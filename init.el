@@ -39,7 +39,8 @@ This function should only modify configuration layer settings."
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     helm
+     ;; helm
+     ivy
      auto-completion
      better-defaults
      emacs-lisp
@@ -55,7 +56,7 @@ This function should only modify configuration layer settings."
      ;; syntax-checking
      version-control
      csharp
-     (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)
+     ;; (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)
      )
 
    ;; List of additional packages that will be installed without being
@@ -74,7 +75,9 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(
+                                    flyspell
+                                    )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -463,18 +466,22 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+
   ;;csharp
 
-  ;; (setq-default omnisharp-server-executable-path "/PATH/TO/OMNISHARP/OmniSharpServer")
+  ;; (setq-default omnisharp-server-executable-path "c:/Users/G4G/AppData/Roaming/.emacs.d/.cache/omnisharp/OmniSharp.exe")
+
 
   (add-hook 'csharp-mode-hook 'ben-charp-hook)
 
   (defun ben-charp-hook()
     (auto-complete-mode)
     (flycheck-mode)
+    ;; (eldoc-mode-set-explicitly)
     (ben-change-csharp-style)
-    (setq-local 'flycheck-display-errors-delay 0.3)
-    (setq-local 'flycheck-check-syntax-automatically '(save mode-enabled))
+
+    (setq-local flycheck-display-errors-delay 0.3)
+    (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
 
     )
 
@@ -508,6 +515,105 @@ before packages are loaded."
   (setq projectile-git-submodule-command nil)
 
 
+  (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
+
+  ;; ;; (setq-default projectile-indexing-method 'hybrid)
+
+  ;; (with-eval-after-load 'helm-projectile
+  ;;  (setq projectile-globally-ignored-directories (append projectile-globally-ignored-directories '("Library" "Packages" "Translations" "Design" "Sprites"))))
+
+  ;; (with-eval-after-load 'helm-projectile
+  ;;   (setq projectile-globally-ignored-file-suffixes '(".meta" ".unity" ".js" ".md" ".exe" ".prefab" ".yasnippet" ".asset")))
+
+  (with-eval-after-load 'grep
+    (setq grep-find-ignored-files (append grep-find-ignored-files '(".meta" ".unity" ".js" ".md" ".exe" ".prefab" ".yasnippet" ".asset"))))
+
+  (with-eval-after-load 'grep
+    (setq grep-find-ignored-directories (append grep-find-ignored-directories '("Library" "Packages" "Translations" "Design" "Sprites"))))
+
+
+
+  ;; (with-eval-after-load 'grep-find
+  ;;   (setq-default )
+  ;;   )
+
+
+  ;;(with-eval-after-load 'helm
+    ;;(setq-default helm-ag-ignore-patterns '(".meta" ".unity" ".js" ".md" ".exe" ".prefab" "**/MessagePack/*" "**/Library/" "**/Design/")))
+
+
+  ;;trying out ivy
+
+
+
+  ;; (setq-default counsel-find-file-ignore-regexp "\\(?:\\`[#.]\\)\\|\\(?:[#~]\\'\\)\|\\.meta\\'|\\.unity\\'|\\.js\\'|\\.md\\'|\\.exe\\'|\\.prefab\\'|\\*\\*/MessagePack/\\*|Library/\\*|Design/\\*")
+
+  (setq-default counsel-find-file-ignore-regexp "Design\\/\\|\\.meta\\'\\|\\.asset\\'\\|\\.png\\'\\|\\.prefab\\'\\|\\.#")
+
+
+  (setq counsel-git-cmd "rg --files")
+
+  (setq counsel-rg-base-command
+        "rg -i -M 120 --no-heading --line-number --color never %s .")
+
+
+
+
+
+  (setq yas-snippet-dirs '("~/.spacemacs.d/snippets"))
+
+
+  ;; override this fucking shit ESC
+  (define-key ctl-x-map (kbd "<ESC>" ) nil)
+
+
+
+  ;;keybindings
+  (spacemacs/set-leader-keys "eb" 'flycheck-buffer)
+
+
+
+
+
+  ;;copy pasta windows performance
+
+    (progn
+
+      ;; (windowsPerformanceTweaks)
+      ;; Make sure Unix tools are in front of `exec-path'
+      (let ((bash (executable-find "bash")))
+        (when bash
+          (push (file-name-directory bash) exec-path)))
+
+      ;; Update PATH from exec-path
+      (let ((path (mapcar 'file-truename
+                          (append exec-path
+                                  (split-string (getenv "PATH") path-separator t)))))
+
+        (setenv "PATH" (mapconcat 'identity (delete-dups path) path-separator)))
+
+      (defun windowsPerformanceTweaks()
+        ;; Windows performance tweaks
+        ;;
+        (when (boundp 'w32-pipe-read-delay)
+          (setq w32-pipe-read-delay 0))
+        ;; Set the buffer size to 64K on Windows (from the original 4K)
+        (when (boundp 'w32-pipe-buffer-size)
+          (setq irony-server-w32-pipe-buffer-size (* 64 1024)))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -524,13 +630,11 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (powershell helm-gtags ggtags counsel-gtags evil-snipe yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop rg restart-emacs rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp neotree nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (smex ivy-yasnippet ivy-xref ivy-purpose ivy-hydra yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop rg restart-emacs rainbow-delimiters powershell popwin persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp neotree nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-snipe evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
- '(sp-show-pair-match-face ((t (:inherit sp-show-pair-match-face :underline t :foreground "#16f7dd")))))
+ )
 )
