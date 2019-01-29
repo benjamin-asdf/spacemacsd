@@ -57,6 +57,7 @@ This function should only modify configuration layer settings."
      version-control
      csharp
      ;; (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)
+     tags-utils
      )
 
    ;; List of additional packages that will be installed without being
@@ -466,6 +467,8 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  (setq-default fringe-mode 'no-fringes)
+
 
   ;;csharp
 
@@ -474,15 +477,15 @@ before packages are loaded."
 
   (add-hook 'csharp-mode-hook 'ben-charp-hook)
 
+
   (defun ben-charp-hook()
     (auto-complete-mode)
-    (flycheck-mode)
-    ;; (eldoc-mode-set-explicitly)
     (ben-change-csharp-style)
-
+    (flycheck-mode)
     (setq-local flycheck-display-errors-delay 0.3)
     (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
-
+    (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
+    (define-key evil-insert-state-map (kbd "C-; C-o") 'omnisharp-auto-complete)
     )
 
   (defun ben-change-csharp-style()
@@ -565,13 +568,24 @@ before packages are loaded."
 
   ;; override this fucking shit ESC
   (define-key ctl-x-map (kbd "<ESC>" ) nil)
+  
+
+  ;;retarded mode line in which key buffer
+
+  (add-hook 'menu-bar-mode-hook 'ben-menu-bar-hook)
+
+  (defun ben-menu-bar-hook ()
+    (if which-key-mode
+      (menu-bar-mode)))
+
+
 
 
 
   ;;keybindings
   (spacemacs/set-leader-keys "eb" 'flycheck-buffer)
-
-
+  (spacemacs/set-leader-keys "ek" 'flycheck-explain-error-at-point)
+  (spacemacs/set-leader-keys "ec" 'flycheck-clear)
 
 
 
@@ -604,10 +618,11 @@ before packages are loaded."
 
 
 
+    (defvar idlegame-dir "\"c:/CosEntitas/idlegame/IdleGame\"")
 
-
-
-
+    (defun insert-idlegame-dir()
+      (interactive)
+      (insert-before-markers-and-inherit idlegame-dir))
 
 
 
