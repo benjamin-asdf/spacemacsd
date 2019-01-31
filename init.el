@@ -33,7 +33,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(windows-scripts
+   '(
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -41,7 +41,9 @@ This function should only modify configuration layer settings."
      ;; ----------------------------------------------------------------
      ;; helm
      ivy
-     auto-completion
+     (auto-completion :variables
+                      auto-completion-enable-help-tooltip 'manual)
+
      better-defaults
      emacs-lisp
      git
@@ -56,7 +58,7 @@ This function should only modify configuration layer settings."
      ;; syntax-checking
      version-control
      csharp
-     ;; (evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)
+     windows-scripts ;;.bat lang support
      tags-utils
      )
 
@@ -163,7 +165,7 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-editing-style 'vim
 
    ;; If non-nil output loading progress in `*Messages*' buffer. (default nil)
-   dotspacemacs-verbose-loading nil
+   dotspacemacs-verbose-loading t
 
    ;; Specify the startup banner. Default value is `official', it displays
    ;; the official spacemacs logo. An integer value is the index of text
@@ -304,7 +306,7 @@ It should only modify the values of Spacemacs settings."
    ;; If non-nil a progress bar is displayed when spacemacs is loading. This
    ;; may increase the boot time on some systems and emacs builds, set it to
    ;; nil to boost the loading time. (default t)
-   dotspacemacs-loading-progress-bar t
+   dotspacemacs-loading-progress-bar nil
 
    ;; If non-nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
@@ -380,14 +382,14 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil, start an Emacs server if one is not already running.
    ;; (default nil)
-   dotspacemacs-enable-server nil
+   dotspacemacs-enable-server t
 
    ;; Set the emacs server socket location.
    ;; If nil, uses whatever the Emacs default is, otherwise a directory path
    ;; like \"~/.emacs.d/server\". It has no effect if
    ;; `dotspacemacs-enable-server' is nil.
    ;; (default nil)
-   dotspacemacs-server-socket-dir nil
+   dotspacemacs-server-socket-dir '"c:/Users/G4G/AppData/Roaming/.emacs.d/server/"
 
    ;; If non-nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
@@ -426,7 +428,7 @@ It should only modify the values of Spacemacs settings."
    ;; `trailing' to delete only the whitespace at end of lines, `changed' to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup nil
+   dotspacemacs-whitespace-cleanup 'changed
 
    ;; Either nil or a number of seconds. If non-nil zone out after the specified
    ;; number of seconds. (default nil)
@@ -451,6 +453,10 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
+
+  (setq tramp-ssh-controlmaster-options
+        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+
   )
 
 (defun dotspacemacs/user-load ()
@@ -470,10 +476,8 @@ before packages are loaded."
   (setq-default fringe-mode 'no-fringes)
 
 
+
   ;;csharp
-
-  ;; (setq-default omnisharp-server-executable-path "c:/Users/G4G/AppData/Roaming/.emacs.d/.cache/omnisharp/OmniSharp.exe")
-
 
   (add-hook 'csharp-mode-hook 'ben-charp-hook)
 
@@ -485,7 +489,8 @@ before packages are loaded."
     (setq-local flycheck-display-errors-delay 0.3)
     (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
     (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
-    (define-key evil-insert-state-map (kbd "C-; C-o") 'omnisharp-auto-complete)
+    (define-key evil-insert-state-map (kbd "C-SPC") 'omnisharp-auto-complete)
+    (setq-local eldoc-idle-delay 0.8)
     )
 
   (defun ben-change-csharp-style()
@@ -520,7 +525,7 @@ before packages are loaded."
 
   (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-  ;; ;; (setq-default projectile-indexing-method 'hybrid)
+  ;; ;; (setq-default projectile-indexing-method 'hybrid)member
 
   ;; (with-eval-after-load 'helm-projectile
   ;;  (setq projectile-globally-ignored-directories (append projectile-globally-ignored-directories '("Library" "Packages" "Translations" "Design" "Sprites"))))
@@ -563,12 +568,11 @@ before packages are loaded."
 
 
 
-  (setq yas-snippet-dirs '("~/.spacemacs.d/snippets"))
+  ;; (setq yas-snippet-dirs '("~/.spacemacs.d/snippets"))
 
 
   ;; override this fucking shit ESC
   (define-key ctl-x-map (kbd "<ESC>" ) nil)
-  
 
   ;;retarded mode line in which key buffer
 
@@ -591,10 +595,9 @@ before packages are loaded."
 
   ;;copy pasta windows performance
 
-    (progn
-
-      ;; (windowsPerformanceTweaks)
-      ;; Make sure Unix tools are in front of `exec-path'
+  (defun windows-set-path()
+    ;; (windowsPerformanceTweaks)
+    ;; Make sure Unix tools are in front of `exec-path'
       (let ((bash (executable-find "bash")))
         (when bash
           (push (file-name-directory bash) exec-path)))
@@ -604,28 +607,30 @@ before packages are loaded."
                           (append exec-path
                                   (split-string (getenv "PATH") path-separator t)))))
 
-        (setenv "PATH" (mapconcat 'identity (delete-dups path) path-separator)))
+        (setenv "PATH" (mapconcat 'identity (delete-dups path) path-separator))))
 
-      (defun windowsPerformanceTweaks()
-        ;; Windows performance tweaks
-        ;;
-        (when (boundp 'w32-pipe-read-delay)
-          (setq w32-pipe-read-delay 0))
-        ;; Set the buffer size to 64K on Windows (from the original 4K)
-        (when (boundp 'w32-pipe-buffer-size)
-          (setq irony-server-w32-pipe-buffer-size (* 64 1024)))))
+      ;; (progn
+      ;; (defun windowsPerformanceTweaks()
+      ;;   ;; Windows performance tweaks
+      ;;   ;;
+      ;;   (when (boundp 'w32-pipe-read-delay)
+      ;;     (setq w32-pipe-read-delay 0))
+      ;;   ;; Set the buffer size to 64K on Windows (from the original 4K)
+      ;;   (when (boundp 'w32-pipe-buffer-size)
+      ;;     (setq irony-server-w32-pipe-buffer-size (* 64 1024)))))
 
-
-
-
-    (defvar idlegame-dir "\"c:/CosEntitas/idlegame/IdleGame\"")
-
-    (defun insert-idlegame-dir()
-      (interactive)
-      (insert-before-markers-and-inherit idlegame-dir))
+  (windows-set-path)
 
 
 
+  (defvar idlegame-dir "\"c:/CosEntitas/idlegame/IdleGame\"")
+
+  (defun insert-idlegame-dir()
+    (interactive)
+    (insert-before-markers-and-inherit idlegame-dir))
+
+
+  (setenv "GIT_ASKPASS" "git-gui--askpass")
 
 
 
@@ -645,7 +650,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (smex ivy-yasnippet ivy-xref ivy-purpose ivy-hydra yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop rg restart-emacs rainbow-delimiters powershell popwin persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp neotree nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-snipe evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (company-quickhelp pos-tip yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org symon string-inflection spaceline-all-the-icons smex smeargle shell-pop rg restart-emacs request rainbow-delimiters powershell popwin persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp neotree nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-make google-translate golden-ratio gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-window ace-link ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
