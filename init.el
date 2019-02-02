@@ -39,8 +39,7 @@ This function should only modify configuration layer settings."
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     ;; helm
-     ivy
+     helm
      (auto-completion :variables
                       auto-completion-enable-help-tooltip 'manual)
 
@@ -80,6 +79,7 @@ This function should only modify configuration layer settings."
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '(
                                     flyspell
+                                    overseer
                                     )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -473,7 +473,6 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
-  (setq-default fringe-mode 'no-fringes)
 
 
 
@@ -491,6 +490,7 @@ before packages are loaded."
     (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
     (define-key evil-insert-state-map (kbd "C-SPC") 'omnisharp-auto-complete)
     (setq-local eldoc-idle-delay 0.8)
+    (setq fringe-mode 'no-fringes)
     )
 
   (defun ben-change-csharp-style()
@@ -502,6 +502,11 @@ before packages are loaded."
     (setq tab-width 4)
     (setq evil-shift-width 4)
     )
+
+
+  ;;helm
+
+  (setq-default helm-candidate-number-limit 30)
 
 
 
@@ -522,19 +527,22 @@ before packages are loaded."
   ;;projectile bug
   (setq projectile-git-submodule-command nil)
 
-
   (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-  ;; ;; (setq-default projectile-indexing-method 'hybrid)member
+  (setq-default projectile-indexing-method 'hybrid)
 
-  ;; (with-eval-after-load 'helm-projectile
-  ;;  (setq projectile-globally-ignored-directories (append projectile-globally-ignored-directories '("Library" "Packages" "Translations" "Design" "Sprites"))))
+  (with-eval-after-load 'projectile
+    (setq projectile-globally-ignored-files (append projectile-globally-ignored-files '("*.meta" "*.unity" "*.js" "*.md" "*.exe" "*.prefab" "*.yasnippet" "*.asset"))))
 
-  ;; (with-eval-after-load 'helm-projectile
-  ;;   (setq projectile-globally-ignored-file-suffixes '(".meta" ".unity" ".js" ".md" ".exe" ".prefab" ".yasnippet" ".asset")))
+  (with-eval-after-load 'helm-projectile
+   (setq projectile-globally-ignored-directories (append projectile-globally-ignored-directories '("Library/" "Packages/" "Translations/" "Design/" "Sprites/"))))
+
+  (with-eval-after-load 'helm-projectile
+    (setq projectile-globally-ignored-file-suffixes  '("png" "unity" "tga" "psd" "anim" "prefab" "mat" "meta" "asset")))
+
 
   (with-eval-after-load 'grep
-    (setq grep-find-ignored-files (append grep-find-ignored-files '(".meta" ".unity" ".js" ".md" ".exe" ".prefab" ".yasnippet" ".asset"))))
+    (setq grep-find-ignored-files (append grep-find-ignored-files '("*.meta" "*.png" "*.unity" "*.tga" "*.psd" "*.anim" "*.prefab" "*.mat" "*.xls" "*.asset"))))
 
   (with-eval-after-load 'grep
     (setq grep-find-ignored-directories (append grep-find-ignored-directories '("Library" "Packages" "Translations" "Design" "Sprites"))))
@@ -546,8 +554,8 @@ before packages are loaded."
   ;;   )
 
 
-  ;;(with-eval-after-load 'helm
-    ;;(setq-default helm-ag-ignore-patterns '(".meta" ".unity" ".js" ".md" ".exe" ".prefab" "**/MessagePack/*" "**/Library/" "**/Design/")))
+  (with-eval-after-load 'helm
+    (setq-default helm-ag-ignore-patterns '(".meta" ".unity" ".js" ".md" ".exe" ".prefab" "**/MessagePack/*" "**/Library/" "**/Design/")))
 
 
   ;;trying out ivy
@@ -556,13 +564,13 @@ before packages are loaded."
 
   ;; (setq-default counsel-find-file-ignore-regexp "\\(?:\\`[#.]\\)\\|\\(?:[#~]\\'\\)\|\\.meta\\'|\\.unity\\'|\\.js\\'|\\.md\\'|\\.exe\\'|\\.prefab\\'|\\*\\*/MessagePack/\\*|Library/\\*|Design/\\*")
 
-  (setq-default counsel-find-file-ignore-regexp "Design\\/\\|\\.meta\\'\\|\\.asset\\'\\|\\.png\\'\\|\\.prefab\\'\\|\\.#")
+  ;; (setq-default counsel-find-file-ignore-regexp "Design\\/\\|\\.meta\\'\\|\\.asset\\'\\|\\.png\\'\\|\\.prefab\\'\\|\\.#")
 
 
-  (setq counsel-git-cmd "rg --files")
+  ;; (setq counsel-git-cmd "rg --files")
 
-  (setq counsel-rg-base-command
-        "rg -i -M 120 --no-heading --line-number --color never %s .")
+  ;; (setq counsel-rg-base-command
+  ;;       "rg -i -M 120 --no-heading --line-number --color never %s .")
 
 
 
@@ -587,9 +595,17 @@ before packages are loaded."
 
 
   ;;keybindings
+
+  ;;flycheck
   (spacemacs/set-leader-keys "eb" 'flycheck-buffer)
   (spacemacs/set-leader-keys "ek" 'flycheck-explain-error-at-point)
   (spacemacs/set-leader-keys "ec" 'flycheck-clear)
+
+
+  ;;avy
+  (spacemacs/set-leader-keys "ja" 'avy-goto-char-in-line)
+
+
 
 
 
@@ -650,7 +666,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (company-quickhelp pos-tip yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org symon string-inflection spaceline-all-the-icons smex smeargle shell-pop rg restart-emacs request rainbow-delimiters powershell popwin persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp neotree nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-make google-translate golden-ratio gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-window ace-link ac-ispell))))
+    (helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag ace-jump-helm-line yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org symon string-inflection spaceline-all-the-icons smex smeargle shell-pop rg restart-emacs request rainbow-delimiters powershell popwin persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp neotree nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-make google-translate golden-ratio gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics company-quickhelp column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-window ace-link ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
