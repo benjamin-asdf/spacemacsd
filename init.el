@@ -535,16 +535,6 @@ before packages are loaded."
 
 
 
-  (with-eval-after-load 'projectile
-    (setq projectile-globally-ignored-files (append projectile-globally-ignored-files '("*.meta" "*.unity" "*.js" "*.md" "*.exe" "*.prefab" "*.yasnippet" "*.asset"))))
-
-  (with-eval-after-load 'helm-projectile
-   (setq projectile-globally-ignored-directories (append projectile-globally-ignored-directories '("Library/" "Packages/" "Translations/" "Design/" "Sprites/"))))
-
-  (with-eval-after-load 'helm-projectile
-    (setq projectile-globally-ignored-file-suffixes  '("png" "unity" "tga" "psd" "anim" "prefab" "mat" "meta" "asset")))
-
-
   (with-eval-after-load 'grep
     (setq grep-find-ignored-files (append grep-find-ignored-files '("*.meta" "*.png" "*.unity" "*.tga" "*.psd" "*.anim" "*.prefab" "*.mat" "*.xls" "*.asset"))))
 
@@ -553,48 +543,15 @@ before packages are loaded."
 
 
 
-  ;; (with-eval-after-load 'grep-find
-  ;;   (setq-default )
-  ;;   )
-
-
   (with-eval-after-load 'helm
     (setq-default helm-ag-ignore-patterns '(".meta" ".unity" ".js" ".md" ".exe" ".prefab" "**/MessagePack/*" "**/Library/" "**/Design/" ".xml" ".asset")))
 
 
-  ;;trying out ivy
 
-
-
-  ;; (setq-default counsel-find-file-ignore-regexp "\\(?:\\`[#.]\\)\\|\\(?:[#~]\\'\\)\|\\.meta\\'|\\.unity\\'|\\.js\\'|\\.md\\'|\\.exe\\'|\\.prefab\\'|\\*\\*/MessagePack/\\*|Library/\\*|Design/\\*")
-
-  ;; (setq-default counsel-find-file-ignore-regexp "Design\\/\\|\\.meta\\'\\|\\.asset\\'\\|\\.png\\'\\|\\.prefab\\'\\|\\.#")
-
-
-  ;; (setq counsel-git-cmd "rg --files")
-
-  ;; (setq counsel-rg-base-command
-  ;;       "rg -i -M 120 --no-heading --line-number --color never %s .")
-
-
-
-
-
-  ;; (setq yas-snippet-dirs '("~/.spacemacs.d/snippets"))
 
 
   ;; override this fucking shit ESC
   (define-key ctl-x-map (kbd "<ESC>" ) nil)
-
-  ;;retarded mode line in which key buffer
-
-  (add-hook 'menu-bar-mode-hook 'ben-menu-bar-hook)
-
-  (defun ben-menu-bar-hook ()
-    (if which-key-mode
-      (menu-bar-mode)))
-
-
 
 
 
