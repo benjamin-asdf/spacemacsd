@@ -40,9 +40,7 @@ This function should only modify configuration layer settings."
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
-     (auto-completion :variables
-                      auto-completion-enable-help-tooltip 'manual)
-
+     auto-completion
      better-defaults
      emacs-lisp
      git
@@ -54,7 +52,7 @@ This function should only modify configuration layer settings."
             shell-default-height 30
             shell-default-position 'bottom)
      ;; spell-checking
-     ;; syntax-checking
+     syntax-checking
      version-control
      csharp
      windows-scripts ;;.bat lang support
@@ -80,6 +78,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-excluded-packages '(
                                     flyspell
                                     overseer
+                                    evil-escape
                                     )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -475,7 +474,6 @@ before packages are loaded."
 
 
 
-
   ;;csharp
 
   (add-hook 'csharp-mode-hook 'ben-charp-hook)
@@ -498,7 +496,6 @@ before packages are loaded."
     (setq c-syntactic-indentation t)
     (c-set-style "ellemtel")
     (setq c-basic-offset 4)
-    (setq truncate-lines t)
     (setq tab-width 4)
     (setq evil-shift-width 4)
     )
@@ -529,7 +526,14 @@ before packages are loaded."
 
   (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-  (setq-default projectile-indexing-method 'hybrid)
+  (setq-default projectile-indexing-method 'alien)
+
+  (defvar my-fd-command "fd . -0")
+
+  (setq-default projectile-git-command my-fd-command)
+  (setq-default projectile-generic-command my-fd-command)
+
+
 
   (with-eval-after-load 'projectile
     (setq projectile-globally-ignored-files (append projectile-globally-ignored-files '("*.meta" "*.unity" "*.js" "*.md" "*.exe" "*.prefab" "*.yasnippet" "*.asset"))))
@@ -597,16 +601,11 @@ before packages are loaded."
   ;;keybindings
   (spacemacs/declare-prefix "o" "own")
 
-  ;;flycheck
-  (spacemacs/set-leader-keys "eb" 'flycheck-buffer)
-  (spacemacs/set-leader-keys "ek" 'flycheck-explain-error-at-point)
-  (spacemacs/set-leader-keys "ec" 'flycheck-clear)
-
-
   ;;avy
   (spacemacs/declare-prefix "oj" "jump")
   (spacemacs/set-leader-keys "ojf" 'avy-goto-char-in-line)
   (spacemacs/set-leader-keys "ojw" 'evil-avy-goto-word-0)
+  (spacemacs/set-leader-keys "jj" 'evil-avy-goto-word-0) ;;because I like that so much
 
 
   (spacemacs/set-leader-keys "osp" 'rg-dwim-project-dir)
@@ -669,35 +668,13 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(evil-want-Y-yank-to-eol nil)
- '(hl-todo-keyword-faces
-   (quote
-    (("TODO" . "#dc752f")
-     ("NEXT" . "#dc752f")
-     ("THEM" . "#2d9574")
-     ("PROG" . "#4f97d7")
-     ("OKAY" . "#4f97d7")
-     ("DONT" . "#f2241f")
-     ("FAIL" . "#f2241f")
-     ("DONE" . "#86dc2f")
-     ("NOTE" . "#b1951d")
-     ("KLUDGE" . "#b1951d")
-     ("HACK" . "#b1951d")
-     ("TEMP" . "#b1951d")
-     ("FIXME" . "#dc752f")
-     ("XXX" . "#dc752f")
-     ("XXXX" . "#dc752f")
-     ("???" . "#dc752f"))))
  '(package-selected-packages
    (quote
-    (treemacs-projectile treemacs-evil treemacs ht pfuture helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag ace-jump-helm-line yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org symon string-inflection spaceline-all-the-icons smex smeargle shell-pop rg restart-emacs request rainbow-delimiters powershell popwin persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp neotree nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-make google-translate golden-ratio gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics company-quickhelp column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-window ace-link ac-ispell)))
- '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e"))))
+    (flycheck-pos-tip pos-tip yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop rg restart-emacs rainbow-delimiters powershell popwin persp-mode pcre2el password-generator paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
- '(sp-show-pair-match-face ((t (:inherit sp-show-pair-match-face :underline t :foreground "#16f7dd")))))
+ )
 )
