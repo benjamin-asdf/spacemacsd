@@ -33,7 +33,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(ruby
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -388,7 +388,7 @@ It should only modify the values of Spacemacs settings."
    ;; like \"~/.emacs.d/server\". It has no effect if
    ;; `dotspacemacs-enable-server' is nil.
    ;; (default nil)
-   dotspacemacs-server-socket-dir '"c:/Users/G4G/AppData/Roaming/.emacs.d/server/"
+   dotspacemacs-server-socket-dir '"~/.emacs.d/server/"
 
    ;; If non-nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
@@ -472,6 +472,29 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  ;;magit
+
+  ;; WORKAROUND https://github.com/magit/magit/issues/2395
+  (define-derived-mode magit-staging-mode magit-status-mode "Magit staging"
+    "Mode for showing staged and unstaged changes."
+    :group 'magit-status)
+  (defun magit-staging-refresh-buffer ()
+    (magit-insert-section (status)
+      (magit-insert-untracked-files)
+      (magit-insert-unstaged-changes)
+      (magit-insert-staged-changes)))
+  (defun magit-staging ()
+    (interactive)
+    (magit-mode-setup #'magit-staging-mode))
+
+
+  (setq-default pos-tip-use-relative-coordinates t)
+  (setq-default pos-tip-background-color "midnight blue")
+  (setq-default pos-tip-foreground-color "MistyRose1")
+
+
+
+
 
 
   ;;csharp
@@ -483,7 +506,6 @@ before packages are loaded."
     (auto-complete-mode)
     (ben-change-csharp-style)
     (flycheck-mode)
-    (setq-local flycheck-display-errors-delay 0.3)
     (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
     (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
     (define-key evil-insert-state-map (kbd "C-SPC") 'omnisharp-auto-complete)
@@ -528,10 +550,12 @@ before packages are loaded."
 
   (setq-default projectile-indexing-method 'alien)
 
-  (defvar my-fd-command "fd . -0")
+  (defvar my-fd-command "c:/Users/G4G/code/ruby/cmd/mfd.rb")
 
   (setq-default projectile-git-command my-fd-command)
   (setq-default projectile-generic-command my-fd-command)
+
+  (setq projectile-enable-caching t)
 
 
 
@@ -542,9 +566,10 @@ before packages are loaded."
     (setq grep-find-ignored-directories (append grep-find-ignored-directories '("Library" "Packages" "Translations" "Design" "Sprites"))))
 
 
+  (setq-default helm-ag-use-grep-ignore-list)
 
   (with-eval-after-load 'helm
-    (setq-default helm-ag-ignore-patterns '(".meta" ".unity" ".js" ".md" ".exe" ".prefab" "**/MessagePack/*" "**/Library/" "**/Design/" ".xml" ".asset")))
+    (setq-default helm-ag-ignore-patterns '("*.meta" "*.unity" "*.js" "*.md" "*.exe" "*.prefab" "**/MessagePack/*" "**/Library/" "**/Design/" "*.xml" "*.asset" "**/Plugins/*")))
 
 
 
@@ -564,9 +589,15 @@ before packages are loaded."
   (spacemacs/set-leader-keys "ojw" 'evil-avy-goto-word-0)
   (spacemacs/set-leader-keys "jj" 'evil-avy-goto-word-0) ;;because I like that so much
 
-
+  (spacemacs/declare-prefix "os" "search")
   (spacemacs/set-leader-keys "osp" 'rg-dwim-project-dir)
   (spacemacs/set-leader-keys "osd" 'rg-dwim-current-dir)
+
+  ;;explain error
+  (define-key evil-normal-state-map "gj" 'flycheck-explain-error-at-point)
+
+  (spacemacs/set-leader-keys "ss" 'spacemacs/helm-swoop-region-or-symbol)
+  (spacemacs/set-leader-keys "sS" 'helm-swoop)
 
 
 
@@ -607,7 +638,21 @@ before packages are loaded."
     (insert-before-markers-and-inherit idlegame-dir))
 
 
-  (setenv "GIT_ASKPASS" "git-gui--askpass")
+  (setenv "GIT_ASKPASS" "git-gui--askpass") ;;TODO make work
+
+  ;; (defvar idlegame-sln-path "c:/CosEntitas/idlegame/IdleGame/")
+
+  ;; (defun solution-path ()
+  ;;     (interactive)
+  ;;     (message (concat idlegame-dir "IdleGame.sln")))
+
+
+  (defun start-omnisharp-server-no-auto-detect() ;;wip
+      (interactive)
+      (omnisharp--start-omnisharp-server nil)
+      )
+
+
 
 
 
@@ -627,11 +672,13 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (flycheck-pos-tip pos-tip yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop rg restart-emacs rainbow-delimiters powershell popwin persp-mode pcre2el password-generator paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line ac-ispell))))
+    (seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rbenv rake minitest helm-gtags ggtags enh-ruby-mode counsel-gtags chruby bundler inf-ruby flycheck-pos-tip pos-tip yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop rg restart-emacs rainbow-delimiters powershell popwin persp-mode pcre2el password-generator paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp nameless mwim multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum link-hint indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-statistics column-enforce-mode clean-aindent-mode centered-cursor-mode browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
+ '(sp-show-pair-match-face ((t (:inherit sp-show-pair-match-face :underline t :foreground "#16f7dd")))))
 )
