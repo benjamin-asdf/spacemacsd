@@ -588,16 +588,20 @@ before packages are loaded."
   (spacemacs/set-leader-keys "ojf" 'avy-goto-char-in-line)
   (spacemacs/set-leader-keys "ojw" 'evil-avy-goto-word-0)
   (spacemacs/set-leader-keys "jj" 'evil-avy-goto-word-0) ;;because I like that so much
+  (spacemacs/set-leader-keys "jc" 'evil-avy-goto-char)
+
+  (spacemacs/set-leader-keys "om" "move")
+  (spacemacs/set-leader-keys "omr" 'avy-move-region)
+  (spacemacs/set-leader-keys "oml" 'avy-move-line)
 
   (spacemacs/declare-prefix "os" "search")
   (spacemacs/set-leader-keys "osp" 'rg-dwim-project-dir)
   (spacemacs/set-leader-keys "osd" 'rg-dwim-current-dir)
 
-  ;;explain error
-  (define-key evil-normal-state-map "gj" 'flycheck-explain-error-at-point)
-
   (spacemacs/set-leader-keys "ss" 'spacemacs/helm-swoop-region-or-symbol)
   (spacemacs/set-leader-keys "sS" 'helm-swoop)
+
+  (spacemacs/set-leader-keys "op" 'evil-paste-before)
 
 
 
