@@ -474,8 +474,6 @@ before packages are loaded."
 
   ;;magit
 
-
-  ;;NOTE doesn't work
   ;; WORKAROUND https://github.com/magit/magit/issues/2395
   (define-derived-mode magit-staging-mode magit-status-mode "Magit staging"
     "Mode for showing staged and unstaged changes."
@@ -608,6 +606,7 @@ before packages are loaded."
   (spacemacs/declare-prefix "og" "git")
   (spacemacs/set-leader-keys "ogs" 'vc-revision-other-window)
   (spacemacs/set-leader-keys "ogc" 'vc-find-conflicted-file)
+  (spacemacs/set-leader-keys "oga" 'magit-staging)
 
 
   (spacemacs/set-leader-keys "op" 'evil-paste-before)
