@@ -584,9 +584,13 @@ before packages are loaded."
   ;;avy
   (spacemacs/declare-prefix "oj" "jump")
   (spacemacs/set-leader-keys "ojf" 'avy-goto-char-in-line)
-  (spacemacs/set-leader-keys "ojw" 'evil-avy-goto-word-0)
-  (spacemacs/set-leader-keys "jj" 'evil-avy-goto-word-0) ;;because I like that so much
-  (spacemacs/set-leader-keys "jc" 'evil-avy-goto-char)
+  (spacemacs/set-leader-keys "ojK" 'evil-avy-goto-word-1-above)
+  (spacemacs/set-leader-keys "ojJ" 'evil-avy-goto-word-1-below)
+  (spacemacs/set-leader-keys "ojt" 'evil-avy-goto-char-timer)
+
+  (spacemacs/set-leader-keys "jca" 'evil-avy-goto-char-2)
+  (spacemacs/set-leader-keys "jcK" 'evil-avy-goto-char-2-above)
+  (spacemacs/set-leader-keys "jcJ" 'evil-avy-goto-char-2-below)
 
   (spacemacs/declare-prefix "om" "move")
   (spacemacs/set-leader-keys "omr" 'avy-move-region)
