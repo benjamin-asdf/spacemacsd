@@ -33,16 +33,14 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(javascript
-     ruby
+   '(
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
-     (auto-completion :variables
-                      auto-completion-enable-snippets-in-popup t)
+     auto-completion
      better-defaults
      emacs-lisp
      git
@@ -58,8 +56,11 @@ This function should only modify configuration layer settings."
      version-control
      csharp
      windows-scripts
+     javascript
+     ruby
      tags-utils
-     substitute-utils)
+     substitute-utils
+     my-funcs)
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -573,6 +574,8 @@ before packages are loaded."
 
 
 
+
+
   ;; override this fucking shit ESC
   (define-key ctl-x-map (kbd "<ESC>" ) nil)
 
@@ -614,6 +617,9 @@ before packages are loaded."
 
 
   (spacemacs/set-leader-keys "op" 'evil-paste-before)
+
+
+  (spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)
 
 
 
