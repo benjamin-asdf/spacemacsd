@@ -678,6 +678,9 @@ before packages are loaded."
 
 
 
+  (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
+
+
 
   )
 
