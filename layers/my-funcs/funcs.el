@@ -54,3 +54,15 @@
 (define-auto-substitute-command my/evil-line-substitute
 	"Substitute inline."
 	nil)
+
+(defun reopen-buffer ()
+  "Kill and open current BUFFER."
+  (interactive)
+  (let ( (buffer (buffer-name))
+         (file (buffer-file-name))
+         (point (point)) )
+    (kill-buffer buffer)
+    (find-file file)
+    (goto-char point)))
+
+
