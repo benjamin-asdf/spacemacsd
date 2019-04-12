@@ -61,13 +61,5 @@
                 (async-shell-command command)))
 
 
-        ;; (general-define-key
-        ;;  :keymaps 'mikus-tags-map
-        ;;  "g" 'projectile-regenerate-tags-for-cos-generated-files
-        ;;  "i" 'regenerate-idlegame-tags
-        ;;  "r" 'regenerate-tags
-        ;;  "f" 'projectile-regenerate-tags-for-current-file-async)
-        
-
         )
     )
