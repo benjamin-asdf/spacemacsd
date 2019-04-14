@@ -621,6 +621,8 @@ before packages are loaded."
 
   (spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)
 
+  (spacemacs/set-leader-keys "gm" 'magit-dispatch-popup)
+
 
 
 
