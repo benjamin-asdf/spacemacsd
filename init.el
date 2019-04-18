@@ -33,7 +33,9 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(yaml
+     systemd
+     html
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -55,12 +57,18 @@ This function should only modify configuration layer settings."
      syntax-checking
      version-control
      csharp
+     python
      windows-scripts
      javascript
      ruby
      tags-utils
      substitute-utils
-     my-funcs)
+     my-funcs
+     my-keybindings
+     csharp-config
+     my-theme-config
+     idlegame-special-config
+     )
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -77,10 +85,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(
-                                    flyspell
-                                    overseer
-                                    evil-escape)
+   dotspacemacs-excluded-packages '()
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -124,7 +129,7 @@ It should only modify the values of Spacemacs settings."
    ;; This variable has no effect if Emacs is launched with the parameter
    ;; `--insecure' which forces the value of this variable to nil.
    ;; (default t)
-   dotspacemacs-elpa-https nil
+   dotspacemacs-elpa-https t
 
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    ;; (default 5)
@@ -199,8 +204,7 @@ It should only modify the values of Spacemacs settings."
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
                          doom-molokai
-                         spacemacs-dark
-                         )
+                         spacemacs-dark)
 
    ;; Set the theme for the Spaceline. Supported themes are `spacemacs',
    ;; `all-the-icons', `custom', `doom', `vim-powerline' and `vanilla'. The
@@ -310,7 +314,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup nil
+   dotspacemacs-fullscreen-at-startup t
 
    ;; If non-nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
@@ -382,14 +386,14 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil, start an Emacs server if one is not already running.
    ;; (default nil)
-   dotspacemacs-enable-server t
+   dotspacemacs-enable-server nil
 
    ;; Set the emacs server socket location.
    ;; If nil, uses whatever the Emacs default is, otherwise a directory path
    ;; like \"~/.emacs.d/server\". It has no effect if
    ;; `dotspacemacs-enable-server' is nil.
    ;; (default nil)
-   dotspacemacs-server-socket-dir '"~/.emacs.d/server/"
+   dotspacemacs-server-socket-dir nil
 
    ;; If non-nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
@@ -453,10 +457,6 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
-
-  (setq tramp-ssh-controlmaster-options
-        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
-
   )
 
 (defun dotspacemacs/user-load ()
@@ -473,221 +473,17 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
-  ;;magit
-
-  ;; WORKAROUND https://github.com/magit/magit/issues/2395
-  (define-derived-mode magit-staging-mode magit-status-mode "Magit staging"
-    "Mode for showing staged and unstaged changes."
-    :group 'magit-status)
-  (defun magit-staging-refresh-buffer ()
-    (magit-insert-section (status)
-      (magit-insert-untracked-files)
-      (magit-insert-unstaged-changes)
-      (magit-insert-staged-changes)))
-  (defun magit-staging ()
-    (interactive)
-    (magit-mode-setup #'magit-staging-mode))
-
-
-  (setq-default pos-tip-use-relative-coordinates t)
-  (setq-default pos-tip-background-color "midnight blue")
-  (setq-default pos-tip-foreground-color "MistyRose1")
-
-
-
-
-
-
-  ;;csharp
-
-  (add-hook 'csharp-mode-hook 'ben-charp-hook)
-
-
-  (defun ben-charp-hook()
-    (auto-complete-mode)
-    (ben-change-csharp-style)
-    (flycheck-mode)
-    (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
-    (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
-    (define-key evil-insert-state-map (kbd "C-SPC") 'omnisharp-auto-complete)
-    (setq-local eldoc-idle-delay 0.8)
-    (setq fringe-mode 'no-fringes))
-
-  (defun ben-change-csharp-style()
-    (setq indent-tabs-mode nil)
-    (setq c-syntactic-indentation t)
-    (c-set-style "ellemtel")
-    (setq c-basic-offset 4)
-    (setq tab-width 4)
-    (setq evil-shift-width 4))
-
-
-  ;;helm
-
-  (setq-default helm-candidate-number-limit 30)
-
-
-
-
-
-  (custom-set-faces
-   '(company-tooltip-common
-     ((t (:inherit company-tooltip :weight bold :underline nil))))
-   '(company-tooltip-common-selection
-     ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
-
-  ;;theme
-  (custom-set-faces
-   '(sp-show-pair-match-face
-     ((t (:inherit sp-show-pair-match-face :underline t :foreground "#16f7dd")))))
-
-
-  ;;projectile bug
-  (setq projectile-git-submodule-command nil)
-
+  ;;rg
   (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-  (setq-default projectile-indexing-method 'alien)
-
-  (defvar my-fd-command "c:/Users/G4G/code/ruby/cmd/mfd.rb")
-
-  (setq-default projectile-git-command my-fd-command)
-  (setq-default projectile-generic-command my-fd-command)
+  (setq-default helm-ag-use-grep-ignore-list 't)
 
   (setq projectile-enable-caching t)
 
 
 
-  (with-eval-after-load 'grep
-    (setq grep-find-ignored-files (append grep-find-ignored-files '("*.meta" "*.png" "*.unity" "*.tga" "*.psd" "*.anim" "*.prefab" "*.mat" "*.xls" "*.asset"))))
-
-  (with-eval-after-load 'grep
-    (setq grep-find-ignored-directories (append grep-find-ignored-directories '("Library" "Packages" "Translations" "Design" "Sprites"))))
-
-
-  (setq-default helm-ag-use-grep-ignore-list)
-
-  (with-eval-after-load 'helm
-    (setq-default helm-ag-ignore-patterns '("*.meta" "*.unity" "*.js" "*.md" "*.exe" "*.prefab" "**/MessagePack/*" "**/Library/" "**/Design/" "*.xml" "*.asset" "**/Plugins/*")))
-
-
-
-
-
-
-
-  ;; override this fucking shit ESC
-  (define-key ctl-x-map (kbd "<ESC>" ) nil)
-
-
-
-  ;;keybindings
-  (spacemacs/declare-prefix "o" "own")
-
-  ;;avy
-  (spacemacs/declare-prefix "oj" "jump")
-  (spacemacs/set-leader-keys "ojf" 'avy-goto-char-in-line)
-  (spacemacs/set-leader-keys "ojK" 'evil-avy-goto-word-1-above)
-  (spacemacs/set-leader-keys "ojJ" 'evil-avy-goto-word-1-below)
-  (spacemacs/set-leader-keys "ojt" 'evil-avy-goto-char-timer)
-
-  (spacemacs/set-leader-keys "jca" 'evil-avy-goto-char-2)
-  (spacemacs/set-leader-keys "jcK" 'evil-avy-goto-char-2-above)
-  (spacemacs/set-leader-keys "jcJ" 'evil-avy-goto-char-2-below)
-
-  (spacemacs/declare-prefix "om" "move")
-  (spacemacs/set-leader-keys "omr" 'avy-move-region)
-  (spacemacs/set-leader-keys "oml" 'avy-move-line)
-
-  (spacemacs/declare-prefix "oc" "copy")
-  (spacemacs/set-leader-keys "ocl" 'avy-copy-line)
-  (spacemacs/set-leader-keys "ocr" 'avy-copy-region)
-
-  (spacemacs/declare-prefix "os" "search")
-  (spacemacs/set-leader-keys "osp" 'rg-dwim-project-dir)
-  (spacemacs/set-leader-keys "osd" 'rg-dwim-current-dir)
-
-  (spacemacs/set-leader-keys "ss" 'spacemacs/helm-swoop-region-or-symbol)
-  (spacemacs/set-leader-keys "sS" 'helm-swoop)
-
-  (spacemacs/declare-prefix "og" "git")
-  (spacemacs/set-leader-keys "ogs" 'vc-revision-other-window)
-  (spacemacs/set-leader-keys "ogc" 'vc-find-conflicted-file)
-  (spacemacs/set-leader-keys "oga" 'magit-staging)
-
-
-  (spacemacs/set-leader-keys "op" 'evil-paste-before)
-
-
-  (spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)
-
-  (spacemacs/set-leader-keys "gm" 'magit-dispatch-popup)
-
-
-
-
-
-
-
-
-
-  ;;copy pasta windows performance
-
-  (defun windows-set-path()
-    ;; (windowsPerformanceTweaks)
-    ;; Make sure Unix tools are in front of `exec-path'
-      (let ((bash (executable-find "bash")))
-        (when bash
-          (push (file-name-directory bash) exec-path)))
-
-      ;; Update PATH from exec-path
-      (let ((path (mapcar 'file-truename
-                          (append exec-path
-                                  (split-string (getenv "PATH") path-separator t)))))
-
-        (setenv "PATH" (mapconcat 'identity (delete-dups path) path-separator))))
-
-      ;; (progn
-      ;; (defun windowsPerformanceTweaks()
-      ;;   ;; Windows performance tweaks
-      ;;   ;;
-      ;;   (when (boundp 'w32-pipe-read-delay)
-      ;;     (setq w32-pipe-read-delay 0))
-      ;;   ;; Set the buffer size to 64K on Windows (from the original 4K)
-      ;;   (when (boundp 'w32-pipe-buffer-size)
-      ;;     (setq irony-server-w32-pipe-buffer-size (* 64 1024)))))
-
-  (windows-set-path)
-
-
-
-  (defvar idlegame-dir "\"c:/CosEntitas/idlegame/IdleGame\"")
-
-  (defun insert-idlegame-dir()
-    (interactive)
-    (insert-before-markers-and-inherit idlegame-dir))
-
-
-  (setenv "GIT_ASKPASS" "git-gui--askpass") ;;TODO make work
-  (setenv "SSH_ASKPASS" "git-gui--askpass")
-
-  ;; (defvar idlegame-sln-path "c:/CosEntitas/idlegame/IdleGame/")
-
-  ;; (defun solution-path ()
-  ;;     (interactive)
-  ;;     (message (concat idlegame-dir "IdleGame.sln")))
-
-
-  (defun start-omnisharp-server-no-auto-detect() ;;wip
-      (interactive)
-      (omnisharp--start-omnisharp-server nil)
-      )
-
-
-
-
+  ;;auto save
   (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
-
 
 
   )
@@ -704,20 +500,14 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(evil-emacs-state-modes
-   (quote
-    (org-brain-visualize-mode 5x5-mode archive-mode bbdb-mode biblio-selection-mode blackbox-mode bookmark-bmenu-mode bookmark-edit-annotation-mode browse-kill-ring-mode bubbles-mode bzr-annotate-mode calc-mode cfw:calendar-mode completion-list-mode custom-theme-choose-mode debugger-mode delicious-search-mode desktop-menu-blist-mode desktop-menu-mode dun-mode dvc-bookmarks-mode dvc-diff-mode dvc-info-buffer-mode dvc-log-buffer-mode dvc-revlist-mode dvc-revlog-mode dvc-status-mode dvc-tips-mode ediff-mode ediff-meta-mode efs-mode Electric-buffer-menu-mode emms-browser-mode emms-mark-mode emms-metaplaylist-mode emms-playlist-mode ess-help-mode etags-select-mode fj-mode gc-issues-mode gdb-breakpoints-mode gdb-disassembly-mode gdb-frames-mode gdb-locals-mode gdb-memory-mode gdb-registers-mode gdb-threads-mode gist-list-mode gnus-article-mode gnus-browse-mode gnus-group-mode gnus-server-mode gnus-summary-mode gomoku-mode google-maps-static-mode ibuffer-mode jde-javadoc-checker-report-mode magit-popup-mode magit-popup-sequence-mode magit-branch-manager-mode magit-commit-mode magit-key-mode magit-rebase-mode magit-wazzup-mode mh-folder-mode monky-mode mpuz-mode mu4e-main-mode mu4e-headers-mode mu4e-view-mode notmuch-hello-mode notmuch-search-mode notmuch-show-mode notmuch-tree-mode org-agenda-mode pdf-outline-buffer-mode pdf-view-mode proced-mode rcirc-mode rebase-mode recentf-dialog-mode reftex-select-bib-mode reftex-select-label-mode reftex-toc-mode sldb-mode slime-inspector-mode slime-thread-control-mode slime-xref-mode snake-mode solitaire-mode sr-buttons-mode sr-mode sr-tree-mode sr-virtual-mode tar-mode tetris-mode tla-annotate-mode tla-archive-list-mode tla-bconfig-mode tla-bookmarks-mode tla-branch-list-mode tla-browse-mode tla-category-list-mode tla-changelog-mode tla-follow-symlinks-mode tla-inventory-file-mode tla-inventory-mode tla-lint-mode tla-logs-mode tla-revision-list-mode tla-revlog-mode tla-tree-lint-mode tla-version-list-mode twittering-mode urlview-mode vm-mode vm-summary-mode w3m-mode wab-compilation-mode xgit-annotate-mode xgit-changelog-mode xgit-diff-mode xgit-revlog-mode xhg-annotate-mode xhg-log-mode xhg-mode xhg-mq-mode xhg-mq-sub-mode xhg-status-extra-mode)))
+ '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
-    (json-navigator hierarchy json-mode json-snatcher json-reformat company-tern dash-functional yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toc-org tern symon string-inflection spaceline-all-the-icons smeargle shell-pop seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rg restart-emacs rbenv rake rainbow-delimiters prettier-js powershell popwin persp-mode password-generator paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp nameless mwim multi-term move-text mmm-mode minitest markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum livid-mode link-hint js2-refactor js-doc indent-guide impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gtags helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md ggtags fuzzy font-lock+ flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile counsel-gtags company-statistics column-enforce-mode clean-aindent-mode chruby centered-cursor-mode bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent add-node-modules-path ace-link ace-jump-helm-line ac-ispell))))
+    (yaml-mode yapfify pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope xcscope ggtags cython-mode counsel-gtags company-anaconda anaconda-mode pythonic web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data add-node-modules-path yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rg restart-emacs rbenv rake rainbow-delimiters prettier-js powershell popwin persp-mode password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp nameless mwim multi-term move-text mmm-mode minitest markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum livid-mode link-hint json-navigator json-mode js2-refactor js-doc indent-guide import-js hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flyspell-correct-helm flycheck-pos-tip flycheck-package flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-tern company-statistics column-enforce-mode clean-aindent-mode chruby centered-cursor-mode bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
- '(smerge-refined-added ((t (:inherit smerge-refined-change :background "royal blue"))))
- '(smerge-refined-removed ((t (:inherit smerge-refined-change :background "saddle brown"))))
- '(sp-show-pair-match-face ((t (:inherit sp-show-pair-match-face :underline t :foreground "#16f7dd")))))
+ )
 )
