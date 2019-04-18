@@ -1,5 +1,5 @@
-(add-hook 'csharp-mode-hook 'ben-charp-hook)
 
+(add-hook 'csharp-mode-hook 'ben-charp-hook)
 
 (defun ben-charp-hook()
   (auto-complete-mode)
