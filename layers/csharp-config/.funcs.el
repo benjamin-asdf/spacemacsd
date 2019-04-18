@@ -8,8 +8,7 @@
   (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
   (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
   (define-key evil-insert-state-map (kbd "C-SPC") 'omnisharp-auto-complete)
-  (setq-local eldoc-idle-delay 0.8)
-  (setq fringe-mode 'no-fringes))
+  (setq omnisharp-eldoc-support nil))
 
 (defun ben-change-csharp-style()
   (setq indent-tabs-mode nil)
