@@ -1,7 +1,7 @@
 (with-eval-after-load 'helm-projectile
     (progn
 
-        (defvar idle-game-project-root "c:/CosEntitas/idlegame/IdleGame/")
+        (defvar idle-game-project-root "~/idlegame/IdleGame/")
         (defvar idle-game-best-folders '( "Assets/#/Sources" "Assets/#/Scripts" "Assets/Editor" ))
         (with-eval-after-load 'grep
           (defvar idle-game-ignored-files (append grep-find-ignored-files '("*.asset" "*.java" "*.m" "MessagePack")))
