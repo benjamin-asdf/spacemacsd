@@ -1,14 +1,11 @@
-
 (add-hook 'csharp-mode-hook 'ben-charp-hook)
 
 (defun ben-charp-hook()
-  (auto-complete-mode)
   (ben-change-csharp-style)
-  (flycheck-mode)
   (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
   (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
   (define-key evil-insert-state-map (kbd "C-SPC") 'omnisharp-auto-complete)
-  (setq omnisharp-eldoc-support nil))
+  (setq-local buffer-file-coding-system 'windows-1256-unix))
 
 (defun ben-change-csharp-style()
   (setq indent-tabs-mode nil)
@@ -17,5 +14,3 @@
   (setq c-basic-offset 4)
   (setq tab-width 4)
   (setq evil-shift-width 4))
-
-

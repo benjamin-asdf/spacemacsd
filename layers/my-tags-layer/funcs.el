@@ -1,6 +1,5 @@
 (defvar cos-gtags-config-file "~/.tracked/.cos-gtags-config")
 (defvar my-gtags-command "gtags --gtagslabel pygments --gtagsconf %s")
-(defvar idlegame-project-root "~/idlegame/IdleGame/")
 
 
 (defun my-regenerate-idlegame-tags-async ()

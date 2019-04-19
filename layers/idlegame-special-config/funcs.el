@@ -1,3 +1,4 @@
+(defvar idlegame-project-root "~/idlegame/IdleGame/")
 (setq-default helm-candidate-number-limit 30)
 
 ;;projectile-fd
