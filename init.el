@@ -61,7 +61,6 @@ This function should only modify configuration layer settings."
      windows-scripts
      javascript
      ruby
-     tags-utils
      gtags
      substitute-utils
      my-funcs
@@ -69,6 +68,7 @@ This function should only modify configuration layer settings."
      csharp-config
      my-theme-config
      idlegame-special-config
+     my-tags-layer
      )
 
    ;; List of additional packages that will be installed without being
