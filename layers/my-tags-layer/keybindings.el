@@ -1,0 +1,15 @@
+(spacemacs/declare-prefix "ot" "tags")
+
+(spacemacs/set-leader-keys "otP" 'ggtags-visit-project-root)
+(spacemacs/set-leader-keys "oth" 'ggtags-view-tag-history)
+(spacemacs/set-leader-keys "otf" 'ggtags-find-file)
+(spacemacs/set-leader-keys "otg" 'ggtags-grep)
+(spacemacs/set-leader-keys "ots" 'ggtags-find-other-symbol)
+(spacemacs/set-leader-keys "otr" 'ggtags-find-reference)
+(spacemacs/set-leader-keys "ot`" 'ggtags-save-to-register)
+
+(spacemacs/set-leader-keys "otq" 'ggtags-query-replace)
+(spacemacs/set-leader-keys "otn" 'ggtags-next-mark)
+(spacemacs/set-leader-keys "otp" 'ggtags-prev-mark)
+(spacemacs/set-leader-keys "otd" 'ggtags-show-definition)
+(spacemacs/set-leader-keys "ota" 'ggtags-find-definition)

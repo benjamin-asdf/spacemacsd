@@ -5,6 +5,8 @@
 
 (spacemacs/declare-prefix "o" "own")
 
+(spacemacs/set-leader-keys "ojg" 'spacemacs/jump-to-definition)
+
 ;;avy
 (spacemacs/declare-prefix "oj" "jump")
 (spacemacs/set-leader-keys "ojf" 'avy-goto-char-in-line)
