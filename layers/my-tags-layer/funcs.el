@@ -18,7 +18,7 @@
 (defvar idle-game-best-folders '( "Assets/#/Sources" "Assets/#/Scripts" "Assets/Editor" ))
 
 (defun idle-game-folders ()
-  (mapconcat (lambda (path) (format "\"%s\"" (concat idlegame-project-root path))) idle-game-best-folders " "))
+  (mapconcat (lambda (path) (format "%s" (concat idlegame-project-root path))) idle-game-best-folders " "))
 
 
 
@@ -27,10 +27,11 @@
   "First output the files in DIRS we want to parse to gtags.files, then run gtags in idle-game-project-root."
   (interactive)
   (let* ((directories (or dirs (idle-game-folders)))
-         (default-directory (projectile-project-root))
+         (default-directory idlegame-project-root)
          (find-command (format "fd .cs %s > %sgtags.files" directories default-directory))
          (gtags-command (format "gtags -v --gtagslabel pygments %s" (directory-file-name default-directory))))
     (message (format "find files command %s" find-command))
+    (message (format "gtags command: %s" gtags-command))
     (shell-command find-command)
     (shell-command gtags-command)
     ))
