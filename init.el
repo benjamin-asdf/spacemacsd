@@ -33,36 +33,34 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(shell-scripts
-     yaml
-     systemd
-     html
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
-     ;; `M-m f e R' (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
+   '(version-control
      helm
-     auto-completion
+     gtags
+     (auto-completion  :variables
+                       auto-completion-complete-with-key-sequence "ll")
      better-defaults
-     emacs-lisp
      git
-     markdown
      multiple-cursors
      treemacs
-     org
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
      ;; spell-checking
      syntax-checking
-     version-control
+
+     emacs-lisp
+     org
      csharp
      python
      windows-scripts
      javascript
      ruby
-     gtags
+     shell-scripts
+     systemd
+     html
+     markdown
+     yaml
+
      substitute-utils
      my-funcs
      my-keybindings
