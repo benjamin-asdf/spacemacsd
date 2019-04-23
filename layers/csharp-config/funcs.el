@@ -4,7 +4,6 @@
   (ben-change-csharp-style)
   (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
   (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
-  (define-key evil-insert-state-map (kbd "C-SPC") 'omnisharp-auto-complete)
   (setq-local buffer-file-coding-system 'windows-1256-unix))
 
 (defun ben-change-csharp-style()
