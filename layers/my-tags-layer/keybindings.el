@@ -11,7 +11,6 @@
 (spacemacs/set-leader-keys "odq" 'ggtags-query-replace)
 (spacemacs/set-leader-keys "odn" 'ggtags-next-mark)
 (spacemacs/set-leader-keys "odp" 'ggtags-prev-mark)
-(spacemacs/set-leader-keys "odd" 'ggtags-show-definition)
-
-(spacemacs/set-leader-keys "C-]" 'ggtags-find-definition)
-;; (spacemacs/set-leader-keys "C-[" 'ggtags-prev-mark)
+(spacemacs/set-leader-keys "odD" 'ggtags-show-definition)
+(spacemacs/set-leader-keys "odd" 'ggtags-find-definition)
+;;TODO make this xref thing work, at least figure out how to bind c-[ lul
