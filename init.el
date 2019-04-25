@@ -33,7 +33,9 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(version-control
+   '(
+     ;; basic
+     version-control
      helm
      gtags
      (auto-completion  :variables
@@ -49,6 +51,7 @@ This function should only modify configuration layer settings."
      ;; spell-checking
      syntax-checking
 
+     ;; Langs
      emacs-lisp
      org
      csharp
@@ -62,6 +65,7 @@ This function should only modify configuration layer settings."
      markdown
      yaml
 
+     ;; rtnl-meme
      substitute-utils
      my-funcs
      my-keybindings
@@ -477,7 +481,6 @@ before packages are loaded."
 
   (setq-default spacemacs-show-trailing-whitespace nil)
 
-
   ;;rg
   (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
@@ -485,11 +488,8 @@ before packages are loaded."
 
   (setq projectile-enable-caching t)
 
-
-
   ;;auto save
   (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
-
 
   )
 
