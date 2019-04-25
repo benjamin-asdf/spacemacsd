@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : cachedMatcher
+#key : Ima
+#contributor : benj
+# --
+static IMatcher $1;
+public static IMatcher $2 => $1 ?? ($1 = $0);
