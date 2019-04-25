@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitasMatcherAllOf
+#key : Mall
+#contributor : benj
+# --
+Matcher.AllOf<$1>()$0

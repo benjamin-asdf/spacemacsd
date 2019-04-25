@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : unityDebugAssert
+#key : dA
+#contributor : benj
+# --
+Debug.Assert(${bool condition});
