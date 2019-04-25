@@ -475,6 +475,9 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  (setq-default spacemacs-show-trailing-whitespace nil)
+
+
   ;;rg
   (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
