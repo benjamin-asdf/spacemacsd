@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : profsamp
+#key : profbs
+#contributor : benj
+# --
+Profiler.BeginSample("###$0");

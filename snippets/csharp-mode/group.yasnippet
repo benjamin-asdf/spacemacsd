@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : group
+#key : group
+#contributor : benj
+# --
+IGroup ${1:name};
+public IGroup ${1:$(capitalize yas-text)} => $1 ?? ($1 = state.GetGroup($0));

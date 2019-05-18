@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : rtl
+#key : rtl
+#contributor : benj
+# --
+Rtnl.Log(\$"$1");

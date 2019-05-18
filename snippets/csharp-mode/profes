@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : profes
+#key : profes
+#contributor : benj
+# --
+Profiler.EndSample();
