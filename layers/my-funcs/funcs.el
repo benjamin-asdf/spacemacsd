@@ -41,3 +41,12 @@
 
   (setq projectile-switch-project-action 'mikus-helm-projectile-find-file)
 	)
+
+
+(defun copy-word-from-above ()
+  "Copies the first found word from the line above."
+  (interactive)
+  (save-excursion
+    (forward-line -1)
+    (kill-new (evil-find-word 0)))
+  (yank))
