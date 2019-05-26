@@ -43,10 +43,18 @@
 	)
 
 
+(defun evil-find-WORD (forward)
+  "Return WORD near point as a string.
+If FORWARD is nil, search backward, otherwise forward.  Returns
+nil if nothing is found."
+  (evil-find-thing forward 'evil-WORD))
+
 (defun copy-word-from-above ()
   "Copies the first found word from the line above."
   (interactive)
-  (save-excursion
-    (forward-line -1)
-    (kill-new (evil-find-word 0)))
+  (let ((col (current-column)))
+    (save-excursion
+      (forward-line -1)
+      (evil-goto-column col)
+      (kill-new (concat (evil-find-WORD t) " "))))
   (yank))
