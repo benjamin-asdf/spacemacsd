@@ -43,4 +43,5 @@
 (spacemacs/set-leader-keys "op" 'evil-paste-before)
 
 
-(spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)
+;;TODO fix bug.
+;; (spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)

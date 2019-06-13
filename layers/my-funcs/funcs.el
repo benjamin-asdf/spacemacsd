@@ -39,7 +39,8 @@
               :truncate-lines helm-projectile-truncate-lines
               :prompt (projectile-prepend-project-name "Find file: ")))))
 
-  (setq projectile-switch-project-action 'mikus-helm-projectile-find-file)
+  ;;TODO fix bug.
+  ;; (setq projectile-switch-project-action 'mikus-helm-projectile-find-file)
 	)
 
 
