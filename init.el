@@ -493,6 +493,10 @@ before packages are loaded."
   ;;auto save
   (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
 
+
+  (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
+
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
