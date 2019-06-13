@@ -1,5 +1,5 @@
 (defvar idlegame-project-root "~/idlegame/IdleGame/")
-(setq-default helm-candidate-number-limit 30)
+(setq-default helm-candidate-number-limit 100)
 
 ;;projectile-fd
 (defvar my-fd-command "fd -t f . -0")
