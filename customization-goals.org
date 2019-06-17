@@ -1,7 +1,0 @@
-- never disable redshift
-- open the 2 unity projects on startup
--
-- escape in magit
-- yea
-
-- fix projectile find file bug

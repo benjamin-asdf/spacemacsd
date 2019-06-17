@@ -39,7 +39,8 @@
               :truncate-lines helm-projectile-truncate-lines
               :prompt (projectile-prepend-project-name "Find file: ")))))
 
-  (setq projectile-switch-project-action 'mikus-helm-projectile-find-file)
+  ;;TODO fix bug.
+  ;; (setq projectile-switch-project-action 'mikus-helm-projectile-find-file)
 	)
 
 
@@ -49,6 +50,7 @@ If FORWARD is nil, search backward, otherwise forward.  Returns
 nil if nothing is found."
   (evil-find-thing forward 'evil-WORD))
 
+;; TODO it should copy the inner word, dunno
 (defun copy-word-from-above ()
   "Copies the first found word from the line above."
   (interactive)
@@ -58,3 +60,11 @@ nil if nothing is found."
       (evil-goto-column col)
       (kill-new (concat (evil-find-WORD t) " "))))
   (yank))
+
+
+;; TODO
+;; (defun idlegame-make-test-build ()
+;;   (interactive)
+;;   (let command git commit --allow-empty -m \"do /test\")
+;;   (message command)
+;;   (async-shell-command command))
