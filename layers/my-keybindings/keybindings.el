@@ -42,6 +42,8 @@
 
 (spacemacs/set-leader-keys "op" 'evil-paste-before)
 
+(define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)
+
 
 ;;TODO fix bug.
 ;; (spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)
