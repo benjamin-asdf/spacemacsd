@@ -37,14 +37,14 @@ This function should only modify configuration layer settings."
      ;; basic
      version-control
      helm
-     gtags
+     ;; gtags
      (auto-completion  :variables
                        auto-completion-complete-with-key-sequence "ll"
                        auto-completion-enable-help-tooltip 'manual)
      better-defaults
      git
      multiple-cursors
-     treemacs
+     ;; treemacs
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
@@ -54,22 +54,22 @@ This function should only modify configuration layer settings."
      ;; Langs
      emacs-lisp
      org
-     csharp
-     python
-     windows-scripts
-     javascript
-     ruby
-     shell-scripts
-     systemd
-     html
-     markdown
-     yaml
+     ;; csharp
+     ;; python
+     ;; windows-scripts
+     ;; javascript
+     ;; ruby
+     ;; shell-scripts
+     ;; systemd
+     ;; html
+     ;; markdown
+     ;; yaml
 
      ;; rtnl-meme
      substitute-utils
      my-funcs
      my-keybindings
-     csharp-config
+     ;; csharp-config
      my-theme-config
      idlegame-special-config
      my-tags-layer)
