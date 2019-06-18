@@ -65,7 +65,7 @@ This function should only modify configuration layer settings."
      markdown
      yaml
 
-     ;; rtnl-meme
+     ;; benj
      substitute-utils
      my-funcs
      my-keybindings
