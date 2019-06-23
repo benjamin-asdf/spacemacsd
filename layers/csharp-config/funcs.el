@@ -13,3 +13,5 @@
   (setq c-basic-offset 4)
   (setq tab-width 4)
   (setq evil-shift-width 4))
+
+(setq omnisharp-expected-server-version "1.32.20")
