@@ -28,12 +28,12 @@
   (interactive)
   (let* ((directories (or dirs (idle-game-folders)))
          (default-directory idlegame-project-root)
-         (find-command (format "fd .cs %s > %sgtags.files" directories default-directory))
+         (find-command (format "fd . %s -tf -e cs > %sgtags.files" directories default-directory))
          (gtags-command (format "gtags -v --gtagslabel pygments %s" (directory-file-name default-directory))))
     (message (format "find files command %s" find-command))
     (message (format "gtags command: %s" gtags-command))
     (shell-command find-command)
-    (shell-command gtags-command)
+    (async-shell-command gtags-command)
     ))
 
 
