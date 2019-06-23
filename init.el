@@ -485,19 +485,18 @@ before packages are loaded."
 
   (setq-default spacemacs-show-trailing-whitespace nil)
 
-  ;;rg
+  ;; rg
   (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
   (setq-default helm-ag-use-grep-ignore-list 't)
 
   (setq projectile-enable-caching t)
 
-  ;;auto save
+  ;; auto save
   (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
 
 
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
-
 
   )
 
