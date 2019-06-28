@@ -50,7 +50,7 @@ This function should only modify configuration layer settings."
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
-     ;; spell-checking
+     (spell-checking :variables spell-checking-enable-by-default nil)
      syntax-checking
 
      ;; Langs
@@ -61,13 +61,13 @@ This function should only modify configuration layer settings."
      ;; windows-scripts
      ;; javascript
      ;; ruby
-     ;; shell-scripts
+     shell-scripts
      ;; systemd
      ;; html
      ;; markdown
      ;; yaml
 
-     ;; rtnl-meme
+     ;; benj
      substitute-utils
      my-funcs
      my-keybindings
@@ -76,7 +76,7 @@ This function should only modify configuration layer settings."
      idlegame-special-config
      my-tags-layer
      laptop-configs
-     )
+     my-external-tools)
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -202,7 +202,7 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-startup-buffer-responsive t
 
    ;; Default major mode of the scratch buffer (default `text-mode')
-   dotspacemacs-scratch-mode 'text-mode
+   dotspacemacs-scratch-mode 'org-mode
 
    ;; Initial message in the scratch buffer, such as "Welcome to Spacemacs!"
    ;; (default nil)
@@ -487,20 +487,18 @@ before packages are loaded."
 
   (setq-default spacemacs-show-trailing-whitespace nil)
 
-  ;;rg
+  ;; rg
   (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
   (setq-default helm-ag-use-grep-ignore-list 't)
 
   (setq projectile-enable-caching t)
 
-  ;;auto save
+  ;; auto save
   (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
 
 
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
-
-
 
   )
 
