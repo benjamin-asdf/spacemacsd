@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : dll
+#key : dll
+#contributor : benj
+# --
+Debug.Log($0);
