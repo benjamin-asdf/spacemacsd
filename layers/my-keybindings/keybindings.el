@@ -10,7 +10,7 @@
 
 ;;avy
 (spacemacs/declare-prefix "oj" "jump")
-(spacemacs/set-leader-keys "ojf" 'avy-goto-char-in-line)
+(spacemacs/set-leader-keys "ojl" 'avy-goto-char-in-line)
 (spacemacs/set-leader-keys "ojK" 'evil-avy-goto-word-1-above)
 (spacemacs/set-leader-keys "ojJ" 'evil-avy-goto-word-1-below)
 (spacemacs/set-leader-keys "ojt" 'evil-avy-goto-char-timer)
