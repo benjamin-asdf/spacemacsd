@@ -1,7 +1,7 @@
 (defun my-redshift()
   (interactive)
-  (let ((command "my_redshift"))
-    (async-shell-command command)))
+  (let ((command "fish -c my_redshift"))
+    (shell-command command)))
 
 
 (defun my-open-browser()

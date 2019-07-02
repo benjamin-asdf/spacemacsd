@@ -15,10 +15,6 @@
 (spacemacs/set-leader-keys "ojJ" 'evil-avy-goto-word-1-below)
 (spacemacs/set-leader-keys "ojt" 'evil-avy-goto-char-timer)
 
-(spacemacs/set-leader-keys "jca" 'evil-avy-goto-char-2)
-(spacemacs/set-leader-keys "jcK" 'evil-avy-goto-char-2-above)
-(spacemacs/set-leader-keys "jcJ" 'evil-avy-goto-char-2-below)
-
 (spacemacs/declare-prefix "om" "move")
 (spacemacs/set-leader-keys "omr" 'avy-move-region)
 (spacemacs/set-leader-keys "oml" 'avy-move-line)
