@@ -1,2 +1,16 @@
 go through this
 https://www.shellscript.sh/variables1.html
+
+try this on the laptop first I guess
+https://github.com/tridactyl/tridactyl
+
+i3 - at some point!
+
+
+- somehting in savehist becomes too big and doesn't get cleaned
+
+
+- have one of my-messages as startup message
+
+
+- fiugre out systemctl and have awarenesser run
