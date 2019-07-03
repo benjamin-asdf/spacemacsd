@@ -68,3 +68,17 @@ nil if nothing is found."
 ;;   (let command git commit --allow-empty -m \"do /test\")
 ;;   (message command)
 ;;   (async-shell-command command))
+
+
+
+(defun my-best-message ()
+    "Get a display message"
+    (interactive)
+    (substring (shell-command-to-string "fish -c best-message") 0 -1))
+
+
+(defun read-lines (filePath)
+  "Return a list of lines of a file at filePath."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (split-string (buffer-string) "\n" t)))
