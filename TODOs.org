@@ -4,6 +4,9 @@ https://www.shellscript.sh/variables1.html
 try this on the laptop first I guess
 https://github.com/tridactyl/tridactyl
 
+- configure tridactyl to use emacs as text input
+
+
 i3 - at some point!
 
 
