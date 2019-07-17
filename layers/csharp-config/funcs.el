@@ -14,4 +14,4 @@
   (setq tab-width 4)
   (setq evil-shift-width 4))
 
-(setq omnisharp-expected-server-version "1.32.20")
+(setq omnisharp-expected-server-version "1.34.0")
