@@ -14,4 +14,8 @@
   (setq tab-width 4)
   (setq evil-shift-width 4))
 
+(defun benj-dotnet-run()
+  (interactive)
+  (async-shell-command "dotnet run"))
+
 (setq omnisharp-expected-server-version "1.34.0")
