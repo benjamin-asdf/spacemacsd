@@ -41,5 +41,10 @@
 (define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)
 
 
+(spacemacs/declare-prefix "ob" "buffer")
+
+(spacemacs/set-leader-keys "obr" 'reopen-buffer)
+
+
 ;;TODO fix bug.
 ;; (spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)
