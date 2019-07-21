@@ -1,3 +1,3 @@
-(spacemacs/declare-prefix "mo" "mode-own")
+(spacemacs/declare-prefix-for-mode 'csharp-mode "o" "own")
 
-(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "mor" 'benj-dotnet-run)
+(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "or" 'benj-dotnet-run)
