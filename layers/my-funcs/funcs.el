@@ -82,3 +82,7 @@ nil if nothing is found."
   (with-temp-buffer
     (insert-file-contents filePath)
     (split-string (buffer-string) "\n" t)))
+
+(defun my-flush-empty-lines ()
+  (interactive)
+  (flush-lines "^$" (region-beginning) (region-end)))

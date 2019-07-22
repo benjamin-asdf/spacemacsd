@@ -42,9 +42,10 @@
 
 
 (spacemacs/declare-prefix "ob" "buffer")
-
 (spacemacs/set-leader-keys "obr" 'reopen-buffer)
 
+(spacemacs/declare-prefix "ox" "text")
+(spacemacs/set-leader-keys "oxw" 'my-flush-empty-lines)
 
 ;;TODO fix bug.
 ;; (spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)
