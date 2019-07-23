@@ -1,16 +1,26 @@
-go through this
-https://www.shellscript.sh/variables1.html
+* Learning
+  - go through this
+    - https://www.shellscript.sh/variables1.html
+  - org
+  - git-from-the-bottom-up
+* linux
+- hello world simple x hotkey deamon sxhkd
+  - https://github.com/baskerville/sxhkd
+  - https://wiki.archlinux.org/index.php/Sxhkd
+- figure something out, so crontabs are nicely in git
 
-try this on the laptop first I guess
-https://github.com/tridactyl/tridactyl
-
-i3 - at some point!
-
-
+* Configs
+- omnisharp: figure out how to start omnisharp better
 - somehting in savehist becomes too big and doesn't get cleaned
+- fix env stuff somehow, can be temporary, because I won't use gnome forever
+- smartparens doesn't work inside snippets, little annoyance
+* Goals
+- learn about org
+- minder project
+- goodmorning project (org..?)
+- goodnight project (same.. ?)
+- swith to a tiled window manager
 
 
-- have one of my-messages as startup message
-
-
-- fiugre out systemctl and have awarenesser run
+emacs gitlab package, maybe a no brainer actually:
+https://github.com/nlamirault/emacs-gitlab
