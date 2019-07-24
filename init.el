@@ -496,10 +496,6 @@ before packages are loaded."
 
   (setq projectile-enable-caching t)
 
-  ;; auto save
-  (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
-
-
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
 
   )
