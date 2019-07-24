@@ -8,12 +8,13 @@
   - https://github.com/baskerville/sxhkd
   - https://wiki.archlinux.org/index.php/Sxhkd
 - figure something out, so crontabs are nicely in git
-
 * Configs
 - omnisharp: figure out how to start omnisharp better
 - somehting in savehist becomes too big and doesn't get cleaned
 - fix env stuff somehow, can be temporary, because I won't use gnome forever
 - smartparens doesn't work inside snippets, little annoyance
+- emacs gitlab package, maybe a no brainer actually:
+  - https://github.com/nlamirault/emacs-gitlab
 * Goals
 - learn about org
 - minder project
@@ -22,5 +23,3 @@
 - swith to a tiled window manager
 
 
-emacs gitlab package, maybe a no brainer actually:
-https://github.com/nlamirault/emacs-gitlab
