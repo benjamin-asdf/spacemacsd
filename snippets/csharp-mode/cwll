@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : cwll
+#key : cwll
+#contributor : benj
+# --
+Console.WriteLine($0);
