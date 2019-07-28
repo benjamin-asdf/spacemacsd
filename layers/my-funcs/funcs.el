@@ -69,14 +69,6 @@ nil if nothing is found."
 ;;   (message command)
 ;;   (async-shell-command command))
 
-
-
-(defun my-best-message ()
-    "Get a display message"
-    (interactive)
-    (substring (shell-command-to-string "fish -c best-message") 0 -1))
-
-
 (defun read-lines (filePath)
   "Return a list of lines of a file at filePath."
   (with-temp-buffer

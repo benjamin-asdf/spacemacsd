@@ -64,6 +64,7 @@ This function should only modify configuration layer settings."
      ;; yaml
      ;; basic
      nim
+     ;; c-c++
 
      ;; benj
      substitute-utils
@@ -494,6 +495,11 @@ before packages are loaded."
   (setq projectile-enable-caching t)
 
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
+
+
+  ;; Lock unity auto refresh, if we use idlegame-configs
+  (if (configuration-layer/layer-used-p 'idlegame-special-config)
+      (idlegame-lock-auto-refresh))
 
   )
 
