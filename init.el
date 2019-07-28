@@ -499,6 +499,11 @@ before packages are loaded."
 
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
 
+
+  ;; Lock unity auto refresh, if we use idlegame-configs
+  (if (configuration-layer/layer-used-p 'idlegame-special-config)
+      (idlegame-lock-auto-refresh))
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
