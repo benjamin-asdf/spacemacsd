@@ -31,8 +31,8 @@
 (defvar idlegame-user-refresh-file "/tmp/user-refresh-unity.file")
 
 (defun idlegame-lock-auto-refresh ()
-  "This sets the user auto refresh lock file for idlegame"
-  (simple-touch-file idlegame-lock-auto-refresh-file))
+  "This sets the user auto refresh lock file for idlegame, meant to be called at startup."
+  (write-region "" nil idlegame-lock-auto-refresh-file))
 
 
 (defun idlegame-refresh-unity ()
@@ -44,7 +44,6 @@
 (defun idlegame-touch-refresh-file ()
   (async-start
    (lambda ()
-     ;; (simple-touch-file idlegame-user-refresh-file)
      (write-region "" nil idlegame-user-refresh-file)
      (sleep-for 4)
      t)
@@ -52,9 +51,6 @@
    (lambda (value)
      (if (file-exists-p idlegame-user-refresh-file)
          (delete-file idlegame-user-refresh-file)))))
-
-(defun simple-touch-file (file)
-  (write-region "" nil file))
 
 
 
