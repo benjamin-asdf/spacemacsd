@@ -8,7 +8,6 @@
 If the file specified in best-banners-messages-file matches the saved file, we try to create banners"
   (when (equal buffer-file-name best-messages-file)
     (my-delete-all-files banners-dir)
-    ;; Create new banners for all messages.
     (dolist (msg (read-lines best-messages-file))
       (banners-create-new msg))))
 
@@ -19,7 +18,6 @@ If the file specified in best-banners-messages-file matches the saved file, we t
 (defun my-delete-all-files (dir)
   (dolist (elem (directory-files dir))
     (unless (member elem '("." ".."))
-      (message elem)
       (delete-file (concat (file-name-as-directory dir) elem)))))
 
 (defun new-banner-file-name (&optional n)
