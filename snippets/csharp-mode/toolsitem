@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : toolsitem
+#key : toolsitem
+#contributor : benj
+# --
+[MenuItem("Tools/$1/$2")]
+static void $2() {
+    $0
+}

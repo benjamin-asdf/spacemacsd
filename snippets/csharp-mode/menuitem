@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : menuitem
+#key : menuitem
+#contributor : benj
+# --
+
+[MenuItem("CONTEXT/" + nameof($1) + "/$2")]
+static void $2(MenuCommand cmd) {
+    $0
+}
