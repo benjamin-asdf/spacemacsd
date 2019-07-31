@@ -495,9 +495,17 @@ before packages are loaded."
 
   (setq-default helm-ag-use-grep-ignore-list 't)
 
-  (setq projectile-enable-caching t)
-
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
+
+
+  (setq-default helm-candidate-number-limit 100)
+
+  ;;projectile-fd
+  (defvar my-fd-command "fd -t f . -0")
+  (setq-default projectile-indexing-method 'alien)
+  (setq-default projectile-git-command my-fd-command)
+  (setq-default projectile-generic-command my-fd-command)
+  (setq projectile-enable-caching t)
 
 
   ;; Lock unity auto refresh, if we use idlegame-configs
