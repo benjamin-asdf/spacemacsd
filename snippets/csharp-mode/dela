@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : dela
+#key : dela
+#contributor : benj
+# --
+c.CreateDelayedAction($0);

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : sec
+#key : sec
+#contributor : benj
+# --
+SequenceExt.Create($0)
