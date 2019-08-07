@@ -79,6 +79,7 @@ This function should only modify configuration layer settings."
      my-config-spellcheck
      my-external-tools
      redshiftel
+     sailor
      )
 
    ;; List of additional packages that will be installed without being
@@ -89,7 +90,6 @@ This function should only modify configuration layer settings."
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(
-                                      rg
                                       doom-themes)
 
    ;; A list of packages that cannot be updated.

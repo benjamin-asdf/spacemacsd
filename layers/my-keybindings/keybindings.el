@@ -23,9 +23,6 @@
 (spacemacs/set-leader-keys "ocl" 'avy-copy-line)
 (spacemacs/set-leader-keys "ocr" 'avy-copy-region)
 
-(spacemacs/declare-prefix "os" "search")
-(spacemacs/set-leader-keys "osp" 'rg-dwim-project-dir)
-(spacemacs/set-leader-keys "osd" 'rg-dwim-current-dir)
 
 (spacemacs/set-leader-keys "ss" 'spacemacs/helm-swoop-region-or-symbol)
 (spacemacs/set-leader-keys "sS" 'helm-swoop)
