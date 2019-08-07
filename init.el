@@ -508,10 +508,6 @@ before packages are loaded."
   (setq projectile-enable-caching t)
 
 
-  ;; Lock unity auto refresh, if we use idlegame-configs
-  (if (configuration-layer/layer-used-p 'idlegame-special-config)
-      (idlegame-lock-auto-refresh))
-
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
