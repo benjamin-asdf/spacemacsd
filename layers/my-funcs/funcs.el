@@ -1,4 +1,3 @@
-
 (defun reopen-buffer ()
   "Kill and open current BUFFER."
   (interactive)
@@ -70,11 +69,12 @@ nil if nothing is found."
 ;;   (async-shell-command command))
 
 (defun read-lines (filePath)
-  "Return a list of lines of a file at filePath."
+  "Return a list of lines of a file at FILEPATH."
   (with-temp-buffer
     (insert-file-contents filePath)
     (split-string (buffer-string) "\n" t)))
 
 (defun my-flush-empty-lines ()
+  "Delete empty lines on selection."
   (interactive)
   (flush-lines "^$" (region-beginning) (region-end)))

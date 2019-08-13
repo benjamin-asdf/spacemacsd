@@ -72,11 +72,12 @@ This function should only modify configuration layer settings."
      my-keybindings
      ;; csharp-config
      my-theme-config
-     idlegame-special-config
      my-tags-layer
      laptop-configs
      my-external-tools
-     redshiftel)
+     redshiftel
+     sailor
+     )
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -86,7 +87,6 @@ This function should only modify configuration layer settings."
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(
-                                      rg
                                       doom-themes)
 
    ;; A list of packages that cannot be updated.
@@ -492,14 +492,18 @@ before packages are loaded."
 
   (setq-default helm-ag-use-grep-ignore-list 't)
 
-  (setq projectile-enable-caching t)
-
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
 
 
-  ;; Lock unity auto refresh, if we use idlegame-configs
-  (if (configuration-layer/layer-used-p 'idlegame-special-config)
-      (idlegame-lock-auto-refresh))
+  (setq-default helm-candidate-number-limit 100)
+
+  ;;projectile-fd
+  (defvar my-fd-command "fd -t f . -0")
+  (setq-default projectile-indexing-method 'alien)
+  (setq-default projectile-git-command my-fd-command)
+  (setq-default projectile-generic-command my-fd-command)
+  (setq projectile-enable-caching t)
+
 
   )
 

@@ -58,8 +58,4 @@
                          (tags-file (expand-file-name projectile-tags-file-name))
                          (command (format projectile-tags-command tags-file tags-exclude (or files default-directory))))
                 (message "regenerate tags command: %s" command)
-                (async-shell-command command)))
-
-
-        )
-    )
+                (async-shell-command command)))))
