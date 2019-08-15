@@ -16,6 +16,9 @@
 
 
 
+;; TEMP FIXME
+(with-eval-after-load 'projectile
+  (setq projectile-git-submodule-command nil))
 
 
 ;; TODO, better omnisharp startup.
