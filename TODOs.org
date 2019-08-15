@@ -20,11 +20,15 @@
 - smartparens doesn't work inside snippets, little annoyance
 - emacs gitlab package, maybe a no brainer actually:
   - https://github.com/nlamirault/emacs-gitlab
+- figure out info mode
+- sailor project
+  - find component usages
+  - fuzzy search component
 * Goals
 - learn about org
 - minder project
 - goodmorning project (org..?)
 - goodnight project (same.. ?)
 - swith to a tiled window manager
-
-
+* Quick
+  - function for o j dd
