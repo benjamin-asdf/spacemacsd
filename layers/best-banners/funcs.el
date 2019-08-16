@@ -4,7 +4,7 @@
 
 
 (defun best-banners--save-file-hook ()
-  "This hook is supposed to run when savin a file.
+  "This hook is supposed to run when saving a file.
 If the file specified in best-banners-messages-file matches the saved file, we try to create banners"
   (when (equal buffer-file-name best-messages-file)
     (my-delete-all-files banners-dir)
@@ -21,19 +21,15 @@ If the file specified in best-banners-messages-file matches the saved file, we t
       (delete-file (concat (file-name-as-directory dir) elem)))))
 
 (defun new-banner-file-name (&optional n)
-  ;; FIXME
-  (let ((n (or n 0))
-        (message (type-of n))
-        (file (format "%s/%d" banners-dir n)))
+  (let* ((num (if n n 0))
+         (file (format "%s/%d" banners-dir num)))
     (while (file-exists-p file)
-      (setq file (new-banner-file-name (+ 1 n))))
+      (setq file (new-banner-file-name (+ 1 num))))
     file))
-
 
 (defun banners-create-new (msg)
   (let ((banner (concat banner-header (shell-command-to-string (format "figlet \"%s\"" msg))))
-        ;; FIXME
-        (banner-file (new-banner-file-name 0)))
+        (banner-file (new-banner-file-name)))
     (write-region banner nil banner-file)))
 
 (defun best-message()
