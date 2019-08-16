@@ -78,3 +78,12 @@ nil if nothing is found."
   "Delete empty lines on selection."
   (interactive)
   (flush-lines "^$" (region-beginning) (region-end)))
+
+
+(defun benj-insert-other-line ()
+  "Jump down one line, and go into insert mode
+at the correct indentation, like 'o' without creating a new line"
+  (interactive)
+  (forward-line)
+  (evil-insert-state)
+  (indent-according-to-mode))

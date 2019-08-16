@@ -44,5 +44,8 @@
 (spacemacs/declare-prefix "ox" "text")
 (spacemacs/set-leader-keys "oxw" 'my-flush-empty-lines)
 
+(spacemacs/set-leader-keys "omi" 'benj-insert-other-line)
+
+
 ;;TODO fix bug.
 ;; (spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)
