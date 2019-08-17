@@ -71,12 +71,13 @@ This function should only modify configuration layer settings."
      benj-funcs
      benj-keybindings
      ;; csharp-config
-     benj-themes
+     benj-themes-config
      benj-tags
      laptop-configs
      benj-external
      redshiftel
      sailor
+     best-banners
      )
 
    ;; List of additional packages that will be installed without being

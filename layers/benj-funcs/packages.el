@@ -1,8 +1,8 @@
-;;; packages.el --- my-funcs layer packages file for Spacemacs.
+;;; packages.el --- benj-funcs layer packages file for Spacemacs.
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
-;; Author:  <G4G@BUILDCLONE3>
+;; Author: benj <benj@benj-laptop>
 ;; URL: https://github.com/syl20bnr/spacemacs
 ;;
 ;; This file is not part of GNU Emacs.
@@ -18,20 +18,20 @@
 ;;
 ;;
 ;; Briefly, each package to be installed or configured by this layer should be
-;; added to `my-funcs-packages'. Then, for each package PACKAGE:
+;; added to `benj-funcs-packages'. Then, for each package PACKAGE:
 ;;
 ;; - If PACKAGE is not referenced by any other Spacemacs layer, define a
-;;   function `my-funcs/init-PACKAGE' to load and initialize the package.
+;;   function `benj-funcs/init-PACKAGE' to load and initialize the package.
 
 ;; - Otherwise, PACKAGE is already referenced by another Spacemacs layer, so
-;;   define the functions `my-funcs/pre-init-PACKAGE' and/or
-;;   `my-funcs/post-init-PACKAGE' to customize the package as it is loaded.
+;;   define the functions `benj-funcs/pre-init-PACKAGE' and/or
+;;   `benj-funcs/post-init-PACKAGE' to customize the package as it is loaded.
 
 ;;; Code:
 
-(defconst my-funcs-packages
+(defconst benj-funcs-packages
   '()
-  "The list of Lisp packages required by the my-funcs layer.
+  "The list of Lisp packages required by the benj-funcs layer.
 
 Each entry is either:
 

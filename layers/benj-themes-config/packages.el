@@ -1,8 +1,8 @@
-;;; packages.el --- my-theme-config layer packages file for Spacemacs.
+;;; packages.el --- benj-themes-config layer packages file for Spacemacs.
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
-;; Author: benj <benj@benj-pc>
+;; Author: benj <benj@benj-laptop>
 ;; URL: https://github.com/syl20bnr/spacemacs
 ;;
 ;; This file is not part of GNU Emacs.
@@ -18,20 +18,20 @@
 ;;
 ;;
 ;; Briefly, each package to be installed or configured by this layer should be
-;; added to `my-theme-config-packages'. Then, for each package PACKAGE:
+;; added to `benj-themes-config-packages'. Then, for each package PACKAGE:
 ;;
 ;; - If PACKAGE is not referenced by any other Spacemacs layer, define a
-;;   function `my-theme-config/init-PACKAGE' to load and initialize the package.
+;;   function `benj-themes-config/init-PACKAGE' to load and initialize the package.
 
 ;; - Otherwise, PACKAGE is already referenced by another Spacemacs layer, so
-;;   define the functions `my-theme-config/pre-init-PACKAGE' and/or
-;;   `my-theme-config/post-init-PACKAGE' to customize the package as it is loaded.
+;;   define the functions `benj-themes-config/pre-init-PACKAGE' and/or
+;;   `benj-themes-config/post-init-PACKAGE' to customize the package as it is loaded.
 
 ;;; Code:
 
-(defconst my-theme-config-packages
+(defconst benj-themes-config-packages
   '()
-  "The list of Lisp packages required by the my-theme-config layer.
+  "The list of Lisp packages required by the benj-themes-config layer.
 
 Each entry is either:
 

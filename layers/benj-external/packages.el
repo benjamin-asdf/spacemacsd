@@ -1,8 +1,8 @@
-;;; packages.el --- my-external-tools layer packages file for Spacemacs.
+;;; packages.el --- benj-external layer packages file for Spacemacs.
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
-;; Author: benj <benj@benj-pc>
+;; Author: benj <benj@benj-laptop>
 ;; URL: https://github.com/syl20bnr/spacemacs
 ;;
 ;; This file is not part of GNU Emacs.
@@ -18,20 +18,20 @@
 ;;
 ;;
 ;; Briefly, each package to be installed or configured by this layer should be
-;; added to `my-external-tools-packages'. Then, for each package PACKAGE:
+;; added to `benj-external-packages'. Then, for each package PACKAGE:
 ;;
 ;; - If PACKAGE is not referenced by any other Spacemacs layer, define a
-;;   function `my-external-tools/init-PACKAGE' to load and initialize the package.
+;;   function `benj-external/init-PACKAGE' to load and initialize the package.
 
 ;; - Otherwise, PACKAGE is already referenced by another Spacemacs layer, so
-;;   define the functions `my-external-tools/pre-init-PACKAGE' and/or
-;;   `my-external-tools/post-init-PACKAGE' to customize the package as it is loaded.
+;;   define the functions `benj-external/pre-init-PACKAGE' and/or
+;;   `benj-external/post-init-PACKAGE' to customize the package as it is loaded.
 
 ;;; Code:
 
-(defconst my-external-tools-packages
+(defconst benj-external-packages
   '()
-  "The list of Lisp packages required by the my-external-tools layer.
+  "The list of Lisp packages required by the benj-external layer.
 
 Each entry is either:
 
