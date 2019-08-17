@@ -68,13 +68,13 @@ This function should only modify configuration layer settings."
 
      ;; benj
      substitute-utils
-     my-funcs
-     my-keybindings
+     benj-funcs
+     benj-keybindings
      ;; csharp-config
-     my-theme-config
-     my-tags-layer
+     benj-themes
+     benj-tags
      laptop-configs
-     my-external-tools
+     benj-external
      redshiftel
      sailor
      )
