@@ -17,40 +17,26 @@ If the file specified in best-banners-messages-file matches the saved file, we t
   (interactive)
   (unless (file-exists-p spacemacs-private-banner-directory)
       (make-directory spacemacs-private-banner-directory))
-  (my-delete-all-files spacemacs-private-banner-directory)
+  (benj-delete-all-files spacemacs-private-banner-directory)
   (dolist (msg (read-lines best-messages-file))
-    (banners-create-new msg)))
+    (best-banners-create-new msg)))
 
-
-(defun my-delete-all-files (dir)
-  "Delete all files inside DIR."
-  (dolist (elem (directory-files dir))
-    (unless (member elem '("." ".."))
-      (delete-file (concat (file-name-as-directory dir) elem)))))
-
-(defun new-banner-file-name (&optional n)
+(defun best-banners-next-banner-file (&optional n)
   "New banner file name.
 Optional N the file num to start from, meant for internal use"
   (let* ((num (if n n 0))
          (file (format "%s/%d.txt" spacemacs-private-banner-directory num)))
     (while (file-exists-p file)
-      (setq file (new-banner-file-name (+ 1 num))))
+      (setq file (best-banners-next-banner-file (+ 1 num))))
     file))
 
-(defun banners-create-new (msg)
+(defun best-banners-create-new (msg)
   "Create a new banner with content MSG."
   (let ((banner (concat banner-header (shell-command-to-string (format "figlet \"%s\"" msg))))
-        (banner-file (new-banner-file-name)))
+        (banner-file (best-banners-next-banner-file)))
     (write-region banner nil banner-file)))
 
-(defun best-message()
-  "A random line chosen from best-message file."
-  (let ((msgs (read-lines best-messages-file)))
-    (message (rand-element msgs))))
 
-(defun rand-element (list)
-  "Random element from LIST."
-  (nth (random (length list)) list))
 
 
 ;; TODO s

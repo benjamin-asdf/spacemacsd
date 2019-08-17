@@ -74,16 +74,30 @@ nil if nothing is found."
     (insert-file-contents filePath)
     (split-string (buffer-string) "\n" t)))
 
-(defun my-flush-empty-lines ()
+(defun benj-flush-empty-lines ()
   "Delete empty lines on selection."
   (interactive)
   (flush-lines "^$" (region-beginning) (region-end)))
 
-
 (defun benj-insert-other-line ()
-  "Jump down one line, and go into insert mode
-at the correct indentation, like 'o' without creating a new line"
+  "Go into insert mode in the line below.
+Use correct indentation. Like 'o' without creating a new line"
   (interactive)
   (forward-line)
   (evil-insert-state)
   (indent-according-to-mode))
+
+(defun benj-delete-all-files (dir)
+  "Delete all files inside DIR."
+  (dolist (elem (directory-files dir))
+    (unless (member elem '("." ".."))
+      (delete-file (concat (file-name-as-directory dir) elem)))))
+
+(defun benj-best-message()
+  "A random line chosen from best-message file."
+  (let ((msgs (read-lines best-messages-file)))
+    (message (rand-element msgs))))
+
+(defun rand-element (list)
+  "Random element from LIST."
+  (nth (random (length list)) list))

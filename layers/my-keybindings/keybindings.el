@@ -42,7 +42,7 @@
 (spacemacs/set-leader-keys "obr" 'reopen-buffer)
 
 (spacemacs/declare-prefix "ox" "text")
-(spacemacs/set-leader-keys "oxw" 'my-flush-empty-lines)
+(spacemacs/set-leader-keys "oxw" 'benj-flush-empty-lines)
 
 (spacemacs/set-leader-keys "omi" 'benj-insert-other-line)
 
