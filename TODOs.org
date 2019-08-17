@@ -26,5 +26,3 @@
 - goodmorning project (org..?)
 - goodnight project (same.. ?)
 - swith to a tiled window manager
-
-
