@@ -1,19 +1,13 @@
-* Learning
+* Recources
   - go through this
     - https://www.shellscript.sh/variables1.html
   - org
   - git-from-the-bottom-up
-* linux
+* Configs
 - hello world simple x hotkey deamon sxhkd
   - https://github.com/baskerville/sxhkd
   - https://wiki.archlinux.org/index.php/Sxhkd
 - figure something out, so crontabs are nicely in git
-* Configs
-- create figlet spacemacs startup banners from best messages
-  - nicely automate it
-    - create them automatically when changing the messages file, I guess
-    - put 1 space on top of the bannner
-    - create them with random figlet fonts
 - omnisharp: figure out how to start omnisharp better
 - somehting in savehist becomes too big and doesn't get cleaned
 - fix env stuff somehow, can be temporary, because I won't use gnome forever
@@ -26,3 +20,6 @@
 - goodmorning project (org..?)
 - goodnight project (same.. ?)
 - swith to a tiled window manager
+* Ideas
+ - banel: random figlet fonts
+ - function for opening different "scratch" buffers
