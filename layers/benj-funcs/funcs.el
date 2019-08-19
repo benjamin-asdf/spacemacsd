@@ -8,22 +8,20 @@
     (find-file file)
     (goto-char point)))
 
-(defun evil-find-WORD (forward)
-  "Return WORD near point as a string.
-If FORWARD is nil, search backward, otherwise forward.  Returns
-nil if nothing is found."
-  (evil-find-thing forward 'evil-WORD))
-
-;; TODO it should copy the inner word, dunno
-(defun copy-word-from-above ()
-  "Copies the first found word from the line above."
+(defun benj-copy-word-from-above ()
+  "Copy the word from line above."
   (interactive)
   (let ((col (current-column)))
     (save-excursion
       (forward-line -1)
       (evil-goto-column col)
-      (kill-new (concat (evil-find-WORD t) " "))))
+      ;; Take over spaces from above, but no newlines.
+      (kill-new
+       (if (string-equal (thing-at-point 'char) " ")
+           " "
+         (thing-at-point 'evil-word)))))
   (yank))
+
 
 (defun benj-read-lines (filePath)
   "Return a list of lines of a file at FILEPATH."

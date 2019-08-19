@@ -35,8 +35,6 @@
 
 (spacemacs/set-leader-keys "op" 'evil-paste-before)
 
-(define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)
-
 
 (spacemacs/declare-prefix "ob" "buffer")
 (spacemacs/set-leader-keys "obr" 'mikus-reopen-buffer)
@@ -45,3 +43,7 @@
 (spacemacs/set-leader-keys "oxw" 'benj-flush-empty-lines)
 
 (spacemacs/set-leader-keys "omi" 'benj-insert-other-line)
+
+
+(define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)
+(define-key evil-insert-state-map (kbd "C-y") 'benj-copy-word-from-above)
