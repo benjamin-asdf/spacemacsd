@@ -17,6 +17,15 @@ Use rg to search cs files in project for Entitas syntax."
   (sailor-rg-search-in-project
    (format "\\.Set<%s>\\(%s\\)" word (if all "\.*" "true"))))
 
+(defun sailor-find-comp-set (&optional word)
+  "Start a search for entitas set component syntax.
+With WORD as component. Defaults to thing at point."
+  (interactive "P")
+  (unless word
+    (setq word (thing-at-point 'evil-word)))
+  (sailor-rg-search-in-project
+   (format "\\.\\w+<%s>\\(\\w+\\)" word)))
+
 
 ;; maybe
 
