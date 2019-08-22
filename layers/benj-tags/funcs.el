@@ -1,11 +1,11 @@
-(defvar cos-gtags-config-file "~/.tracked/.cos-gtags-config")
-(defvar my-gtags-command "gtags --gtagslabel pygments --gtagsconf %s")
+(defvar benj-tags-cos-gtags-config-file "~/.tracked/.cos-gtags-config")
+(defvar benj-tags-gtags-command "gtags --gtagslabel pygments --gtagsconf %s")
 
-(defun my-regenerate-idlegame-tags-async ()
+(defun benj-tags-regenerate-idlegame-async ()
   "Regenerate cos gtags, assumes cos-gtags-config is set"
   (interactive)
   (let ((default-directory idlegame-project-root)
-        (command (format my-gtags-command cos-gtags-config-file)))
+        (command (format benj-tags-gtags-command benj-tags-cos-gtags-config-file)))
     (message "regenerate tags command: %s" command)
     (async-shell-command command)))
 
@@ -21,8 +21,6 @@
   (mapconcat (lambda (path) (format "%s" (concat idlegame-project-root path))) idle-game-best-folders " "))
 
 
-
-
 (defun regenerate-idlegame-gtags (&optional dirs)
   "First output the files in DIRS we want to parse to gtags.files, then run gtags in idle-game-project-root."
   (interactive)
@@ -33,12 +31,7 @@
     (message (format "find files command %s" find-command))
     (message (format "gtags command: %s" gtags-command))
     (shell-command find-command)
-    (async-shell-command gtags-command)
-    ))
-
-
-
-
+    (async-shell-command gtags-command)))
 
 (defun compilation-maybe-halt-auto-jump (buffer pos)
   "Halt jumping to first match in ggtags-global-mode if more that 1 results."

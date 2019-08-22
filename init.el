@@ -69,17 +69,18 @@ This function should only modify configuration layer settings."
      c-c++
 
      ;; benj
+     benj-funcs
+     benj-keybindings
+     benj-themes-config
+     benj-tags
+     benj-external
      substitute-utils
-     my-funcs
-     my-keybindings
      csharp-config
-     my-theme-config
      idlegame-special-config
-     my-tags-layer
      my-config-spellcheck
-     my-external-tools
      redshiftel
      sailor
+     best-banners
      )
 
    ;; List of additional packages that will be installed without being

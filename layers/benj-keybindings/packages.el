@@ -1,8 +1,8 @@
-;;; packages.el --- my-tags-layer layer packages file for Spacemacs.
+;;; packages.el --- benj-keybindings layer packages file for Spacemacs.
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
-;; Author: benj <benj@benj-pc>
+;; Author: benj <benj@benj-laptop>
 ;; URL: https://github.com/syl20bnr/spacemacs
 ;;
 ;; This file is not part of GNU Emacs.
@@ -18,20 +18,20 @@
 ;;
 ;;
 ;; Briefly, each package to be installed or configured by this layer should be
-;; added to `my-tags-layer-packages'. Then, for each package PACKAGE:
+;; added to `benj-keybindings-packages'. Then, for each package PACKAGE:
 ;;
 ;; - If PACKAGE is not referenced by any other Spacemacs layer, define a
-;;   function `my-tags-layer/init-PACKAGE' to load and initialize the package.
+;;   function `benj-keybindings/init-PACKAGE' to load and initialize the package.
 
 ;; - Otherwise, PACKAGE is already referenced by another Spacemacs layer, so
-;;   define the functions `my-tags-layer/pre-init-PACKAGE' and/or
-;;   `my-tags-layer/post-init-PACKAGE' to customize the package as it is loaded.
+;;   define the functions `benj-keybindings/pre-init-PACKAGE' and/or
+;;   `benj-keybindings/post-init-PACKAGE' to customize the package as it is loaded.
 
 ;;; Code:
 
-(defconst my-tags-layer-packages
+(defconst benj-keybindings-packages
   '()
-  "The list of Lisp packages required by the my-tags-layer layer.
+  "The list of Lisp packages required by the benj-keybindings layer.
 
 Each entry is either:
 

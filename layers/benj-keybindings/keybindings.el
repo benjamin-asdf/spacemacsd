@@ -1,8 +1,8 @@
-
-;; override this fucking shit ESC
+;; override some ESC stuff
 (define-key ctl-x-map (kbd "<ESC>" ) nil)
-
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+
+
 
 (spacemacs/declare-prefix "o" "own")
 
@@ -35,14 +35,15 @@
 
 (spacemacs/set-leader-keys "op" 'evil-paste-before)
 
-(define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)
-
 
 (spacemacs/declare-prefix "ob" "buffer")
-(spacemacs/set-leader-keys "obr" 'reopen-buffer)
+(spacemacs/set-leader-keys "obr" 'mikus-reopen-buffer)
 
 (spacemacs/declare-prefix "ox" "text")
-(spacemacs/set-leader-keys "oxw" 'my-flush-empty-lines)
+(spacemacs/set-leader-keys "oxw" 'benj-flush-empty-lines)
 
-;;TODO fix bug.
-;; (spacemacs/set-leader-keys "pf" 'mikus-helm-projectile-find-file)
+(spacemacs/set-leader-keys "omi" 'benj-insert-other-line)
+
+
+(define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)
+(define-key evil-insert-state-map (kbd "C-y") 'benj-copy-word-from-above)

@@ -1,50 +1,46 @@
+;;; Code:
+
 (defconst best-messages-file "/home/benj/.homesick/repos/dotfiles/home/.config/my-messages")
 (defconst banner-header "\n             Welcome to spacemacs.\n")
-(defconst banners-dir "~/.spacemacs.d/layers/best-banners/banners")
-
 
 (defun best-banners--save-file-hook ()
-  "This hook is supposed to run when savin a file.
+  "Check if the current file is message file, maybe create banners.
 If the file specified in best-banners-messages-file matches the saved file, we try to create banners"
-  (when (equal buffer-file-name best-messages-file)
-    (my-delete-all-files banners-dir)
-    (dolist (msg (read-lines best-messages-file))
-      (banners-create-new msg))))
+  (when (and (equal buffer-file-name best-messages-file)
+             (yes-or-no-p "Saved best-messages file, do you want to recreate spacemacs startup banners?"))
+    (best-banners-recreate)))
 
 (add-hook 'after-save-hook 'best-banners--save-file-hook)
 
+(defun best-banners-recreate ()
+  "Recreate banners from best-message file."
+  (interactive)
+  (unless (file-exists-p spacemacs-private-banner-directory)
+      (make-directory spacemacs-private-banner-directory))
+  (benj-delete-all-files spacemacs-private-banner-directory)
+  (dolist (msg (benj-read-lines best-messages-file))
+    (best-banners-create-new msg)))
 
-
-(defun my-delete-all-files (dir)
-  (dolist (elem (directory-files dir))
-    (unless (member elem '("." ".."))
-      (delete-file (concat (file-name-as-directory dir) elem)))))
-
-(defun new-banner-file-name (&optional n)
-  ;; FIXME
-  (let ((n (or n 0))
-        (message (type-of n))
-        (file (format "%s/%d" banners-dir n)))
+(defun best-banners-next-banner-file (&optional n)
+  "New banner file name.
+Optional N the file num to start from, meant for internal use"
+  (let* ((num (if n n 0))
+         (file (format "%s/%d.txt" spacemacs-private-banner-directory num)))
     (while (file-exists-p file)
-      (setq file (new-banner-file-name (+ 1 n))))
+      (setq file (best-banners-next-banner-file (+ 1 num))))
     file))
 
-
-(defun banners-create-new (msg)
+(defun best-banners-create-new (msg)
+  "Create a new banner with content MSG."
   (let ((banner (concat banner-header (shell-command-to-string (format "figlet \"%s\"" msg))))
-        ;; FIXME
-        (banner-file (new-banner-file-name 0)))
+        (banner-file (best-banners-next-banner-file)))
     (write-region banner nil banner-file)))
 
-(defun best-message()
-  (let ((msgs (read-lines best-messages-file)))
-    (message (rand-element msgs))))
 
-(defun rand-element (list)
-  (nth (random (length list)) list))
 
 
 ;; TODO s
 ;; random figlet fonts
-;; prompt before creating files
 ;; open a buffer with the progress output
+
+;;; funcs.el ends here
