@@ -24,7 +24,21 @@ With WORD as component. Defaults to thing at point."
   (unless word
     (setq word (thing-at-point 'evil-word)))
   (sailor-rg-search-in-project
-   (format "\\.\\w+<%s>\\(\\w+\\)" word)))
+   ;; TODO fix eg (new somethingData), allow more inside params
+   (format "\\.((Set)|(Add)|(Replace)|(Remove))<%s>\\(.*\\)" word)))
+
+;; TODO
+;;(defun test ()
+;; (sailor-rg-search-in-project  (format "Add<%s" "RoundFinishedCommandData" )))
+;;(test)
+;; cmd.Add<RoundFinishedCommand>(new RoundFinishedCommandData {
+
+(defun sailor-dump-find-cs-implementations ()
+  "Start search with cs implementation syntax for thing at point."
+  (interactive)
+  (sailor-rg-search-in-project
+   (format "\\w+\\s+%s\\(.*\\{" (thing-at-point 'evil-word))))
+
 
 
 ;; maybe
