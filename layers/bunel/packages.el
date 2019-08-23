@@ -1,4 +1,4 @@
-;;; packages.el --- benj-unity layer packages file for Spacemacs.
+;;; packages.el --- bunel layer packages file for Spacemacs.
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
@@ -18,20 +18,20 @@
 ;;
 ;;
 ;; Briefly, each package to be installed or configured by this layer should be
-;; added to `benj-unity-packages'. Then, for each package PACKAGE:
+;; added to `bunel-packages'. Then, for each package PACKAGE:
 ;;
 ;; - If PACKAGE is not referenced by any other Spacemacs layer, define a
-;;   function `benj-unity/init-PACKAGE' to load and initialize the package.
+;;   function `bunel/init-PACKAGE' to load and initialize the package.
 
 ;; - Otherwise, PACKAGE is already referenced by another Spacemacs layer, so
-;;   define the functions `benj-unity/pre-init-PACKAGE' and/or
-;;   `benj-unity/post-init-PACKAGE' to customize the package as it is loaded.
+;;   define the functions `bunel/pre-init-PACKAGE' and/or
+;;   `bunel/post-init-PACKAGE' to customize the package as it is loaded.
 
 ;;; Code:
 
-(defconst benj-unity-packages
+(defconst bunel-packages
   '()
-  "The list of Lisp packages required by the benj-unity layer.
+  "The list of Lisp packages required by the bunel layer.
 
 Each entry is either:
 
