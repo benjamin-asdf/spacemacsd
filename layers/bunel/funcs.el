@@ -1,16 +1,6 @@
-
 (defconst bunel-handle-path "/tmp/bunel-handles")
-
-
 (defconst bunel-idlegame-projects '("IdleGame" "IdleGameSymbolicLink" "IdleGameSymbolicLink-Extra"))
-
 (defconst bunel-default-unity-project "IdleGame")
-
-;; (defun bunel-refresh-project (&optional project all)
-;;   "Refresh idlegame PROJECT. If ALL is non nil, refresh all projects."
-;;   (mapcar (lambda (project)
-;;             ()))
-;;   )
 
 (defun bunel-create-handle-file (project)
   "Create a handle file for project."
@@ -22,7 +12,16 @@
   (interactive)
   (bunel-create-handle-file bunel-default-unity-project))
 
+(defun bunel-refresh-all ()
+  "Refresh all Idlegames."
+  (interactive)
+  (mapcar 'bunel-create-handle-file bunel-idlegame-projects))
 
+(defun bunel-save-and-refresh ()
+  "Save some buffers and refresh all Idlegames."
+  (interactive)
+  (save-some-buffers)
+  (bunel-refresh-all))
 
 ;; (defun bunel-handle-path ()
 ;;   (unless bunel-handle-path

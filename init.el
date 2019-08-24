@@ -81,6 +81,7 @@ This function should only modify configuration layer settings."
      redshiftel
      sailor
      best-banners
+     bunel
      )
 
    ;; List of additional packages that will be installed without being
