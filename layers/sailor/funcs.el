@@ -24,14 +24,8 @@ With WORD as component. Defaults to thing at point."
   (unless word
     (setq word (thing-at-point 'evil-word)))
   (sailor-rg-search-in-project
-   ;; TODO fix eg (new somethingData), allow more inside params
-   (format "\\.((Set)|(Add)|(Replace)|(Remove))<%s>\\(.*\\)" word)))
+   (format "\\.((Add)|(Set)|(Replace))<%s>\\(" word)))
 
-;; TODO
-;;(defun test ()
-;; (sailor-rg-search-in-project  (format "Add<%s" "RoundFinishedCommandData" )))
-;;(test)
-;; cmd.Add<RoundFinishedCommand>(new RoundFinishedCommandData {
 
 (defun sailor-dump-find-cs-implementations ()
   "Start search with cs implementation syntax for thing at point."
@@ -41,13 +35,14 @@ With WORD as component. Defaults to thing at point."
 
 
 
+
 ;; maybe
 
 ;; - Search normal compo used
 ;; - Search where comp used else?
 
 ;; (defconst sailor-entitas-syntax
-;;   '(('entitas-set . "\\.Set")
-;;     ('entitas-add . "\\.Add")
-;;     ('entitas-replace . "\\.Replace")
-;;     ('entitas-remove . "\\.Remove")))
+;;   '(('entitas-set . "Set")
+;;     ('entitas-add . "Add")
+;;     ('entitas-replace . "Replace")
+;;     ('entitas-remove . "Remove")))
