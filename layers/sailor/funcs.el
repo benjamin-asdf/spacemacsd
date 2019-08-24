@@ -1,11 +1,8 @@
-
-
 (defun sailor-find-flag-set-all (&optional word)
   "Maybe find spots where flag is set true or false.
 See sailor-find-flag-set"
   (interactive "P")
   (sailor-find-flag-set word t))
-
 
 (defun sailor-find-flag-set (&optional word all)
   "Maybe find a spots where a flag is set.
@@ -25,7 +22,6 @@ With WORD as component. Defaults to thing at point."
     (setq word (thing-at-point 'evil-word)))
   (sailor-rg-search-in-project
    (format "\\.((Add)|(Set)|(Replace))<%s>\\(" word)))
-
 
 (defun sailor-dump-find-cs-implementations ()
   "Start search with cs implementation syntax for thing at point."
