@@ -65,3 +65,14 @@ Use correct indentation. Like 'o' without creating a new line"
 (defun rand-element (list)
   "Random element from LIST."
   (nth (random (length list)) list))
+
+
+;; TODO
+;; (defun benj-comment-out-unity-logs-in-buffer ()
+;;   "Put csharp comment syntax before Debug\.Log."
+;;   (save-excursion
+;;     (goto-char (point-min))
+;;     (while (search-forward-regexp) "Debug\.Log")
+;;     )
+
+;;   )

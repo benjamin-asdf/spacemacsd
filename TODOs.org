@@ -31,4 +31,16 @@
 - goodnight project (same.. ?)
 - swith to a tiled window manager
 * Quick
-  - function for o j dd
+  - function to comment out all debug.logs in buffer
+  -
+* Things I would like to have
+  - something to search whole project, basically fd with -I
+  - or something to search design dir
+  - bunel:
+    - ability to refresh + press play
+    - put lines into the handle file
+    - first line: function
+    - &rest lines: arguments
+    - have a script that creates bunel handles
+    - open scene with dmenu
+    - have a hotkey for thatt
