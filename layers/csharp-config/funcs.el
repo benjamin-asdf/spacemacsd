@@ -18,4 +18,4 @@
   (interactive)
   (async-shell-command "dotnet run"))
 
-(setq omnisharp-expected-server-version "1.34.0")
+(setq omnisharp-expected-server-version "1.34.1")

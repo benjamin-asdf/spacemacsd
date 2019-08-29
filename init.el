@@ -67,17 +67,21 @@ This function should only modify configuration layer settings."
      ;; c-c++
 
      ;; benj
-     substitute-utils
      benj-funcs
      benj-keybindings
-     ;; csharp-config
      benj-themes-config
      benj-tags
-     laptop-configs
      benj-external
+     substitute-utils
+     ;; csharp-config
+     ;; idlegame-special-config
+     ;; my-config-spellcheck
      redshiftel
      sailor
      best-banners
+     ;; bunel
+
+     laptop-configs
      )
 
    ;; List of additional packages that will be installed without being
