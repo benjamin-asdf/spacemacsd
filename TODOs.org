@@ -32,15 +32,40 @@
 - swith to a tiled window manager
 * Quick
   - function to comment out all debug.logs in buffer
-  -
+  - function to yank branch name currenty checked out,
+    - maybe a version that pastes immediately
+    - maybe another one to do that with the commit sha
 * Things I would like to have
   - something to search whole project, basically fd with -I
   - or something to search design dir
   - bunel:
-    - ability to refresh + press play
-    - put lines into the handle file
-    - first line: function
-    - &rest lines: arguments
-    - have a script that creates bunel handles
     - open scene with dmenu
     - have a hotkey for thatt
+  - Sailor:
+    - "SearchActionHandler"
+    - search where mathed, where reacted to
+  - dotnet run:
+    - use start process,
+    - reuse the same buffer
+* TODO
+  - something in "spaceline" is not performant sometimes
+  - profiler:
+** spaceline-ml-main                                             662  64%
+   + powerline-raw                                                 68   6%
+   + spaceline--get-face                                           56   5%
+   + powerline-render                                              47   4%
+   + powerline-wave-left                                           36   3%
+   + purpose--modeline-string                                      36   3%
+   + powerline-buffer-id                                           36   3%
+   + mapcar                                                        32   3%
+   + powerline-width                                               32   3%
+   + run-hooks                                                     28   2%
+   + powerline-hud                                                 24   2%
+     eyebrowse--get                                                14   1%
+   + powerline-wave-right                                           8   0%
+     powerline-major-mode                                           8   0%
+   + vc-state                                                       8   0%
+     get-frame-persp                                                4   0%
+   + flycheck-has-current-errors-p                                  4   0%
+   + s-trim                                                         4   0%
+     file-remote-p                                                  4   0%
