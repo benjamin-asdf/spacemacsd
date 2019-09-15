@@ -8,7 +8,8 @@
 * Configs
   - banners:
     - create them with random figlet fonts
-  - omnisharp: figure out how to start omnisharp better
+  - omnisharp: figure out how to start omnisharp better,
+    -  currently, I have this issue https://github.com/OmniSharp/omnisharp-emacs/issues/473
   - somehting in savehist becomes too big and doesn't get cleaned
   - fix env stuff somehow, can be temporary, because I won't use gnome forever
   - smartparens doesn't work inside snippets, little annoyance
