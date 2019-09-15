@@ -4,9 +4,6 @@
   - org
   - git-from-the-bottom-up
 * linux
-- hello world simple x hotkey deamon sxhkd
-  - https://github.com/baskerville/sxhkd
-  - https://wiki.archlinux.org/index.php/Sxhkd
 - figure something out, so crontabs are nicely in git
 * Configs
 - create figlet spacemacs startup banners from best messages
