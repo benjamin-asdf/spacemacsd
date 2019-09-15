@@ -78,8 +78,11 @@ Use correct indentation. Like 'o' without creating a new line"
     (goto-char (point-max))
     (evil-insert-state)))
 
-
-
+(defun benj-process-other-window (process-name buffer-name process-program &rest process-args)
+  "Start process and switch to output buffer in other window."
+  (start-process process-name buffer-name process-program (mapconcat 'identity process-args " "))
+  (unless (string-equal (buffer-name) buffer-name)
+    (switch-to-buffer-other-window buffer-name)))
 
 ;; TODO
 ;; (defun benj-comment-out-unity-logs-in-buffer ()

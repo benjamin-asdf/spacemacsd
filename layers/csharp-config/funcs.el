@@ -15,10 +15,9 @@
   (setq evil-shift-width 4))
 
 (defun benj-dotnet-run()
+  "Run dotnet run is current dir, open output in a dedicated buffer."
   (interactive)
-  (async-shell-command "dotnet run"))
-
-
+  (benj-process-other-window "benj-dotnet-run-process" "*dotnet-run*" "dotnet" "run"))
 
 (defun benj-csharp-exclude-buffer ()
   "Exclude the whole buffer from compilation.
