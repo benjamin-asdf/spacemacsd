@@ -6,21 +6,15 @@
 * linux
 - figure something out, so crontabs are nicely in git
 * Configs
-- create figlet spacemacs startup banners from best messages
-  - nicely automate it
-    - create them automatically when changing the messages file, I guess
-    - put 1 space on top of the bannner
+  - banners:
     - create them with random figlet fonts
-- omnisharp: figure out how to start omnisharp better
-- somehting in savehist becomes too big and doesn't get cleaned
-- fix env stuff somehow, can be temporary, because I won't use gnome forever
-- smartparens doesn't work inside snippets, little annoyance
-- emacs gitlab package, maybe a no brainer actually:
-  - https://github.com/nlamirault/emacs-gitlab
-- figure out info mode
-- sailor project
-  - find component usages
-  - fuzzy search component
+  - omnisharp: figure out how to start omnisharp better
+  - somehting in savehist becomes too big and doesn't get cleaned
+  - fix env stuff somehow, can be temporary, because I won't use gnome forever
+  - smartparens doesn't work inside snippets, little annoyance
+  - emacs gitlab package, maybe a no brainer actually:
+    - https://github.com/nlamirault/emacs-gitlab
+  - figure out info mode
 * Goals
 - learn about org
 - minder project
@@ -41,9 +35,8 @@
   - Sailor:
     - "SearchActionHandler"
     - search where mathed, where reacted to
-  - dotnet run:
-    - use start process,
-    - reuse the same buffer
+  - some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
+    -
 * TODO
   - something in "spaceline" is not performant sometimes
   - profiler:
@@ -66,3 +59,8 @@
    + flycheck-has-current-errors-p                                  4   0%
    + s-trim                                                         4   0%
      file-remote-p                                                  4   0%
+
+
+* open-scene
+  - fix systemd sxhkd
+  - fix symlink
