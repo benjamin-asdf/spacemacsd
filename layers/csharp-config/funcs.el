@@ -45,4 +45,4 @@ See `benj-csharp-dont-compile-region'"
   (benj-csharp-dont-compile-region (region-beginning) (region-end)))
 
 
-(setq omnisharp-expected-server-version "1.34.1")
+(setq omnisharp-expected-server-version "1.34.3")
