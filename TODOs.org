@@ -30,9 +30,6 @@
 * Things I would like to have
   - something to search whole project, basically fd with -I
   - or something to search design dir
-  - bunel:
-    - open scene with dmenu
-    - have a hotkey for thatt
   - Sailor:
     - "SearchActionHandler"
     - search where mathed, where reacted to
