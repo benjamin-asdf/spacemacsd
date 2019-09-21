@@ -1,15 +1,11 @@
-* Learning
+* Resources
   - go through this
     - https://www.shellscript.sh/variables1.html
-  - org
   - git-from-the-bottom-up
-* linux
-- figure something out, so crontabs are nicely in git
 * Configs
+- figure something out, so crontabs are nicely in git
   - banners:
     - create them with random figlet fonts
-  - omnisharp: figure out how to start omnisharp better,
-    -  currently, I have this issue https://github.com/OmniSharp/omnisharp-emacs/issues/473
   - somehting in savehist becomes too big and doesn't get cleaned
   - fix env stuff somehow, can be temporary, because I won't use gnome forever
   - smartparens doesn't work inside snippets, little annoyance
@@ -35,30 +31,8 @@
     - search where mathed, where reacted to
   - some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
     -
-* TODO
-  - something in "spaceline" is not performant sometimes
-  - profiler:
-** spaceline-ml-main                                             662  64%
-   + powerline-raw                                                 68   6%
-   + spaceline--get-face                                           56   5%
-   + powerline-render                                              47   4%
-   + powerline-wave-left                                           36   3%
-   + purpose--modeline-string                                      36   3%
-   + powerline-buffer-id                                           36   3%
-   + mapcar                                                        32   3%
-   + powerline-width                                               32   3%
-   + run-hooks                                                     28   2%
-   + powerline-hud                                                 24   2%
-     eyebrowse--get                                                14   1%
-   + powerline-wave-right                                           8   0%
-     powerline-major-mode                                           8   0%
-   + vc-state                                                       8   0%
-     get-frame-persp                                                4   0%
-   + flycheck-has-current-errors-p                                  4   0%
-   + s-trim                                                         4   0%
-     file-remote-p                                                  4   0%
-
-
-* open-scene
-  - fix systemd sxhkd
+    -
+  - fix emacs x session bug
+* bunel
   - fix symlink
+  - save file hook, then move the file?
