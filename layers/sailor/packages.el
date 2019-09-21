@@ -68,6 +68,13 @@ under the project root directory."
     :files current
     :dir project)
 
+  (rg-define-search sailor-rg-project-multiline
+    "See `sailor-rg-search-in-project' allow multiline matches"
+    :files current
+    :dir project
+    :flags '("--multiline"))
+
+
   )
 
 ;;; packages.el ends here

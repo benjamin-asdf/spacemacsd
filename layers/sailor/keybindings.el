@@ -19,4 +19,5 @@
           ("f" . sailor-find-flag-set)
           ("F" . sailor-find-flag-set-all)
           ("C" . sailor-find-comp-set)
-          ("I" . sailor-dump-find-cs-implementations))))
+          ("I" . sailor-dump-find-cs-implementations)
+          ("m" . sailor-find-comp-matched))))
