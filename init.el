@@ -520,6 +520,7 @@ before packages are loaded."
 
   (setq-default dotspacemacs-mode-line-unicode-symbols nil)
 
+  (set-face-foreground 'spaceline-python-venv "SeaGreen")
 
   )
 
