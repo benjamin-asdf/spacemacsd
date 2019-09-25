@@ -27,6 +27,7 @@
     - maybe a version that pastes immediately
     - maybe another one to do that with the commit sha
   - sxhkd + autoclick script
+  - function copy-word-from-below
 * Things I would like to have
   - something to search whole project, basically fd with -I
   - or something to search design dir
@@ -40,3 +41,8 @@
 * bunel
   - fix symlink
   - save file hook, then move the file?
+
+
+* Potential TODOS
+  - setup zsh
+  - configure a minimalist mode line
