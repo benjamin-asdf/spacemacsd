@@ -2,6 +2,9 @@
   - go through this
     - https://www.shellscript.sh/variables1.html
   - git-from-the-bottom-up
+  - dired
+  - registers
+  - git manual
 * Configs
 - figure something out, so crontabs are nicely in git
   - banners:
@@ -23,6 +26,7 @@
   - function to yank branch name currenty checked out,
     - maybe a version that pastes immediately
     - maybe another one to do that with the commit sha
+  - sxhkd + autoclick script
 * Things I would like to have
   - something to search whole project, basically fd with -I
   - or something to search design dir
