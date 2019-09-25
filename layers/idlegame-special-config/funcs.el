@@ -21,6 +21,14 @@
   (setq projectile-git-submodule-command nil))
 
 
+;; need to load csharp layer first
+(defun benj-open-idlegame-project ()
+  "Open idlegame solution file and start omnisharp."
+  (interactive)
+  (find-file-other-window (concat (file-name-as-directory idlegame-project-root) "IdleGame.sln"))
+  (omnisharp--do-server-start idlegame-project-root))
+
+
 ;; TODO, better omnisharp startup.
 ;; (with-eval-after-load 'projectile
 ;;   (add-hook projectile-after-switch-project-hook 'my-projectile-switch-project-hook))
