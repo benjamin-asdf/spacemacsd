@@ -82,6 +82,7 @@ This function should only modify configuration layer settings."
      sailor
      best-banners
      bunel
+     minder
      )
 
    ;; List of additional packages that will be installed without being
