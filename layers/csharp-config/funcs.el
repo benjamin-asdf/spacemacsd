@@ -1,3 +1,18 @@
+(defconst benj-chsarp-samples-dir "~/repos/csharp/csharp-samples")
+
+;; TODO get rid of, use yasnippet
+(defconst benj-csharp-program-snippet "
+
+
+
+public static class Programm {
+
+    public static void Main(string[] args) {
+
+    }
+}
+")
+
 (add-hook 'csharp-mode-hook 'benj-charp-hook)
 
 (defun benj-charp-hook()
@@ -44,5 +59,15 @@ See `benj-csharp-dont-compile-region'"
   (interactive)
   (benj-csharp-dont-compile-region (region-beginning) (region-end)))
 
+
+;; TODO figure out how to put a yasnippet there
+(defun benj-create-new-chsarp-sample (&optional name)
+  "Create a new skeleton chsarp script with NAME in the csharp samples dir"
+  (interactive "sName for chsarp sample: ")
+  (find-file (concat (file-name-as-directory benj-chsarp-samples-dir)
+                     (format "%s.cs" (capitalize name))))
+  (insert benj-csharp-program-snippet)
+  (goto-char (point-min))
+  (forward-line 5))
 
 (setq omnisharp-expected-server-version "1.34.3")
