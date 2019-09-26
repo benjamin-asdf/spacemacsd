@@ -1,43 +1,51 @@
-* Recources
+* Resources
   - go through this
     - https://www.shellscript.sh/variables1.html
-  - org
   - git-from-the-bottom-up
+  - dired
+  - registers
+  - git manual
 * Configs
-- hello world simple x hotkey deamon sxhkd
-  - https://github.com/baskerville/sxhkd
-  - https://wiki.archlinux.org/index.php/Sxhkd
 - figure something out, so crontabs are nicely in git
-- omnisharp: figure out how to start omnisharp better
-- somehting in savehist becomes too big and doesn't get cleaned
-- fix env stuff somehow, can be temporary, because I won't use gnome forever
-- smartparens doesn't work inside snippets, little annoyance
-- emacs gitlab package, maybe a no brainer actually:
-  - https://github.com/nlamirault/emacs-gitlab
-- figure out info mode
-- sailor project
-  - find component usages
-  - fuzzy search component
+  - banners:
+    - create them with random figlet fonts
+  - somehting in savehist becomes too big and doesn't get cleaned
+  - fix env stuff somehow, can be temporary, because I won't use gnome forever
+  - smartparens doesn't work inside snippets, little annoyance
+  - emacs gitlab package, maybe a no brainer actually:
+    - https://github.com/nlamirault/emacs-gitlab
+  - figure out info mode
 * Goals
 - learn about org
 - minder project
 - goodmorning project (org..?)
 - goodnight project (same.. ?)
 - swith to a tiled window manager
-* Ideas
- - banel: random figlet fonts
- - function for opening different "scratch" buffers
 * Quick
   - function to comment out all debug.logs in buffer
-  -
+  - function to yank branch name currenty checked out,
+    - maybe a version that pastes immediately
+    - maybe another one to do that with the commit sha
+  - sxhkd + autoclick script
+  - function copy-word-from-below
 * Things I would like to have
   - something to search whole project, basically fd with -I
   - or something to search design dir
-  - bunel:
-    - ability to refresh + press play
-    - put lines into the handle file
-    - first line: function
-    - &rest lines: arguments
-    - have a script that creates bunel handles
-    - open scene with dmenu
-    - have a hotkey for thatt
+  - Sailor:
+    - "SearchActionHandler"
+    - search where mathed, where reacted to
+  - some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
+    -
+    -
+  - fix emacs x session bug
+* bunel
+  - fix symlink
+  - save file hook, then move the file?
+
+
+* Potential TODOS
+  - setup zsh
+  - configure a minimalist mode line
+  - sailor:
+    - use helm
+    - fuzzy search component

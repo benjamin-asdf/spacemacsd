@@ -32,10 +32,6 @@
 (spacemacs/set-leader-keys "ogc" 'vc-find-conflicted-file)
 (spacemacs/set-leader-keys "oga" 'magit-staging)
 
-
-(spacemacs/set-leader-keys "op" 'evil-paste-before)
-
-
 (spacemacs/declare-prefix "ob" "buffer")
 (spacemacs/set-leader-keys "obr" 'mikus-reopen-buffer)
 
@@ -47,3 +43,7 @@
 
 (define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)
 (define-key evil-insert-state-map (kbd "C-y") 'benj-copy-word-from-above)
+
+
+(spacemacs/declare-prefix "on" "new")
+(spacemacs/set-leader-keys "ons" 'benj-new-shell-script)

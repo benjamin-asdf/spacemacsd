@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+#name : program
+#key : program
+#contributor : benj
+# --
+
+public static class Programm {
+
+
+
+    public static void Main(string[] args) {
+
+        $0
+
+
+    }
+
+
+}

@@ -13,10 +13,6 @@ METHOD should be one of `bunel-method-names'. Optionally provide ARGS. "
                          (cdr (assoc method bunel-method-names))
                          (mapconcat 'identity args  " "))))
 
-(defun bunel-refresh-client-and-playmode ()
-  "See `bunel-refresh-client'."
-  (interactive)
-  (bunel-refresh-client "with-playmode"))
 
 (defun bunel-refresh-client (&optional arg)
   "Refresh default idlegame unity project.
@@ -28,7 +24,7 @@ If ARG is non-nil, also enter playmode."
   "Refresh all Idlegames.
 If ARG is non-nil, also enter playmode"
   (interactive)
-  (mapcar (lambda (project) (bunel-create-handle-file project 'bunel-refresh)) bunel-idlegame-projects))
+  (mapcar (lambda (project) (bunel-create-handle-file project 'bunel-refresh arg)) bunel-idlegame-projects))
 
 (defun bunel-save-and-refresh (&optional arg)
   "Save some buffers and refresh all Idlegames.
@@ -36,12 +32,3 @@ If ARG is non-nil, also enter playmode"
   (interactive)
   (save-some-buffers t)
   (bunel-refresh-all arg))
-
-
-
-;; (defun bunel-handle-path ()
-;;   (unless bunel-handle-path
-;;     (dolist (line (benj-read-lines "~/repos/bunel/.config")) handle-path
-;;             (if (string-match "^HANDLE_FILE_PATH=\\(.+\\)$" line)
-;;                 (setq handle-path (match-string 1 line)))))
-;;   bunel-handle-path)

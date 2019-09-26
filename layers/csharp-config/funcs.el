@@ -1,3 +1,18 @@
+(defconst benj-chsarp-samples-dir "~/repos/csharp/csharp-samples")
+
+;; TODO get rid of, use yasnippet
+(defconst benj-csharp-program-snippet "
+
+
+
+public static class Programm {
+
+    public static void Main(string[] args) {
+
+    }
+}
+")
+
 (add-hook 'csharp-mode-hook 'benj-charp-hook)
 
 (defun benj-charp-hook()
@@ -15,7 +30,44 @@
   (setq evil-shift-width 4))
 
 (defun benj-dotnet-run()
+  "Run dotnet run is current dir, open output in a dedicated buffer."
   (interactive)
-  (async-shell-command "dotnet run"))
+  (benj-process-other-window "benj-dotnet-run-process" "*dotnet-run*" "dotnet" "run"))
 
-(setq omnisharp-expected-server-version "1.34.1")
+(defun benj-csharp-exclude-buffer ()
+  "Exclude the whole buffer from compilation.
+This uses `benj-charp-dont-compile-region' internally"
+  (interactive)
+  (benj-csharp-dont-compile-region (point-min) (point-max)))
+
+(defun benj-csharp-dont-compile-region (beginning end)
+  "Wrap region with 'if false' directive.
+BEGINNING and END are numbers of the region BEGINNING and END."
+  (setq b (make-marker))
+  (setq e (make-marker))
+  (set-marker b beginning (current-buffer))
+  (set-marker e end (current-buffer))
+  (save-excursion
+    (goto-char (marker-position b))
+    (insert "# if false\n")
+    (goto-char (marker-position e))
+    (insert "# endif")))
+
+(defun benj-chsarp-exclude-region ()
+  "Eclude active region from compilation.
+See `benj-csharp-dont-compile-region'"
+  (interactive)
+  (benj-csharp-dont-compile-region (region-beginning) (region-end)))
+
+
+;; TODO figure out how to put a yasnippet there
+(defun benj-create-new-chsarp-sample (&optional name)
+  "Create a new skeleton chsarp script with NAME in the csharp samples dir"
+  (interactive "sName for chsarp sample: ")
+  (find-file (concat (file-name-as-directory benj-chsarp-samples-dir)
+                     (format "%s.cs" (capitalize name))))
+  (insert benj-csharp-program-snippet)
+  (goto-char (point-min))
+  (forward-line 5))
+
+(setq omnisharp-expected-server-version "1.34.3")

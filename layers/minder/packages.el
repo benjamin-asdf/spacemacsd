@@ -1,4 +1,4 @@
-;;; packages.el --- sailor layer packages file for Spacemacs.
+;;; packages.el --- minder layer packages file for Spacemacs.
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
@@ -18,20 +18,20 @@
 ;;
 ;;
 ;; Briefly, each package to be installed or configured by this layer should be
-;; added to `sailor-packages'. Then, for each package PACKAGE:
+;; added to `minder-packages'. Then, for each package PACKAGE:
 ;;
 ;; - If PACKAGE is not referenced by any other Spacemacs layer, define a
-;;   function `sailor/init-PACKAGE' to load and initialize the package.
+;;   function `minder/init-PACKAGE' to load and initialize the package.
 
 ;; - Otherwise, PACKAGE is already referenced by another Spacemacs layer, so
-;;   define the functions `sailor/pre-init-PACKAGE' and/or
-;;   `sailor/post-init-PACKAGE' to customize the package as it is loaded.
+;;   define the functions `minder/pre-init-PACKAGE' and/or
+;;   `minder/post-init-PACKAGE' to customize the package as it is loaded.
 
 ;;; Code:
 
-(defconst sailor-packages
-  '(rg)
-  "The list of Lisp packages required by the sailor layer.
+(defconst minder-packages
+  '()
+  "The list of Lisp packages required by the minder layer.
 
 Each entry is either:
 
@@ -58,23 +58,5 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
-(defun sailor/init-rg ()
-  (use-package rg
-    :defer t)
-
-  (rg-define-search sailor-rg-search-in-project
-    "Search for REGEX in files matching the current file
-under the project root directory."
-    :files current
-    :dir project)
-
-  (rg-define-search sailor-rg-project-multiline
-    "See `sailor-rg-search-in-project' allow multiline matches"
-    :files current
-    :dir project
-    :flags '("--multiline"))
-
-
-  )
 
 ;;; packages.el ends here

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : crea
+#key : crea
+#contributor : benj
+# --
+var ${e} = c.state.CreateEntity();
