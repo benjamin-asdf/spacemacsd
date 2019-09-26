@@ -52,7 +52,7 @@ This function should only modify configuration layer settings."
      ;; Langs
      emacs-lisp
      org
-     ;; csharp
+     csharp
      ;; python
      ;; windows-scripts
      ;; javascript
