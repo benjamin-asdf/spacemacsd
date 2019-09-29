@@ -56,3 +56,20 @@ With WORD as component. Defaults to thing at point."
 ;;     ('entitas-add . "Add")
 ;;     ('entitas-replace . "Replace")
 ;;     ('entitas-remove . "Remove")))
+
+
+
+
+
+
+
+;; (defconst sailor-component-declarations '("Component" "UniqueFlagComponent" "UniqueComponent" "PrimaryIndexComponent" "IndexComponent"))
+
+
+
+;; (defun sailor-global-get-references ()
+
+;;   )
+
+;; somehting with
+;; global --reference --result=grep "UniqueFlagComponent"
