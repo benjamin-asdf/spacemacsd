@@ -35,8 +35,6 @@
     - "SearchActionHandler"
     - search where mathed, where reacted to
   - some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
-    -
-    -
   - fix emacs x session bug
 * bunel
   - fix symlink
