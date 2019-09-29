@@ -3,7 +3,8 @@
 (defconst bunel-default-unity-project "IdleGame")
 
 (defconst bunel-method-names
-  '((bunel-refresh . "refresh")))
+  '((bunel-refresh . "refresh")
+    (bunel-open-scene . "open-scene")))
 
 (defun bunel-create-handle-file (project method &rest args)
   "Create a handle file for PROJECT.
@@ -32,3 +33,8 @@ If ARG is non-nil, also enter playmode"
   (interactive)
   (save-some-buffers t)
   (bunel-refresh-all arg))
+
+;; (defun bunel-open-scene (project scene)
+;;   "Open SCENE in PROJECT."
+;;   (interactive)
+;;   )
