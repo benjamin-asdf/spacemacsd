@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : fore
+#key : fore
+#contributor : benj
+# --
+foreach (var ${1:item} in ${2:list}) {
+  $0
+}
