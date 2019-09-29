@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : vgse
+#key : vgse
+#contributor : benj
+# --
+var $1 = c.state.GetSingleEntity<$2>();
