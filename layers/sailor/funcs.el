@@ -76,6 +76,7 @@ With WORD as component. Defaults to thing at point."
 
 (defconst sailor-fd-find-alot "fd -H -E=.git -I -tf -0 .")
 
+;; TODO helm search behavoiur wrong
 (with-eval-after-load 'projectile
   (defun sailor-projectile-find-file-all ()
     "Simple implementation of projectile find file without any file filters"
