@@ -59,10 +59,6 @@ With WORD as component. Defaults to thing at point."
 
 
 
-
-
-
-
 ;; (defconst sailor-component-declarations '("Component" "UniqueFlagComponent" "UniqueComponent" "PrimaryIndexComponent" "IndexComponent"))
 
 
@@ -73,3 +69,23 @@ With WORD as component. Defaults to thing at point."
 
 ;; somehting with
 ;; global --reference --result=grep "UniqueFlagComponent"
+
+
+
+
+
+(defconst sailor-fd-find-alot "fd -H -E=.git -I -tf -0 .")
+
+(with-eval-after-load 'projectile
+  (defun sailor-projectile-find-file-all ()
+    "Simple implementation of projectile find file without any file filters"
+    (interactive)
+
+    (let* ((project-root (projectile-ensure-project (projectile-project-root)))
+           (files (projectile-files-via-ext-command project-root sailor-fd-find-alot))
+           (file (projectile-completing-read "Find file: "
+                                             files))
+           (ff (or ff-variant #'find-file)))
+      (when file
+        (funcall ff (expand-file-name file project-root))
+        (run-hooks 'projectile-find-file-hook)))))
