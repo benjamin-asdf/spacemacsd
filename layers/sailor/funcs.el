@@ -23,6 +23,12 @@ With WORD as component. Defaults to thing at point."
   (sailor-rg-search-in-project
    (format "\\.((Add)|(Set)|(Replace))<%s>\\(" word)))
 
+(defun sailor-find-comp-value-access ()
+  "Start search for value access syntax with thing at point."
+  (interactive)
+  (sailor-rg-search-in-project
+   (format "\\.((Get)|(Is))<%s>\\(\\)\\.value" (thing-at-point 'evil-word))))
+
 (defun sailor-dump-find-cs-implementations ()
   "Start search with cs implementation syntax for thing at point."
   (interactive)
