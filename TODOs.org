@@ -40,7 +40,13 @@
   - fix symlink
   - save file hook, then move the file?
 
-
 * Potential TODOS
-  - setup zsh
   - configure a minimalist mode line
+* Try fix emacs x11 bug
+  Sep 30 07:15:49 benj-pc emacs[4946]: Warning: due to a long standing Gtk+ bug
+Sep 30 07:15:49 benj-pc emacs[4946]: https://gitlab.gnome.org/GNOME/gtk/issues/221
+Sep 30 07:15:49 benj-pc emacs[4946]: Emacs might crash when run in daemon mode and the X11 connection is unexpectedly lost.
+Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-toolkit=lucid does not have this problem.
+* zsh config
+  - color ls output https://github.com/trapd00r/LS_COLORS
+  - last: make default shell
