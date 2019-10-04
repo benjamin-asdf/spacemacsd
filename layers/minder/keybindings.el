@@ -7,4 +7,6 @@
           (spacemacs/set-leader-keys (concat minder-leader-keys (car x)) (cdr x)))
         '(("a" . minder-push-best-message)
           ("m" . minder-push-message)
-          ("e" . minder-abort-food-request))))
+          ("e" . minder-abort-food-request)
+          ("d" . minder-do-deed)
+          ("j" . minder-mine-asteriod))))

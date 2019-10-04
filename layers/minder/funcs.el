@@ -2,6 +2,17 @@
 (defconst minder-meme-journal-dir "~/.local/minder/memetic-journal"
   "The directory minder saves memetic journal files.")
 
+
+
+(defconst minder-imaginary-deeds
+  '(
+    (minder-mined-asteriod-message "Connect 5% of population to brain computer interface." "Built deep sea outpost."
+     "Harnessed ancient alien ruins."))
+  "Deeds used for `minder-do-deed' cons cells correspond to the deed level.")
+
+(defconst minder-mined-asteriod-message "Mined an asteriod."
+  "The default basic deed.")
+
 ;; Variables
 
 (defconst minder-food-request-wait-time 15
@@ -71,5 +82,19 @@ If non-nil, modify wait time by FACTOR."
   "Formatted time string for `minder-food-request-allowed-time'."
   (format-time-string "%T" minder-food-request-allowed-time))
 
-;; automatically save it and push it to a repo maybe
+(defun minder-do-deed (&optional level)
+  "Push a message full of accomplishment to memetic journal.
+See `minder-push-message'."
+  (interactive)
+  (minder--push-message (rand-element (nth (or level 0) minder-imaginary-deeds))))
 
+(defun minder-mine-asteriod ()
+  "Push `minder-mined-asteriod-message' to memetic journal.
+See `minder--push-message'"
+  (interactive)
+  (minder--push-message minder-mined-asteriod-message))
+
+
+
+
+;; automatically save it and push it to a repo maybe
