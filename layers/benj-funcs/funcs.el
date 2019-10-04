@@ -67,16 +67,15 @@ Use correct indentation. Like 'o' without creating a new line"
   (nth (random (length list)) list))
 
 
-(defun benj-new-shell-script (name)
+(defun benj-new-shell-script (file)
   "Create a new script shell script with NAME in scripts dir."
-  (interactive "sName of the new script: ")
-  (let ((file (concat "~/.scripts/" name)))
-    (unless (file-exists-p file)
-      (write-region "#!/usr/bin/env bash\n\n" " " file))
-    (set-file-modes file #o777)
-    (find-file file)
-    (goto-char (point-max))
-    (evil-insert-state)))
+  (interactive "FNew script: ")
+  (unless (file-exists-p file)
+    (write-region "#!/bin/sh\n\n" " " file))
+  (set-file-modes file #o777)
+  (find-file file)
+  (goto-char (point-max))
+  (evil-insert-state))
 
 (defun benj-process-other-window (process-name buffer-name process-program &rest process-args)
   "Start process and switch to output buffer in other window."
