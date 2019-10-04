@@ -1,7 +1,11 @@
 ;; Constants
-(defconst minder-meme-journal-dir "~/.local/minder/memetic-journal"
+(defconst minder-private-repo-root "~/.local/minder/"
+  "Root of minders private journal repo.")
+
+(defconst minder-meme-journal-dir (concat minder-private-repo-root "memetic-journal/")
   "The directory minder saves memetic journal files.")
 
+(defconst minder-nogo-messages-file (concat minder-private-repo-root "nogo-messages"))
 
 
 (defconst minder-imaginary-deeds
@@ -13,12 +17,17 @@
 (defconst minder-mined-asteriod-message "Mined an asteriod."
   "The default basic deed.")
 
-;; Variables
-
 (defconst minder-food-request-wait-time 15
   "The wait time in minutes between requesting food and allowing food.")
 
+(defconst minder-think-about-food-duration 10)
+
+;; Variables
+
 (defvar minder-food-request-allowed-time nil)
+
+;; TODO sore in cache file.
+(defvar minder-thought-about-food-today nil)
 
 ;; Functions
 
@@ -95,6 +104,21 @@ See `minder--push-message'"
   (minder--push-message minder-mined-asteriod-message))
 
 
+(defun minder-ask-to-think-about-food ()
+  "Ask minder to think about food.
+You are allowed to think about food once per day. For `minder-think-about-food-duration'."
+  (interactive)
+  (minder--push-message "Hey minder, am I allowed to think about food?")
+  (if minder-thought-about-food-today (minder--push-nogo-message)
+    (progn (minder--push-message
+      (format "Sure, for %s minutes until %s"
+              minder-think-about-food-duration
+              (format-time-string "%T" (time-add (current-time) (* minder-think-about-food-duration 60))))))
+    (setq minder-thought-about-food-today t)))
+
+(defun minder--push-nogo-message ()
+  "Random message read from `minder-nogo-messages-file'."
+  (minder--push-message (rand-element (benj-read-lines minder-nogo-messages-file))))
 
 
 ;; automatically save it and push it to a repo maybe
