@@ -9,4 +9,6 @@
           ("m" . minder-push-message)
           ("e" . minder-abort-food-request)
           ("d" . minder-do-deed)
-          ("j" . minder-mine-asteriod))))
+          ("j" . minder-mine-asteriod)
+          ("q" . minder-friendly-nogo)
+          ("&" . minder-ask-to-think-about-food))))

@@ -130,6 +130,12 @@ You are allowed to think about food once per day. For `minder-think-about-food-d
               (format-time-string "%T" (time-add (current-time) (* minder-think-about-food-duration 60))))))
     (setq minder-thought-about-food-today t)))
 
+(defun minder-friendly-nogo ()
+  "Push a small conversion with minder. Get told a nogo message."
+  (interactive)
+  (minder--push-message "Hey minder, ....?")
+  (minder--push-nogo-message))
+
 (defun minder--push-nogo-message ()
   "Push a random message read from `minder-nogo-messages-file'."
   (minder--push-message (rand-element (benj-read-lines minder-nogo-messages-file))))
