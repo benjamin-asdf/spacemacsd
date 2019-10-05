@@ -41,14 +41,27 @@
   (interactive "sWhat is the current meme?")
   (minder--push-message msg))
 
-(defun minder--push-message (msg)
-  "Open the messages file and push MSG."
+(defun minder--push-message (msg &optional non-intrusive)
+  "Open todays journal file and push MSG.
+If NON-INTRUSIVE is non nil, supress opening a journal file window."
   (let ((curr-buffer (buffer-name)))
-    (find-file-other-window (minder--todays-journal-file))
-    (goto-char (point-max))
-    (insert (format "[%s] %s\n" (format-time-string "%T") msg))
-    (save-buffer)
-    (switch-to-buffer-other-window curr-buffer)))
+    (cond ((string-equal curr-buffer (minder--todays-journal-file))
+           (minder--insert-message msg)
+           (save-buffer))
+          (non-intrusive
+           (progn (with-temp-file (minder--todays-journal-file)
+                    (insert-file-contents (minder--todays-journal-file))
+                    (minder--insert-message msg))
+                  (message msg)))
+          (t (progn (find-file-other-window (minder--todays-journal-file))
+                  (minder--insert-message msg)
+                  (save-buffer)
+                  (switch-to-buffer-other-window curr-buffer))))))
+
+(defun minder--insert-message (msg)
+  "Insert new line containing a timestamp and MSG"
+  (goto-char (point-max))
+  (insert (format "[%s] %s\n" (format-time-string "%T") msg)))
 
 (defun minder-push-best-message ()
   "Push one of messages defined in .config/my-messages to minder file."
@@ -102,7 +115,7 @@ See `minder-push-message'."
   "Push `minder-mined-asteriod-message' to memetic journal.
 See `minder--push-message'"
   (interactive)
-  (minder--push-message minder-mined-asteriod-message))
+  (minder--push-message minder-mined-asteriod-message t))
 
 
 (defun minder-ask-to-think-about-food ()
