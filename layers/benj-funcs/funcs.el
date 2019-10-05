@@ -83,6 +83,16 @@ Use correct indentation. Like 'o' without creating a new line"
   (unless (string-equal (buffer-name) buffer-name)
     (switch-to-buffer-other-window buffer-name)))
 
+(defun benj-append-to-file (file content &optional newline)
+  "Append a newline with CONTENT to FILE.
+If NEWLINE is non nil, append a newline character."
+  (unless (file-exists-p file)
+    (write-region "" nil file))
+  (with-temp-file file
+    (insert-file-contents file)
+    (goto-char (point-max))
+    (insert (if newline (concat content "\n") content))))
+
 ;; TODO
 ;; (defun benj-comment-out-unity-logs-in-buffer ()
 ;;   "Put csharp comment syntax before Debug\.Log."

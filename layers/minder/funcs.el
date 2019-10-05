@@ -5,6 +5,8 @@
 (defconst minder-meme-journal-dir (concat minder-private-repo-root "memetic-journal/")
   "The directory minder saves memetic journal files.")
 
+(defconst minder-remembered-msgs-file (concat minder-private-repo-root "remember-that"))
+
 (defconst minder-nogo-messages-file (concat minder-private-repo-root "nogo-messages"))
 
 
@@ -25,6 +27,8 @@
 
 ;; Variables
 
+(defvar minder-last-pushed-msg nil)
+
 (defvar minder-food-request-allowed-time nil)
 
 ;; TODO sore in cache file.
@@ -44,14 +48,14 @@
 (defun minder--push-message (msg &optional non-intrusive)
   "Open todays journal file and push MSG.
 If NON-INTRUSIVE is non nil, supress opening a journal file window."
+  (setq minder-last-pushed-msg msg)
   (let ((curr-buffer (buffer-name)))
     (cond ((string-equal curr-buffer (minder--todays-journal-file))
            (minder--insert-message msg)
            (save-buffer))
           (non-intrusive
-           (progn (with-temp-file (minder--todays-journal-file)
-                    (insert-file-contents (minder--todays-journal-file))
-                    (minder--insert-message msg))
+           (progn (benj-append-newline-to-file
+                   (minder--todays-journal-file) (minder--formatted-msg msg))
                   (message msg)))
           (t (progn (find-file-other-window (minder--todays-journal-file))
                   (minder--insert-message msg)
@@ -61,7 +65,11 @@ If NON-INTRUSIVE is non nil, supress opening a journal file window."
 (defun minder--insert-message (msg)
   "Insert new line containing a timestamp and MSG"
   (goto-char (point-max))
-  (insert (format "[%s] %s\n" (format-time-string "%T") msg)))
+  (insert (minder--formatted-msg msg)))
+
+(defun minder--formatted-msg (msg)
+  "Format MSG for minder memetic journal."
+  (format "[%s] %s\n" (format-time-string "%T") msg))
 
 (defun minder-push-best-message ()
   "Push one of messages defined in .config/my-messages to minder file."
@@ -140,5 +148,13 @@ You are allowed to think about food once per day. For `minder-think-about-food-d
   "Push a random message read from `minder-nogo-messages-file'."
   (minder--push-message (rand-element (benj-read-lines minder-nogo-messages-file))))
 
+
+(defun minder-remember-last-msg ()
+  "Store `minder-last-pushed-msg' in a special notes file."
+  (interactive)
+  (if minder-last-pushed-msg
+      (progn (benj-append-to-file minder-remembered-msgs-file minder-last-pushed-msg t)
+             (minder--push-message "- Inclining the mind to remember that!"))
+    (message "There is no last message to remember.")))
 
 ;; automatically save it and push it to a repo maybe
