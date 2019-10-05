@@ -157,4 +157,11 @@ You are allowed to think about food once per day. For `minder-think-about-food-d
              (minder--push-message "- Inclining the mind to remember that!"))
     (message "There is no last message to remember.")))
 
+(defun minder-push-remembered-msgs ()
+  "Push 3 random remembered msgs into current journal file."
+  (interactive)
+  (when (file-exists-p minder-remembered-msgs-file)
+      (dotimes (i 3)
+        (minder--push-message (benj-rand-line-from-file minder-remembered-msgs-file)))))
+
 ;; automatically save it and push it to a repo maybe
