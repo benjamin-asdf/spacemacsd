@@ -57,10 +57,13 @@ Use correct indentation. Like 'o' without creating a new line"
     (unless (member elem '("." ".."))
       (delete-file (concat (file-name-as-directory dir) elem)))))
 
-(defun benj-best-message()
+(defun benj-best-message ()
   "A random line chosen from best-message file."
-  (let ((msgs (benj-read-lines best-messages-file)))
-    (message (rand-element msgs))))
+  (benj-rand-line-from-file best-messages-file))
+
+(defun benj-rand-line-from-file (file)
+  "A random line from FILE"
+  (rand-element (benj-read-lines file)))
 
 (defun rand-element (list)
   "Random element from LIST."
