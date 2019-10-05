@@ -10,8 +10,9 @@
 
 (defconst minder-imaginary-deeds
   '(
-    (minder-mined-asteriod-message "Connect 5% of population to brain computer interface." "Built deep sea outpost."
-     "Harnessed ancient alien ruins."))
+    ("Just connected 5% more of population to brain computer interface." "Just Built deep sea outpost."
+     "Just harnessed ancient alien library." "Just did a deed." "Just accomplished something." "Just Inclined mind towards winning."
+     "Just took a step." "Just won." "Just updated some memetic program." "Just got rid of a few lines of neurol link code." "Just updated gas giant outpost database."))
   "Deeds used for `minder-do-deed' cons cells correspond to the deed level.")
 
 (defconst minder-mined-asteriod-message "Mined an asteriod."
