@@ -20,10 +20,10 @@
 (defconst minder-mined-asteriod-message "Mined an asteriod."
   "The default basic deed.")
 
-(defconst minder-food-request-wait-time 15
+(defconst minder-food-request-wait-time 10
   "The wait time in minutes between requesting food and allowing food.")
 
-(defconst minder-think-about-food-duration 10)
+(defconst minder-think-about-food-duration 8)
 
 ;; Variables
 
