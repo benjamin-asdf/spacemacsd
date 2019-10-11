@@ -11,10 +11,10 @@
 
 
 (defconst minder-imaginary-deeds
-  '(("Just did a deed." "Just accomplished something." "Just Inclined mind towards winning."
-     "Just took a step." "Just won." "Just updated some memetic program." "Just activated some rocket activation patterns."
-     "Just got some dopamine, benj style." "Just took a breath." "Just used the brain." "Like a sip of water."
-     "Just took the best thing of the momemt."))
+  '(
+    ("Just connected 5% more of population to brain computer interface." "Just Built deep sea outpost."
+     "Just harnessed ancient alien library." "Just did a deed." "Just accomplished something." "Just Inclined mind towards winning."
+     "Just took a step." "Just won." "Just updated some memetic program." "Just got rid of a few lines of neural link code." "Just updated gas giant outpost database." "Just activated some rocket activation patterns."))
   "Deeds used for `minder-do-deed' cons cells correspond to the deed level.")
 
 (defconst minder-mined-asteriod-message "Mined an asteriod."
