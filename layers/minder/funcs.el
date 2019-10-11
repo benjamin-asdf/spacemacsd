@@ -9,6 +9,15 @@
 
 (defconst minder-nogo-messages-file (concat minder-private-repo-root "nogo-messages"))
 
+(defconst minder-sounds-types
+  '((minder-friendly-sounds . "friendly-sounds")
+    (minder-intense-sounds . "intense-sounds")
+    (minder-intense-sounds-long . "intense-sounds-long"))
+  "Types of minder sounds to play. There must be a files for every type,
+in the format described in `minder-play-sound'")
+
+(defconst minder-nogo-messages-file (concat minder-private-repo-root "nogo-messages")
+  "The file minder looks for nogo messages")
 
 (defconst minder-imaginary-deeds
   '(("Just did a deed." "Just accomplished something." "Just Inclined mind towards winning."
@@ -118,12 +127,14 @@ If non-nil, modify wait time by FACTOR."
   "Push a message full of accomplishment to memetic journal.
 See `minder-push-message'."
   (interactive)
+  (minder-play-sound 'minder-intense-sounds)
   (minder--push-message (rand-element (nth (or level 0) minder-imaginary-deeds))))
 
 (defun minder-mine-asteriod ()
   "Push `minder-mined-asteriod-message' to memetic journal.
 See `minder--push-message'"
   (interactive)
+  (minder-play-sound 'minder-intense-sounds)
   (minder--push-message minder-mined-asteriod-message t))
 
 
@@ -164,5 +175,16 @@ You are allowed to think about food once per day. For `minder-think-about-food-d
   (when (file-exists-p minder-remembered-msgs-file)
       (dotimes (i 3)
         (minder--push-message (benj-rand-line-from-file minder-remembered-msgs-file)))))
+
+(defun minder-play-sound (kind)
+  "Play a random sound of KIND.
+KIND must be one of `minder-sounds-types'. The associated sound file must exist.
+The sound file must be a file of absolute paths pointing to .wav files, seperated by newline characters."
+  (start-process "minder-play-sound" "*minder-play-sound*" "aplay" (benj-rand-line-from-file (minder-sounds-file kind))))
+
+(defun minder-sounds-file (type)
+  "Sounds file name.
+TYPE must be one of `minder-sounds-types'"
+  (concat minder-sounds-dir (cdr (assoc type minder-sounds-types))))
 
 ;; automatically save it and push it to a repo maybe
