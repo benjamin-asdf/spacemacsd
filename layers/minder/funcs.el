@@ -5,9 +5,12 @@
 (defconst minder-meme-journal-dir (concat minder-private-repo-root "memetic-journal/")
   "The directory minder saves memetic journal files.")
 
-(defconst minder-remembered-msgs-file (concat minder-private-repo-root "remember-that"))
+(defconst minder-sounds-dir (concat minder-private-repo-root "sounds-lookup/")
+  "The directory that minder checks for sound lookup files")
 
-(defconst minder-nogo-messages-file (concat minder-private-repo-root "nogo-messages"))
+;; TODO I guess I should eval an sexpr there instead of having a file with lines.
+(defconst minder-remembered-msgs-file (concat minder-private-repo-root "remember-that")
+  "The file minder stores remembered msgs.")
 
 (defconst minder-sounds-types
   '((minder-friendly-sounds . "friendly-sounds")
