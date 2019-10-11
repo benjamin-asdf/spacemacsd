@@ -34,8 +34,10 @@
   - some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
 * bunel
   - fix symlink
-  - save file hook, then move the file?
-
+    - save file hook, then move the file?
+  - potentially: fuzzy gameobject select
+  - selecting is easy: https://docs.unity3d.com/ScriptReference/Selection.html
+  - but getting a list of hierachy objects for dmenu.. hm.
 * Potential TODOS
   - configure a minimalist mode line
   - then it says something like "Launched a rocked."
@@ -44,11 +46,21 @@
 Sep 30 07:15:49 benj-pc emacs[4946]: https://gitlab.gnome.org/GNOME/gtk/issues/221
 Sep 30 07:15:49 benj-pc emacs[4946]: Emacs might crash when run in daemon mode and the X11 connection is unexpectedly lost.
 Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-toolkit=lucid does not have this problem.
-* zsh config
-  - last: make default shell
 * minder
   - some minor mode where I can press a button repeatly
   - automatically push to private repo every 2 hours or something
   - merge timetrack and minder somehow
   - have functions that do the repetetive stuff for timetrack
-  -
+  - add a user config hook
+** merge minder and time track
+   - these two functions are almost all I need?
+   - well kinda for the beginning that would basically be good enough
+*** func minder good morning
+    - just push a special message with the wake up time so it's at the top of the file
+    - ask "how long did you sleep?"
+    - ask for additional message
+*** func minder good night
+    - would be nice to put the time awake automatically
+* Need to fix
+  - zsh path inside spacemacs is not correct
+  - projectile submodules issue
