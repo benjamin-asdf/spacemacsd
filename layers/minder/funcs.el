@@ -15,7 +15,9 @@
 (defconst minder-sounds-types
   '((minder-friendly-sounds . "friendly-sounds")
     (minder-intense-sounds . "intense-sounds")
-    (minder-intense-sounds-long . "intense-sounds-long"))
+    (minder-intense-sounds-long . "intense-sounds-long")
+    (minder-mining-sounds . "mining-sounds")
+    (minder-rock-breaks-sounds . "rock-breaks"))
   "Types of minder sounds to play. There must be a files for every type,
 in the format described in `minder-play-sound'")
 
@@ -130,14 +132,15 @@ If non-nil, modify wait time by FACTOR."
   "Push a message full of accomplishment to memetic journal.
 See `minder-push-message'."
   (interactive)
-  (minder-play-sound 'minder-intense-sounds)
+  (minder-play-sound 'minder-intense-sounds-long)
   (minder--push-message (rand-element (nth (or level 0) minder-imaginary-deeds))))
 
 (defun minder-mine-asteriod ()
   "Push `minder-mined-asteriod-message' to memetic journal.
 See `minder--push-message'"
   (interactive)
-  (minder-play-sound 'minder-intense-sounds)
+  (minder-play-sound 'minder-mining-sounds)
+  (minder-play-sound 'minder-rock-breaks-sounds)
   (minder--push-message minder-mined-asteriod-message t))
 
 
