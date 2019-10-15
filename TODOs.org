@@ -53,14 +53,20 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
   - have functions that do the repetetive stuff for timetrack
   - add a user config hook
 ** merge minder and time track
-   - these two functions are almost all I need?
-   - well kinda for the beginning that would basically be good enough
+  - these two functions are almost all I need?
+  - well kinda for the beginning that would basically be good enough
 *** func minder good morning
     - just push a special message with the wake up time so it's at the top of the file
     - ask "how long did you sleep?"
     - ask for additional message
 *** func minder good night
-    - would be nice to put the time awake automatically
+    - would be nice to put the time awake automaticall
+
+** bit bigger mine asteriod funcs
+   :PROPERTIES:
+   :Effort:   3
+   :END:
+   -
 * Need to fix
   - zsh path inside spacemacs is not correct
   - projectile submodules issue
