@@ -9,7 +9,8 @@
 (defun bunel-create-handle-file (project method &rest args)
   "Create a handle file for PROJECT.
 METHOD should be one of `bunel-method-names'. Optionally provide ARGS. "
-  (shell-command (format "bunel %s %s %s"
+  ;; (shell-command (format "bunel %s %s %s" #TODO TEMP small one time hack
+  (shell-command (format "/home/benj/.local/bin/bunel/bunel %s %s %s"
                          project
                          (cdr (assoc method bunel-method-names))
                          (mapconcat 'identity args  " "))))
