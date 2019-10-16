@@ -3,6 +3,11 @@
 ;; TODO get rid of, use yasnippet
 (defconst benj-csharp-program-snippet "
 
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Collections;
+using System.Diagnostics;
 
 
 public static class Programm {
