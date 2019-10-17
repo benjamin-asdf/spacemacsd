@@ -34,19 +34,19 @@ in the format described in `minder-play-sound'")
 (defconst minder-mined-asteriod-message "Mined an asteriod."
   "The default basic deed.")
 
-(defconst minder-food-request-wait-time 10
-  "The wait time in minutes between requesting food and allowing food.")
+(defconst minder-something-random-request-wait-time 10
+  "The wait time in minutes between requesting something-random and allowing something-random.")
 
-(defconst minder-think-about-food-duration 8)
+(defconst minder-think-about-something-random-duration 8)
 
 ;; Variables
 
 (defvar minder-last-pushed-msg nil)
 
-(defvar minder-food-request-allowed-time nil)
+(defvar minder-something-random-request-allowed-time nil)
 
 ;; TODO sore in cache file.
-(defvar minder-thought-about-food-today nil)
+(defvar minder-thought-about-something-random-today nil)
 
 ;; Functions
 
@@ -91,42 +91,42 @@ If NON-INTRUSIVE is non nil, supress opening a journal file window."
   (interactive)
   (minder--push-message (benj-best-message)))
 
-(defun minder-request-food ()
+(defun minder-request-something-random ()
   "Ask for permission to eat"
   (interactive)
   (minder--push-message "Hey minder, am I allowed to eat now?")
-  (cond ((null minder-food-request-allowed-time)
-         (minder--set-food-allowed-soon))
-        ((not (time-less-p minder-food-request-allowed-time (current-time)))
+  (cond ((null minder-something-random-request-allowed-time)
+         (minder--set-something-random-allowed-soon))
+        ((not (time-less-p minder-something-random-request-allowed-time (current-time)))
          (message "Not yet, take 3 breaths."))
         ((not (and (yes-or-no-p "Did you take 3 breaths?") (yes-or-no-p "Did you REALY take 3 breaths?")))
-         (minder--set-food-allowed-soon 0.33))
+         (minder--set-something-random-allowed-soon 0.33))
         (t
-         (minder--push-message "You are allowed to eat now.\n Do not forget to do some pushups!")
-         (setq minder-food-request-allowed-time nil))))
+         (minder--push-message "You are allowed to think about something random now.")
+         (setq minder-something-random-request-allowed-time nil))))
 
-(defun minder-abort-food-request ()
-  "Abort food request, if one is ongoing. Inform user."
+(defun minder-abort-something-random-request ()
+  "Abort something-random request, if one is ongoing. Inform user."
   (interactive)
-  (if minder-food-request-allowed-time
+  (if minder-something-random-request-allowed-time
       (progn (minder--push-message
-              (format "Aborted food, would have been allowed at %s"
-                      (minder--food-allowed-time-formatted)))
-             (setq minder-food-request-allowed-time nil))
-    (message "No food request for aborting")))
+              (format "Aborted something random, would have been allowed at %s"
+                      (minder--something-random-allowed-time-formatted)))
+             (setq minder-something-random-request-allowed-time nil))
+    (message "No something random request for aborting")))
 
-(defun minder--set-food-allowed-soon (&optional factor)
-    "Set food allowed in some time in the future.
-Depends on `minder-food-request-wait-time'.
+(defun minder--set-something-random-allowed-soon (&optional factor)
+    "Set something-random allowed in some time in the future.
+Depends on `minder-something-random-request-wait-time'.
 If non-nil, modify wait time by FACTOR."
-  (setq minder-food-request-allowed-time (time-add (current-time) (* minder-food-request-wait-time 60 (or factor 1))))
+  (setq minder-something-random-request-allowed-time (time-add (current-time) (* minder-something-random-request-wait-time 60 (or factor 1))))
   (minder--push-message (format "Take 3 breaths, and ask me again in %.2f minutes, at %s."
-                                (/ (- (float-time minder-food-request-allowed-time) (float-time (current-time))) 60)
-                                (minder--food-allowed-time-formatted))))
+                                (/ (- (float-time minder-something-random-request-allowed-time) (float-time (current-time))) 60)
+                                (minder--something-random-allowed-time-formatted))))
 
-(defun minder--food-allowed-time-formatted ()
-  "Formatted time string for `minder-food-request-allowed-time'."
-  (format-time-string "%T" minder-food-request-allowed-time))
+(defun minder--something-random-allowed-time-formatted ()
+  "Formatted time string for `minder-something-random-request-allowed-time'."
+  (format-time-string "%T" minder-something-random-request-allowed-time))
 
 (defun minder-do-deed (&optional level)
   "Push a message full of accomplishment to memetic journal.
@@ -144,17 +144,17 @@ See `minder--push-message'"
   (minder--push-message minder-mined-asteriod-message t))
 
 
-(defun minder-ask-to-think-about-food ()
-  "Ask minder to think about food.
-You are allowed to think about food once per day. For `minder-think-about-food-duration'."
+(defun minder-ask-to-think-about-something-random ()
+  "Ask minder to think about something-random.
+You are allowed to think about something-random once per day. For `minder-think-about-something-random-duration'."
   (interactive)
-  (minder--push-message "Hey minder, am I allowed to think about food?")
-  (if minder-thought-about-food-today (minder--push-nogo-message)
+  (minder--push-message "Hey minder, am I allowed to think about something random?")
+  (if minder-thought-about-something-random-today (minder--push-nogo-message)
     (progn (minder--push-message
       (format "Sure, for %s minutes until %s"
-              minder-think-about-food-duration
-              (format-time-string "%T" (time-add (current-time) (* minder-think-about-food-duration 60))))))
-    (setq minder-thought-about-food-today t)))
+              minder-think-about-something-random-duration
+              (format-time-string "%T" (time-add (current-time) (* minder-think-about-something-random-duration 60))))))
+    (setq minder-thought-about-something-random-today t)))
 
 (defun minder-friendly-nogo ()
   "Push a small conversion with minder. Get told a nogo message."
