@@ -63,6 +63,10 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
     - would be nice to put the time awake automaticall
 
 ** bit bigger mine asteriod funcs
+** add a minder hook for commiting,
+    should be easy
+    hook or this advice-add, whatever that is
+
 * Need to fix
   - zsh path inside spacemacs is not correct
   - projectile submodules issue
