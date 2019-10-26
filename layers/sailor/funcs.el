@@ -55,7 +55,7 @@ With WORD as component. Defaults to thing at point."
   "Start stupid search for class decleration syntax for thing at point."
   (interactive)
   (sailor-rg-search-in-project
-   (format "\\bclass\\s+%s" (thing-at-point 'evil-word))))
+   (format "\\bclass\\s+%s\\b" (thing-at-point 'evil-word))))
 
 (defun sailor-dump-find-comp-declaration ()
   "Start search for component declaration syntax for thing at point."
