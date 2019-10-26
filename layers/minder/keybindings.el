@@ -13,4 +13,5 @@
           ("q" . minder-friendly-nogo)
           ("&" . minder-ask-to-think-about-food)
           ("r" . minder-remember-last-msg)
-          ("R" . minder-push-remembered-msgs))))
+          ("R" . minder-push-remembered-msgs)
+          ("x" . minder-delete-meme))))

@@ -193,4 +193,12 @@ The sound file must be a file of absolute paths pointing to .wav files, seperate
 TYPE must be one of `minder-sounds-types'"
   (concat minder-sounds-dir (cdr (assoc type minder-sounds-types))))
 
+(defun minder-delete-meme ()
+  "Give some imaginary feedback about deleting a meme."
+  (interactive)
+  (let ((id (random 1000)))
+    (if (yes-or-no-p (format "Do you really want to current meme %s?" id))
+        (message (format "Deleted meme, was %s" id)))))
+
+
 ;; automatically save it and push it to a repo maybe
