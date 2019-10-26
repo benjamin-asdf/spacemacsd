@@ -1,8 +1,9 @@
 (defconst benj-chsarp-samples-dir "~/repos/csharp/csharp-samples")
 
 ;; TODO get rid of, use yasnippet
-(defconst benj-csharp-program-snippet "
+(defun benj--csharp-program-snippet (name)
 
+  (format "
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -13,10 +14,11 @@ using System.Diagnostics;
 public static class Programm {
 
     public static void Main(string[] args) {
-
+        Console.WriteLine(\"==== %s ====\\n\");
     }
 }
-")
+" name))
+
 
 (add-hook 'csharp-mode-hook 'benj-charp-hook)
 
@@ -71,7 +73,7 @@ See `benj-csharp-dont-compile-region'"
   (interactive "sName for chsarp sample: ")
   (find-file (concat (file-name-as-directory benj-chsarp-samples-dir)
                      (format "%s.cs" (capitalize name))))
-  (insert benj-csharp-program-snippet)
+  (insert (benj--csharp-program-snippet name))
   (goto-char (point-min))
   (forward-line 5))
 
