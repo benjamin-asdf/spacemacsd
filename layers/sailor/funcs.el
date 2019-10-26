@@ -81,15 +81,36 @@ With WORD as component. Defaults to thing at point."
 
 
 
-;; (defun sailor-global-get-references ()
+
+;; (defun sailor-component-declerations-canditates ()
+;;   "List of all component declarations found with global.
+;; Component declartion is a plist containing the the keys
+;; `:path' - The absolute path of the declaration location,
+;; `:line' - The line number of the location,
+;; `:name' - The name of the component."
+
+;;   (let ((global-cmd )) )
+
+
 
 ;;   )
 
-;; somehting with
-;; global --reference --result=grep "UniqueFlagComponent"
+;; (defun sailor--global-find-refs (name)
+
+;;   ((let default-directory idlegame-project-root)
+;;    (shell-command-to-string (format "global --rerence --result=grep %s" (shell-quote-argument name))))
+
+;;   )
+
+;; ;; somehting with
+;; ;; global --reference --result=grep "UniqueFlagComponent"
 
 
+;; (defvar helm-sailor-component-declerations-source
+;;   (helm-build-sync-source "Sailor Component Declarations"
+;;     :candidates (sailor-component-declerations-canditates)))
 
+;; (helm :sources helm-sailor-component-declerations-source :buffer "*helm-sailor-components*")
 
 
 (defconst sailor-fd-find-alot "fd -H -E=.git -I -tf -0 .")
