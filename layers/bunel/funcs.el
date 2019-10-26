@@ -39,3 +39,6 @@ If ARG is non-nil, also enter playmode"
 ;;   "Open SCENE in PROJECT."
 ;;   (interactive)
 ;;   )
+
+
+;; (add-hook 'git-commit-post-finish-hook '(lambda () (message "This is the commit-post-finish-hook!")))
