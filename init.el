@@ -33,7 +33,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(go
+   '(
      ;; basic
      version-control
      helm
@@ -67,6 +67,8 @@ This function should only modify configuration layer settings."
      typescript
      nim
      c-c++
+     vimscript
+     go
 
      ;; benj
      benj-funcs
