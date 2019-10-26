@@ -51,6 +51,18 @@ With WORD as component. Defaults to thing at point."
   "Get matcher syntax for COMP."
   (format "Matcher(\n)?(\n\r)?\.(\n)?(\n\r)?.*%s\\b" comp))
 
+(defun sailor-dump-find-class-declaration ()
+  "Start stupid search for class decleration syntax for thing at point."
+  (interactive)
+  (sailor-rg-search-in-project
+   (format "\\bclass\\s+%s" (thing-at-point 'evil-word))))
+
+(defun sailor-dump-find-comp-declaration ()
+  "Start search for component declaration syntax for thing at point."
+  (interactive)
+  (sailor-rg-search-in-project
+   (format "\\bclass\\s+%s\\s+:.*Component" (thing-at-point 'evil-word))))
+
 
 ;; maybe
 
