@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : visit
+#key : visit
+#contributor : benj
+# --
+
+public override SyntaxNode Visit$0
