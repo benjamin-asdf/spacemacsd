@@ -70,3 +70,4 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
 * Need to fix
   - zsh path inside spacemacs is not correct
   - projectile submodules issue
+  - fix zsh git auto completion (Guess it still has old version)
