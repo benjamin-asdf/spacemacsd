@@ -23,4 +23,4 @@
           ("i" . sailor-dump-find-cs-implementations)
           ("m" . sailor-find-comp-matched)
           ("d" . sailor-dump-find-comp-declaration)
-          ("D" . sailor-dump-find-class-declaration))))
+          ("D" . sailor-dump-find-declaration))))
