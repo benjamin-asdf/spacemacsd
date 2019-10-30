@@ -201,4 +201,17 @@ TYPE must be one of `minder-sounds-types'"
         (message (format "Deleted meme, was %s" id)))))
 
 
+;; WIP
+
+(define-derived-mode minder-mode fundamental-mode "Minder"
+  "Minder major mode for memetic journal files."
+  :syntax-table nil
+  :abbrev-table nil
+  (evil-define-key 'motion minder-mode-map
+    (kbd "J") 'minder-mine-asteriod
+    (kbd "D") 'minder-do-deed
+    (kbd "A") 'minder-push-best-message))
+
+(add-to-list 'auto-mode-alist '("/memetic-journal/" . minder-mode))
+
 ;; automatically save it and push it to a repo maybe
