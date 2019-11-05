@@ -96,6 +96,29 @@ If NEWLINE is non nil, append a newline character."
     (goto-char (point-max))
     (insert (if newline (concat content "\n") content))))
 
+
+(with-eval-after-load 'proctile
+  (defun benj-curr-revision-as-kill (branch-name auto-insert)
+    "Copy current git revision as kill.
+If BRANCH-NAME is non nil, copy the branch name instead of commit sha.
+If AUTO-INSERT is non nil, instantly insert at current buffer position."
+    (let* ((command (if branch-name "git branch --show-current" "git rev-parse HEAD"))
+           (output (benj-remove-newline-end-of-string
+                    (benj-projectile-dir-command-to-string command))))
+      (message output)
+      (when auto-insert (insert output))
+      (kill-new output)))
+
+  (defun benj-projectile-dir-command-to-string (command)
+    "Run COMMAND with the current projectile project root as default dir.
+Evaluate to the output string. See `shell-command-to-string'."
+    (let ((default-directory (projectile-ensure-project (projectile-project-root))))
+      (shell-command-to-string command))))
+
+(defun benj-remove-newline-end-of-string (string)
+  "Remove newline characters at the end of STRING."
+  (replace-regexp-in-string "\n\\'" "" string))
+
 ;; TODO
 ;; (defun benj-comment-out-unity-logs-in-buffer ()
 ;;   "Put csharp comment syntax before Debug\.Log."

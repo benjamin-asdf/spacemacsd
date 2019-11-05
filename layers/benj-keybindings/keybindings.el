@@ -32,6 +32,11 @@
 (spacemacs/set-leader-keys "ogc" 'vc-find-conflicted-file)
 (spacemacs/set-leader-keys "oga" 'magit-staging)
 
+(spacemacs/set-leader-keys "ogr" (lambda () (interactive) (benj-curr-revision-as-kill nil nil)) )
+(spacemacs/set-leader-keys "ogR" (lambda () (interactive) (benj-curr-revision-as-kill nil t)))
+(spacemacs/set-leader-keys "ogb" (lambda () (interactive) (benj-curr-revision-as-kill t nil)))
+(spacemacs/set-leader-keys "ogB" (lambda () (interactive) (benj-curr-revision-as-kill t t)))
+
 (spacemacs/declare-prefix "ob" "buffer")
 (spacemacs/set-leader-keys "obr" 'mikus-reopen-buffer)
 
