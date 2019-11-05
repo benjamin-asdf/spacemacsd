@@ -14,7 +14,6 @@
   - smartparens doesn't work inside snippets, little annoyance
   - emacs gitlab package, maybe a no brainer actually:
     - https://github.com/nlamirault/emacs-gitlab
-  - figure out info mode
 * Goals
 - learn about org
 - minder project
@@ -112,3 +111,5 @@ print "Killed ", $processesFound, " processes $date \n";
 I run this in cron every minute
 1 HR AGO
 You could modify to check for vbs compiler and if theres a duplicate, kill the oldest one
+* crony
+* tmux
