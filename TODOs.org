@@ -21,9 +21,6 @@
 - swith to a tiled window manager
 * Quick
   - function to comment out all debug.logs in buffer
-  - function to yank branch name currenty checked out,
-    - maybe a version that pastes immediately
-    - maybe another one to do that with the commit sha
   - sxhkd + autoclick script
   - function copy-word-from-below
 * Things I would like to have
@@ -46,6 +43,8 @@
 Sep 30 07:15:49 benj-pc emacs[4946]: https://gitlab.gnome.org/GNOME/gtk/issues/221
 Sep 30 07:15:49 benj-pc emacs[4946]: Emacs might crash when run in daemon mode and the X11 connection is unexpectedly lost.
 Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-toolkit=lucid does not have this problem.
+** install emacs with this option, man
+   https://git.savannah.gnu.org/cgit/emacs.git/tree/INSTALL.REPO
 * minder
   - some minor mode where I can press a button repeatly
   - automatically push to private repo every 2 hours or something
@@ -71,3 +70,45 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
   - zsh path inside spacemacs is not correct
   - projectile submodules issue
   - fix zsh git auto completion (Guess it still has old version)
+  -> update git man git@github.com:git/git.git
+
+* potential memory fix:
+  You could make a program that listens and kills duplicate processes
+1 HR AGO
+I use this to kill processes that take to much memory
+1 HR AGO
+#!/run/current-system/sw/bin/perl
+
+use strict;
+use warnings;
+use Proc::ProcessTable;
+
+my $processesFound = 0;
+my $table = Proc::ProcessTable->new;
+
+for my $process (@{$table->table}) {
+    # skip root processes
+    next if $process->uid == 0 or $process->gid == 0;
+
+    # skip any using less than 4 GiB
+    next if $process->rss < 4_294_967_296;
+
+    # document the slaughter
+		$processesFound = $processesFound + 1;
+    (my $cmd = $process->cmndline) =~ s/\s+\z//;
+    print "Killing process: pid=", $process->pid, " uid=", $process->uid, " rss=", $process->rss, " fname=", $process->fname, " cmndline=", $cmd, "\n";
+
+    # try first to terminate process politely
+    kill 15, $process->pid;
+
+    # wait a little, then kill ruthlessly if it's still around
+    sleep 5;
+    kill 9, $process->pid;
+}
+
+my $date = localtime();
+print "Killed ", $processesFound, " processes $date \n";
+1 HR AGO
+I run this in cron every minute
+1 HR AGO
+You could modify to check for vbs compiler and if theres a duplicate, kill the oldest one
