@@ -17,7 +17,8 @@
     (minder-intense-sounds . "intense-sounds")
     (minder-intense-sounds-long . "intense-sounds-long")
     (minder-mining-sounds . "mining-sounds")
-    (minder-rock-breaks-sounds . "rock-breaks"))
+    (minder-rock-breaks-sounds . "rock-breaks")
+    (minder-abstract-sounds . "abstract-sounds"))
   "Types of minder sounds to play. There must be a files for every type,
 in the format described in `minder-play-sound'")
 
@@ -89,6 +90,7 @@ If NON-INTRUSIVE is non nil, supress opening a journal file window."
 (defun minder-push-best-message ()
   "Push one of messages defined in .config/my-messages to minder file."
   (interactive)
+  (minder-play-sound 'minder-abstract-sounds)
   (minder--push-message (benj-best-message)))
 
 (defun minder-request-something-random ()
@@ -210,8 +212,37 @@ TYPE must be one of `minder-sounds-types'"
   (evil-define-key 'motion minder-mode-map
     (kbd "J") 'minder-mine-asteriod
     (kbd "D") 'minder-do-deed
-    (kbd "A") 'minder-push-best-message))
+    (kbd "M") 'minder-push-message
+    (kbd "A") 'minder-push-best-message)
+  ;; maybe I figure out how to reuse the map
+
+  (evil-set-initial-state 'minder-mode 'motion))
+;; fix motion state
+;; or fix the thing for normal mode
 
 (add-to-list 'auto-mode-alist '("/memetic-journal/" . minder-mode))
 
+
+
+;; TODO
 ;; automatically save it and push it to a repo maybe
+
+
+(defun minder-good-morning ()
+  "Ask the user a series of questions and push into journal file.
+Meant to be run at the start of the day."
+  (prompt)
+
+
+  )
+
+(defun minder-good-night ()
+  "Push some stats about the day into the journal file."
+  ;; how many asteriods
+  ;; (or how many point the user gathered on that day I guess)
+  ;; man I want something that says 3 rockets launched etc lul
+  )
+
+
+;; I want to have one cache file for every month
+;; there I have one big (setq) ?
