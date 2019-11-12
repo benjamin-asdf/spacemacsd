@@ -503,6 +503,8 @@ before packages are loaded."
 
   (setq-default spacemacs-show-trailing-whitespace nil)
 
+  (setq-default avy-timeout-seconds 0.25)
+
   ;; rg
   (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
