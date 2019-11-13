@@ -141,9 +141,12 @@ See `minder-push-message'."
   "Push `minder-mined-asteriod-message' to memetic journal.
 See `minder--push-message'"
   (interactive)
-  (minder-play-sound 'minder-mining-sounds)
-  (minder-play-sound 'minder-rock-breaks-sounds)
+  (minder--play-mine-sounds)
   (minder--push-message minder-mined-asteriod-message t))
+
+(defun minder--play-mine-sounds ()
+  (minder-play-sound 'minder-mining-sounds)
+  (minder-play-sound 'minder-rock-breaks-sounds))
 
 
 (defun minder-ask-to-think-about-something-random ()
@@ -211,8 +214,10 @@ TYPE must be one of `minder-sounds-types'"
   :abbrev-table nil
   (evil-define-key 'motion minder-mode-map
     (kbd "J") 'minder-mine-asteriod
+    (kbd "L") 'minder-mine-big-asteriod
     (kbd "D") 'minder-do-deed
     (kbd "M") 'minder-push-message
+    (kbd "R") 'minder-push-remembered-msgs
     (kbd "A") 'minder-push-best-message)
   ;; maybe I figure out how to reuse the map
 
@@ -223,6 +228,38 @@ TYPE must be one of `minder-sounds-types'"
 (add-to-list 'auto-mode-alist '("/memetic-journal/" . minder-mode))
 
 
+;; TODO
+(defvar minder-asteroid-taps-made 0)
+;; todo random between 3 and 6 or something
+(defconst minder-big-asteroid-taps-required 4)
+(defun minder-mine-big-asteriod ()
+  (interactive)
+  (setq minder-asteroid-taps-made (1+ minder-asteroid-taps-made))
+  (minder--play-mine-sounds)
+  (minder-big-asteriod-progress-message (/ minder-asteroid-taps-made (* minder-big-asteroid-taps-required 1.0)))
+  (when (>= minder-asteroid-taps-made minder-big-asteroid-taps-required)
+    (progn (minder--push-message "Asteriod mined.")
+           (setq minder-asteroid-taps-made 0))))
+
+(defun minder-big-asteriod-progress-message (progress)
+  "Push message about asteriod mining progress.
+PROGRESS should be a float between 0 and 1."
+  (minder-push-message  "Mining asteriod... ")
+  (minder-push-message  (minder-progress-bar progress)))
+
+;; TODO make the bar look more different when asteriod minded
+(defconst minder-progress-bar-length 40)
+(defun minder-progress-bar (progress)
+  (let ((progress-part-size (floor (* progress minder-progress-bar-length))))
+    (concat (make-string progress-part-size ?#) ">"
+            (minder--progress-bar-thin-line (- minder-progress-bar-length progress-part-size)))))
+
+(defun minder--progress-bar-thin-line (lenght)
+  "Evaluates to a string like '_ _ _' with LENGTH"
+  (let ((s ""))
+    (dotimes (i (/ lenght 2) s)
+      (setq s (concat s "_ " )))
+    s))
 
 ;; TODO
 ;; automatically save it and push it to a repo maybe
