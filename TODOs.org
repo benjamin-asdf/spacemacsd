@@ -22,6 +22,7 @@
   - function to comment out all debug.logs in buffer
   - sxhkd + autoclick script
   - function copy-word-from-below
+  - function to copy the " register into a named one
 * Things I would like to have
   - something to search whole project, basically fd with -I
   - or something to search design dir
@@ -111,5 +112,5 @@ print "Killed ", $processesFound, " processes $date \n";
 I run this in cron every minute
 1 HR AGO
 You could modify to check for vbs compiler and if theres a duplicate, kill the oldest one
-* crony
+* conky
 * tmux
