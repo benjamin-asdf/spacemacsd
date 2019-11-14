@@ -23,6 +23,7 @@
   - sxhkd + autoclick script
   - function copy-word-from-below
   - function to copy the " register into a named one
+  - function to `dip` but leave 1 line
 * Things I would like to have
   - something to search whole project, basically fd with -I
   - or something to search design dir
