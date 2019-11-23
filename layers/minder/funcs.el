@@ -263,7 +263,6 @@ PROGRESS should be a float between 0 and 1."
 
 
 
-
 ;; TODO where to put this or rename this?
 ;; TODO debug
 ;; (defvar helm-benj-best-message-source
@@ -275,12 +274,8 @@ PROGRESS should be a float between 0 and 1."
  (interactive)
  (minder-push-best-message (format "#!@ - %s" (helm :sources helm-benj-best-message-source :buffer "*become-aware*"))))
 
-
-
-
 ;; TODO
 ;; automatically save it and push it to a repo maybe
-
 
 (defun minder-good-morning ()
   "Ask the user a series of questions and push into journal file.
