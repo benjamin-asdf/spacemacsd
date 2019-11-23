@@ -11,7 +11,7 @@
           ("d" . minder-do-deed)
           ("j" . minder-mine-asteriod)
           ("q" . minder-friendly-nogo)
-          ("&" . minder-ask-to-think-about-food)
+          ("&" . minder-ask-to-think-about-something-random)
           ("r" . minder-remember-last-msg)
           ("R" . minder-push-remembered-msgs)
           ("x" . minder-delete-meme))))
