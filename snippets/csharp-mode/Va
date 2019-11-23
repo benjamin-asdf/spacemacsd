@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : Va
+#key : Va
+#contributor : benj
+# --
+[Values(true, false)] bool $1
