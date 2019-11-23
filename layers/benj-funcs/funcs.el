@@ -96,14 +96,13 @@ If NEWLINE is non nil, append a newline character."
     (goto-char (point-max))
     (insert (if newline (concat content "\n") content))))
 
-
-(with-eval-after-load 'proctile
+(with-eval-after-load 'projectile
   (defun benj-curr-revision-as-kill (branch-name auto-insert)
     "Copy current git revision as kill.
 If BRANCH-NAME is non nil, copy the branch name instead of commit sha.
 If AUTO-INSERT is non nil, instantly insert at current buffer position."
     (let* ((command (if branch-name "git branch --show-current" "git rev-parse HEAD"))
-           (output (benj-remove-newline-end-of-string
+            (output (benj-remove-newline-end-of-string
                     (benj-projectile-dir-command-to-string command))))
       (message output)
       (when auto-insert (insert output))
