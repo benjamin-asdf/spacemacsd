@@ -77,4 +77,4 @@ See `benj-csharp-dont-compile-region'"
   (goto-char (point-min))
   (forward-line 5))
 
-(setq omnisharp-expected-server-version "1.34.3")
+(setq omnisharp-expected-server-version "1.34.7")
