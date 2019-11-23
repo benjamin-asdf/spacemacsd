@@ -125,6 +125,18 @@ Default is register a."
   (interactive)
   (evil-set-register (or reg ?a) (evil-get-register ?\" t)))
 
+
+(defun benj-delete-some-whitespace ()
+  "Delete a lot of white space but keep one line.
+This is the same as vim `dipO'"
+  (interactive)
+  (re-search-backward "^.+$")
+  (delete-blank-lines)
+  (forward-line 1)
+  (insert "\n"))
+
+
+
 ;; TODO
 ;; (defun benj-comment-out-unity-logs-in-buffer ()
 ;;   "Put csharp comment syntax before Debug\.Log."
