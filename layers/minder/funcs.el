@@ -87,11 +87,11 @@ If NON-INTRUSIVE is non nil, supress opening a journal file window."
   "Format MSG for minder memetic journal."
   (format "[%s] %s\n" (format-time-string "%T") msg))
 
-(defun minder-push-best-message ()
-  "Push one of messages defined in .config/my-messages to minder file."
+(defun minder-push-best-message (&optional msg)
+  "Push MSG or one of .config/my-messages to minder file. "
   (interactive)
   (minder-play-sound 'minder-abstract-sounds)
-  (minder--push-message (benj-best-message)))
+  (minder--push-message (or msg (benj-best-message))))
 
 (defun minder-request-something-random ()
   "Ask for permission to eat"
@@ -261,6 +261,23 @@ PROGRESS should be a float between 0 and 1."
       (setq s (concat s "_ " )))
     s))
 
+
+
+
+;; TODO where to put this or rename this?
+;; TODO debug
+;; (defvar helm-benj-best-message-source
+;;  (helm-build-sync-source "Best Message"
+;;    :candidates (benj-read-lines best-messages-file)))
+
+(defun minder-select-a-message ()
+ "Use helm to select one of best messages and push it."
+ (interactive)
+ (minder-push-best-message (format "#!@ - %s" (helm :sources helm-benj-best-message-source :buffer "*become-aware*"))))
+
+
+
+
 ;; TODO
 ;; automatically save it and push it to a repo maybe
 
@@ -283,3 +300,9 @@ Meant to be run at the start of the day."
 
 ;; I want to have one cache file for every month
 ;; there I have one big (setq) ?
+
+;; TODO start rocked by typing some correct numbers
+;; (let ((string "8510"))
+;;   (if (= string (read-string (format "Type %s" string)))
+;;       (message "you typed the string")
+;;     (message "you did not type the string")))
