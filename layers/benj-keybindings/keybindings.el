@@ -6,6 +6,7 @@
 
 (spacemacs/declare-prefix "o" "own")
 
+
 (spacemacs/set-leader-keys "ojg" 'spacemacs/jump-to-definition)
 
 ;;avy
@@ -42,6 +43,8 @@
 
 (spacemacs/declare-prefix "ox" "text")
 (spacemacs/set-leader-keys "oxw" 'benj-flush-empty-lines)
+(spacemacs/set-leader-keys "oxp" 'benj-delete-some-whitespace)
+
 
 (spacemacs/set-leader-keys "omi" 'benj-insert-other-line)
 
@@ -52,3 +55,5 @@
 
 (spacemacs/declare-prefix "on" "new")
 (spacemacs/set-leader-keys "ons" 'benj-new-shell-script)
+
+(spacemacs/set-leader-keys "orr" 'benj-copy-last-yank-to-register)
