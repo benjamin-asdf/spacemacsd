@@ -118,6 +118,13 @@ Evaluate to the output string. See `shell-command-to-string'."
   "Remove newline characters at the end of STRING."
   (replace-regexp-in-string "\n\\'" "" string))
 
+
+(defun benj-copy-last-yank-to-register (&optional reg)
+  "Copy the contens of the \" register into REG.
+Default is register a."
+  (interactive)
+  (evil-set-register (or reg ?a) (evil-get-register ?\" t)))
+
 ;; TODO
 ;; (defun benj-comment-out-unity-logs-in-buffer ()
 ;;   "Put csharp comment syntax before Debug\.Log."
