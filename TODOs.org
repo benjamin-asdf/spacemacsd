@@ -22,14 +22,16 @@
   - function to comment out all debug.logs in buffer
   - sxhkd + autoclick script
   - function copy-word-from-below
-  - function to copy the " register into a named one
   - function to `dip` but leave 1 line
+  - function to put curlies around if
+  - function to delete the rest inside param syntax
 * Things I would like to have
   - something to search whole project, basically fd with -I
   - or something to search design dir
   - Sailor:
     - "SearchActionHandler"
   - some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
+  - figure out how to trick rider, have a script for that
 * bunel
   - fix symlink
     - save file hook, then move the file?
@@ -46,6 +48,11 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Emacs might crash when run in daemon mode a
 Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-toolkit=lucid does not have this problem.
 ** install emacs with this option, man
    https://git.savannah.gnu.org/cgit/emacs.git/tree/INSTALL.REPO
+*** build emacs
+    - put the the new build into another dir
+    - test if it works
+    - then delete the old emacs installation and use the new one
+    - cmon man this is easy
 * minder
   - some minor mode where I can press a button repeatly
   - automatically push to private repo every 2 hours or something
@@ -71,7 +78,6 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
   - zsh path inside spacemacs is not correct
   - projectile submodules issue
   - fix zsh git auto completion (Guess it still has old version)
-  -> update git man git@github.com:git/git.git
 
 * potential memory fix:
   You could make a program that listens and kills duplicate processes
@@ -115,3 +121,20 @@ I run this in cron every minute
 You could modify to check for vbs compiler and if theres a duplicate, kill the oldest one
 * conky
 * tmux
+* emacs-roslyn-code-action program
+  - man imagine shit like I give you a syntax tree of the visual selection
+    - then it puts curlies around if blocks for example
+* make rider work
+** try with docker
+*** milan notes
+   it will look something like this for you
+FROM <someLinuxDistro>  # have a look into dockerhub
+WORKDIR = <someDir>
+COPY = <yourProgram> to WORKDIR
+CMD <execute program>
+(edited)
+
+it is just a sketch but you will need to copy your program there and run it if it is executable
+if not you will put installation command there also (edited)
+and one more thing which I haven't done you will
+probably need to enable X if it is graphical app. I haven't done it, but it will be again some config in Dockerfile.
