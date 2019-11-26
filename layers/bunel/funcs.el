@@ -1,6 +1,9 @@
 (defconst bunel-handle-path "/tmp/bunel-handles")
 (defconst bunel-idlegame-projects '("IdleGame" "IdleGameSymbolicLink" "IdleGameSymbolicLink-Extra"))
 (defconst bunel-default-unity-project "IdleGame")
+(defconst bunel-bridge-file "/home/benj/repos/bunel/BenjBridge.cs")
+(defconst bunel-unity-location "/home/benj/idlegame/IdleGame/Assets/Editor/benj-private/")
+
 
 (defconst bunel-method-names
   '((bunel-refresh . "refresh")
@@ -39,6 +42,17 @@ If ARG is non-nil, also enter playmode"
 ;;   "Open SCENE in PROJECT."
 ;;   (interactive)
 ;;   )
+
+
+(defun bunel-ensure-bridge-file (&optional force)
+  "Ensure bridge file is in the idlegame project.
+If FORCE is non nil, override any existing file."
+  (interactive)
+  (if (or (not (file-exists-p (concat bunel-unity-location (file-name-base bunel-bridge-file)))) force)
+    (unless (file-exists-p bunel-unity-location)
+      (mkdir bunel-unity-location)
+      (copy-file bunel-bridge-file bunel-unity-location))))
+
 
 
 ;; (add-hook 'git-commit-post-finish-hook '(lambda () (message "This is the commit-post-finish-hook!")))
