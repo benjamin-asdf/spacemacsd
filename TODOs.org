@@ -22,7 +22,6 @@
   - function to comment out all debug.logs in buffer
   - sxhkd + autoclick script
   - function copy-word-from-below
-  - function to `dip` but leave 1 line
   - function to put curlies around if
   - function to delete the rest inside param syntax
 * Things I would like to have
