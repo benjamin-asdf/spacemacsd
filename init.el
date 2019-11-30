@@ -530,6 +530,8 @@ before packages are loaded."
 
   (set-face-foreground 'spaceline-python-venv "SeaGreen")
 
+  (electric-pair-mode)
+
   ;; if using minder, insert some messages to remember into todays journal.
   (when (configuration-layer/layer-used-p 'minder)
     (minder-push-remembered-msgs))
