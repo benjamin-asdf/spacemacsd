@@ -126,6 +126,7 @@ Default is register a."
   (evil-set-register (or reg ?a) (evil-get-register ?\" t)))
 
 
+;; TODO fix case where there are no lines above us here
 (defun benj-delete-some-whitespace ()
   "Delete a lot of white space but keep one line.
 This is the same as vim `dipO'"
