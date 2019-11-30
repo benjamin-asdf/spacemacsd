@@ -135,6 +135,22 @@ This is the same as vim `dipO'"
   (forward-line 1)
   (insert "\n"))
 
+(defun benj-copy-file-pos-pretty ()
+  "Copy the current pos in the format <filename> line <linenum>."
+  (interactive)
+  (kill-new
+   (format "`%s` line %d"
+           (file-name-base (buffer-file-name))
+           (line-number-at-pos (point)))))
+
+(defun benj-delete-til-closing-parem ()
+  "Delete the rest until closing parem.
+Basically evil `dt)'"
+  (interactive)
+  (let ((beg (point)))
+    (search-forward ")")
+    (forward-char -1)
+    (delete-region beg (point))))
 
 
 ;; TODO

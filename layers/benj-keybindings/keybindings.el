@@ -1,3 +1,5 @@
+;; TODO make this thing here cleaner
+
 ;; override some ESC stuff
 (define-key ctl-x-map (kbd "<ESC>" ) nil)
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
@@ -44,6 +46,8 @@
 (spacemacs/declare-prefix "ox" "text")
 (spacemacs/set-leader-keys "oxw" 'benj-flush-empty-lines)
 (spacemacs/set-leader-keys "oxp" 'benj-delete-some-whitespace)
+(spacemacs/set-leader-keys "oxl" 'benj-delete-til-closing-parem)
+
 
 
 (spacemacs/set-leader-keys "omi" 'benj-insert-other-line)
@@ -57,3 +61,6 @@
 (spacemacs/set-leader-keys "ons" 'benj-new-shell-script)
 
 (spacemacs/set-leader-keys "orr" 'benj-copy-last-yank-to-register)
+
+(spacemacs/declare-prefix "of" "file")
+(spacemacs/set-leader-keys "ofy" 'benj-copy-file-pos-pretty)
