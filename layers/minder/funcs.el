@@ -8,6 +8,11 @@
 (defconst minder-sounds-dir (concat minder-private-repo-root "sounds-lookup/")
   "The directory that minder checks for sound lookup files")
 
+(defconst minder-cache-dir (concat minder-private-repo-root ".cache/"))
+
+(defconst minder-file-ext ".mind"
+  "The extension that should conventionally used for mind files")
+
 ;; TODO I guess I should eval an sexpr there instead of having a file with lines.
 (defconst minder-remembered-msgs-file (concat minder-private-repo-root "remember-that")
   "The file minder stores remembered msgs.")
@@ -85,7 +90,7 @@ If NON-INTRUSIVE is non nil, supress opening a journal file window."
 
 (defun minder--formatted-msg (msg)
   "Format MSG for minder memetic journal."
-  (format "[%s] %s\n" (format-time-string "%T") msg))
+  (format "[%s] %s\n" "###->" msg))
 
 (defun minder-push-best-message (&optional msg)
   "Push MSG or one of .config/my-messages to minder file. "
@@ -297,7 +302,29 @@ Meant to be run at the start of the day."
 ;; there I have one big (setq) ?
 
 ;; TODO start rocked by typing some correct numbers
-;; (let ((string "8510"))
-;;   (if (= string (read-string (format "Type %s" string)))
-;;       (message "you typed the string")
-;;     (message "you did not type the string")))
+(defun minder-launch-rocked ()
+  (interactive)
+  (let ((s (minder-random-num-string 5)))
+   (if (string-equal s (read-string (format "Type %s" s)))
+       (message "you typed the s")
+     (message "you did not type the s"))))
+
+
+;; (minder-launch-rocked)
+
+
+
+(defun minder-random-num-string (length)
+  "Get a string of numbers with LENGTH."
+  (interactive)
+  (number-to-string (+ (expt 10 length) (random (expt 10 length)))))
+
+
+
+
+
+
+
+
+
+

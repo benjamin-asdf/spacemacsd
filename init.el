@@ -531,7 +531,7 @@ before packages are loaded."
   (set-face-foreground 'spaceline-python-venv "SeaGreen")
 
   (setq-default split-width-threshold 80)
-  (setq-default split-hight-threshold 1000)
+  (setq-default split-hight-threshold 500)
 
   (electric-pair-mode)
 

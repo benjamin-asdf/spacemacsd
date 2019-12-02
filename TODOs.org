@@ -77,6 +77,7 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
   - zsh path inside spacemacs is not correct
   - projectile submodules issue
   - fix zsh git auto completion (Guess it still has old version)
+  - fix bug where we detect too much string
 
 * potential memory fix:
   You could make a program that listens and kills duplicate processes
