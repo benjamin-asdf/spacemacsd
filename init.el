@@ -530,6 +530,9 @@ before packages are loaded."
 
   (set-face-foreground 'spaceline-python-venv "SeaGreen")
 
+  (setq-default split-width-threshold 80)
+  (setq-default split-hight-threshold 1000)
+
   (electric-pair-mode)
 
   ;; if using minder, insert some messages to remember into todays journal.
