@@ -37,7 +37,7 @@ This function should only modify configuration layer settings."
      ;; basic
      version-control
      helm
-     gtags
+     ;; gtags
      (auto-completion  :variables
                        auto-completion-complete-with-key-sequence "ll"
                        auto-completion-enable-help-tooltip 'manual)
@@ -57,11 +57,11 @@ This function should only modify configuration layer settings."
      csharp
      python
      windows-scripts
-     javascript
-     ruby
+     ;; javascript
+     ;; ruby
      shell-scripts
      systemd
-     html
+     ;; html
      markdown
      yaml
      typescript
@@ -74,16 +74,16 @@ This function should only modify configuration layer settings."
      benj-funcs
      benj-keybindings
      benj-themes-config
-     benj-tags
-     benj-external
+     ;;benj-tags
+     ;;benj-external
      substitute-utils
      csharp-config
      idlegame-special-config
-     my-config-spellcheck
-     redshiftel
+     ;;my-config-spellcheck
+     ;;redshiftel
      sailor
-     best-banners
-     bunel
+     ;;best-banners
+     ;;bunel
      minder
      )
 
