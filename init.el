@@ -146,7 +146,7 @@ It should only modify the values of Spacemacs settings."
    ;; This variable has no effect if Emacs is launched with the parameter
    ;; `--insecure' which forces the value of this variable to nil.
    ;; (default t)
-   dotspacemacs-elpa-https t
+   dotspacemacs-elpa-https nil
 
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    ;; (default 5)
@@ -197,7 +197,7 @@ It should only modify the values of Spacemacs settings."
    ;; A string value must be a path to an image format supported
    ;; by your Emacs build.
    ;; If the value is nil then no banner is displayed. (default 'official)
-   dotspacemacs-startup-banner 'private
+   dotspacemacs-startup-banner 'official
 
    ;; List of items to show in startup buffer or an association list of
    ;; the form `(list-type . list-size)`. If nil then it is disabled.
@@ -529,8 +529,6 @@ before packages are loaded."
   (setq-default dotspacemacs-mode-line-unicode-symbols nil)
 
   (set-face-foreground 'spaceline-python-venv "SeaGreen")
-
-  (electric-pair-mode)
 
   ;; if using minder, insert some messages to remember into todays journal.
   (when (configuration-layer/layer-used-p 'minder)

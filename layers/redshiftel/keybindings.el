@@ -1,1 +1,1 @@
-/home/benj/repos/redshiftel/keybindings.el
+;; /home/benj/repos/redshiftel/keybindings.el

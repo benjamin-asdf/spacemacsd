@@ -10,7 +10,7 @@ If the file specified in best-banners-messages-file matches the saved file, we t
              (yes-or-no-p "Saved best-messages file, do you want to recreate spacemacs startup banners?"))
     (best-banners-recreate)))
 
-(add-hook 'after-save-hook 'best-banners--save-file-hook)
+;; (add-hook 'after-save-hook 'best-banners--save-file-hook)
 
 (defun best-banners-recreate ()
   "Recreate banners from best-message file."

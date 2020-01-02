@@ -26,7 +26,8 @@ public static class Programm {
   (benj-change-csharp-style)
   (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
   (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
-  (setq-local buffer-file-coding-system 'windows-1256-unix))
+  (setq-local buffer-file-coding-system 'windows-1256-unix)
+  (setq-local company-idle-delay 1.5))
 
 (defun benj-change-csharp-style()
   (setq indent-tabs-mode nil)
