@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : roull
+#key : roull
+#contributor :
+# --
+Globals.RouletteLog($"$0");

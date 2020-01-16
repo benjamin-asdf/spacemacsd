@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : exit
+#key : exit
+#contributor :
+# --
+AddOnExitMenu($1, () => {
+    $0
+});
