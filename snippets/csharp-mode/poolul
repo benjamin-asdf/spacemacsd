@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : poolul
+#key : poolul
+#contributor :
+# --
+using (PoolUtils.UseList<${1:IEntity}>(out var ${2:list})) {
+      $0
+}

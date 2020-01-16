@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : addr
+#key : addr
+#contributor :
+# --
+AddReactEach($1, e => {
+    $0
+});
