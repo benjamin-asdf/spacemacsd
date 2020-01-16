@@ -280,8 +280,6 @@ PROGRESS should be a float between 0 and 1."
 (defun minder-good-morning ()
   "Ask the user a series of questions and push into journal file.
 Meant to be run at the start of the day."
-  (prompt)
-
 
   )
 
@@ -297,7 +295,12 @@ Meant to be run at the start of the day."
 ;; there I have one big (setq) ?
 
 ;; TODO start rocked by typing some correct numbers
-;; (let ((string "8510"))
-;;   (if (= string (read-string (format "Type %s" string)))
-;;       (message "you typed the string")
-;;     (message "you did not type the string")))
+
+
+
+(defun minder-start-rocket ()
+  (interactive)
+  (let ((string (number-to-string (random (expt 10 6)))))
+   (if (string-equal string (read-string (format "Type %s" string)))
+       (message "rocked started.")
+     (message "Try again."))))
