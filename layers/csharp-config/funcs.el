@@ -27,7 +27,13 @@ public static class Programm {
   (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
   (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
   (setq-local buffer-file-coding-system 'windows-1256-unix)
+  ;; windows only, slow
   (setq-local company-idle-delay 1.5))
+
+;; hack for windows, because this is slow
+(defun c-before-change (beg end))
+
+
 
 (defun benj-change-csharp-style()
   (setq indent-tabs-mode nil)
