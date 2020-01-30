@@ -14,4 +14,5 @@
           ("&" . minder-ask-to-think-about-something-random)
           ("r" . minder-remember-last-msg)
           ("R" . minder-push-remembered-msgs)
-          ("x" . minder-delete-meme))))
+          ("x" . minder-delete-meme)
+          ("s" . minder-start-rocket))))

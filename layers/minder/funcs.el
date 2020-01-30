@@ -297,10 +297,12 @@ Meant to be run at the start of the day."
 ;; TODO start rocked by typing some correct numbers
 
 
+(defvar minder-last-rocked-string nil)
 
 (defun minder-start-rocket ()
   (interactive)
-  (let ((string (number-to-string (random (expt 10 6)))))
-   (if (string-equal string (read-string (format "Type %s" string)))
-       (message "rocked started.")
-     (message "Try again."))))
+  (setq minder-last-rocked-string (or minder-last-rocked-string (number-to-string (random (expt 10 6)))))
+  (if (string-equal minder-last-rocked-string (read-string (format "Type %s" minder-last-rocked-string)))
+      (progn (message "rocked started.")
+             (setq minder-last-rocked-string nil))
+    (message "Try again.")))
