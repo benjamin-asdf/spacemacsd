@@ -97,6 +97,16 @@ If NEWLINE is non nil, append a newline character."
     (insert (if newline (concat content "\n") content))))
 
 (with-eval-after-load 'projectile
+
+  (defun benj-diff-files (&optional rev)
+    "Print the output of git diff --name-only to temp buffer.
+If REV is non nil compare with REV instead of default develop."
+    (interactive)
+    (let ((other-rev (or rev "develop")))
+      (with-output-to-temp-buffer (format "diff-%s..HEAD" other-rev)
+          (print (shell-command-to-string (format "git diff --name-only %s..HEAD" other-rev)))
+        (print standard-output))))
+
   (defun benj-curr-revision-as-kill (branch-name auto-insert)
     "Copy current git revision as kill.
 If BRANCH-NAME is non nil, copy the branch name instead of commit sha.

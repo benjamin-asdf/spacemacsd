@@ -39,6 +39,7 @@
 (spacemacs/set-leader-keys "ogR" (lambda () (interactive) (benj-curr-revision-as-kill nil t)))
 (spacemacs/set-leader-keys "ogb" (lambda () (interactive) (benj-curr-revision-as-kill t nil)))
 (spacemacs/set-leader-keys "ogB" (lambda () (interactive) (benj-curr-revision-as-kill t t)))
+(spacemacs/set-leader-keys "ogdf" 'benj-diff-files)
 
 (spacemacs/declare-prefix "ob" "buffer")
 (spacemacs/set-leader-keys "obr" 'mikus-reopen-buffer)
