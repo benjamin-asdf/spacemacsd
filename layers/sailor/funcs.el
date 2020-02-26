@@ -67,7 +67,7 @@ With WORD as component. Defaults to thing at point."
 (defun sailor-get-pet-id-with-name (name)
   (interactive "sPet name: ")
   (with-temp-buffer
-    (insert-file-contents "c:/ClashOfStreamers/IdleGame/Assets/#/Sources/Expansion/PetsMetaData.asset")
+    (insert-file-contents "c:/ClashOfStreamers/IdleGame/Assets/#/Sources/Expansion/Shared/PetsMetaData.asset")
     (search-forward-regexp (format "%s.*\n.*id: \\(.*\\)" name) nil t)
     (message (match-string 1))
     (kill-new (match-string 1))))
