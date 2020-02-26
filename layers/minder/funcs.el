@@ -280,8 +280,11 @@ PROGRESS should be a float between 0 and 1."
 (defun minder-good-morning ()
   "Ask the user a series of questions and push into journal file.
 Meant to be run at the start of the day."
-
-  )
+  (interactive)
+  (insert (format minder-good-morning-template (current-time-string)))
+  (evil-insert-newline-above)
+  (evil-insert-state)
+  (indent-according-to-mode))
 
 (defun minder-good-night ()
   "Push some stats about the day into the journal file."
