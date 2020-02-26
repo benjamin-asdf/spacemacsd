@@ -40,6 +40,7 @@
 (spacemacs/set-leader-keys "ogb" (lambda () (interactive) (benj-curr-revision-as-kill t nil)))
 (spacemacs/set-leader-keys "ogB" (lambda () (interactive) (benj-curr-revision-as-kill t t)))
 (spacemacs/set-leader-keys "ogdf" 'benj-diff-files)
+(spacemacs/set-leader-keys "ogfc" 'magit-file-checkout)
 
 (spacemacs/declare-prefix "ob" "buffer")
 (spacemacs/set-leader-keys "obr" 'mikus-reopen-buffer)
@@ -65,3 +66,7 @@
 
 (spacemacs/declare-prefix "of" "file")
 (spacemacs/set-leader-keys "ofy" 'benj-copy-file-pos-pretty)
+
+
+(spacemacs/declare-prefix "oo" "org")
+(spacemacs/set-leader-keys "oop" 'org-pomodoro)
