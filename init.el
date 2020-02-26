@@ -240,7 +240,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; Default font or prioritized list of fonts.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 15
+                               :size 14
                                :weight normal
                                :width normal)
 
@@ -517,7 +517,7 @@ before packages are loaded."
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
 
 
-  (setq-default helm-candidate-number-limit 100)
+  (setq-default helm-candidate-number-limit 30)
 
   ;;projectile-fd
   (defconst my-fd-command "fd -H -E=.git -tf . -0")
@@ -530,11 +530,21 @@ before packages are loaded."
 
   (set-face-foreground 'spaceline-python-venv "SeaGreen")
 
+  (setenv "SSH_ASKPASS" "git-gui--askpass")
+
   ;; if using minder, insert some messages to remember into todays journal.
   (when (configuration-layer/layer-used-p 'minder)
-    (minder-push-remembered-msgs))
+    (minder-push-remembered-msgs)
+    (minder-check-if-sunday))
 
   )
+
+(with-eval-after-load 'org-pomodoro
+  (setq-default org-pomodoro-manual-break t)
+  (setq-default org-pomodoro-short-break-length 3))
+
+
+
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
