@@ -9,8 +9,8 @@
   "The directory that minder checks for sound lookup files")
 
 ;; TODO I guess I should eval an sexpr there instead of having a file with lines.
-(defconst minder-remembered-msgs-file (concat minder-private-repo-root "remember-that")
-  "The file minder stores remembered msgs.")
+;;(defconst minder-remembered-msgs-file (concat minder-private-repo-root "remember-that")
+  ;;"The file minder stores remembered msgs.")
 
 (defconst minder-sounds-types
   '((minder-friendly-sounds . "friendly-sounds")
@@ -35,19 +35,32 @@ in the format described in `minder-play-sound'")
 (defconst minder-mined-asteriod-message "Mined an asteriod."
   "The default basic deed.")
 
-(defconst minder-something-random-request-wait-time 10
-  "The wait time in minutes between requesting something-random and allowing something-random.")
+(defconst minder-food-request-wait-time 10
+  "The wait time in minutes between requesting food and allowing food.")
 
-(defconst minder-think-about-something-random-duration 8)
+(defconst minder-think-about-food-duration 8)
 
 ;; Variables
 
 (defvar minder-last-pushed-msg nil)
 
-(defvar minder-something-random-request-allowed-time nil)
+(defvar minder-food-request-allowed-time nil)
 
 ;; TODO sore in cache file.
-(defvar minder-thought-about-something-random-today nil)
+(defvar minder-thought-about-food-today nil)
+
+
+;; TODO set as environment variable or something
+(defvar minder-play-sound-command
+  "benaplay")
+
+(defconst minder-play-sound-command-linux "aplay")
+
+(defconst minder-good-morning-template
+  "* %s
+** Wake up Info
+** WorkspotInfo")
+
 
 ;; Functions
 
@@ -93,42 +106,42 @@ If NON-INTRUSIVE is non nil, supress opening a journal file window."
   (minder-play-sound 'minder-abstract-sounds)
   (minder--push-message (or msg (benj-best-message))))
 
-(defun minder-request-something-random ()
+(defun minder-request-food ()
   "Ask for permission to eat"
   (interactive)
   (minder--push-message "Hey minder, am I allowed to eat now?")
-  (cond ((null minder-something-random-request-allowed-time)
-         (minder--set-something-random-allowed-soon))
-        ((not (time-less-p minder-something-random-request-allowed-time (current-time)))
+  (cond ((null minder-food-request-allowed-time)
+         (minder--set-food-allowed-soon))
+        ((not (time-less-p minder-food-request-allowed-time (current-time)))
          (message "Not yet, take 3 breaths."))
         ((not (and (yes-or-no-p "Did you take 3 breaths?") (yes-or-no-p "Did you REALY take 3 breaths?")))
-         (minder--set-something-random-allowed-soon 0.33))
+         (minder--set-food-allowed-soon 0.33))
         (t
          (minder--push-message "You are allowed to think about something random now.")
-         (setq minder-something-random-request-allowed-time nil))))
+         (setq minder-food-request-allowed-time nil))))
 
-(defun minder-abort-something-random-request ()
-  "Abort something-random request, if one is ongoing. Inform user."
+(defun minder-abort-food-request ()
+  "Abort food request, if one is ongoing. Inform user."
   (interactive)
-  (if minder-something-random-request-allowed-time
+  (if minder-food-request-allowed-time
       (progn (minder--push-message
               (format "Aborted something random, would have been allowed at %s"
-                      (minder--something-random-allowed-time-formatted)))
-             (setq minder-something-random-request-allowed-time nil))
+                      (minder--food-allowed-time-formatted)))
+             (setq minder-food-request-allowed-time nil))
     (message "No something random request for aborting")))
 
-(defun minder--set-something-random-allowed-soon (&optional factor)
-    "Set something-random allowed in some time in the future.
-Depends on `minder-something-random-request-wait-time'.
+(defun minder--set-food-allowed-soon (&optional factor)
+    "Set food allowed in some time in the future.
+Depends on `minder-food-request-wait-time'.
 If non-nil, modify wait time by FACTOR."
-  (setq minder-something-random-request-allowed-time (time-add (current-time) (* minder-something-random-request-wait-time 60 (or factor 1))))
+  (setq minder-food-request-allowed-time (time-add (current-time) (* minder-food-request-wait-time 60 (or factor 1))))
   (minder--push-message (format "Take 3 breaths, and ask me again in %.2f minutes, at %s."
-                                (/ (- (float-time minder-something-random-request-allowed-time) (float-time (current-time))) 60)
-                                (minder--something-random-allowed-time-formatted))))
+                                (/ (- (float-time minder-food-request-allowed-time) (float-time (current-time))) 60)
+                                (minder--food-allowed-time-formatted))))
 
-(defun minder--something-random-allowed-time-formatted ()
-  "Formatted time string for `minder-something-random-request-allowed-time'."
-  (format-time-string "%T" minder-something-random-request-allowed-time))
+(defun minder--food-allowed-time-formatted ()
+  "Formatted time string for `minder-food-request-allowed-time'."
+  (format-time-string "%T" minder-food-request-allowed-time))
 
 (defun minder-do-deed (&optional level)
   "Push a message full of accomplishment to memetic journal.
@@ -149,17 +162,17 @@ See `minder--push-message'"
   (minder-play-sound 'minder-rock-breaks-sounds))
 
 
-(defun minder-ask-to-think-about-something-random ()
-  "Ask minder to think about something-random.
-You are allowed to think about something-random once per day. For `minder-think-about-something-random-duration'."
+(defun minder-ask-to-think-about-food ()
+  "Ask minder to think about food.
+You are allowed to think about food once per day. For `minder-think-about-food-duration'."
   (interactive)
   (minder--push-message "Hey minder, am I allowed to think about something random?")
-  (if minder-thought-about-something-random-today (minder--push-nogo-message)
+  (if minder-thought-about-food-today (minder--push-nogo-message)
     (progn (minder--push-message
       (format "Sure, for %s minutes until %s"
-              minder-think-about-something-random-duration
-              (format-time-string "%T" (time-add (current-time) (* minder-think-about-something-random-duration 60))))))
-    (setq minder-thought-about-something-random-today t)))
+              minder-think-about-food-duration
+              (format-time-string "%T" (time-add (current-time) (* minder-think-about-food-duration 60))))))
+    (setq minder-thought-about-food-today t)))
 
 (defun minder-friendly-nogo ()
   "Push a small conversion with minder. Get told a nogo message."
@@ -187,11 +200,21 @@ You are allowed to think about something-random once per day. For `minder-think-
       (dotimes (i 3)
         (minder--push-message (benj-rand-line-from-file minder-remembered-msgs-file)))))
 
+(defun minder-check-if-sunday ()
+  "Checks if it is sunday today and pushes a message"
+  (when (= (decoded-time-weekday (decode-time (current-time))) 0)
+    (minder--push-message "It is sunday today.")))
+
 (defun minder-play-sound (kind)
   "Play a random sound of KIND.
 KIND must be one of `minder-sounds-types'. The associated sound file must exist.
 The sound file must be a file of absolute paths pointing to .wav files, seperated by newline characters."
-  (start-process "minder-play-sound" "*minder-play-sound*" "aplay" (benj-rand-line-from-file (minder-sounds-file kind))))
+  (start-process "minder-play-sound" "*minder-play-sound*" minder-play-sound-command (benj-rand-line-from-file (minder-sounds-file kind))))
+
+
+;; todo need to set the default shell to bash
+;; (start-process "tst " "output" "benaplay")
+
 
 (defun minder-sounds-file (type)
   "Sounds file name.
