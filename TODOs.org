@@ -73,11 +73,23 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
     should be easy
     hook or this advice-add, whatever that is
 
+** minor mode
+  - minder mode, I could put a special character in front of a block of lines
+  - then show those differently
+** windows
+***  make playing sound files from the command line work
+**** figure out how to chang the target framework in rider
+**** hello world play sound file
+**** have a cmd line program that takes a file location as argument
+**** update minder to work in all environments
 * Need to fix
   - zsh path inside spacemacs is not correct
   - projectile submodules issue
   - fix zsh git auto completion (Guess it still has old version)
-
+  - emacs string highlighting bug
+  - emacs crashes
+  - emacs performance
+  - emacs performance windows
 * potential memory fix:
   You could make a program that listens and kills duplicate processes
 1 HR AGO
