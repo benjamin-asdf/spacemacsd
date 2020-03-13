@@ -28,10 +28,12 @@ public static class Programm {
   (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
   (setq-local buffer-file-coding-system 'windows-1256-unix)
   ;; windows only, slow
-  (setq-local company-idle-delay 1.5))
+  (setq-local company-idle-delay 1.5)
+  (smartparens-strict-mode -1))
 
 ;; hack for windows, because this is slow
 (defun c-before-change (beg end))
+(defun c-after-change (beg end old-len))
 
 
 
