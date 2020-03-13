@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+#name : ugsys
+#key : ugsys
+#contributor :
+# --
+public class $1 : UnityGameSystem {
+public $1(Contexts c) : base(c) {
+
+       $0
+
+    }
+}
