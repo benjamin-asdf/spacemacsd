@@ -70,3 +70,8 @@
 
 (spacemacs/declare-prefix "oo" "org")
 (spacemacs/set-leader-keys "oop" 'org-pomodoro)
+
+
+(spacemacs/declare-prefix "ol" "expand")
+(spacemacs/set-leader-keys "olL" 'evil-complete-next-line)
+(spacemacs/set-leader-keys "oll" 'evil-complete-next)
