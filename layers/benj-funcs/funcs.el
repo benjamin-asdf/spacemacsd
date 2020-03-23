@@ -164,6 +164,15 @@ Basically evil `dt)'"
     (delete-region beg (point))))
 
 
+(defun benj-windows-add-file-to-startup ()
+  ;; Creates a copy of the current file in the default windows startup directory.
+  ;; TODO warn user if not executable
+  (interactive)
+  (if buffer-file-name
+      (copy-file buffer-file-name (format "~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/%s" (file-name-nondirectory buffer-file-name)))
+    (message "Buffer is not visiting a file.")))
+
+
 ;; TODO
 ;; (defun benj-comment-out-unity-logs-in-buffer ()
 ;;   "Put csharp comment syntax before Debug\.Log."
