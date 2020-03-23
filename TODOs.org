@@ -149,3 +149,15 @@ it is just a sketch but you will need to copy your program there and run it if i
 if not you will put installation command there also (edited)
 and one more thing which I haven't done you will
 probably need to enable X if it is graphical app. I haven't done it, but it will be again some config in Dockerfile.
+
+
+
+
+
+
+
+
+
+
+
+Debug.Log("test)
