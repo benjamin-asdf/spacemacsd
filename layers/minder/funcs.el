@@ -17,10 +17,21 @@
     (minder-intense-sounds . "intense-sounds")
     (minder-intense-sounds-long . "intense-sounds-long")
     (minder-mining-sounds . "mining-sounds")
-    (minder-rock-breaks-sounds . "rock-breaks")
+    (minder-rock-breaks-sounds . "rock")
     (minder-abstract-sounds . "abstract-sounds"))
   "Types of minder sounds to play. There must be a files for every type,
 in the format described in `minder-play-sound'")
+
+
+;; TODO
+(defconst minder-sounds-search-terms
+  '((minder-friendly-sounds . "crack")
+    (minder-intense-sounds . "crack")
+    (minder-intense-sounds-long . "hero")
+    (minder-mining-sounds . "crack")
+    (minder-rock-breaks-sounds . "rockbreaks")
+    (minder-abstract-sounds . "poop"))
+  "Search-Terms of minder sounds")
 
 (defconst minder-nogo-messages-file (concat minder-private-repo-root "nogo-messages")
   "The file minder looks for nogo messages")
@@ -61,6 +72,9 @@ in the format described in `minder-play-sound'")
 ** Wake up Info
 ** WorkspotInfo")
 
+
+(defvar minder-day-streak nil
+  "Streak of something that was accomplished for a span of days. This should be an alist with")
 
 ;; Functions
 
@@ -209,11 +223,25 @@ You are allowed to think about food once per day. For `minder-think-about-food-d
   "Play a random sound of KIND.
 KIND must be one of `minder-sounds-types'. The associated sound file must exist.
 The sound file must be a file of absolute paths pointing to .wav files, seperated by newline characters."
-  (start-process "minder-play-sound" "*minder-play-sound*" minder-play-sound-command (benj-rand-line-from-file (minder-sounds-file kind))))
+  (minder--ensure-sound-file kind)
+  (start-process "minder-play-sound" "*minder-play-sound*" minder-play-sound-command (or (benj-rand-line-from-file (minder-sounds-file kind)) "")))
 
+(defun minder-invalidate-sounds-lookup ()
+  "Clear minder sounds lookups."
+  (interactive)
+  (benj-clear-directory-contents minder-sounds-dir)
+  (message (format "Cleared contents of %s" minder-sounds-dir)))
 
-;; todo need to set the default shell to bash
-;; (start-process "tst " "output" "benaplay")
+(defun minder--ensure-sound-file (kind)
+  "Initialize a sounds file for KIND. KIND must be one of `minder-sounds-types'."
+  (let ((file (minder-sounds-file kind)))
+    (unless (file-exists-p file)
+      (write-region
+       ((shell-command-to-string)
+        (format "fd -I -e wav %s %s"
+                (cdr (assoc kind minder-sounds-search-terms))
+                (concat (file-name-as-directory idlegame-project-root) "Assets/Audio/_AudioToObject/")))
+       nil file))))
 
 
 (defun minder-sounds-file (type)
@@ -332,3 +360,9 @@ Meant to be run at the start of the day."
       (progn (message "rocked started.")
              (setq minder-last-rocked-string nil))
     (message "Try again.")))
+
+
+
+
+(defun minder-save-day-streak (arg)
+  )
