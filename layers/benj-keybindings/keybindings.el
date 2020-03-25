@@ -31,6 +31,8 @@
 (spacemacs/set-leader-keys "sS" 'helm-swoop)
 
 (spacemacs/declare-prefix "og" "git")
+(spacemacs/declare-prefix "ogi" "git-idlegame")
+(spacemacs/set-leader-keys "ogic" 'benj-make-merge-request-commit)
 (spacemacs/set-leader-keys "ogs" 'vc-revision-other-window)
 (spacemacs/set-leader-keys "ogc" 'vc-find-conflicted-file)
 (spacemacs/set-leader-keys "oga" 'magit-staging)
@@ -40,6 +42,10 @@
 (spacemacs/set-leader-keys "ogb" (lambda () (interactive) (benj-curr-revision-as-kill t nil)))
 (spacemacs/set-leader-keys "ogB" (lambda () (interactive) (benj-curr-revision-as-kill t t)))
 (spacemacs/set-leader-keys "ogdf" 'benj-diff-files)
+(spacemacs/set-leader-keys "ogfc" 'magit-file-checkout)
+(spacemacs/set-leader-keys "ogC" 'benj-quick-commit)
+
+
 
 (spacemacs/declare-prefix "ob" "buffer")
 (spacemacs/set-leader-keys "obr" 'mikus-reopen-buffer)

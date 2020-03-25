@@ -1,4 +1,5 @@
-(defvar idlegame-project-root "~/idlegame/IdleGame/")
+(defconst cos-dir (getenv "COSDIR"))
+(defconst idlegame-project-root (concat (file-name-as-directory cos-dir) "IdleGame"))
 
 
 
