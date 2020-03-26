@@ -27,10 +27,15 @@
 * Things I would like to have
   - something to search whole project, basically fd with -I
   - or something to search design dir
-  - Sailor:
-    - "SearchActionHandler"
-  - some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
-  - figure out how to trick rider, have a script for that
+** Sailor:
+*** search for synced action handler
+*** list components, goto component definition, fuzzy helm
+**** just as a base thing, then also have things like insert component name
+**** insert add instant react to component - could already make something work with a bit of yasnippet scripting
+
+
+** some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
+** figure out how to trick rider, have a script for that
 * bunel
   - fix symlink
     - save file hook, then move the file?
@@ -153,9 +158,10 @@ probably need to enable X if it is graphical app. I haven't done it, but it will
 
 
 
-
-
-
+* minder - sounds for windows
+** search sounds instead of static
+** initialize some sound lookups
+** make the paths work
 
 
 

@@ -86,4 +86,23 @@ See `benj-csharp-dont-compile-region'"
   (goto-char (point-min))
   (forward-line 5))
 
+
+(defun benj-chsarp-exclude-all-files-from-compilation (project)
+  "Exclude all files in compilation for PROJECT. Defaults to sample project."
+  (interactive)
+  (dolist (file (directory-files (or project benj-chsarp-samples-dir)))
+    (benj-chsarp-exclude-file-from-compilation file)))
+
+(defun benj-csharp-exclude-file-from-compilation (path)
+  "Adds #if false around the the whole file at PATH, if not present already."
+  (interactive "fFile to exclude from compilation:")
+  (with-temp-file path
+    (insert-file-contents-literally path)
+    (goto-char (point-min))
+    (unless (looking-at-p "# if false")
+      (benj-csharp-exclude-buffer))))
+
+
+
+
 (setq omnisharp-expected-server-version "1.34.7")
