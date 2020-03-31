@@ -1,6 +1,6 @@
 ;;; Code:
 
-(defconst best-messages-file "/home/benj/.homesick/repos/dotfiles/home/.config/my-messages")
+(defconst best-messages-file "~/.homesick/repos/dotfiles/home/.config/my-messages")
 (defconst banner-header "\n             Welcome to spacemacs.\n")
 
 (defun best-banners--save-file-hook ()
