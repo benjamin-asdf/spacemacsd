@@ -140,7 +140,7 @@ Evaluate to the output string. See `shell-command-to-string'."
   (defun benj-quick-commit (arg)
     "Run git commit in projectile root with ARG as commit message"
     (interactive "sCommit Message: ")
-    (benj-projectile-dir-command-to-string (format "git commit -m \"%s\"" arg)))
+    (benj-projectile-dir-command-to-string (format "git commit --allow-empty -m \"%s\"" arg)))
 
 
   (defun benj--git-diff-files (rev1 &optional rev2)
@@ -289,14 +289,3 @@ Basically evil `dt)'"
   (dolist (file (benj-directory-files path))
     (delete-file file)))
 
-
-
-(defun benj--diff-output-match-lines-debug (regex rev1 &optional rev2)
-  "Open temp output buffer, show files and regex match of REGEX matching in the diff of REV1 against REV2
-If REV2 is ommitted, default to HEAD."
-  ;; (with-output-to-temp-buffer "*diff-match-lines*"
-  ;;   (print (format "Git diff %s..%s, searching matching lines for %s ..." rev1 (or rev2 "HEAD") regex))
-  ;;   (print (benj--get-diff-output-match-lines regex rev1 rev2))
-  ;;   (print standard-output))
-  (benj--log-to-diff-output (format "Git diff %s..%s, searching matching lines for %s ..." rev1 (or rev2 "HEAD") regex))
-  (benj--log-to-diff-output (benj--get-diff-output-match-lines regex rev1 rev2)))
