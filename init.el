@@ -82,7 +82,7 @@ This function should only modify configuration layer settings."
      ;;my-config-spellcheck
      ;;redshiftel
      sailor
-     ;;best-banners
+     best-banners
      ;;bunel
      minder
      )
@@ -197,7 +197,7 @@ It should only modify the values of Spacemacs settings."
    ;; A string value must be a path to an image format supported
    ;; by your Emacs build.
    ;; If the value is nil then no banner is displayed. (default 'official)
-   dotspacemacs-startup-banner 'official
+   dotspacemacs-startup-banner 'private
 
    ;; List of items to show in startup buffer or an association list of
    ;; the form `(list-type . list-size)`. If nil then it is disabled.
@@ -541,7 +541,9 @@ before packages are loaded."
 
 (with-eval-after-load 'org-pomodoro
   (setq-default org-pomodoro-manual-break t)
-  (setq-default org-pomodoro-short-break-length 3))
+  (setq-default org-pomodoro-short-break-length 3)
+  (setq-default org-pomodoro-audio-player (or org-pomodoro-audio-player (executable-find "benaplay"))))
+
 
 
 
