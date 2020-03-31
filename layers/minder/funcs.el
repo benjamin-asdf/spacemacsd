@@ -9,8 +9,8 @@
   "The directory that minder checks for sound lookup files")
 
 ;; TODO I guess I should eval an sexpr there instead of having a file with lines.
-;;(defconst minder-remembered-msgs-file (concat minder-private-repo-root "remember-that")
-  ;;"The file minder stores remembered msgs.")
+(defconst minder-remembered-msgs-file (concat minder-private-repo-root "remember-that")
+  "The file minder stores remembered msgs.")
 
 (defconst minder-sounds-types
   '((minder-friendly-sounds . "friendly-sounds")
