@@ -158,12 +158,18 @@ probably need to enable X if it is graphical app. I haven't done it, but it will
 
 
 
-* minder - sounds for windows
-** search sounds instead of static
-** initialize some sound lookups
-** make the paths work
 
-
-
+* new script improvement
+** check all the cs files, or just the files in the dir for now
+** look at file, if it does not start with #if false, then run my function
 
 Debug.Log("test)
+
+
+
+* git-tools
+** put git-tools into idlegame repo
+** install.sh 'echo "export PATH" >> ~/.bashrc'
+** make a google doc explaining what it is and why
+** something to get develop from before the merge of a certain branch, then diff
+** something to get the branches that changed a file
