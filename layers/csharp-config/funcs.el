@@ -2,7 +2,7 @@
 
 ;; TODO get rid of, use yasnippet
 (defun benj--csharp-program-snippet (name)
-
+  "Get snippet to add into chsarp sample."
   (format "
 using System;
 using System.Linq;
@@ -50,11 +50,12 @@ public static class Programm {
   (interactive)
   (benj-process-other-window "benj-dotnet-run-process" "*dotnet-run*" "dotnet" "run"))
 
-(defun benj-csharp-exclude-buffer ()
+(defun benj-csharp-exclude-file ()
   "Exclude the whole buffer from compilation.
 This uses `benj-charp-dont-compile-region' internally"
   (interactive)
   (benj-csharp-dont-compile-region (point-min) (point-max)))
+
 
 (defun benj-csharp-dont-compile-region (beginning end)
   "Wrap region with 'if false' directive.
@@ -78,8 +79,9 @@ See `benj-csharp-dont-compile-region'"
 
 ;; TODO figure out how to put a yasnippet there
 (defun benj-create-new-chsarp-sample (&optional name)
-  "Create a new skeleton chsarp script with NAME in the csharp samples dir"
+  "Create a new skeleton chsarp script with NAME in the csharp samples dir."
   (interactive "sName for chsarp sample: ")
+  (benj-chsarp-exclude-all-files-from-project)
   (find-file (concat (file-name-as-directory benj-chsarp-samples-dir)
                      (format "%s.cs" (capitalize name))))
   (insert (benj--csharp-program-snippet name))
@@ -87,22 +89,21 @@ See `benj-csharp-dont-compile-region'"
   (forward-line 5))
 
 
-(defun benj-chsarp-exclude-all-files-from-compilation (project)
+(defun benj-chsarp-exclude-all-files-from-project (&optional project)
   "Exclude all files in compilation for PROJECT. Defaults to sample project."
   (interactive)
-  (dolist (file (directory-files (or project benj-chsarp-samples-dir)))
-    (benj-chsarp-exclude-file-from-compilation file)))
+  (dolist (file (directory-files (or project benj-chsarp-samples-dir) t ".*\.cs$"))
+    (benj-csharp-exclude-file-at file)))
 
-(defun benj-csharp-exclude-file-from-compilation (path)
-  "Adds #if false around the the whole file at PATH, if not present already."
+
+(defun benj-csharp-exclude-file-at (&optional path)
+  "Add #if false around the the whole file at PATH, if not present already."
   (interactive "fFile to exclude from compilation:")
   (with-temp-file path
     (insert-file-contents-literally path)
     (goto-char (point-min))
     (unless (looking-at-p "# if false")
-      (benj-csharp-exclude-buffer))))
+      (benj-csharp-exclude-file))))
 
+(setq omnisharp-expected-server-version "1.34.15")
 
-
-
-(setq omnisharp-expected-server-version "1.34.7")
