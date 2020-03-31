@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : cstring
+#key : cstring
+#contributor :
+# --
+var s = c.state.Is<Suspended>() ? "Suspended" : "Sandbox";
