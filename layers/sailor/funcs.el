@@ -138,3 +138,25 @@ With WORD as component. Defaults to thing at point."
       (when file
         (funcall ff (expand-file-name file project-root))
         (run-hooks 'projectile-find-file-hook)))))
+
+
+
+
+
+(defconst sailor--insta-react-template "
+      AddInstantReact(Matcher.AllOf<%s>().AddedOrRemoved(), e => {
+              Debug.Log($\"set %1$s to {e.%2$s<%1$s>()}\");
+      });
+")
+
+(defun sailor-copy-with-instant-react-template (name flagcomp)
+  "Copy a template for instant react as kill. flagcomp"
+  (evil-set-register ?i (format sailor--insta-react-template name (if flagcomp "Is" "Has"))))
+
+
+(defun sailor-instant-react-template-to-reg-i (&optional flagcomp)
+  "Add to register an instant react template. If FLAGCOMP in non nil, use flag template."
+  (interactive)
+  (sailor-copy-with-instant-react-template (thing-at-point 'evil-word) flagcomp))
+
+(defun sailor-instant-react-to-reg-flagcomp () (interactive) "See `sailor-instant-react-template-to-reg-i'" (sailor-instant-react-template-to-reg-i t))

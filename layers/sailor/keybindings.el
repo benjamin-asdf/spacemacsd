@@ -23,4 +23,6 @@
           ("i" . sailor-dump-find-cs-implementations)
           ("m" . sailor-find-comp-matched)
           ("d" . sailor-dump-find-comp-declaration)
-          ("D" . sailor-dump-find-declaration))))
+          ("D" . sailor-dump-find-declaration)
+          ("r" . sailor-instant-react-template-to-reg-i)
+          ("R" . sailor-instant-react-to-reg-flagcomp))))
