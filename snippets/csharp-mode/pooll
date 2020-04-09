@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : pooll
+#key : pooll
+#contributor :
+# --
+using (PoolUtils.$1(out var $2)) {
+      $0
+}

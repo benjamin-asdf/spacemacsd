@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : sfield
+#key : sfield
+#contributor :
+# --
+static ${1:type} ${0:name};
+public static ${1:type} ${0:Name} => ${0:name} ?? (${0:name} = new ${1:type});
