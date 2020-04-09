@@ -1,7 +1,7 @@
 (defconst benj-chsarp-samples-dir "~/repos/csharp/csharp-samples")
 
 ;; TODO get rid of, use yasnippet
-(defun benj--csharp-program-snippet (name)
+(defun benj--csharp-program-snippet (name &optional contents)
   "Get snippet to add into chsarp sample."
   (format "
 using System;
@@ -15,9 +15,11 @@ public static class Programm {
 
     public static void Main(string[] args) {
         Console.WriteLine(\"==== %s ====\\n\");
+
+        %s
     }
 }
-" name))
+" name (or contents "")))
 
 
 (add-hook 'csharp-mode-hook 'benj-charp-hook)

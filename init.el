@@ -83,8 +83,11 @@ This function should only modify configuration layer settings."
      ;;redshiftel
      sailor
      best-banners
-     ;;bunel
+     bunel
      minder
+
+     speed-reading
+
      )
 
    ;; List of additional packages that will be installed without being
@@ -544,6 +547,23 @@ before packages are loaded."
   (setq-default org-pomodoro-short-break-length 3)
   (setq-default org-pomodoro-audio-player (or org-pomodoro-audio-player (executable-find "benaplay"))))
 
+(add-hook 'python-mode-hook 'benj-python-mode-hook)
+
+
+(defun benj-python-mode-hook ()
+;;; On Windows, commands run by flycheck may have CRs (\r\n line endings).
+;;; Strip them out before parsing.
+;;;https://emacs.stackexchange.com/questions/39241/flycheck-on-windows-python-pycompile-output-contained-no-errors
+  (defun flycheck-parse-output (output checker buffer)
+    "Parse OUTPUT from CHECKER in BUFFER.
+
+OUTPUT is a string with the output from the checker symbol
+CHECKER.  BUFFER is the buffer which was checked.
+
+Return the errors parsed with the error patterns of CHECKER."
+    (let ((sanitized-output (replace-regexp-in-string "\r" "" output))
+          )
+      (funcall (flycheck-checker-get checker 'error-parser) sanitized-output checker buffer))))
 
 
 

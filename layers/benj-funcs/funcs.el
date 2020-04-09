@@ -80,6 +80,9 @@ Use correct indentation. Like 'o' without creating a new line"
   (goto-char (point-max))
   (evil-insert-state))
 
+
+;;(defun benj-new-)
+
 (defun benj-process-other-window (process-name buffer-name process-program &rest process-args)
   "Start process and switch to output buffer in other window."
   (start-process process-name buffer-name process-program (mapconcat 'identity process-args " "))
@@ -166,7 +169,7 @@ Evaluate to the output string. See `shell-command-to-string'."
   this also sets the return value of `match-string'."
     ;; TODO line number would be cool
     (let ((ret)
-          (files (file (benj--git-diff-files-list rev1 rev2))))
+          (files (benj--git-diff-files-list rev1 rev2)))
       (dolist (file files)
         (benj--log-to-diff-output (format "%s %d%%" file (/ (cl-position file files) (* (length files) 1.0)) 100))
         (let ((match (benj--file-diff-string-match file regex rev1 rev2)))
@@ -289,3 +292,26 @@ Basically evil `dt)'"
   (dolist (file (benj-directory-files path))
     (delete-file file)))
 
+
+
+(defconst benj-scratch-buffer-kinds
+  '((:csharp . csharp-mode)
+    (:fundamental . fundamental-mode)
+    (:lisp-interaction . lisp-interaction-mode)
+    (:markdown . markdown-mode)
+    (:org . org-mode))
+  "Map scratch buffer kind names with respective mode.
+Form '(:key . MODE-FUNC)")
+
+
+(defun benj--switch-to-scratch-buffer (arg)
+  "Switch to one of the `'*scratch<name>*' buffers.
+ARG should be one of `benj-scratch-buffer-kinds'"
+  (let* ((buff-name (format "*scratch%s*" arg))
+         (exists (get-buffer buff-name))
+         (mode (car (assoc arg benj-scratch-buffer-kinds))))
+    (switch-to-buffer (get-buffer-create buff-name))
+    (when (and (not exists)
+               (not (eq major-mode mode))
+               (fboundp mode))
+      (funcall mode))))

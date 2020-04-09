@@ -173,3 +173,18 @@ Debug.Log("test)
 ** make a google doc explaining what it is and why
 ** something to get develop from before the merge of a certain branch, then diff
 ** something to get the branches that changed a file
+
+
+
+* bossel
+** DONE send current region to bossel
+   CLOSED: [2020-04-05 Sun 06:51]
+** DONE parse syntax tree
+   CLOSED: [2020-04-05 Sun 06:51]
+** send return package from bossel
+** something for brackets
+** compile the solution with bossel..
+
+** getting compilation once is easy.. then
+*** could generate some cache of components
+

@@ -85,3 +85,24 @@
 
 (spacemacs/declare-prefix "ow" "system")
 (spacemacs/set-leader-keys "ows" 'benj-windows-add-file-to-startup)
+
+
+;; maybe something
+;; (defvar benj-keybindings-prefixes '()
+;;   "Should be a list of form '(PREFIX NAME) determining prefixes to be declared.")
+
+
+;; (push '("obs" "scratch-buff") benj-keybindings-prefixes)
+
+
+(defconst benj-scratch-buffer-leader-keys "obs")
+
+(spacemacs/declare-prefix benj-scratch-buffer-leader-keys "scratch-buffs")
+
+(progn
+  (mapc (lambda (x) (spacemacs/set-leader-keys (concat benj-scratch-buffer-leader-keys (car x)) (cdr x)))
+        '(("c" . (lambda () (interactive) (benj--switch-to-scratch-buffer :csharp)))
+          ("f" . (lambda () (interactive) (benj--switch-to-scratch-buffer :fundamental)))
+          ("l" . (lambda () (interactive) (benj--switch-to-scratch-buffer :lisp-interaction)))
+          ("o" . (lambda () (interactive) (benj--switch-to-scratch-buffer :org)))
+          ("m" . (lambda () (interactive) (benj--switch-to-scratch-buffer :markdown))))))
