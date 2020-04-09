@@ -258,6 +258,8 @@ TYPE must be one of `minder-sounds-types'"
 
 
 ;; WIP
+(defconst minder-mode-font-keywords '(("^\\[.*\\] " . font-lock-variable-name-face)
+                                      ("#+?>" . font-lock-type-face)))
 
 (define-derived-mode minder-mode fundamental-mode "Minder"
   "Minder major mode for memetic journal files."
@@ -271,6 +273,14 @@ TYPE must be one of `minder-sounds-types'"
     (kbd "R") 'minder-push-remembered-msgs
     (kbd "A") 'minder-push-best-message)
   ;; maybe I figure out how to reuse the map
+
+  (font-lock-add-keywords nil minder-mode-font-keywords)
+
+  (if (fboundp 'font-lock-flush)
+      (font-lock-flush)
+    (when font-lock-mode
+      (with-no-warnings (font-lock-fontify-buffer))))
+
 
   (evil-set-initial-state 'minder-mode 'motion))
 ;; fix motion state
@@ -342,7 +352,8 @@ Meant to be run at the start of the day."
   ;; how many asteriods
   ;; (or how many point the user gathered on that day I guess)
   ;; man I want something that says 3 rockets launched etc lul
-  )
+  (interactive)
+  (minder-push-message (format "Good night. Don't forget the blanket, earplugs etc. Pomodoros today: %d" org-pomodoro-count)))
 
 
 ;; I want to have one cache file for every month
@@ -362,7 +373,19 @@ Meant to be run at the start of the day."
     (message "Try again.")))
 
 
+(defun minder-take-a-breath ()
+  "Do a minder deed after some time.
+Use this to be able to close the eyes for 20 seconds and take a deep breath."
+  (interactive)
+  (minder-push-message "Take a breath.")
+  (run-at-time "20" nil (lambda () (progn (minder-do-deed) (minder-push-message "Success.")))))
 
 
 (defun minder-save-day-streak (arg)
+  )
+
+
+
+(defun minder-persist-data (symbol value day)
+  "Save SYMBOLs value VALUE into the current cache file."
   )
