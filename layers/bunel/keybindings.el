@@ -13,4 +13,5 @@
           ("c" . bunel-refresh-client)
           ("C" . (lambda () (interactive) (bunel-refresh-client "with-playmode")))
           ("a" . bunel-refresh-all)
-          ("A" . (lambda () (interactive) (bunel-refresh-all "with-playmode"))))))
+          ("A" . (lambda () (interactive) (bunel-refresh-all "with-playmode")))
+          ("L" . bunel-open-unity-editor-log))))

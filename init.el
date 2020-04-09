@@ -541,6 +541,12 @@ before packages are loaded."
 
   )
 
+;; todo pomodoro config
+;; (with-eval-after-load 'org-pomodoro
+;;   (setq-default org-pomodoro-manual-break t)
+;;   (setq-default org-pomodoro-short-break-length 3)
+;;   (setq-default org-pomodoro-audio-player (or org-pomodoro-audio-player (executable-find "benaplay"))))
+
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (defun dotspacemacs/emacs-custom-settings ()

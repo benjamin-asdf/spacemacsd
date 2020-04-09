@@ -92,22 +92,22 @@
 ;;   "Should be a list of form '(PREFIX NAME) determining prefixes to be declared.")
 
 
-;; (push '("obs" "scratch-buff") benj-keybindings-prefixes)
+(push '("obs" "scratch-buff") benj-keybindings-prefixes)
 
 
-;; (defconst benj-scratch-buffer-leader-keys "obs")
+(defconst benj-scratch-buffer-leader-keys "obs")
 
-;; (spacemacs/declare-prefix benj-scratch-buffer-leader-keys "scratch-buffs")
+(spacemacs/declare-prefix benj-scratch-buffer-leader-keys "scratch-buffs")
 
-;; (progn
-;;   (mapc (lambda (x) (spacemacs/set-leader-keys (concat benj-scratch-buffer-leader-keys (car x)) (cdr x)))
-;;         '(("c" . (lambda () (interactive) (benj--switch-to-scratch-buffer :csharp)))
-;;           ("f" . (lambda () (interactive) (benj--switch-to-scratch-buffer :fundamental)))
-;;           ("l" . (lambda () (interactive) (benj--switch-to-scratch-buffer :lisp-interaction)))
-;;           ("o" . (lambda () (interactive) (benj--switch-to-scratch-buffer :org)))
-;;           ("m" . (lambda () (interactive) (benj--switch-to-scratch-buffer :markdown))))))
+(progn
+  (mapc (lambda (x) (spacemacs/set-leader-keys (concat benj-scratch-buffer-leader-keys (car x)) (cdr x)))
+        '(("c" . (lambda () (interactive) (benj--switch-to-scratch-buffer :csharp)))
+          ("f" . (lambda () (interactive) (benj--switch-to-scratch-buffer :fundamental)))
+          ("l" . (lambda () (interactive) (benj--switch-to-scratch-buffer :lisp-interaction)))
+          ("o" . (lambda () (interactive) (benj--switch-to-scratch-buffer :org)))
+          ("m" . (lambda () (interactive) (benj--switch-to-scratch-buffer :markdown))))))
 
 
-;; (defconst benj-project-leader-keys "op")
-;; (spacemacs/declare-prefix benj-project-leader-keys "project")
-;; (spacemacs/set-leader-keys (concat benj-project-leader-keys "F") 'benj-helm-projectile-find-many-files)
+(defconst benj-project-leader-keys "op")
+(spacemacs/declare-prefix benj-project-leader-keys "project")
+(spacemacs/set-leader-keys (concat benj-project-leader-keys "F") 'benj-helm-projectile-find-many-files)

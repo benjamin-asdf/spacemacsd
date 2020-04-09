@@ -148,3 +148,37 @@ it is just a sketch but you will need to copy your program there and run it if i
 if not you will put installation command there also (edited)
 and one more thing which I haven't done you will
 probably need to enable X if it is graphical app. I haven't done it, but it will be again some config in Dockerfile.
+
+
+
+
+
+* new script improvement
+** check all the cs files, or just the files in the dir for now
+** look at file, if it does not start with #if false, then run my function
+
+Debug.Log("test)
+
+
+
+* git-tools
+** put git-tools into idlegame repo
+** install.sh 'echo "export PATH" >> ~/.bashrc'
+** make a google doc explaining what it is and why
+** something to get develop from before the merge of a certain branch, then diff
+** something to get the branches that changed a file
+
+
+
+* bossel
+** DONE send current region to bossel
+   CLOSED: [2020-04-05 Sun 06:51]
+** DONE parse syntax tree
+   CLOSED: [2020-04-05 Sun 06:51]
+** send return package from bossel
+** something for brackets
+** compile the solution with bossel..
+
+** getting compilation once is easy.. then
+*** could generate some cache of components
+
