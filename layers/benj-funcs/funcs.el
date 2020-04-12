@@ -97,6 +97,20 @@ If NEWLINE is non nil, append a newline character."
     (insert (if newline (concat content "\n") content))))
 
 (with-eval-after-load 'projectile
+  (defconst benj-fd-find-alot "fd -H -E=.git -I -tf -0 .")
+
+  (defun benj-helm-projectile-find-many-files ()
+    "Simple implementation of projectile find file without any file filters"
+    (interactive)
+    (let* ((project-root (projectile-ensure-project (projectile-project-root)))
+           (files (projectile-files-via-ext-command project-root benj-fd-find-alot))
+           (file (projectile-completing-read "Find file: "
+                                             files)))
+      (when file
+        (funcall #'find-file (expand-file-name file project-root))
+        (run-hooks 'projectile-find-file-hook))))
+
+
 
   (defun benj-diff-files (&optional rev)
     "Print the output of git diff --name-only to temp buffer.

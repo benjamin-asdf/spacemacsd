@@ -122,19 +122,21 @@ With WORD as component. Defaults to thing at point."
 ;; (helm :sources helm-sailor-component-declerations-source :buffer "*helm-sailor-components*")
 
 
-(defconst sailor-fd-find-alot "fd -H -E=.git -I -tf -0 .")
 
-;; TODO helm search behavoiur wrong
-(with-eval-after-load 'projectile
-  (defun sailor-projectile-find-file-all ()
-    "Simple implementation of projectile find file without any file filters"
-    (interactive)
+(defconst sailor--insta-react-template "
+      AddInstantReact(Matcher.AllOf<%s>().AddedOrRemoved(), e => {
+              Debug.Log($\"set %1$s to {e.%2$s<%1$s>()}\");
+      });
+")
 
-    (let* ((project-root (projectile-ensure-project (projectile-project-root)))
-           (files (projectile-files-via-ext-command project-root sailor-fd-find-alot))
-           (file (projectile-completing-read "Find file: "
-                                             files))
-           (ff (or ff-variant #'find-file)))
-      (when file
-        (funcall ff (expand-file-name file project-root))
-        (run-hooks 'projectile-find-file-hook)))))
+(defun sailor-copy-with-instant-react-template (name flagcomp)
+  "Copy a template for instant react as kill. flagcomp"
+  (evil-set-register ?i (format sailor--insta-react-template name (if flagcomp "Is" "Has"))))
+
+
+(defun sailor-instant-react-template-to-reg-i (&optional flagcomp)
+  "Add to register an instant react template. If FLAGCOMP in non nil, use flag template."
+  (interactive)
+  (sailor-copy-with-instant-react-template (thing-at-point 'evil-word) flagcomp))
+
+(defun sailor-instant-react-to-reg-flagcomp () (interactive) "See `sailor-instant-react-template-to-reg-i'" (sailor-instant-react-template-to-reg-i t))
