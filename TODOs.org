@@ -188,3 +188,8 @@ Debug.Log("test)
 ** getting compilation once is easy.. then
 *** could generate some cache of components
 
+
+
+* omnisharp funcs
+** something that stores the last usages or something
+*** Could just put usages into a buffer then have a minor mode for visiting them
