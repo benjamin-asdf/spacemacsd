@@ -64,4 +64,4 @@ If FORCE is non nil, override any existing file."
   "Open unity editor log other window.
 ;; TODO linux"
   (interactive)
-  (find-file "c:/Users/G4G/AppData/Local/Unity/Editor/Editor.log"))
+  (find-file-literally "c:/Users/G4G/AppData/Local/Unity/Editor/Editor.log"))
