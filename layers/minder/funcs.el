@@ -324,7 +324,11 @@ Meant to be run at the start of the day."
 
 
 
+(defvar minder-good-night-messages '()
+  "Some messages that will send on good night.
+;; TODO reset on morning
+")
 
-
-
-
+(defun minder-add-good-night-message (arg)
+  "Add something to `minder-good-night-messages'"
+  (push arg minder-good-night-messages))
