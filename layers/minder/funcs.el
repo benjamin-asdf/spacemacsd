@@ -237,7 +237,7 @@ The sound file must be a file of absolute paths pointing to .wav files, seperate
   (let ((file (minder-sounds-file kind)))
     (unless (file-exists-p file)
       (write-region
-       ((shell-command-to-string)
+       (shell-command-to-string
         (format "fd -I -e wav %s %s"
                 (cdr (assoc kind minder-sounds-search-terms))
                 (concat (file-name-as-directory idlegame-project-root) "Assets/Audio/_AudioToObject/")))
@@ -369,6 +369,7 @@ Meant to be run at the start of the day."
   (setq minder-last-rocked-string (or minder-last-rocked-string (number-to-string (random (expt 10 6)))))
   (if (string-equal minder-last-rocked-string (read-string (format "Type %s" minder-last-rocked-string)))
       (progn (message "rocked started.")
+             (minder-play-sound 'minder-intense-sounds)
              (setq minder-last-rocked-string nil))
     (message "Try again.")))
 
