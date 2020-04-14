@@ -298,19 +298,6 @@ Basically evil `dt)'"
     (delete-file file)))
 
 
-
-(defun benj--diff-output-match-lines-debug (regex rev1 &optional rev2)
-  "Open temp output buffer, show files and regex match of REGEX matching in the diff of REV1 against REV2
-If REV2 is ommitted, default to HEAD."
-  ;; (with-output-to-temp-buffer "*diff-match-lines*"
-  ;;   (print (format "Git diff %s..%s, searching matching lines for %s ..." rev1 (or rev2 "HEAD") regex))
-  ;;   (print (benj--get-diff-output-match-lines regex rev1 rev2))
-  ;;   (print standard-output))
-  (benj--log-to-diff-output (format "Git diff %s..%s, searching matching lines for %s ..." rev1 (or rev2 "HEAD") regex))
-  (benj--log-to-diff-output (benj--get-diff-output-match-lines regex rev1 rev2)))
-
-
-
 ;; temp
 (defun benj-change-best-img ()
   (interactive)
@@ -324,12 +311,27 @@ If REV2 is ommitted, default to HEAD."
 
 
 
+(defconst benj-scratch-buffer-kinds
+  '((:csharp . csharp-mode)
+    (:fundamental . fundamental-mode)
+    (:lisp-interaction . lisp-interaction-mode)
+    (:markdown . markdown-mode)
+    (:org . org-mode))
+  "Map scratch buffer kind names with respective mode.
+Form '(:key . MODE-FUNC)")
 
 
-
-
-
-
+(defun benj--switch-to-scratch-buffer (arg)
+  "Switch to one of the `'*scratch<name>*' buffers.
+ARG should be one of `benj-scratch-buffer-kinds'"
+  (let* ((buff-name (format "*scratch%s*" arg))
+         (exists (get-buffer buff-name))
+         (mode (car (assoc arg benj-scratch-buffer-kinds))))
+    (switch-to-buffer (get-buffer-create buff-name))
+    (when (and (not exists)
+               (not (eq major-mode mode))
+               (fboundp mode))
+      (funcall mode))))
 
 
 
@@ -390,26 +392,3 @@ Return the new class name, which is a symbol named DIR."
     (dir-locals-set-class-variables class-name variables)
     (dir-locals-set-directory-class dir class-name success)
     class-name))
-
-
-(defconst benj-scratch-buffer-kinds
-  '((:csharp . csharp-mode)
-    (:fundamental . fundamental-mode)
-    (:lisp-interaction . lisp-interaction-mode)
-    (:markdown . markdown-mode)
-    (:org . org-mode))
-  "Map scratch buffer kind names with respective mode.
-Form '(:key . MODE-FUNC)")
-
-
-(defun benj--switch-to-scratch-buffer (arg)
-  "Switch to one of the `'*scratch<name>*' buffers.
-ARG should be one of `benj-scratch-buffer-kinds'"
-  (let* ((buff-name (format "*scratch%s*" arg))
-         (exists (get-buffer buff-name))
-         (mode (car (assoc arg benj-scratch-buffer-kinds))))
-    (switch-to-buffer (get-buffer-create buff-name))
-    (when (and (not exists)
-               (not (eq major-mode mode))
-               (fboundp mode))
-      (funcall mode))))
