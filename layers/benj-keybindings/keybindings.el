@@ -111,3 +111,14 @@
 (defconst benj-project-leader-keys "op")
 (spacemacs/declare-prefix benj-project-leader-keys "project")
 (spacemacs/set-leader-keys (concat benj-project-leader-keys "F") 'benj-helm-projectile-find-many-files)
+
+
+
+
+;; todo hippie expand with arg in insert mode
+
+
+
+
+(spacemacs/set-leader-keys "oln" 'hippie-expand)
+(spacemacs/set-leader-keys "olp" (lambda () (interactive) (hippie-expand 1)))

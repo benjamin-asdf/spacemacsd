@@ -329,3 +329,8 @@ ARG should be one of `benj-scratch-buffer-kinds'"
                (not (eq major-mode mode))
                (fboundp mode))
       (funcall mode))))
+
+(defun benj-temp-dir-jump ()
+  "Open the systems temp dir in dired Uses `temporary-file-directory'"
+  (interactive)
+  (find-file temporary-file-directory))
