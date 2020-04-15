@@ -91,8 +91,7 @@
 ;; (defvar benj-keybindings-prefixes '()
 ;;   "Should be a list of form '(PREFIX NAME) determining prefixes to be declared.")
 
-
-(push '("obs" "scratch-buff") benj-keybindings-prefixes)
+;;(push '("obs" "scratch-buff") benj-keybindings-prefixes)
 
 
 (defconst benj-scratch-buffer-leader-keys "obs")
