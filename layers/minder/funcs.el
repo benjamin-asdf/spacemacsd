@@ -66,11 +66,8 @@ in the format described in `minder-play-sound'")
 (defvar minder-thought-about-food-today nil)
 
 
-;; TODO set as environment variable or something
 (defvar minder-play-sound-command
-  "benaplay")
-
-(defconst minder-play-sound-command-linux "aplay")
+  (if (eq system-type 'windows-nt)) "benaplay" "aplay")
 
 (defconst minder-good-morning-template
   "* %s
@@ -118,6 +115,7 @@ If NON-INTRUSIVE is non nil, supress opening a journal file window."
 (defun minder--formatted-msg (msg)
   "Format MSG for minder memetic journal."
   (format "[%s] %s\n" (format-time-string "%T") msg))
+;; TODO  toggle as abbrev
 
 (defun minder-push-best-message (&optional msg)
   "Push MSG or one of .config/my-messages to minder file. "
