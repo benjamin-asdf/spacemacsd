@@ -56,12 +56,11 @@ If FORCE is non nil, override any existing file."
 
 
 ;; (add-hook 'git-commit-post-finish-hook '(lambda () (message "This is the commit-post-finish-hook!")))
-
-
-
+(defconst unity-log-file "~/.config/unity3d/Editor.log")
 
 (defun bunel-open-unity-editor-log ()
-  "Open unity editor log other window.
-;; TODO linux"
+  "Open unity log file in tail mode."
   (interactive)
-  (find-file "c:/Users/G4G/AppData/Local/Unity/Editor/Editor.log"))
+  (find-file-literally unity-log-file)
+  (goto-char (point-max))
+  (follow-mode))
