@@ -6,5 +6,6 @@
 
 [MenuItem("CONTEXT/" + nameof($1) + "/$2")]
 static void $2(MenuCommand cmd) {
-    $0
+    var $0 = cmd.context as $1;
+
 }
