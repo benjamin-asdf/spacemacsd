@@ -320,13 +320,12 @@ Basically evil `dt)'"
   "Map scratch buffer kind names with respective mode.
 Form '(:key . MODE-FUNC)")
 
-
 (defun benj--switch-to-scratch-buffer (arg)
   "Switch to one of the `'*scratch<name>*' buffers.
 ARG should be one of `benj-scratch-buffer-kinds'"
   (let* ((buff-name (format "*scratch%s*" arg))
          (exists (get-buffer buff-name))
-         (mode (car (assoc arg benj-scratch-buffer-kinds))))
+         (mode (cdr (assoc arg benj-scratch-buffer-kinds))))
     (switch-to-buffer (get-buffer-create buff-name))
     (when (and (not exists)
                (not (eq major-mode mode))
