@@ -55,7 +55,7 @@ This function should only modify configuration layer settings."
      emacs-lisp
      org
      csharp
-     python
+     (python :variables python-backend 'anaconda)
      windows-scripts
      javascript
      ruby
