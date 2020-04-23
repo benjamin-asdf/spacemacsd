@@ -28,7 +28,12 @@ public static class Programm {
   (benj-change-csharp-style)
   (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
   (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
-  (electric-pair-mode -1)
+  ;; TODO needs a bit of work
+  (define-key evil-normal-state-map "ge" (lambda () (interactive)
+                                           (flycheck-cancel-error-display-error-at-point-timer)
+                                           (flycheck-display-error-at-point)))
+  ;; (electric-pair-mode -1)
+  (smartparens-strict-mode -1)
   (setq-local buffer-file-coding-system 'windows-1256-unix))
 
 (defun benj-change-csharp-style()
@@ -72,12 +77,30 @@ See `benj-csharp-dont-compile-region'"
 
 ;; TODO figure out how to put a yasnippet there
 (defun benj-create-new-chsarp-sample (&optional name)
-  "Create a new skeleton chsarp script with NAME in the csharp samples dir"
+  "Create a new skeleton chsarp script with NAME in the csharp samples dir."
   (interactive "sName for chsarp sample: ")
+  (benj-chsarp-exclude-all-files-from-project)
   (find-file (concat (file-name-as-directory benj-chsarp-samples-dir)
                      (format "%s.cs" (capitalize name))))
   (insert (benj--csharp-program-snippet name))
   (goto-char (point-min))
   (forward-line 5))
 
-(setq omnisharp-expected-server-version "1.34.7")
+
+(defun benj-chsarp-exclude-all-files-from-project (&optional project)
+  "Exclude all files in compilation for PROJECT. Defaults to sample project."
+  (interactive)
+  (dolist (file (directory-files (or project benj-chsarp-samples-dir) t ".*\.cs$"))
+    (benj-csharp-exclude-file-at file)))
+
+
+(defun benj-csharp-exclude-file-at (&optional path)
+  "Add #if false around the the whole file at PATH, if not present already."
+  (interactive "fFile to exclude from compilation:")
+  (with-temp-file path
+    (insert-file-contents-literally path)
+    (goto-char (point-min))
+    (unless (looking-at-p "# if false")
+      (benj-csharp-exclude-file))))
+
+(setq omnisharp-expected-server-version "1.35.0")

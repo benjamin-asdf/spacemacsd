@@ -16,4 +16,5 @@
           ("R" . minder-push-remembered-msgs)
           ("x" . minder-delete-meme)
           ("s" . minder-start-rocket)
-          ("b" . minder-take-a-breath))))
+          ("b" . minder-take-a-breath)
+          ("B" . minder-take-bite))))

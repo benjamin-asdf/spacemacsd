@@ -3,4 +3,4 @@
 #key : dll
 #contributor : benj
 # --
-Debug.Log($0);
+UnityEngine.Debug.Log($0);
