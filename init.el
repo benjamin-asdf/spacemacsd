@@ -86,6 +86,7 @@ This function should only modify configuration layer settings."
      bunel
      minder
      parens-config
+     benj-pomodoro
      )
 
    ;; List of additional packages that will be installed without being
