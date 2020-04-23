@@ -101,6 +101,6 @@ See `benj-csharp-dont-compile-region'"
     (insert-file-contents-literally path)
     (goto-char (point-min))
     (unless (looking-at-p "# if false")
-      (benj-csharp-exclude-file))))
+      (benj-csharp-exclude-buffer))))
 
 (setq omnisharp-expected-server-version "1.35.0")
