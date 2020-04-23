@@ -520,9 +520,6 @@ before packages are loaded."
   (setq-default helm-candidate-number-limit 100)
 
 
-
-
-
   ;;projectile-fd
   (defconst my-fd-command "fd -H -E=.git -tf . -0")
   (setq-default projectile-indexing-method 'alien)
