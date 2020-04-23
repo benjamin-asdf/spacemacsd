@@ -67,7 +67,7 @@ in the format described in `minder-play-sound'")
 
 
 (defvar minder-play-sound-command
-  (if (eq system-type 'windows-nt)) "benaplay" "aplay")
+  (if (eq system-type 'windows-nt) "benaplay" "aplay"))
 
 (defconst minder-good-morning-template
   "* %s
@@ -356,26 +356,28 @@ Meant to be run at the start of the day."
   ;; (or how many point the user gathered on that day I guess)
   ;; man I want something that says 3 rockets launched etc lul
   (interactive)
-  (minder-push-message (format "Good night. Don't forget the blanket, earplugs etc. Pomodoros today: %d" org-pomodoro-count)))
+  (minder-push-message (format "Good night. Don't forget the blanket, earplugs etc. Pomodoros today: %d" org-pomodoro-count))
+  (mapcar 'minder-push-message minder-good-night-messages))
 
 
 ;; I want to have one cache file for every month
 ;; there I have one big (setq) ?
 
-;; TODO start rocked by typing some correct numbers
-
 (defvar minder-good-night-messages '()
   "Some messages that will send on good night.
+See `minder-good-night'
 ;; TODO reset on morning
 ")
 
 (defun minder-add-good-night-message (arg)
   "Add something to `minder-good-night-messages'"
+  (interactive"sEnter good night message: ")
   (push arg minder-good-night-messages))
 
 (defvar minder-last-rocked-string nil)
 
 (defun minder-start-rocket ()
+  "Ask the user to type in a string of numbers. And put success or failure messages as minder messages."
   (interactive)
   (setq minder-last-rocked-string (or minder-last-rocked-string (number-to-string (random (expt 10 6)))))
   (if (string-equal minder-last-rocked-string (read-string (format "Type %s" minder-last-rocked-string)))
@@ -393,11 +395,18 @@ Use this to be able to close the eyes for 20 seconds and take a deep breath."
   (run-at-time "20" nil (lambda () (progn (minder-do-deed) (minder-push-message "Success.")))))
 
 
-(defun minder-save-day-streak (arg)
-  )
-
-
-
 (defun minder-persist-data (symbol value day)
   "Save SYMBOLs value VALUE into the current cache file."
   )
+
+
+
+(defvar minder-take-bite-messages
+  '("Small spoons" "32 chews at least" "Slow and deliberate" "Carefully")
+  "Messages for `minder-take-bite'")
+
+
+(defun minder-take-bite ()
+  "Show a message defined in `minder-take-bite-messages'. Meant to make the user eat efficiently."
+  (interactive)
+  (minder-push-message (rand-element minder-take-bite-messages)))

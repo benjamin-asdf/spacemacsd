@@ -81,8 +81,6 @@ Use correct indentation. Like 'o' without creating a new line"
   (evil-insert-state))
 
 
-;;(defun benj-new-)
-
 (defun benj-process-other-window (process-name buffer-name process-program &rest process-args)
   "Start process and switch to output buffer in other window."
   (start-process process-name buffer-name process-program (mapconcat 'identity process-args " "))
@@ -272,17 +270,6 @@ Basically evil `dt)'"
     (forward-char -1)
     (delete-region beg (point))))
 
-
-;; TODO
-;; (defun benj-comment-out-unity-logs-in-buffer ()
-;;   "Put csharp comment syntax before Debug\.Log."
-;;   (save-excursion
-;;     (goto-char (point-min))
-;;     (while (search-forward-regexp) "Debug\.Log")
-;;     )
-
-;;   )
-
 (defun benj-directory-files (path)
   "Get directory files from PATH. Excludes '.' and '..'."
   (let ((ret '()))
@@ -331,6 +318,8 @@ ARG should be one of `benj-scratch-buffer-kinds'"
                (not (eq major-mode mode))
                (fboundp mode))
       (funcall mode))))
+
+
 
 
 

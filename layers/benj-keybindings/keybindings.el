@@ -58,6 +58,7 @@
 
 
 (spacemacs/set-leader-keys "omi" 'benj-insert-other-line)
+(spacemacs/set-leader-keys "omn" 'benj-next-digit)
 
 
 (define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)

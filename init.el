@@ -519,6 +519,10 @@ before packages are loaded."
 
   (setq-default helm-candidate-number-limit 100)
 
+
+
+
+
   ;;projectile-fd
   (defconst my-fd-command "fd -H -E=.git -tf . -0")
   (setq-default projectile-indexing-method 'alien)
@@ -533,19 +537,10 @@ before packages are loaded."
   (setq-default split-width-threshold 80)
   (setq-default split-hight-threshold 500)
 
-  (electric-pair-mode)
-
   ;; if using minder, insert some messages to remember into todays journal.
   (when (configuration-layer/layer-used-p 'minder)
     (minder-push-remembered-msgs))
-
   )
-
-;; todo pomodoro config
-;; (with-eval-after-load 'org-pomodoro
-;;   (setq-default org-pomodoro-manual-break t)
-;;   (setq-default org-pomodoro-short-break-length 3)
-;;   (setq-default org-pomodoro-audio-player (or org-pomodoro-audio-player (executable-find "benaplay"))))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.

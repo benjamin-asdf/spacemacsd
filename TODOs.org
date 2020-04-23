@@ -182,3 +182,14 @@ Debug.Log("test)
 ** getting compilation once is easy.. then
 *** could generate some cache of components
 
+* bunel
+** need something for opening prefabs
+
+* helm ag fix crlf showing
+
+
+* githubbel
+** achieve automatically getting new omnisharp release
+
+
+* fix multiple entries in helm- mx history

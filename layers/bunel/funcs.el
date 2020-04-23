@@ -44,6 +44,17 @@ If ARG is non-nil, also enter playmode"
 ;;   )
 
 
+;; TODO
+;; (defun bunel--save-file-hook ()
+;;   "Check if the current file is message file, maybe create banners.
+;; If the file specified in bunel-messages-file matches the saved file, we try to create banners"
+;;   (when (and (equal buffer-file-name best-messages-file)
+;;              (yes-or-no-p "Saved best-messages file, do you want to recreate spacemacs startup banners?"))
+;;     (bunel-recreate)))
+
+;; (add-hook 'after-save-hook 'bunel--save-file-hook)
+
+
 (defun bunel-ensure-bridge-file (&optional force)
   "Ensure bridge file is in the idlegame project.
 If FORCE is non nil, override any existing file."
