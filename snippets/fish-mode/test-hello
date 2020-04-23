@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : test-hello
+#key : test-hello
+#contributor : benj
+# --
+
+#!/bin/sh
+
+echo "hello" >> hello-file

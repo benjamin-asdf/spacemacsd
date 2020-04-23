@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : onspawn
+#key : onspawn
+#contributor : benj
+# --
+static void $1(Contexts c, IEntity e, GameObject go) {
+    $0
+}

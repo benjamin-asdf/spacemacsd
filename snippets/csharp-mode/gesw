@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : gesw
+#key : gesw
+#contributor : benj
+# --
+var ${1:entities} = c.state.GetEntitiesWith<$2>($3);

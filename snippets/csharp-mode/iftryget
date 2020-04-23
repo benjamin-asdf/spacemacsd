@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : iftryget
+#key : iftryget
+#contributor : benj
+# --
+if (c.state.TryGet<$1>(out var $2)) {
+                           $0
+}

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : forge
+#key : forge
+#contributor : benj
+# --
+using (c.state.GetGroup(${1:matcher}).GetEntities(out List<IEntity> ${2:entities})) {
+    foreach (var ${3:e} in ${2:entities}) {
+        $0
+    }
+}

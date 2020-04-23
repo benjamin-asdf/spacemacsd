@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : varc
+#key : varc
+#contributor : benj
+# --
+                var $1 = _go.GetComponent<Image>();
+                if ($1) GameObject.DestroyImmediate($1);

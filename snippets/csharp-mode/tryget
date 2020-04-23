@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : tryget
+#key : tryget
+#contributor : benj
+# --
+c.state.TryGet<$1>(out var $0)

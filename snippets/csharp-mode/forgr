@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : forgr
+#key : forgr
+#contributor : benj
+# --
+foreach (var e in c.state.GetGroup(Matcher.AllOf<$1>())) {
+    $0
+}
