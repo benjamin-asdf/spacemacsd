@@ -1,7 +1,5 @@
-(defconst cos-dir (getenv "COSDIR"))
-(defconst idlegame-project-root (concat (file-name-as-directory cos-dir) "IdleGame"))
-
-
+(defconst cos-dir (or (getenv "COSDIR") "~/clashofstreamers"))
+(defconst idlegame-project-root (concat (file-name-as-directory cos-dir) "IdleGame/"))
 
 ;;grep, helm ag
 (setq-default helm-ag-use-grep-ignore-list 't)

@@ -1,7 +1,6 @@
 (with-eval-after-load 'helm-projectile
     (progn
 
-        (defvar idle-game-project-root "~/idlegame/IdleGame/")
         (defvar idle-game-best-folders '( "Assets/#/Sources" "Assets/#/Scripts" "Assets/Editor" ))
         (with-eval-after-load 'grep
           (defvar idle-game-ignored-files (append grep-find-ignored-files '("*.asset" "*.java" "*.m" "MessagePack")))
@@ -10,12 +9,12 @@
         (defvar projectile-custom-ignored-files '())
 
         (defun tags-custom-ignored-files ()
-            (if (string-equal ( projectile-project-root ) idle-game-project-root)
+            (if (string-equal ( projectile-project-root ) idlegame-project-root)
                     idle-game-ignored-files
                 projectile-custom-ignored-files))
 
         (defun idle-game-folders ()
-            (mapconcat (lambda (path) (format "\"%s\"" (concat idle-game-project-root path))) idle-game-best-folders " "))
+            (mapconcat (lambda (path) (format "\"%s\"" (concat idlegame-project-root path))) idle-game-best-folders " "))
 
         (defun regenerate-idlegame-tags ()
             (interactive)
@@ -26,7 +25,7 @@
         (defun projectile-regenerate-tags-for-cos-generated-files ()
             "Regenerate tags for this file and append it to the project's TAGS file."
             (interactive)
-            (let* ((dir (concat idle-game-project-root "Assets/#/Sources/Generated"))
+            (let* ((dir (concat idlegame-project-root "Assets/#/Sources/Generated"))
                          (projectile-tags-command "ctags -Re -f \"%s\" %s -a \"%s\""))
                 (projectile-regenerate-tags-async dir)))
         
@@ -45,7 +44,7 @@
 
         (defun regenerate-tags ()
             (interactive)
-            (if (string-equal ( projectile-project-root ) idle-game-project-root)
+            (if (string-equal ( projectile-project-root ) idlegame-project-root)
                     (regenerate-idlegame-tags)
                 (projectile-regenerate-tags-async)))
 
