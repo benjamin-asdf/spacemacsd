@@ -69,12 +69,20 @@ Use correct indentation. Like 'o' without creating a new line"
   "Random element from LIST."
   (nth (random (length list)) list))
 
+(defun benj-new-python-script (file)
+  "Create a new python script shell script with NAME."
+  (interactive "FNew script: ")
+  (benj--new-script-worker file "#!/usr/bin/env python3"))
 
 (defun benj-new-shell-script (file)
-  "Create a new script shell script with NAME in scripts dir."
+  "Create a new script shell script with NAME."
   (interactive "FNew script: ")
+  (benj--new-script-worker file "#!/bin/sh\n\n"))
+
+(defun benj--new-script-worker (file shebang)
+  "Insert SHEBANG into FILE and make it executable"
   (unless (file-exists-p file)
-    (write-region "#!/bin/sh\n\n" " " file))
+    (write-region shebang " " file))
   (set-file-modes file #o777)
   (find-file file)
   (goto-char (point-max))
@@ -323,8 +331,11 @@ ARG should be one of `benj-scratch-buffer-kinds'"
 
 
 
-
-
+(defun benj-next-digit ()
+  "Jump to next digit in buff"
+  (interactive)
+  (re-search-forward "[0-9]+")
+  (forward-char -1))
 
 
 
