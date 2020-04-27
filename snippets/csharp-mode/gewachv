@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : gewachv
+#key : gewachv
+#contributor : benj
+# --
+var e = c.state.GetEntityWith<AchvProgressIdC>($0);

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : achvtryget
+#key : achvtryget
+#contributor : benj
+# --
+if (!c.TryGetAchvProgressView(AchvProgressId.$1, out var view)) return;
+$0

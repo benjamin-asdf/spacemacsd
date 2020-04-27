@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : class
+#key : class
+#contributor : benj
+# --
+public $1 class ${1:`(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`} {
+       $0
+}
