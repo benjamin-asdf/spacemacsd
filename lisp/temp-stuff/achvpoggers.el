@@ -1,6 +1,6 @@
 (defconst move-achv-code-getter-template
   "
-        _updateView() {
+        void _updateView() {
             if (!c.TryGetAchvProgressView(%s, out var view)) return;
 %s
         }
@@ -13,7 +13,7 @@
   (interactive)
 
   (let ((text) (min) (max) (func-spot) (achvname))
-    (while (re-search-forward "AddReactEach(Matcher\.AllOf<\\(\\w+\\).*UpdateView>(), e => {" nil t)
+    (while (re-search-forward "AddReactEach(Matcher\.AllOf<\\(\\w+\\)C.*UpdateView>(), e => {" nil t)
       (setq achvname (match-string 1))
       (save-excursion
         (setq func-spot (copy-marker (point-at-eol)))
