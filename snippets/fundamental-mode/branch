@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : branch
+#key : branch
+#contributor : benj
+# --
+\``(benj-curr-revision t)`\`
