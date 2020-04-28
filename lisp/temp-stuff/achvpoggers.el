@@ -1,51 +1,71 @@
 (defconst move-achv-code-getter-template
   "
         void _updateView() {
-            if (!c.TryGetAchvProgressView(%s, out var view)) return;
+            if (!c.TryGetAchvProgress%sView(AchvViewId.%s, out var view)) return;
 %s
         }
 "
   )
 
 
-(defun benj-move-achv-code ()
+(defconst achv-file "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/AchievementProgressDisplaySystems.cs")
+
+(benj-move-achv-code-perf nil)
+
+(defun benj-move-achv-code (file)
   "Reformat update view code to fit new api."
-  (interactive)
-
-  (let ((text) (min) (max) (func-spot) (achvname))
-    (while (re-search-forward "AddReactEach(Matcher\.AllOf<\\(\\w+\\)C.*UpdateView>(), e => {" nil t)
-      (setq achvname (match-string 1))
-      (save-excursion
-        (setq func-spot (copy-marker (point-at-eol)))
-        (evil-end-of-line)
+  (interactive"fFile to rewrite or default: ")
+  (setq file (or file achv-file))
+  (with-temp-file file
+    (insert-file-contents-literally file)
+    (benj-remove-eol-in-buff)
+    (let ((text) (min) (max) (func-spot) (achvname) (kindname))
+      (while (re-search-forward "AddReactEach(Matcher\.AllOf<\\(\\w+\\)C.*UpdateView>(), e => {" nil t)
+        (setq achvname (match-string 1))
+        (setq kindname (if (string-match "Bar" achvname) "Bar" "Icon"))
         (save-excursion
-          ;; ommit the "var view =" line
-          (forward-line 2)
-          (setq min (copy-marker (point-at-bol))))
-        (evil-jump-item)
-        (save-excursion
-          (forward-line -1)
-          (setq max (copy-marker (point-at-eol)))))
-      (setq text (buffer-substring min max))
-      (kill-region (save-excursion
-                     (goto-char min)
-                     (forward-line -3)
-                     (point-at-bol))
-                   (save-excursion
-                     (goto-char max)
-                     (forward-line 1)
-                     (point-at-eol)))
+          (setq func-spot (copy-marker (point-at-eol)))
+          (evil-end-of-line)
+          (save-excursion
+            (forward-line 1)
+            (setq min (copy-marker (point-at-bol))))
+          (evil-jump-item)
+          (save-excursion
+            (forward-line -1)
+            (setq max (copy-marker (point-at-eol)))))
+        (setq text (buffer-substring min max))
+        (kill-region (save-excursion
+                       (goto-char min)
+                       (search-backward "AddReactEach")
+                       (point-at-bol))
+                     (save-excursion
+                       (goto-char max)
+                       (forward-line 1)
+                       (point-at-eol)))
 
-      (goto-char func-spot)
-      (insert (format move-achv-code-getter-template achvname text))))
+        (goto-char func-spot)
+        (insert (format move-achv-code-getter-template kindname achvname text))))
 
-  (goto-char (point-min))
-  (while (re-search-forward "c.state.UpdateView<\\w+C>();" nil t)
-    (replace-match "_updateView();"))
-  )
+    (goto-char (point-min))
+    (while (re-search-forward "c.state.UpdateView<\\w+C>();" nil t)
+      (replace-match "_updateView();"))
+
+    (goto-char (point-min))
+    (while (re-search-forward "^.*var view =.*Get<\\w+Progress\\w+>()\.value.*" nil t)
+      (goto-char (point-at-bol))
+      (kill-line t))))
+
 
 
 (defconst dirs-with-monos '("/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/Icons/" "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/ProgressBars/"))
+
+
+(defun benj-remove-eol-in-buff ()
+  "Remove eol and aset to ut8."
+  (interactive)
+  (save-excursion (goto-char (point-min))
+                  (while (re-search-forward "\r\n" nil t) (replace-match "\n"))))
+
 
 
 
@@ -60,10 +80,10 @@
           (unless (search-forward "[Obsolete]" nil t)
             (goto-char (point-min))
             (set-buffer-file-coding-system 'utf-8)
-            (while (re-search-forward "\r\n" nil t) (replace-match "\n"))
+            (save-excursion (while (re-search-forward "\r\n" nil t) (replace-match "\n")))
             (goto-char (point-min))
             (if (not (search-forward "Component" nil t))
-                (message "Did not find  Component i)n %s" file)
+                (message "Did not find  Component in %s" file)
               (progn (forward-line -2)
                      (insert "using System;\n")
                      (forward-line 1)
