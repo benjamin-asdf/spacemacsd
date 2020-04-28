@@ -10,7 +10,41 @@
 
 (defconst achv-file "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/AchievementProgressDisplaySystems.cs")
 
-(benj-move-achv-code-perf nil)
+
+(defun benj-add-update-view-code ()
+  "Add update view syntax to all systems in the current buffer."
+  (goto-char (point-min))
+  (while (re-search-forward "public \\w+System(Contexts c) : base(c) {" nil t)
+    (forward-line 1)
+    (open-line 1)
+    (insert
+"
+        AddReact(Matcher.AllOf<AchvProgressViewC>(), e => {
+            _updateView();
+        });
+"
+
+     )))
+
+(defun benj-delete-achv-scripts ()
+  "Delete icon and bar scripts from the dirs. Keep special"
+
+  (interactive)
+  (dolist (dir dirs-with-monos)
+      (dolist (file (benj-directory-files dir))
+        (unless (string-equal "meta" (file-name-extension file))
+          (with-temp-file file
+            (insert-file-contents-literally file)
+            (if (search-forward "// special" nil t)
+                (progn (re-search-backward "Obsolete")
+                       (goto-char (point-at-bol))
+                       (kill-line t)
+                       (goto-char (point-at-bol))
+                       (kill-line t))
+
+              (progn (delete-file file) (delete-file (concat file ".meta"))))
+
+  )))))
 
 (defun benj-move-achv-code (file)
   "Reformat update view code to fit new api."
@@ -53,7 +87,9 @@
     (goto-char (point-min))
     (while (re-search-forward "^.*var view =.*Get<\\w+Progress\\w+>()\.value.*" nil t)
       (goto-char (point-at-bol))
-      (kill-line t))))
+      (kill-line t)))
+
+  (benj-add-update-view-code))
 
 
 
