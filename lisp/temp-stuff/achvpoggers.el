@@ -46,7 +46,7 @@
 
   )))))
 
-(defun benj-move-achv-code (file)
+(defun benj-move-achv-code (&optional file)
   "Reformat update view code to fit new api."
   (interactive"fFile to rewrite or default: ")
   (setq file (or file achv-file))
@@ -87,9 +87,8 @@
     (goto-char (point-min))
     (while (re-search-forward "^.*var view =.*Get<\\w+Progress\\w+>()\.value.*" nil t)
       (goto-char (point-at-bol))
-      (kill-line t)))
-
-  (benj-add-update-view-code))
+      (kill-line t))
+    (benj-add-update-view-code)))
 
 
 
