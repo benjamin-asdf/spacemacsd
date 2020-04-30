@@ -87,6 +87,7 @@ This function should only modify configuration layer settings."
      minder
      parens-config
      benj-pomodoro
+     benj-roslyn
      )
 
    ;; List of additional packages that will be installed without being
