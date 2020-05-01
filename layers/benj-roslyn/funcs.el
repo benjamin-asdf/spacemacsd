@@ -49,8 +49,6 @@ see `benj-roslyn-proj-configs'"
                               (format "-s \"%s\" %s" idlegame-sln-path benj-roslyn-idlegame-analyzer-args)))
 
 
-
-
 ;; TODO figure out the args
 (defun benj-roslyn-run-playground ()
   "Run release build on playground project."
@@ -68,8 +66,6 @@ see `benj-roslyn-proj-configs'"
      "--no-git"
      )
     (switch-to-buffer-other-window buff-name)))
-
-
 
 
 (defvar sharpel-process nil)
@@ -93,11 +89,15 @@ see `benj-roslyn-proj-configs'"
 (defun sharpel-build (config)
   "Compile the sharpel project. CONFIG is either 'Release' or 'Debug' "
   (interactive)
-  (when (processp sharpel-process)
-    (progn (delete-process sharpel-process) (setq benj-roslyn-process nil)))
+  (sharpel-clean-proc)
   (benj-msbuild-sln sharpel-sln-path config))
 
 
+(defun sharpel-clean-proc ()
+  "Delete process and reset state."
+  (interactive)
+  (when (processp sharpel-process)
+    (progn (delete-process sharpel-process) (setq benj-roslyn-process nil))))
 
 (defun sharpel-ensure-proc ()
   "Ensure that there is a benj roslyn process"
@@ -108,40 +108,57 @@ see `benj-roslyn-proj-configs'"
 (defun sharpel-refresh-proc ()
   "Refresh sharpel compilation. And create new proc."
   (interactive)
+
   ;; (sharpel-build "Debug") ;; dotnet run is good enough
+  (sharpel-clean-proc)
   (sharpel-ensure-proc))
 
 
-(defun sharpel-send-string-maybe ()
-  "Send string to current `sharpel-process'"
-
-  )
-
-;; TODO
-(defun sharpel-send-region-as-tree ()
-  "Send region to roslyn process"
+(defun sharpel-logsyntax-req ()
+  "Send active region as logsyntax request"
   (interactive)
-  (sharpel-ensure-proc)
-  (process-send-region sharpel-process (region-beginning) (region-end)))
+  (sharpel--runner
+   (concat ":logsyntax:\n"
+           (replace-regexp-in-string "[ \t\n\r]+" " " (buffer-substring (region-beginning) (region-end)))
+           ;; (replace-regexp-in-string "[\n\r]+" (make-string 1 ?\0) (buffer-substring (region-beginning) (region-end)))
+           "\n"))
+  (org-mode))
 
+(defconst sharpel-command-kinds
+  '((:filename . ":filename:")
+    (:logsyntax . ":logsyntax:"))
+  "Possible cammands send to sharpel proc.")
 
 (defvar sharpel-last-input nil)
+(defvar sharpel-last-file-send nil)
 
-;; TODO maybe select file
+;; TODO maybe select file, default to buffer file
 (defun sharpel-send-file-name-command ()
-  "Send current buffer file name command to playground roslyn."
+  "Send current buffer file name command to sharpel."
+  (interactive) ;; interactive list form
+  (sharpel--send-file-name-command buffer-file-name))
+
+(defun sharpel--send-file-name-command (file-name)
+  "Send FILE-NAME as input to sharpel."
+  (setq sharpel-last-file-send file-name)
+  (sharpel--runner (concat ":filename:\n" file-name "\n")))
+
+(defun sharpel-rerun-last-file-command ()
+  "Rerun last file command, if set."
   (interactive)
-  (sharpel--runner (concat ":filename:\n" buffer-file-name "\n")))
+  (if sharpel-last-file-send (sharpel--send-file-name-command sharpel-last-file-send)
+    (message "No previous file send command.")))
 
 (defun sharpel--runner (input)
   "Ensure sharpel and run input"
   (sharpel-ensure-proc)
   (setq sharpel-last-input input)
   (process-send-string sharpel-process input)
-  (switch-to-buffer-other-window sharpel-buff-name)
-  (chsarp-mode))
+  ;; (switch-to-buffer-other-window sharpel-buff-name)
+  (pop-to-buffer sharpel-buff-name)
+  (csharp-mode))
 
 (defun sharpel-rerun-last ()
   "Rerun the last sharpel command."
   (interactive)
-  (if sharpel-last-input (sharpel--runner sharpel-last-input)
+  (if sharpel-last-input (sharpel--runner sharpel-last-input)))
