@@ -850,6 +850,31 @@ ARG should be one of `benj-scratch-buffer-kinds'"
 
 
 
+;; todo needs a bit of work, only want the file names and nicer buffer
+(defun benj-quick-file-usages ()
+  "Search the project for the guid of the meta file you are visiting.
+Or try to use the meta file of the file that you are visiting."
+  (interactive)
+  (if (buffer-file-name)
+      (let* ((meta-file
+              (if (string-equal (file-name-extension (buffer-file-name)) "meta")
+                  (buffer-file-name)
+               (concat (buffer-file-name) ".meta")))
+             (guid
+              (when meta-file
+                (with-output-to-string
+                 (with-temp-buffer meta-file
+                                   (insert-file-contents-literally meta-file)
+                                   (re-search-forward "guid: \\(\\w+\\)" nil t)
+                                   (print (match-string 1)))))))
+        (if guid
+            ;;(start-process ) todo nicer buffer like that
+            (let ((default-directory (projectile-project-root))
+                  (command (format "rg --no-ignore  %s" (string-trim guid))))
+              (message (format "run %s in %s" command default-directory))
+              (async-shell-command command))
+          (message "Could not get meta files guid.")))
+    (message "not visiting a file.")))
 
 
 
