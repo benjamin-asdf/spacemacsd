@@ -192,4 +192,6 @@ Debug.Log("test)
 ** achieve automatically getting new omnisharp release
 
 
-* fix multiple entries in helm- mx history
+* TODO trello package
+
+* If you need to debug code run from jit-lock, see `jit-lock-debug-mode'."
