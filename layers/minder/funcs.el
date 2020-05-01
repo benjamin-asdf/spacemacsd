@@ -356,7 +356,7 @@ Meant to be run at the start of the day."
   ;; (or how many point the user gathered on that day I guess)
   ;; man I want something that says 3 rockets launched etc lul
   (interactive)
-  (minder-push-message (format "Good night. Don't forget the blanket, earplugs etc. Pomodoros today: %d" org-pomodoro-count))
+  (minder-push-message (format "Good night. Don't forget the blanket, earplugs etc. Pomodoros today: %d" (or 0 org-pomodoro-count)))
   (mapcar 'minder-push-message minder-good-night-messages))
 
 
