@@ -881,6 +881,15 @@ Or try to use the meta file of the file that you are visiting."
 
 
 
+(defun benj-get-guid (meta-file)
+  "Get guid for META-FILE."
+  (with-output-to-string
+    (with-temp-buffer
+      (insert-file-contents-literally meta-file)
+      (re-search-forward "guid: \\(\\w+\\)" nil t)
+      (princ (match-string 1)))))
+
+
 
 
 
