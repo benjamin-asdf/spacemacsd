@@ -878,6 +878,14 @@ Or try to use the meta file of the file that you are visiting."
 
 
 
+(defun mikus-clist (new-el &rest args)
+	(let ((res (or (and (listp new-el) new-el) (list new-el))))
+		(mapc (lambda (x)
+            (setq res
+                  (or (and (listp x) (append res x))
+                      (cons x res))))
+          args)
+    res))
 
 
 (defun benj-msg-time-string ()
