@@ -860,13 +860,7 @@ Or try to use the meta file of the file that you are visiting."
               (if (string-equal (file-name-extension (buffer-file-name)) "meta")
                   (buffer-file-name)
                (concat (buffer-file-name) ".meta")))
-             (guid
-              (when meta-file
-                (with-output-to-string
-                 (with-temp-buffer meta-file
-                                   (insert-file-contents-literally meta-file)
-                                   (re-search-forward "guid: \\(\\w+\\)" nil t)
-                                   (print (match-string 1)))))))
+             (guid (and meta-file (benj-get-guid meta-file))))
         (if guid
             ;;(start-process ) todo nicer buffer like that
             (let ((default-directory (projectile-project-root))
