@@ -880,6 +880,11 @@ Or try to use the meta file of the file that you are visiting."
 
 
 
+(defun benj-msg-time-string ()
+  "Put curr time string in the echo area."
+  (interactive)
+  (message (current-time-string)))
+
 
 (defun benj-get-guid (meta-file)
   "Get guid for META-FILE."
