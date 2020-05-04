@@ -54,6 +54,8 @@
 (spacemacs/set-leader-keys "oxw" 'benj-flush-empty-lines)
 (spacemacs/set-leader-keys "oxp" 'benj-delete-some-whitespace)
 (spacemacs/set-leader-keys "oxl" 'benj-delete-til-closing-parem)
+(spacemacs/set-leader-keys "oxe" 'benj-remove-eol-from-file)
+(spacemacs/set-leader-keys "oxE" 'benj-remove-eol)
 
 
 
@@ -76,6 +78,7 @@
 
 (spacemacs/declare-prefix "oo" "org")
 (spacemacs/set-leader-keys "oop" 'org-pomodoro)
+(spacemacs/set-leader-keys "oot" 'benj-msg-time-string)
 
 
 (spacemacs/declare-prefix "ol" "expand")

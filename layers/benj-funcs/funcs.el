@@ -300,11 +300,13 @@ Basically evil `dt)'"
     (forward-char -1)
     (delete-region beg (point))))
 
-(defun benj-directory-files (path)
-  "Get directory files from PATH. Excludes '.' and '..'."
+(defun benj-directory-files (path &optional pattern)
+  "Get directory files from PATH. Excludes '.' and '..'.
+Match file names for a PATTERN, if non nil."
   (let ((ret '()))
     (dolist (file (directory-files path t) ret)
-      (unless (member (file-name-nondirectory file) '("." ".."))
+      (when (and (not (member (file-name-nondirectory file) '("." "..")))
+                 (or (not pattern) (string-match-p pattern (file-name-nondirectory file))))
         (setq ret (cons file ret))))
     ret))
 
@@ -383,12 +385,43 @@ ARG should be one of `benj-scratch-buffer-kinds'"
 (defun benj-remove-eol (file)
   "Remove crlf from FILE."
   (interactive"fRemove eol from file: ")
+  (benj-remove-eol-from-file file))
+
+(defun benj-remove-eol-from-file (&optional file)
+  "Remve crlf from FILE. Try buffer file if FILE is nil."
+  (interactive)
+  (setq file (or file buffer-file-name))
   (with-temp-file file
     (insert-file-contents-literally file)
     (while (re-search-forward "\r\n" nil t) (replace-match "\n"))))
 
 
+(defun benj-unmerged-prefabs ()
+  "List currently unmerged prefabs"
+  (let ((default-directory (magit-toplevel)))
+    (seq-filter (lambda (s) (string-match-p "prefab" s))
+                (split-string (shell-command-to-string "gs-files \"UU\"") "\n"))))
 
+
+(defun benj-all-changed-files (rev1 rev2 regex)
+  "List all changed files between REV1 and REV2 that match REGEX
+REV1 defaults to develop, if nil, REV2 defaults to HEAD, if nil."
+  (let ((default-directory (magit-toplevel)))
+    (seq-filter
+     (lambda (s) (string-match-p regex s))
+     (split-string (shell-command-to-string (format "git diff --name-only -z %s...%s" (or rev1 "develop") (or rev2 "HEAD"))) "\0"))))
+
+(defun benj-checkout-develop-prefabs ()
+  "Checkout all changed prefabs from develop."
+  (interactive)
+  (benj-checkout-develop-prefabs)
+  (benj-checkout-files-from-develop "\\.prefab$"))
+
+(defun benj-checkout-files-from-develop (regex)
+  "Checkout changed files matching REGEX from develop."
+  (let ((default-directory (magit-toplevel)))
+    (async-shell-command
+     (concat "git checkout develop -- " (combine-and-quote-strings (benj-all-changed-files "develop" "HEAD" regex))))))
 
 
 
@@ -850,26 +883,31 @@ ARG should be one of `benj-scratch-buffer-kinds'"
 
 
 
-;; todo needs a bit of work, only want the file names and nicer buffer
 (defun benj-quick-file-usages ()
   "Search the project for the guid of the meta file you are visiting.
 Or try to use the meta file of the file that you are visiting."
   (interactive)
-  (if (buffer-file-name)
-      (let* ((meta-file
-              (if (string-equal (file-name-extension (buffer-file-name)) "meta")
-                  (buffer-file-name)
-               (concat (buffer-file-name) ".meta")))
-             (guid (and meta-file (benj-get-guid meta-file))))
-        (if guid
-            ;;(start-process ) todo nicer buffer like that
-            (let ((default-directory (projectile-project-root))
-                  (command (format "rg --no-ignore  %s" (string-trim guid))))
-              (message (format "run %s in %s" command default-directory))
-              (async-shell-command command))
-          (message "Could not get meta files guid.")))
-    (message "not visiting a file.")))
+  (let* ((default-directory (projectile-project-root))
+         (buff-name "*quick-file-usages*")
+         (guid (and buffer-file-name (benj-get-guid-with-meta buffer-file-name)))
+         (usages (and guid (benj-guid-file-usages guid))))
+    (if usages
+        (progn (pop-to-buffer buff-name)
+               (insert (format "file usages for guid: %s\n" guid))
+               (insert (mapconcat 'identity usages "\n")))
+      (message "cannot get file usages"))))
 
+
+(defun benj-guid-file-usages (guid)
+  "GUIDS file usages as list, non-zappy in large repos."
+  (let ((default-directory (projectile-project-root)))
+    (process-lines "git" "grep" "--files-with-matches" guid)))
+
+
+(defun benj-git-repo-root ()
+  "Current git repo root.
+Depends on `default-directory'"
+  (string-trim (shell-command-to-string "git rev-parse --show-toplevel")))
 
 
 (defun mikus-clist (new-el &rest args)
@@ -888,13 +926,31 @@ Or try to use the meta file of the file that you are visiting."
   (message (current-time-string)))
 
 
+(defun benj-get-guid-with-meta (file)
+  "Get guid for FILE. If FILE is not a meta file, try to use the corresponding meta file."
+  (benj-get-guid
+   (or (and (string-equal (file-name-extension file) "meta") file)
+       (concat file ".meta"))))
+
+
 (defun benj-get-guid (meta-file)
-  "Get guid for META-FILE."
+  "Get guid for META-FILE. Or the empty string.
+If META-FILE is not a valid meta file."
   (with-output-to-string
     (with-temp-buffer
       (insert-file-contents-literally meta-file)
-      (re-search-forward "guid: \\(\\w+\\)" nil t)
-      (princ (match-string 1)))))
+      (when (re-search-forward "guid: \\(\\w+\\)" nil t)
+        (princ (match-string 1))))))
+
+
+(defun benj-all-guids-at-path (dir)
+  "All unity guids of metas in DIR"
+  (mapcar 'benj-get-guid
+          (benj-directory-files dir ".*meta")))
+
+
+
+
 
 
 
