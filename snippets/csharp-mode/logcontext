@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : logcontext
+#key : logcontext
+#contributor : benj
+# --
+var s = c.state.Is<InFutureMode>() ? "sandbox" : "suspended";
+UnityEngine.Debug.Log($"contexts: {s}");
