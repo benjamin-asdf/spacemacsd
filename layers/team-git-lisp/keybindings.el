@@ -12,9 +12,10 @@
           ("R" . (lambda () (interactive) (benj-curr-revision-as-kill nil t)))
           ("b" . (lambda () (interactive) (benj-curr-revision-as-kill t nil)))
           ("B" . (lambda () (interactive) (benj-curr-revision-as-kill t t)))
-          ("D" . 'benj-diff-files)
-          ("f" . 'magit-file-checkout)
-          ("C" . 'benj-quick-commit))))
+          ("D" . benj-diff-files)
+          ("f" . magit-file-checkout)
+          ("C" . benj-quick-commit)
+          ("a" . team-git-common-ancestor-as-kill))))
 
 
 (spacemacs/declare-prefix "ogi" "git-idlegame")
