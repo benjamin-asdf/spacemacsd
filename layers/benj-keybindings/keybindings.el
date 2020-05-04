@@ -97,6 +97,3 @@
           ("m" . (lambda () (interactive) (benj--switch-to-scratch-buffer :markdown))))))
 
 
-(defconst benj-project-leader-keys "op")
-(spacemacs/declare-prefix benj-project-leader-keys "project")
-(spacemacs/set-leader-keys (concat benj-project-leader-keys "F") 'benj-helm-projectile-find-many-files)
