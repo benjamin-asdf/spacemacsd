@@ -159,16 +159,6 @@ Match file names for a PATTERN, if non nil."
     (delete-file file)))
 
 
-;; temp
-(defun benj-change-best-img ()
-  (interactive)
-  (search-forward-regexp "\\w+ Image \\(\\w+\\)")
-  (message (match-string 1))
-  (goto-char (line-end-position))
-  (insert (format "\n     public BestImage best_%s" (match-string 1))))
-
-(defun benj-mean (lst)
-  (/ (float (apply '+ lst)) (length lst)))
 
 
 
