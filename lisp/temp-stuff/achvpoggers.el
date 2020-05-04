@@ -182,8 +182,8 @@ for the prefabs that need to be fixed."
     (progn
       (with-temp-file prefab
         (insert-file-contents-literally prefab)
-        (benj-achv--search-and-replace (regexp-opt bar-guids) "hello mofos!!")
-        (benj-achv--search-and-replace (regexp-opt icon-guids) "hello mofos!! -icon")))))
+        (benj-achv--search-and-replace (regexp-opt bar-guids) new-bar-guid)
+        (benj-achv--search-and-replace (regexp-opt icon-guids) new-icon-guid)))))
 
 (defun benj-achv--search-and-replace (str replstr)
   "Replace all occurances of STR with REPLSTR in buffer"
