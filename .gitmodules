@@ -1,0 +1,3 @@
+[submodule "redshiftel"]
+	path = redshiftel
+	url = git@github.com:rtnlmeme-DestroyerOfDeath/redshiftel.git
