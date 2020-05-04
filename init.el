@@ -88,6 +88,11 @@ This function should only modify configuration layer settings."
      parens-config
      benj-pomodoro
      benj-roslyn
+     team-projectile
+     team-utils
+     team-git-lisp
+
+
      )
 
    ;; List of additional packages that will be installed without being
