@@ -6,7 +6,8 @@
 
 ;; todo
 (defconst benj-roslyn-idlegame-analyzer-args
-    "-x \"(Test)|(^Unity\\\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)\" -i \".*\\Assets\\.*\" -t \"Main\" --no-git")
+  '("-x" "\"(Test)|(^Unity\\\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)\""
+    "-i" "\".*\\Assets\\.*\""))
 
 
 ;; TODO
@@ -44,9 +45,13 @@ see `benj-roslyn-proj-configs'"
 ;; TODO
 (defun benj-roslyn-run-default-idlegame ()
   "Run analzyers with default args on idlegame."
+
+
   (interactive)
-  (benj-roslyn--runner-worker :release
-                              (format "-s \"%s\" %s" idlegame-sln-path benj-roslyn-idlegame-analyzer-args)))
+  (benj-roslyn-temp-run-idlegame)
+  ;; (benj-roslyn--cos-runner idlegame-sln-path :release
+  ;;                          benj-roslyn-idlegame-analyzer-args)
+  )
 
 
 ;; TODO figure out the args
@@ -65,7 +70,77 @@ see `benj-roslyn-proj-configs'"
      "-t" "Playground"
      "--no-git"
      )
-    (switch-to-buffer-other-window buff-name)))
+    (switch-to-buffer-other-window buff-name))
+  )
+
+
+(defun benj-roslyn-temp-run-idlegame ()
+  "Run release build on playground project."
+  (interactive)
+  (let (
+        (buff-name "*roslyn-analzyers*")
+        (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
+    (start-process
+     "run-analyzers"
+     buff-name
+     "/usr/bin/mono"
+     "/home/benj/idlegame/RoslynAnalyzers/EntityClosureCLI/bin/Release/EntityClosureCLI.exe"
+     "-s" idlegame-sln-path
+     "--no-git"
+     "-x" "\"(Test)|(^Unity\\\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)\""
+     "-i" "\".*\\Assets\\.*\""
+     "-a" "StartupMethodAnalyzer" "-startup"
+
+     "-e" "UNITY_EDITOR"
+      ;; "-p" "UNITY_ANDROID"
+     "-p" "UNITY_IOS"
+
+     )
+    (switch-to-buffer-other-window buff-name))
+  )
+
+
+;; todo
+;; & RunAnalyzers("-a StartupMethodAnalyzer -startup -p UNITY_IOS -e UNITY_EDITOR", "iOSStartupAnalyzerWarnings")
+;; & RunAnalyzers("-a StartupMethodAnalyzer -startup -p UNITY_ANDROID -e UNITY_EDITOR", "AndroidStartupAnalyzerWarnings");
+
+
+;; TODO
+;; (defun benj-roslyn--cos-runner (sln-file config &rest args)
+;;   "Run cos roslyn project with SLN-FILE and CONFIG.
+;; ARGS can be additional args passed to the process."
+;;   (let (
+;;         (buff-name "*roslyn-analzyers*")
+;;         (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
+;;     (make-process
+;;      (append (list :name "run-analyzers" :buffer buff-name
+;;                    :command (mikus-clist
+;;                              "/usr/bin/mono"
+;;                              (benj-roslyn-cli-path config)
+;;                              sln-file "-s"
+;;                              "--no-git"
+;;                              args))))
+;;     (switch-to-buffer-other-window buff-name)))
+
+
+
+(defun benj-start-process-args-as-list (name buffer program &rest program-args)
+  "See `start-process'. Uses `make-process' as subroutine.
+Difference is that we make sure args are never a list of list but list of strings."
+  (unless (fboundp 'make-process)
+    (error "Emacs was compiled without subprocess support"))
+  (apply #'make-process
+	       (append (list :name name :buffer buffer)
+		             (if program
+		                 (list :command (mikus-clist program program-args))))))
+
+
+(defun args-method (&rest args)
+  (mikus-clist args))
+
+(args-method '("asdf" "asdf") "asdf")
+(mikus-clist '("asdf" "asdf") "asdf")
+
 
 
 (defvar sharpel-process nil)
