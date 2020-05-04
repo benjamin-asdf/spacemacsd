@@ -1,7 +1,5 @@
 
 
-
-
 (defun team-helm-projectile-find-many-files ()
   "Simple implementation of projectile find file without any file filters"
   (interactive)
@@ -30,7 +28,7 @@ Build an fd command with DIR and REGEX. DIR should either be expanded, or relati
   "Uses `team-helm-projectile--find-files'.
 Search Asset dir for .prefabs"
   (interactive)
-  (let ((default-directory projectile-project-root))
+  (let ((default-directory (projectile-project-root)))
     (team-helm-projectile--find-files "fd -tf -I -0 -e prefab . IdleGame/Assets/")))
 
 (defun team-helm-projectile-initial-regex (regex)
