@@ -1,4 +1,5 @@
 ;; funcs.el starts here;; funcs.el starts here
+;;; Code:
 (defun mikus-reopen-buffer ()
   "Kill and open current BUFFER."
   (interactive)
@@ -23,10 +24,11 @@
       (yank))))
 
 (defun benj--word-in-column (line col)
-  "Evaluates to the evil word in LINE and COL.
- single space if char at point is a space. Nil for empty lines."
+  "Evil word in LINE and COL.
+single space if char at point is a space. Nil for empty lines."
   (save-excursion
-    (goto-line line)
+    (goto-char (point-min))
+    (forward-line (1- line))
     (evil-goto-column col)
     (cond ((looking-at "^$") nil)
           ((string-equal (thing-at-point 'char) " ") " ")
@@ -105,8 +107,6 @@ If NEWLINE is non nil, append a newline character."
     (insert-file-contents file)
     (goto-char (point-max))
     (insert (if newline (concat content "\n") content))))
-
-(with-eval-after-load 'projectile
 
 (defun benj-copy-last-yank-to-register (&optional reg)
   "Copy the contens of the \" register into REG.
@@ -188,7 +188,7 @@ ARG should be one of `benj-scratch-buffer-kinds'"
 
 
 (defun benj-next-digit ()
-  "Jump to next digit in buff"
+  "Jump to next digit in buff."
   (interactive)
   (re-search-forward "[0-9]+")
   (forward-char -1))
