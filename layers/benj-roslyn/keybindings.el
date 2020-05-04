@@ -21,7 +21,7 @@
 
 
 
-(defconst benj-roslyn-leader-keys "oy")
+(defconst benj-roslyn-leader-keys "ok")
 
 (spacemacs/declare-prefix benj-roslyn-leader-keys "roslyn")
 
@@ -34,7 +34,7 @@
           ("p" . benj-roslyn-run-playground)
           ("r" . sharpel-logsyntax-req)
           ("s" . sharpel-refresh-proc)
-          ("f" . sharpel-send-file-name-command)
+          ("F" . sharpel-send-file-name-command)
           ("l" . sharpel-rerun-last)
-          ("F" . sharpel-rerun-last-file-command)
+          ("f" . sharpel-rerun-last-file-command)
           )))
