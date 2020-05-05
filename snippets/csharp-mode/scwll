@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : scwll
+#key : scwll
+#contributor : benj
+# --
+Console.WriteLine($"{`(buffer-substring (point) (point-at-eol))`}");

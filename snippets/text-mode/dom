@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : dom
+#key : dom
+#contributor : benj
+# --
+do /merge
