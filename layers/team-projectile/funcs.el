@@ -28,8 +28,10 @@ Build an fd command with DIR and REGEX. DIR should either be expanded, or relati
   "Uses `team-helm-projectile--find-files'.
 Search Asset dir for .prefabs"
   (interactive)
-  (let ((default-directory (projectile-project-root)))
-    (team-helm-projectile--find-files "fd -tf -I -0 -e prefab . IdleGame/Assets/")))
+  (let* ((default-directory (projectile-project-root))
+         (dir (or (and (file-exists-p "Assets/") "Assets/") (and (file-exists-p "IdleGame/Assets/") "IdleGame/Assets"))))
+    (if dir (team-helm-projectile--find-files (concat "fd -tf -I -0 -e prefab . " dir))
+      (message "Not in idlegame project."))))
 
 (defun team-helm-projectile-initial-regex (regex)
   "Start helm projectile but collect files with a predefined regex REGEX."
