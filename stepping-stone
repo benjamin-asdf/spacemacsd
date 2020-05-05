@@ -4,23 +4,12 @@
 
 
 - indent-rigidgly x-tab
-
 - use marks
-
 - use registers
-
-- know more about registers
-
--
-
-
-
+- append to register
 
 - move-text-up spc-x-K
 
-- append to register
--
 
-
-
-- with "reverse" I can cheat getting a nice temp buffer of the hunk
+- symbol overlay mode
+- remove all with s O
