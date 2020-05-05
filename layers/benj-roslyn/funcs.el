@@ -100,6 +100,50 @@ see `benj-roslyn-proj-configs'"
   )
 
 
+
+;; (let (
+;;       (buff-name "*roslyn-analzyers*")
+;;       (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
+;;   (start-process
+;;    "run-analyzers"
+;;    buff-name
+;;    "/usr/bin/mono"
+;;    "/home/benj/idlegame/RoslynAnalyzers/EntityClosureCLI/bin/Release/EntityClosureCLI.exe"
+;;    "-s" benj-cos-roslyn-sln-path
+;;    "--no-git"
+;;    "-t" "Playground"
+;;    "-a" "StartupMethodAnalyzer" "-startup"
+
+;;    "-e" "UNITY_EDITOR"
+;;    ;; "-p" "UNITY_ANDROID"
+;;    "-p" "UNITY_IOS"
+;;    )
+;;   (switch-to-buffer-other-window buff-name))
+
+
+
+;; (let (
+;;       (buff-name "*roslyn-analzyers*")
+;;       (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
+;;   (start-process
+;;    "run-analyzers"
+;;    buff-name
+;;    "/usr/bin/mono"
+;;    "/home/benj/idlegame/RoslynAnalyzers/EntityClosureCLI/bin/Release/EntityClosureCLI.exe"
+;;    "-s" "/home/benj/repos/csharp/playground-sample/playground-sample.sln"
+;;    "--no-git"
+;;    "-a" "StartupMethodAnalyzer" "-startup"
+
+;;    ;; "-e"
+;;    "-e" "UNITY_EDITOR"
+;;    ;; "-e" "DEBUG"
+;;    ;; "-p" "UNITY_ANDROID"
+;;    ;; "-p" "UNITY_IOS"
+;;    "-p"
+;;    )
+;;   (switch-to-buffer-other-window buff-name))
+
+
 ;; todo
 ;; & RunAnalyzers("-a StartupMethodAnalyzer -startup -p UNITY_IOS -e UNITY_EDITOR", "iOSStartupAnalyzerWarnings")
 ;; & RunAnalyzers("-a StartupMethodAnalyzer -startup -p UNITY_ANDROID -e UNITY_EDITOR", "AndroidStartupAnalyzerWarnings");
