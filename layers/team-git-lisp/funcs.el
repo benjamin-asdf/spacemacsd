@@ -17,6 +17,32 @@ if REVISIONS has the length 1, default to HEAD and arg"
 
 
 
+
+(defun benj-their-prefabs ()
+  "Checkout theirs for all unmerged prefabs."
+  (interactive)
+  (let ((prefabs (benj-unmerged-prefabs)))
+    (write-region (mapconcat 'identity prefabs "\n") nil "conflicted-prefabs")
+    (async-shell-command (concat "git checkout --theirs " (mapconcat 'shell-quote-argument prefabs " ")))))
+
+
+(defun benj-git-lfs-obj (rev &optional file)
+  "Get git lfs obj for REV on FILE.
+If FILE is ommitted try to get the current buffer file instead,
+if REV is nil, use 'develop'."
+  (string-trim
+   (shell-command-to-string (concat "git-lfs-object" " " (or rev "develop") " " (shell-quote-argument (string-trim-left (or file buffer-file-name) (magit-toplevel)))))))
+
+;;TODO
+(defun benj-git-lfs-diff (rev1 rev2 &optional file)
+  "View diff of git lfs object at FILE.
+If FILE is ommitted, try use current buffer file.
+IF REV1 is nill, use HEAD.
+IF REV2 is null, use develop."
+
+  )
+
+
 (defun team-curr-revision-as-kill (branch-name auto-insert)
   "Copy current git revision as kill.
 If BRANCH-NAME is non nil, copy the branch name instead of commit sha.
