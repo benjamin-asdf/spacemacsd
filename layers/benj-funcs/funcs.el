@@ -260,6 +260,7 @@ Or try to use the meta file of the file that you are visiting."
          (usages (and guid (benj-guid-file-usages guid))))
     (if usages
         (progn (pop-to-buffer buff-name)
+               (erase-buffer)
                (insert (format "file usages for guid: %s\n" guid))
                (insert (mapconcat 'identity usages "\n")))
       (message "cannot get file usages"))))
