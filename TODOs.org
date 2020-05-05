@@ -195,3 +195,29 @@ Debug.Log("test)
 * TODO trello package
 
 * If you need to debug code run from jit-lock, see `jit-lock-debug-mode'."
+
+
+
+* nicholas list stuff
+  (defun clist-1 (new-el &rest args)
+	(cons new-el args))
+
+;; everything you put in &rest is put into a list so if you put a list it will be come a list of lists
+(clist-1 "blah" '("fjlsdk" "jfksaj"))
+=> ("blah" ("fjlsdk" "jfksaj"))
+
+(clist-1 "blah" "fjlsdk" "jfksaj")
+=> ("blah" "fjlsdk" "jfksaj")
+
+;; You can achieve what you want like this
+(defun clist (new-el &rest args)
+	(let ((res (or (and (listp new-el) new-el) (list new-el))))
+		(mapc (lambda (x)
+						(setq res
+									(or (and (listp x) (append res x))
+											(cons x res))))
+					args)
+		res))
+
+(clist "sldfjas" '("fdlsk" "fjasdl"))
+=> ("sldfjas" "fdlsk" "fjasdl")
