@@ -230,6 +230,12 @@ REV1 defaults to develop, if nil, REV2 defaults to HEAD, if nil."
      (lambda (s) (string-match-p regex s))
      (split-string (shell-command-to-string (format "git diff --name-only -z %s...%s" (or rev1 "develop") (or rev2 "HEAD"))) "\0"))))
 
+
+(defun benj-changed-prefabs (rev1 rev2)
+  "Uses `benj-all-changed-files' as subroutine.
+Default to develop and HEAD."
+  (benj-all-changed-files nil nil "\\.prefab$"))
+
 (defun benj-checkout-develop-prefabs ()
   "Checkout all changed prefabs from develop."
   (interactive)
