@@ -148,25 +148,27 @@
 
 (defconst bar-path "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/ProgressBars/")
 (defconst icon-path "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/Icons/")
-(defconst emote-icon-path "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/Icons/EmotesAchievementProgressIcon.cs")
+(defconst emote-path "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/Icons/EmotesAchievementProgressIcon.cs")
+
+(defvar bar-guids '())
+(defvar icon-guids '())
 
 
-(defvar bar-guids (benj-all-guids-at-path bar-path))
-(defvar icon-guids (benj-all-guids-at-path icon-path))
-(setq bar-guids (benj-all-guids-at-path bar-path))
-(setq icon-guids (benj-all-guids-at-path icon-path))
-
-
-(defconst new-bar-guid (benj-get-guid-with-meta
+(defun new-bar-guid () (benj-get-guid-with-meta
                         "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/AchvProgressBar.cs"
                         ))
-(defconst new-icon-guid (benj-get-guid-with-meta "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/AchvProgressIcon.cs"))
+(defun new-icon-guid () (benj-get-guid-with-meta "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/AchvProgressIcon.cs"))
 
 
 
 
 (benj-achv-fix-prefabs (list "/home/benj/idlegame/IdleGame/Assets/Prefabs/ChurchPrefabInception/Holy Book.prefab"))
 
+
+(defun achv-init-guids ()
+  "Init old prefab guids, Checkout develop first."
+  (setq bar-guids (benj-all-guids-at-path bar-path))
+  (setq icon-guids (benj-all-guids-at-path icon-path)))
 
 
 ;; call this after merging,
@@ -182,8 +184,8 @@ for the prefabs that need to be fixed."
     (progn
       (with-temp-file prefab
         (insert-file-contents-literally prefab)
-        (benj-achv--search-and-replace (regexp-opt bar-guids) new-bar-guid)
-        (benj-achv--search-and-replace (regexp-opt icon-guids) new-icon-guid)))))
+        (benj-achv--search-and-replace (regexp-opt bar-guids) (new-bar-guid))
+        (benj-achv--search-and-replace (regexp-opt icon-guids) (new-icon-guid))))))
 
 (defun benj-achv--search-and-replace (str replstr)
   "Replace all occurances of STR with REPLSTR in buffer"
@@ -292,20 +294,11 @@ Evaluates to the display types used by this type as list of numbers."
 
 
 
-(defun benj-magit-cmd (cmd)
-  "Get current top dir using magit and run cmd as `async-shell-command'"
-  (let ((default-directory (magit-toplevel)))
-    (async-shell-command cmd)))
-
 
 (let ((default-directory cos-dir))
   ;; (setq prefabs-to-handle (benj-unmerged-prefabs))
   (async-shell-command (format "git checkout develop -- %s" (mapconcat 'identity prefabs-to-handle " ")))
   )
-
-(benj-magit-cmd
- )
-
 
 
 ;; (write-region () "unmerged-prefabs" )
@@ -325,8 +318,7 @@ Evaluates to the display types used by this type as list of numbers."
 
 
 (defconst achv-ids-string
-                              "
-    None,
+   "None,
     AdsAchievementProgressIcon,
     ArenaRefreshProgressIcon,
     AvatarLevelUpgradeProgressIcon,
@@ -397,6 +389,7 @@ Evaluates to the display types used by this type as list of numbers."
     WeeklyEventAchievementProgressBar,
     ClaimStreamerProgressIcon,
     TopUpItemAchievementProgressbar,
+    BlackMarketPresentProgressBar,
     AthenePackPresentProgressbar,
     DailyPrayerBoostPresentProgressbar,
     CryptonToCharityProgressBar,
