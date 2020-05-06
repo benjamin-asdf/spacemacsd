@@ -89,46 +89,6 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
   - emacs string highlighting bug
   - emacs crashes
   - emacs performance
-* potential memory fix:
-  You could make a program that listens and kills duplicate processes
-1 HR AGO
-I use this to kill processes that take to much memory
-1 HR AGO
-#!/run/current-system/sw/bin/perl
-
-use strict;
-use warnings;
-use Proc::ProcessTable;
-
-my $processesFound = 0;
-my $table = Proc::ProcessTable->new;
-
-for my $process (@{$table->table}) {
-    # skip root processes
-    next if $process->uid == 0 or $process->gid == 0;
-
-    # skip any using less than 4 GiB
-    next if $process->rss < 4_294_967_296;
-
-    # document the slaughter
-		$processesFound = $processesFound + 1;
-    (my $cmd = $process->cmndline) =~ s/\s+\z//;
-    print "Killing process: pid=", $process->pid, " uid=", $process->uid, " rss=", $process->rss, " fname=", $process->fname, " cmndline=", $cmd, "\n";
-
-    # try first to terminate process politely
-    kill 15, $process->pid;
-
-    # wait a little, then kill ruthlessly if it's still around
-    sleep 5;
-    kill 9, $process->pid;
-}
-
-my $date = localtime();
-print "Killed ", $processesFound, " processes $date \n";
-1 HR AGO
-I run this in cron every minute
-1 HR AGO
-You could modify to check for vbs compiler and if theres a duplicate, kill the oldest one
 * conky
 * tmux
 * emacs-roslyn-code-action program
@@ -195,8 +155,6 @@ Debug.Log("test)
 * TODO trello package
 
 * If you need to debug code run from jit-lock, see `jit-lock-debug-mode'."
-
-
 
 * nicholas list stuff
   (defun clist-1 (new-el &rest args)
