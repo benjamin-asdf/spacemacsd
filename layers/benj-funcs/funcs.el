@@ -218,8 +218,17 @@ ARG should be one of `benj-scratch-buffer-kinds'"
 (defun benj-unmerged-prefabs ()
   "List currently unmerged prefabs"
   (let ((default-directory (magit-toplevel)))
-    (seq-filter (lambda (s) (string-match-p "prefab" s))
-                (split-string (shell-command-to-string "gs-files \"UU\"") "\n"))))
+    (seq-filter (lambda (s) (string-match-p "prefab" s)) (benj-unmerged-files))))
+
+(defun benj-unmerged-files ()
+  "List currently unmerged files."
+  (seq-uniq (mapcar (lambda (s) (string-trim-left s "[0-9]+ \\w+ [0-9]\t")) (split-string (shell-command-to-string "git ls-files -z --unmerged") "\0"))))
+
+(defun benj-write-prefabs-for-rewrite ()
+  "Put unmerged prefabs into a file for unity script processing."
+  (interactive)
+  (let ((default-directory (magit-toplevel)))
+    (write-region (mapconcat (lambda (s) (string-trim-left s "IdleGame/")) (benj-unmerged-prefabs) "\n") nil "IdleGame/prefabs-for-rewrite")))
 
 
 (defun benj-all-changed-files (rev1 rev2 regex)
