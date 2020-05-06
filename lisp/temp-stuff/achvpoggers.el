@@ -277,9 +277,22 @@ Evaluates to the display types used by this type as list of numbers."
     (dolist (prefab (seq-filter (lambda (p) (not (member p achv-base-prefabs))) (benj-all-changed-files nil nil "\\.prefab$")))
       (with-temp-file prefab
         (insert-file-contents-literally prefab)
-        (while (re-search-forward "^  identifier: \\([0-9]+\\)$" nil t)
-          (replace-match (format "  identifier: %s" (number-to-string (+ 1 (string-to-number (match-string 1)))))))))))
+        (while (re-search-forward "
+      propertyPath: identifier
+      value: \\([0-9]+\\)" nil t)
+          (replace-match (format "
+      propertyPath: identifier
+      value: %s"
+                                 (number-to-string (+ 1 (string-to-number (match-string 1)))))))))))
 
+
+(defconst regex-block "
+    - target: {fileID: 6220887528573366562, guid: 842422f110a86044b8d0a43b83a7f7e4,
+        type: 3}
+      propertyPath: identifier
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents:")
 
 
 (defconst achv-ids
@@ -395,3 +408,23 @@ Evaluates to the display types used by this type as list of numbers."
     CryptonToCharityProgressBar,
     SpecialDealsAchievementProgressbar"
  )
+
+(defconst bonus-view-path "/home/benj/idlegame/IdleGame/Assets/Prefabs/Achievements/AchievementBonusView.prefab.meta")
+(defconst bar-prefab-path "/home/benj/idlegame/IdleGame/Assets/Prefabs/Achievements/AchievementProgressBar.prefab")
+(defconst prefab-dir "IdleGame/prefabs-achv-view/")
+
+(defun find-achv-guid ()
+  (interactive)
+  (re-search-forward (regexp-opt (append bar-guids icon-guids)))
+  )
+
+(defun find-ref-in-prefab ()
+  (interactive)
+  (re-search-forward (regexp-opt (list (benj-get-guid-with-meta bonus-view-path) (benj-get-guid-with-meta bar-prefab-path))))
+
+  )
+
+(defun goto-id
+    (interactive)
+  (re-search-forward (regexp-opt (append (benj-get-guid-with-meta bonus-view-path) (benj-get-guid-with-meta ))))
+  )
