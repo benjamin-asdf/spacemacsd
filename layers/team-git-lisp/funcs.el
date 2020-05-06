@@ -43,6 +43,12 @@ IF REV2 is null, use develop."
   )
 
 
+(defun benj-write-unmermged-prefabs-to-file ()
+  "Write current unmerged prefabs to file called unmerged-prefabs."
+  (interactive)
+  (write-region (mapconcat 'identity (benj-unmerged-prefabs) " ") nil "unmerged-prefabs"))
+
+
 (defun team-curr-revision-as-kill (branch-name auto-insert)
   "Copy current git revision as kill.
 If BRANCH-NAME is non nil, copy the branch name instead of commit sha.

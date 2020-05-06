@@ -15,7 +15,8 @@
           ("D" . benj-diff-files)
           ("f" . magit-file-checkout)
           ("C" . benj-quick-commit)
-          ("a" . team-git-common-ancestor-as-kill))))
+          ("a" . team-git-common-ancestor-as-kill)
+          ("F" . benj-fetch-merge))))
 
 
 (spacemacs/declare-prefix "ogi" "git-idlegame")
