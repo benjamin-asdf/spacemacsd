@@ -60,9 +60,7 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
 
 (defun team-curr-revision (&optional branch-name)
   "Current git revision. If BRANCH-NAME is non nil, evaluate to the branch name instead of the commit sha."
-  (team-remove-newline-end-of-string
-   (team-projectile-dir-command-to-string
-    (if branch-name "git branch --show-current" "git rev-parse HEAD"))))
+  (string-trim (shell-command-to-string (or (and branch-name "git branch --show-current") "git rev-parse HEAD"))))
 
   (defun team-diff-files (&optional rev)
     "Print the output of git diff --name-only to temp buffer.
