@@ -36,7 +36,6 @@ This function should only modify configuration layer settings."
    '(
      ;; basic
      version-control
-     helm
      gtags
      (auto-completion  :variables
                        auto-completion-complete-with-key-sequence "ll"
@@ -52,6 +51,9 @@ This function should only modify configuration layer settings."
      syntax-checking
      (org :variables
           org-enable-trello-support t)
+     (helm :variables
+           spacemacs-helm-rg-max-column-number 1024
+           )
 
      ;; Langs
      emacs-lisp
