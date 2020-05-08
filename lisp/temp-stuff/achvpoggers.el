@@ -143,9 +143,6 @@
 
 
 
-
-
-
 (defconst bar-path "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/ProgressBars/")
 (defconst icon-path "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/Icons/")
 (defconst emote-path "/home/benj/idlegame/IdleGame/Assets/#/Sources/Achievements/MonoBehaviours/AchievementProgressDisplayImpl/Icons/EmotesAchievementProgressIcon.cs")
@@ -163,7 +160,6 @@
 
 
 (benj-achv-fix-prefabs (list "/home/benj/idlegame/IdleGame/Assets/Prefabs/ChurchPrefabInception/Holy Book.prefab"))
-
 
 (defun achv-init-guids ()
   "Init old prefab guids, Checkout develop first."
