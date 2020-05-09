@@ -4,7 +4,6 @@
 (defconst benj-roslyn-cli-name "EntityClosureCLI.exe")
 (defconst idlegame-sln-path (concat idlegame-project-root "IdleGame.sln"))
 
-;; todo
 (defconst benj-roslyn-idlegame-analyzer-args
   '("-x" "\"(Test)|(^Unity\\\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)\""
     "-i" "\".*\\Assets\\.*\""))
@@ -15,6 +14,8 @@
   '((:debug . "Debug")
     (:release . "Release")))
 
+;; TODO
+;; would be trivial to have some helm selection of args
 
 
 (defun benj-roslyn--build-proj-worker (config)
@@ -42,15 +43,6 @@ see `benj-roslyn-proj-configs'"
           benj-roslyn-cli-name))
 
 
-(defun benj-roslyn-run-default-idlegame ()
-  "Run analzyers with default args on idlegame."
-  (interactive)
-  (benj-roslyn-temp-run-idlegame)
-  ;; (benj-roslyn--cos-runner idlegame-sln-path :release
-  ;;                          benj-roslyn-idlegame-analyzer-args)
-  )
-
-
 (defun benj-roslyn-run-playground ()
   "Run release build on playground project."
   (interactive)
@@ -58,17 +50,18 @@ see `benj-roslyn-proj-configs'"
    benj-cos-roslyn-sln-path
    "-t" "Playground"))
 
-(defun benj-roslyn-run-idlegame ()
-  "Run release build on playground project."
+(defun benj-roslyn-run-idlegame (&optional args)
+  "Run release build on playground project. ARGS can be additional args."
   (interactive)
   (benj-roslyn-runner
    idlegame-sln-path
    benj-roslyn-idlegame-analyzer-args
-   "--no-git"
-   ;; "-a" "StartupMethodAnalyzer" "-startup"
-   ;; "-e" "UNITY_EDITOR"
-   ;; "-p" "UNITY_IOS"
-   ))
+   "--no-git"))
+
+(benj-roslyn-run-idlegame)
+;; "-a" "StartupMethodAnalyzer" "-startup"
+;; "-e" "UNITY_EDITOR"
+;; "-p" "UNITY_IOS"
 
 
 (defun benj-roslyn-runner (sln &rest args)
@@ -99,8 +92,6 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
 		                 (list :command (-flatten (cons program program-args)))))))
 
 
-(defvar sharpel-process nil)
-;; TODO name this programm sharpel
 (defconst sharpel-repo-root "/home/benj/repos/csharp/Sharpel/")
 (defconst sharpel-proj-dir (concat sharpel-repo-root "Sharpel/"))
 (defconst sharpel-sln-path (concat sharpel-repo-root "Sharpel.sln"))
@@ -110,10 +101,11 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
 (defconst sharpel-debug-exe-path (concat sharpel-debug-exe-dir "Sharpel.dll"))
 (defconst sharpel-buff-name "*sharpel*")
 
+(defvar sharpel-process nil)
+
 (defun sharpel-start-proc ()
   "Start roslyn proc and switch to output buffer"
   (let ((default-directory sharpel-proj-dir))
-   ;; (setq sharpel-process (start-process "benj-roslyn" sharpel-buff-name "mono" sharpel-debug-exe-path))
     (setq sharpel-process (start-process "benj-roslyn" sharpel-buff-name "dotnet" "run"))
    (switch-to-buffer-other-window sharpel-buff-name)))
 
@@ -139,7 +131,6 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
 (defun sharpel-refresh-proc ()
   "Refresh sharpel compilation. And create new proc."
   (interactive)
-
   ;; (sharpel-build "Debug") ;; dotnet run is good enough
   (sharpel-clean-proc)
   (sharpel-ensure-proc))
@@ -185,7 +176,6 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
   (sharpel-ensure-proc)
   (setq sharpel-last-input input)
   (process-send-string sharpel-process input)
-  ;; (switch-to-buffer-other-window sharpel-buff-name)
   (pop-to-buffer sharpel-buff-name)
   (csharp-mode))
 
