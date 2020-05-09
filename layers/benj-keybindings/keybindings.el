@@ -73,10 +73,6 @@
 
 
 
-(spacemacs/declare-prefix "ow" "system")
-(spacemacs/set-leader-keys "ows" 'benj-windows-add-file-to-startup)
-
-
 ;; maybe something
 ;; (defvar benj-keybindings-prefixes '()
 ;;   "Should be a list of form '(PREFIX NAME) determining prefixes to be declared.")
