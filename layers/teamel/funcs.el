@@ -9,4 +9,4 @@ Expects some valid url in the unamed register"
     (pop-to-buffer buff-name)
     (erase-buffer)
     (follow-mode)
-    (start-process "get-logs" buff-name "curl" (evil-get-register ?\"))))
+    (start-process "get-logs" buff-name "curl" (format "%s"(evil-get-register ?\")))))
