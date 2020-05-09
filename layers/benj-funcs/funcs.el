@@ -214,15 +214,11 @@ ARG should be one of `benj-scratch-buffer-kinds'"
     (insert-file-contents-literally file)
     (while (re-search-forward "\r\n" nil t) (replace-match "\n"))))
 
-
+;; see `magit-unmerged-files', stuff already exists
 (defun benj-unmerged-prefabs ()
   "List currently unmerged prefabs"
   (let ((default-directory (magit-toplevel)))
-    (seq-filter (lambda (s) (string-match-p "prefab" s)) (benj-unmerged-files))))
-
-(defun benj-unmerged-files ()
-  "List currently unmerged files."
-  (seq-uniq (mapcar (lambda (s) (string-trim-left s "[0-9]+ \\w+ [0-9]\t")) (split-string (shell-command-to-string "git ls-files -z --unmerged") "\0"))))
+    (seq-filter (lambda (s) (string-match-p "prefab" s)) (magit-unmerged-files))))
 
 (defun benj-write-prefabs-for-rewrite ()
   "Put unmerged prefabs into a file for unity script processing."
@@ -234,21 +230,20 @@ ARG should be one of `benj-scratch-buffer-kinds'"
 (defun benj-all-changed-files (rev1 rev2 regex)
   "List all changed files between REV1 and REV2 that match REGEX
 REV1 defaults to develop, if nil, REV2 defaults to HEAD, if nil."
-  (let ((default-directory (magit-toplevel)))
-    (seq-filter
-     (lambda (s) (string-match-p regex s))
-     (split-string (shell-command-to-string (format "git diff --name-only -z %s...%s" (or rev1 "develop") (or rev2 "HEAD"))) "\0"))))
+  (seq-filter
+   (or (not regex) (lambda (s) (string-match-p regex s)))
+   (magit-changed-files rev1 rev2)))
 
 
 (defun benj-changed-prefabs (rev1 rev2)
   "Uses `benj-all-changed-files' as subroutine.
+Also see `magit-changed-files'
 Default to develop and HEAD."
   (benj-all-changed-files nil nil "\\.prefab$"))
 
 (defun benj-checkout-develop-prefabs ()
   "Checkout all changed prefabs from develop."
   (interactive)
-  (benj-checkout-develop-prefabs)
   (benj-checkout-files-from-develop "\\.prefab$"))
 
 (defun benj-checkout-files-from-develop (regex)
