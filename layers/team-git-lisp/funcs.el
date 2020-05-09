@@ -16,35 +16,42 @@ if REVISIONS has the length 1, default to HEAD and arg"
                           (or (and revisions (cadr revisions)) "HEAD"))))))
 
 
-;; ! see eg `magit-changed-files', all this stuff exists
-
 (defun benj-their-prefabs ()
   "Checkout theirs for all unmerged prefabs."
   (interactive)
   (let ((prefabs (benj-unmerged-prefabs)))
+
     (write-region (mapconcat 'identity prefabs "\n") nil "conflicted-prefabs")
     ;; (write-region (mapconcat (lambda (p) (string-trim-left p "IdleGame/")) prefabs "\n") nil "IdleGame/prefabs-for-rewrite.txt")
-    (let ((file-arg (mapconcat 'shell-quote-argument prefabs " ")))
-      (shell-command (concat "git checkout --theirs -- " file-arg))
-      (shell-command (concat "git add -- " file-arg)))))
+    (benj-checkout-stage "--theirs" prefabs)))
 
-(defun benj-checkout-stage (files arg)
+
+
+(defun benj-checkout-stage (arg files)
   "Checkout FILES, which should be list of paths, ARG can be either
 --ours, --theirs,
 TODO: --merge."
   ;; See `magit-checkout-stage', but I wanted to not invoke it foreach file
-  (let ((file-arg (mapconcat 'shell-quote-argument files " ")))
-    ;; (shell-command (concat "git checkout " arg " -- " file-arg))
-    ;; (shell-command (concat "git add -u -- " file-arg))
-    (start-process )
-    (magit-run-git "checkout" arg "--" file-arg)
-    (magit-run-git "add" "-u" "--" file-arg))
-  )
+  (let ((file-arg (or (and (listp files) (mapcar 'shell-quote-argument files)) files)))
+    (benj-run-git-sync "checkout" arg "--" file-arg)
+    (benj-run-git "add" "-u" "--" file-arg)))
+
 
 (defun benj-run-git (&rest args)
-  "Run git in *benj-git* buffer with current `magit-toplevel' as default directory."
-  (let ((default-directory (magit-toplevel)))
-    (start-process "benj-git" "*benj-git*" "git" (-flatten args))))
+ "Run git in *benj-git* buffer with current `magit-toplevel' as default directory."
+ ;; TODO put the command in the buffer
+ (let* ((default-directory (magit-toplevel))
+        (buff-name "*benj-git*")
+        (proc (benj-start-proccess-flatten-args "benj-git" buff-name "git" args)))
+   (pop-to-buffer buff-name)
+   proc))
+
+(defun benj-run-git-sync (&rest args)
+  "Use `benj-run-git' and wait for process to finish. Returns the process"
+  (let ((proc (benj-run-git args)))
+    (while (accept-process-output proc))
+    proc))
+
 
 ;; todo
 (defun benj-find-git-lfs-obj ()
@@ -198,4 +205,3 @@ of HEAD agains develop."
 (defun benj--git-diff-files (rev1 &optional rev2)
   "Get shell output for git diff files of REV1 agains REV2, if REV2 is ommitted, default to HEAD."
   (benj-projectile-dir-command-to-string (format "git diff --name-only %s..%s" rev1 (or rev2 "HEAD"))))
-
