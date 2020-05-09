@@ -232,14 +232,14 @@ ARG should be one of `benj-scratch-buffer-kinds'"
 REV1 defaults to develop, if nil, REV2 defaults to HEAD, if nil."
   (seq-filter
    (or (not regex) (lambda (s) (string-match-p regex s)))
-   (magit-changed-files rev1 rev2)))
+   (magit-changed-files (or rev1 "develop") rev2)))
 
 
 (defun benj-changed-prefabs (rev1 rev2)
   "Uses `benj-all-changed-files' as subroutine.
 Also see `magit-changed-files'
 Default to develop and HEAD."
-  (benj-all-changed-files nil nil "\\.prefab$"))
+  (benj-all-changed-files rev1 rev2 "\\.prefab$"))
 
 (defun benj-checkout-develop-prefabs ()
   "Checkout all changed prefabs from develop."
