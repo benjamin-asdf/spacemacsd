@@ -179,3 +179,38 @@ Debug.Log("test)
 
 (clist "sldfjas" '("fdlsk" "fjasdl"))
 => ("sldfjas" "fdlsk" "fjasdl")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+* todo ggtags eldoc with advice
+ (defgroup ggtags nil
+	"Options for ggtags"
+	:group 'init)
+
+(defcustom ggtags-eldoc-disabled-major-modes '()
+	"List of major modes in which ggtags-eldoc should not run"
+	:group 'ggtags
+	:type '(set symbol))
+
+(setq ggtags-eldoc-disabled-major-modes '(csharp-mode))
+
+(defun my/ggtags-eldoc-advice (original-func &rest args)
+	(and
+	 (not (memq major-mode ggtags-eldoc-disabled-major-modes))
+	 (apply original-func args)
+	 ))
+
+(advice-add 'ggtags-eldoc-function :around #'my/ggtags-eldoc-advice)
