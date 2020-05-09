@@ -42,11 +42,8 @@ see `benj-roslyn-proj-configs'"
           benj-roslyn-cli-name))
 
 
-;; TODO
 (defun benj-roslyn-run-default-idlegame ()
   "Run analzyers with default args on idlegame."
-
-
   (interactive)
   (benj-roslyn-temp-run-idlegame)
   ;; (benj-roslyn--cos-runner idlegame-sln-path :release
@@ -54,137 +51,52 @@ see `benj-roslyn-proj-configs'"
   )
 
 
-;; TODO figure out the args
 (defun benj-roslyn-run-playground ()
   "Run release build on playground project."
   (interactive)
-  (let (
-        (buff-name "*roslyn-analzyers*")
-       (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
-    (start-process
-     "run-analyzers"
-     buff-name
-     "/usr/bin/mono"
-     "/home/benj/idlegame/RoslynAnalyzers/EntityClosureCLI/bin/Release/EntityClosureCLI.exe"
-     "-s" benj-cos-roslyn-sln-path
-     "-t" "Playground"
-     "--no-git"
-     )
-    (switch-to-buffer-other-window buff-name))
-  )
+  (benj-roslyn-runner
+   benj-cos-roslyn-sln-path
+   "-t" "Playground"))
 
-
-(defun benj-roslyn-temp-run-idlegame ()
+(defun benj-roslyn-run-idlegame ()
   "Run release build on playground project."
+  (interactive)
+  (benj-roslyn-runner
+   idlegame-sln-path
+   benj-roslyn-idlegame-analyzer-args
+   "--no-git"
+   ;; "-a" "StartupMethodAnalyzer" "-startup"
+   ;; "-e" "UNITY_EDITOR"
+   ;; "-p" "UNITY_IOS"
+   ))
+
+
+(defun benj-roslyn-runner (sln &rest args)
+  "Run release analzyers with SLN and additional ARGS"
   (interactive)
   (let (
         (buff-name "*roslyn-analzyers*")
         (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
-    (start-process
+    (benj-start-proccess-flatten-args
      "run-analyzers"
      buff-name
      "/usr/bin/mono"
      "/home/benj/idlegame/RoslynAnalyzers/EntityClosureCLI/bin/Release/EntityClosureCLI.exe"
-     "-s" idlegame-sln-path
-     "--no-git"
-     "-x" "\"(Test)|(^Unity\\\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)\""
-     "-i" "\".*\\Assets\\.*\""
-     "-a" "StartupMethodAnalyzer" "-startup"
-
-     "-e" "UNITY_EDITOR"
-      ;; "-p" "UNITY_ANDROID"
-     "-p" "UNITY_IOS"
-
-     )
-    (switch-to-buffer-other-window buff-name))
-  )
+     "-s" sln
+     args)
+    (pop-to-buffer buff-name)))
 
 
 
-;; (let (
-;;       (buff-name "*roslyn-analzyers*")
-;;       (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
-;;   (start-process
-;;    "run-analyzers"
-;;    buff-name
-;;    "/usr/bin/mono"
-;;    "/home/benj/idlegame/RoslynAnalyzers/EntityClosureCLI/bin/Release/EntityClosureCLI.exe"
-;;    "-s" benj-cos-roslyn-sln-path
-;;    "--no-git"
-;;    "-t" "Playground"
-;;    "-a" "StartupMethodAnalyzer" "-startup"
-
-;;    "-e" "UNITY_EDITOR"
-;;    ;; "-p" "UNITY_ANDROID"
-;;    "-p" "UNITY_IOS"
-;;    )
-;;   (switch-to-buffer-other-window buff-name))
-
-
-
-;; (let (
-;;       (buff-name "*roslyn-analzyers*")
-;;       (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
-;;   (start-process
-;;    "run-analyzers"
-;;    buff-name
-;;    "/usr/bin/mono"
-;;    "/home/benj/idlegame/RoslynAnalyzers/EntityClosureCLI/bin/Release/EntityClosureCLI.exe"
-;;    "-s" "/home/benj/repos/csharp/playground-sample/playground-sample.sln"
-;;    "--no-git"
-;;    "-a" "StartupMethodAnalyzer" "-startup"
-
-;;    ;; "-e"
-;;    "-e" "UNITY_EDITOR"
-;;    ;; "-e" "DEBUG"
-;;    ;; "-p" "UNITY_ANDROID"
-;;    ;; "-p" "UNITY_IOS"
-;;    "-p"
-;;    )
-;;   (switch-to-buffer-other-window buff-name))
-
-
-;; todo
-;; & RunAnalyzers("-a StartupMethodAnalyzer -startup -p UNITY_IOS -e UNITY_EDITOR", "iOSStartupAnalyzerWarnings")
-;; & RunAnalyzers("-a StartupMethodAnalyzer -startup -p UNITY_ANDROID -e UNITY_EDITOR", "AndroidStartupAnalyzerWarnings");
-
-
-;; TODO
-;; (defun benj-roslyn--cos-runner (sln-file config &rest args)
-;;   "Run cos roslyn project with SLN-FILE and CONFIG.
-;; ARGS can be additional args passed to the process."
-;;   (let (
-;;         (buff-name "*roslyn-analzyers*")
-;;         (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
-;;     (make-process
-;;      (append (list :name "run-analyzers" :buffer buff-name
-;;                    :command (mikus-clist
-;;                              "/usr/bin/mono"
-;;                              (benj-roslyn-cli-path config)
-;;                              sln-file "-s"
-;;                              "--no-git"
-;;                              args))))
-;;     (switch-to-buffer-other-window buff-name)))
-
-
-
-(defun benj-start-process-args-as-list (name buffer program &rest program-args)
-  "See `start-process'. Uses `make-process' as subroutine.
-Difference is that we make sure args are never a list of list but list of strings."
+(defun benj-start-proccess-flatten-args (name buffer program &rest program-args)
+  "See `start-process'. Uses `make-process.'
+Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatten'"
   (unless (fboundp 'make-process)
     (error "Emacs was compiled without subprocess support"))
   (apply #'make-process
 	       (append (list :name name :buffer buffer)
 		             (if program
-		                 (list :command (mikus-clist program program-args))))))
-
-
-(defun args-method (&rest args)
-  (mikus-clist args))
-
-(args-method '("asdf" "asdf") "asdf")
-(mikus-clist '("asdf" "asdf") "asdf")
-
+		                 (list :command (-flatten (cons program program-args)))))))
 
 
 (defvar sharpel-process nil)
