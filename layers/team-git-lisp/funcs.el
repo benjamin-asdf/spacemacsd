@@ -16,15 +16,41 @@ if REVISIONS has the length 1, default to HEAD and arg"
                           (or (and revisions (cadr revisions)) "HEAD"))))))
 
 
-
+;; ! see eg `magit-changed-files', all this stuff exists
 
 (defun benj-their-prefabs ()
   "Checkout theirs for all unmerged prefabs."
   (interactive)
   (let ((prefabs (benj-unmerged-prefabs)))
     (write-region (mapconcat 'identity prefabs "\n") nil "conflicted-prefabs")
-    (async-shell-command (concat "git checkout --theirs " (mapconcat 'shell-quote-argument prefabs " ")))))
+    ;; (write-region (mapconcat (lambda (p) (string-trim-left p "IdleGame/")) prefabs "\n") nil "IdleGame/prefabs-for-rewrite.txt")
+    (let ((file-arg (mapconcat 'shell-quote-argument prefabs " ")))
+      (shell-command (concat "git checkout --theirs -- " file-arg))
+      (shell-command (concat "git add -- " file-arg)))))
 
+(defun benj-checkout-stage (files arg)
+  "Checkout FILES, which should be list of paths, ARG can be either
+--ours, --theirs,
+TODO: --merge."
+  ;; See `magit-checkout-stage', but I wanted to not invoke it foreach file
+  (let ((file-arg (mapconcat 'shell-quote-argument files " ")))
+    ;; (shell-command (concat "git checkout " arg " -- " file-arg))
+    ;; (shell-command (concat "git add -u -- " file-arg))
+    (start-process )
+    (magit-run-git "checkout" arg "--" file-arg)
+    (magit-run-git "add" "-u" "--" file-arg))
+  )
+
+(defun benj-run-git (&rest args)
+  "Run git in *benj-git* buffer with current `magit-toplevel' as default directory."
+  (let ((default-directory (magit-toplevel)))
+    (start-process "benj-git" "*benj-git*" "git" (-flatten args))))
+
+;; todo
+(defun benj-find-git-lfs-obj ()
+  "Find git lfs object file, for REV and FILE, default to develop and current buffer file"
+  (interactive)
+  (find-file (benj-git-lfs-obj nil)))
 
 (defun benj-git-lfs-obj (rev &optional file)
   "Get git lfs obj for REV on FILE.
@@ -47,6 +73,12 @@ IF REV2 is null, use develop."
   "Write current unmerged prefabs to file called unmerged-prefabs."
   (interactive)
   (write-region (mapconcat 'identity (benj-unmerged-prefabs) " ") nil "unmerged-prefabs"))
+
+(defun benj-fetch-merge ()
+  "Fetch dev and merge."
+  (interactive)
+  (let ((default-directory (magit-toplevel)))
+    (start-process "fetchmerge" "*fetchmerge*" "sh" "-c" "gfetchmerge")))
 
 
 (defun team-curr-revision-as-kill (branch-name auto-insert)
