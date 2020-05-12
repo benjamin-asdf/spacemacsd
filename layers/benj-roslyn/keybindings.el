@@ -37,4 +37,5 @@
           ("F" . sharpel-send-file-name-command)
           ("l" . sharpel-rerun-last)
           ("f" . sharpel-rerun-last-file-command)
+          ("d" . sharpel-file-command-on-region)
           )))

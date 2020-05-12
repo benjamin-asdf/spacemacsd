@@ -14,12 +14,13 @@
 
 
 (defun team-create-temp-file-on-region ()
-  "Create a file in temp data folder from active region"
+  "Create a file in temp data folder from active region,
+return the file name of the create file"
   (interactive)
   (when (region-active-p)
     (let ((file (make-temp-file "team-file" nil nil (buffer-substring (region-beginning) (region-end)))))
-      (find-file file))))
-
+      (find-file file)
+      file)))
 
 
 (defun stack-overlow-find-duplicates (list)
