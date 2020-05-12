@@ -39,4 +39,4 @@ If INIT is given, put it as start string for the method body."
   "Uses `teamel-add-debug-button' as subroutine.
 Add debug button with region as init method body."
   (interactive)
-  (benj-add-debug-button (buffer-substring-no-properties (region-beginning) (region-end))))
+  (teamel-add-debug-button (buffer-substring-no-properties (region-beginning) (region-end))))
