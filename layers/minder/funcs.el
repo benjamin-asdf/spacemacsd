@@ -410,3 +410,15 @@ Use this to be able to close the eyes for 20 seconds and take a deep breath."
   "Show a message defined in `minder-take-bite-messages'. Meant to make the user eat efficiently."
   (interactive)
   (minder-push-message (rand-element minder-take-bite-messages)))
+
+
+(defun minder-take-one-min ()
+  "Take a deep breath. Or as many as you like."
+  (interactive)
+  (-dotimes 6
+    #'(lambda (it)
+        (async-start
+         (lambda ()
+           (sleep-for 10)
+           (minder-do-deed))
+         'ignore))))
