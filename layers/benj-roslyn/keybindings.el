@@ -38,4 +38,5 @@
           ("l" . sharpel-rerun-last)
           ("f" . sharpel-rerun-last-file-command)
           ("d" . sharpel-file-command-on-region)
+          ("c" . sharpel-rewrite-file)
           )))
