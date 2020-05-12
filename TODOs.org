@@ -214,3 +214,11 @@ Debug.Log("test)
 	 ))
 
 (advice-add 'ggtags-eldoc-function :around #'my/ggtags-eldoc-advice)
+
+* todo bunel hack ggtags
+(defun track-ggtags-cmd (orig-fun &rest args)
+  (let ((res (apply orig-fun args)))
+    (message "ggtags prepared command %S" res)
+    res))
+
+(advice-add 'ggtags-global-build-command :around #'track-ggtags-cmd)
