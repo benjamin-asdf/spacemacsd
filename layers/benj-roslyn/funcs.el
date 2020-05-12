@@ -79,7 +79,12 @@ see `benj-roslyn-proj-configs'"
      args)
     (pop-to-buffer buff-name)))
 
-
+(defun benj-start-process-synchronously-flatten-args (name buffer program &rest program-args)
+  "See `benj-start-proccess-flatten-args' use `accept-process-output' to run synchronously.
+Returns the created proc."
+  (let ((proc (benj-start-proccess-flatten-args name buffer program program-args)))
+    (while (accept-process-output proc))
+    proc))
 
 (defun benj-start-proccess-flatten-args (name buffer program &rest program-args)
   "See `start-process'. Uses `make-process.'
