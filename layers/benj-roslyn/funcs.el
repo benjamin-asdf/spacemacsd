@@ -160,7 +160,7 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
 (defconst sharpel-command-kinds
   '((:filename . ":filename:")
     (:logsyntax . ":logsyntax:")
-    (:rewrite-file: ":rewrite-file"))
+    (:rewrite-file . ":rewrite-file:"))
   "Possible cammands send to sharpel proc.")
 
 (defvar sharpel-last-input nil)
@@ -185,8 +185,7 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
 (defun sharpel--command (cmd body)
   "Build sharpel command input. With header CMD and BODY.
 Valid options for CMD are defined in `sharpel-command-kinds'."
-  (concatenate 'string (cdr (assoc cmd sharpel-command-kinds)) "\n" body "\n"))
-
+  (concat (cdr (assoc cmd sharpel-command-kinds)) "\n" body "\n"))
 
 (defun sharpel-rerun-last-file-command ()
   "Rerun last file command, if set."
