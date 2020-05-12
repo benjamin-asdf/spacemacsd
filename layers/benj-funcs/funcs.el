@@ -324,6 +324,14 @@ If META-FILE is not a valid meta file."
 
 
 
+(defun benj-proc-with-buff (name buffname program &rest args)
+  "See `start-process', also pop to the buffer.
+NAME and BUFFNAME are allowed to be nil."
+  (let ((name (or name "benj-proc"))
+        (buffname (or buffname "*benj-proc*"))
+        )
+    (start-process name buffname program args)
+    (pop-to-buffer buffname)))
 
 
 
