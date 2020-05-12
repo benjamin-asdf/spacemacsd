@@ -142,6 +142,7 @@ Basically evil `dt)'"
     (forward-char -1)
     (delete-region beg (point))))
 
+;; NOTE that this is redundant `directory-files' already provides all the functionality
 (defun benj-directory-files (path &optional pattern)
   "Get directory files from PATH. Excludes '.' and '..'.
 Match file names for a PATTERN, if non nil."
