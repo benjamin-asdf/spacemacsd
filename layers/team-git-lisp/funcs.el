@@ -16,14 +16,19 @@ if REVISIONS has the length 1, default to HEAD and arg"
                           (or (and revisions (cadr revisions)) "HEAD"))))))
 
 
-(defun benj-their-prefabs ()
-  "Checkout theirs for all unmerged prefabs."
+(defun benj-their-prefabs (&optional arg)
+  "Checkout theirs for all unmerged prefabs. If ARG is non nil, also write a file for prefabs to rewrite."
   (interactive)
   (let ((prefabs (benj-unmerged-prefabs)))
 
     (write-region (mapconcat 'identity prefabs "\n") nil "conflicted-prefabs")
     ;; (write-region (mapconcat (lambda (p) (string-trim-left p "IdleGame/")) prefabs "\n") nil "IdleGame/prefabs-for-rewrite.txt")
     (benj-checkout-stage "--theirs" prefabs)))
+
+(defun benj-merge-prefabs ()
+  "Run mergetool with unmerged prefabs."
+  (benj-run-git "mergetool" "--no-prompt" "--" (mapcar 'shell-quote-argument (benj-unmerged-prefabs))))
+
 
 
 
@@ -46,6 +51,9 @@ TODO: --merge."
    (pop-to-buffer buff-name)
    proc))
 
+
+
+;; TODO just use `call-process'
 (defun benj-run-git-sync (&rest args)
   "Use `benj-run-git' and wait for process to finish. Returns the process"
   (let ((proc (benj-run-git args)))
@@ -59,12 +67,16 @@ TODO: --merge."
   (interactive)
   (find-file (benj-git-lfs-obj nil)))
 
+(defun benj-find-git-lfs-obj-develop ()
+    (interactive)
+    (find-file (benj-git-lfs-obj "develop")))
+
 (defun benj-git-lfs-obj (rev &optional file)
   "Get git lfs obj for REV on FILE.
 If FILE is ommitted try to get the current buffer file instead,
 if REV is nil, use 'develop'."
   (string-trim
-   (shell-command-to-string (concat "git-lfs-object" " " (or rev "develop") " " (shell-quote-argument (string-trim-left (or file buffer-file-name) (magit-toplevel)))))))
+   (shell-command-to-string (concat "git-lfs-object" " " (or rev "HEAD") " " (shell-quote-argument (string-trim-left (or file buffer-file-name) (magit-toplevel)))))))
 
 ;;TODO
 (defun benj-git-lfs-diff (rev1 rev2 &optional file)
@@ -72,8 +84,7 @@ if REV is nil, use 'develop'."
 If FILE is ommitted, try use current buffer file.
 IF REV1 is nill, use HEAD.
 IF REV2 is null, use develop."
-
-  )
+  (ediff (benj-git-lfs-obj rev1 file) (benj-git-lfs-obj rev2 file)))
 
 
 (defun benj-write-unmermged-prefabs-to-file ()
