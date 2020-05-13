@@ -4,6 +4,7 @@
 (defconst benj-roslyn-cli-name "EntityClosureCLI.exe")
 (defconst idlegame-sln-path (concat idlegame-project-root "IdleGame.sln"))
 
+;; TODO program doesn't parse that
 (defconst benj-roslyn-idlegame-analyzer-args
   '("-x" "\"(Test)|(^Unity\\\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)\""
     "-i" "\".*\\Assets\\.*\""))
@@ -55,10 +56,13 @@ see `benj-roslyn-proj-configs'"
   (interactive)
   (benj-roslyn-runner
    idlegame-sln-path
-   benj-roslyn-idlegame-analyzer-args
-   "--no-git"))
+   ;; benj-roslyn-idlegame-analyzer-args ;TODO
+   "-t" "Main"
+   "-v"
+   ;; "--no-git"
+   ))
 
-(benj-roslyn-run-idlegame)
+
 ;; "-a" "StartupMethodAnalyzer" "-startup"
 ;; "-e" "UNITY_EDITOR"
 ;; "-p" "UNITY_IOS"
