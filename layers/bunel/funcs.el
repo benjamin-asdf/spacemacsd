@@ -12,9 +12,8 @@
 (defconst unity-log-file "~/.config/unity3d/Editor.log"
   "Location of the unity log file")
 
-(defconst bunel-method-names
-  '((bunel-refresh . "refresh")
-    (bunel-open-scene . "open-scene"))
+(defconst bunel-method-names '((bunel-refresh . "refresh")
+                               (bunel-open-scene . "open-scene"))
   "List of commands to send to bunel")
 
 (defconst bunel-window-name-lookup-file (concat idlegame-project-root "windows.files")
@@ -27,19 +26,27 @@
 (defun bunel-create-handle-file (project method &rest args)
   "Create a handle file for PROJECT.
 METHOD should be one of `bunel-method-names'. Optionally provide ARGS. "
-  (start-process-shell-command "bunel" "*bunel*" project (cdr (assoc method bunel-method-names)) (mapconcat 'identity args  " ")))
+  (start-process-shell-command "bunel"
+                               "*bunel*"
+                               project
+                               (cdr (assoc method bunel-method-names))
+                               (mapconcat 'identity args " ")))
 
 (defun bunel-refresh-client (&optional arg)
   "Refresh default idlegame unity project.
 If ARG is non-nil, also enter playmode."
   (interactive)
-  (bunel-create-handle-file bunel-default-unity-project 'bunel-refresh arg))
+  (bunel-create-handle-file bunel-default-unity-project
+                            'bunel-refresh arg))
 
 (defun bunel-refresh-all (&optional arg)
   "Refresh all Idlegames.
 If ARG is non-nil, also enter playmode"
   (interactive)
-  (mapcar (lambda (project) (bunel-create-handle-file project 'bunel-refresh arg)) bunel-idlegame-projects))
+  (mapcar (lambda (project)
+            (bunel-create-handle-file project 'bunel-refresh
+                                      arg))
+          bunel-idlegame-projects))
 
 (defun bunel-save-and-refresh (&optional arg)
   "Save some buffers and refresh all Idlegames.
@@ -53,10 +60,12 @@ If ARG is non-nil, also enter playmode"
   "Ensure bridge file is in the idlegame project.
 If FORCE is non nil, override any existing file."
   (interactive)
-  (if (or (not (file-exists-p (concat bunel-unity-location (file-name-base bunel-bridge-file)))) force)
-    (unless (file-exists-p bunel-unity-location)
-      (mkdir bunel-unity-location)
-      (copy-file bunel-bridge-file bunel-unity-location))))
+  (if (or (not (file-exists-p (concat bunel-unity-location
+                                      (file-name-base bunel-bridge-file))))
+          force)
+      (unless (file-exists-p bunel-unity-location)
+        (mkdir bunel-unity-location)
+        (copy-file bunel-bridge-file bunel-unity-location))))
 
 
 (defun bunel-open-unity-editor-log ()
@@ -70,7 +79,11 @@ If FORCE is non nil, override any existing file."
   "Ensure open menu lookups.
 List for menus, overlays, windows to open."
   (interactive)
-  (write-region (mapconcat 'identity (bunel-get-windows-list) "\n") nil bunel-window-name-lookup-file))
+  (write-region (mapconcat 'identity
+                           (bunel-get-windows-list)
+                           "\n")
+                nil
+                bunel-window-name-lookup-file))
 
 
 
@@ -79,18 +92,19 @@ List for menus, overlays, windows to open."
   (let ((res))
     (with-temp-buffer
       (insert-file-contents-literally bunel-menu-enums-file)
-      (search-forward "public static class WindowType {" nil t)
-      (while (re-search-forward "public const string \\w+ = \"\\(\\w+\\)\";" nil t)
-        (setq res (-flatten (list res (match-string 1)))))
-      )
+      (search-forward "public static class WindowType {"
+                      nil t)
+      (while (re-search-forward "public const string \\w+ = \"\\(\\w+\\)\";"
+                                nil t)
+        (setq res (-flatten (list res
+                                  (match-string 1))))))
     res))
 
 
 (defun bunel-get-menu-types ()
-  "Generate a  list of strings with menu types. Search `bunel-menu-enums-file'."
+  "Generate a  list of strings with menu types. Search `bunel-menu-enums-file'.")
 
 
-  )
 
 
 
