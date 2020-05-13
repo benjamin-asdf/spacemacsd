@@ -72,6 +72,8 @@ This function should only modify configuration layer settings."
      c-c++
      vimscript
      go
+
+     ;; features
      slack
      pass
 
