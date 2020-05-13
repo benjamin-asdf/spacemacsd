@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : somelist
+#key : somelist
+#contributor : benj
+# --
+var list = new List<int> { 1, 2 , 3};
