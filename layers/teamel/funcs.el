@@ -11,6 +11,8 @@ Expects some valid url in the unamed register"
     (follow-mode)
     (start-process "get-logs" buff-name "curl" (format "%s"(evil-get-register ?\")))))
 
+;; todo
+;;(defun teamel-delete-scriptass ())
 
 (defun teamel-add-debug-button (&optional init)
   "Open debug buttons file and insert some stuff for a quick debug button.
