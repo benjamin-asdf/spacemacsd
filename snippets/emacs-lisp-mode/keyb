@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+#name : keyb
+#key : keyb
+#contributor : benj
+# --
+(defconst $1-leader-keys "$2")
+
+(spacemacs/declare-prefix $1-leader-keys "$3")
+
+(progn
+  (mapc (lambda (x)
+          (spacemacs/set-leader-keys (concat $1-leader-keys (car x)) (cdr x)))
+        '(("$4" . $0)
+          )))
