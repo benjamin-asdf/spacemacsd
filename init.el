@@ -38,7 +38,6 @@ This function should only modify configuration layer settings."
      version-control
      gtags
      (auto-completion  :variables
-                       auto-completion-complete-with-key-sequence "ll"
                        auto-completion-enable-help-tooltip 'manual)
      better-defaults
      git
