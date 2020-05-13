@@ -85,6 +85,7 @@ This function should only modify configuration layer settings."
      benj-external
      substitute-utils
      csharp-config
+     benj-csharp
      idlegame-special-config
      my-config-spellcheck
      redshiftel
