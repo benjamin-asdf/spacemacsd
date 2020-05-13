@@ -22,7 +22,6 @@
 (defconst bunel-menu-enums-file (concat idlegame-project-root "Assets/#/Sources/Menu/MenuEnums.cs")
   "The Idlegame menu enums file. Used to generate menu names lookups.")
 
-
 (defun bunel-create-handle-file (project method &rest args)
   "Create a handle file for PROJECT.
 METHOD should be one of `bunel-method-names'. Optionally provide ARGS. "
