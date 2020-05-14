@@ -1,4 +1,4 @@
-(defconst sharpel-repo-root "/home/benj/repos/csharp/Sharpel/")
+(defconst sharpel-repo-root "/home/benj/repos/csharp/roslyn-stuff/Sharpel/")
 (defconst sharpel-proj-dir (concat sharpel-repo-root "Sharpel/"))
 (defconst sharpel-sln-path (concat sharpel-repo-root "Sharpel.sln"))
 (defconst sharpel-release-exe-dir (concat sharpel-proj-dir "bin/Release/netcoreapp3.0/"))
