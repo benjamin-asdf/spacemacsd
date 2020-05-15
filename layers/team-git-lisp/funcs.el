@@ -16,6 +16,12 @@ if REVISIONS has the length 1, default to HEAD and arg"
                           (or (and revisions (cadr revisions)) "HEAD"))))))
 
 
+(defun team-git-clear-merge-temp-files ()
+  "Use fd to find and delete temp files."
+  (interactive)
+  (let ((default-directory (magit-toplevel)))
+    (async-shell-command "fd -I --full-path '\.orig$' -x rm")))
+
 (defun benj-their-prefabs (&optional arg)
   "Checkout theirs for all unmerged prefabs. If ARG is non nil, also write a file for prefabs to rewrite."
   (interactive)
@@ -27,6 +33,7 @@ if REVISIONS has the length 1, default to HEAD and arg"
 
 (defun benj-merge-prefabs ()
   "Run mergetool with unmerged prefabs."
+  (interactive)
   (benj-run-git "mergetool" "--no-prompt" "--" (mapcar 'shell-quote-argument (benj-unmerged-prefabs))))
 
 
