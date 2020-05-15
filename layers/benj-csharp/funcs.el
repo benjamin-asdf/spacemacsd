@@ -8,6 +8,13 @@ obj/
 bin/
 ")
 
+(defvar benj-chsarp-working-projects '()
+  "List of currently worked on projects for quick use of compile funcs etc.")
+
+(defun benj-csharp-push-working-proj (file)
+  "Add PROJ to `benj-chsarp-working-projects'"
+  (unless (member file benj-chsarp-working-projects) (push file benj-chsarp-working-projects)))
+
 (defun benj-dotnet-add-default-gitignore ()
   "Add default gitignore, to currently visited dir."
   (interactive)
@@ -50,7 +57,7 @@ Use `dired-file-name-at-point' as default value.
 If PROJECTS is nil initialize new projects using `benj-near-proj-and-slns'"
   (let ((def (file-name-nondirectory (dired-file-name-at-point))))
     (benj-dotnet--read-near-proj "Project or sln: "
-                                 projects (and (benj-dotnet-proj-or-sln-p def) def))))
+                                 (-union projects benj-chsarp-working-projects) (and (benj-dotnet-proj-or-sln-p def) def))))
 
 (defun benj-dotnet--read-near-proj (prompt projects &optional def)
   "Completing read for projects, if PROJECTS is nil, initialize with fd.
@@ -76,10 +83,16 @@ Args can be ommitted and queried by user."
   (interactive (let ((sln-path (or (and (boundp 'sln-path) sln-path)
                                    (benj-dotnet--read-proj-or-sln-def-to-point nil)))
                      (config (or (and (boundp 'config) config)
-                                 (completing-read "config: "
-                                                  '("Release" "Debug")))))
+                                 (benj-dotnet-read-build-config))))
                  (list sln-path config)))
+
   (benj-msbuild-sln sln-path config))
+
+
+;; TODO actually read available configs from sln file
+(defun benj-dotnet-read-build-config ()
+  "Completing read from a list of configs."
+  (completing-read "config: " '("Release" "Debug")))
 
 (defun benj-dotnet--add-proj-ref (proj ref-proj)
   "Add REF-PROJ reference to PROJ.")
@@ -104,3 +117,28 @@ Args can be ommitted and queried by user."
   (forward-line -1)
   (indent-according-to-mode)
   (evil-insert-state))
+
+
+(defun benj-msbuild-sln (sln-path config &optional buff-name)
+  "Build sln at SLN-PATH using mono msbuild. CONFIG is a string passed as /p:Configuration=
+usually something like 'Release'.
+Optional BUFF-NAME to put proc output in a custom buffer. "
+  (benj-csharp-push-working-proj sln-path)
+  (let ((buff-name (or buff-name (format "*msbuild-%s*" config))))
+    (start-process "benj-msbuild" buff-name "msbuild" sln-path (format "/p:Configuration=%s" config))
+    (switch-to-buffer-other-window buff-name)))
+
+
+(defun benj-chsarp-msbuild-this-proj ()
+  "Try ms build sln at `projectile-project-root'"
+  (interactive)
+  (let ((maybe-sln (car (directory-files (concat (projectile-project-root)) t "\.\\(?:csproj\\|sln\\)$"))))
+    (if (and maybe-sln (file-exists-p maybe-sln))
+        (benj-msbuild-sln maybe-sln (benj-dotnet-read-build-config)))))
+
+(defun benj-do-msbuild-dwim()
+  "If there are any recent projects, Ask to build."
+  (interactive)
+  (if benj-chsarp-working-projects
+      (benj-msbuild-sln (benj-dotnet--read-near-proj nil benj-chsarp-working-projects) "Release" )
+    (message "No recent projects.")))

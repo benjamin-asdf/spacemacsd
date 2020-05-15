@@ -23,15 +23,6 @@
   "Build cos roslyn project, CONFIG should be a string of the form 'Release' or 'Debug'."
   (benj-msbuild-sln benj-cos-roslyn-sln-path (concat config "Linux") (format "*build-roslyn-%s*" (concat config "Linux"))))
 
-
-(defun benj-msbuild-sln (sln-path config &optional buff-name)
-  "Build sln at SLN-PATH using mono msbuild. CONFIG is a string passed as /p:Configuration=
-usually something like 'Release'.
-Optional BUFF-NAME to put proc output in a custom buffer. "
-  (let ((buff-name (or buff-name (format "*msbuild-%s*" config))))
-    (start-process "benj-msbuild" buff-name "msbuild" sln-path (format "/p:Configuration=%s" config))
-    (switch-to-buffer-other-window buff-name)))
-
 (defun benj-roslyn-cli-path (config)
   "Roslyn cli path for CONFIG.
 Meaningfull values for CONFIG are
