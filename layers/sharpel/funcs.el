@@ -111,3 +111,15 @@ Valid options for CMD are defined in `sharpel-command-kinds'."
   "Rerun the last sharpel command."
   (interactive)
   (if sharpel-last-input (sharpel--runner sharpel-last-input)))
+
+
+
+
+(defun sharpel-one-shot (&rest args)
+  "Call one shot sharpel with ARGS"
+  (interactive)
+  (shell-command-to-string (format "sharpel %s" (mapconcat 'identity args " "))))
+
+(defun sharpel-split-classes (file)
+  "Call sharpel split classes with FILE arg"
+  (sharpel-one-shot "--split-classes" file))
