@@ -13,10 +13,11 @@
   "Location of the unity log file")
 
 (defconst bunel-method-names '((bunel-refresh . "refresh")
-                               (bunel-open-scene . "open-scene"))
+                               (bunel-open-scene . "open-scene")
+                               (bunel-open-prefab . "open-prefab"))
   "List of commands to send to bunel")
 
-(defconst bunel-window-name-lookup-file (concat idlegame-project-root "windows.files")
+(defconst bunel-window-name-lookup-file (concat idlegame-project-root "windows.best.files")
   "File to generate a lookup with window names. This is consumed by scripts that want to send open window commands.")
 
 (defconst bunel-menu-enums-file (concat idlegame-project-root "Assets/#/Sources/Menu/MenuEnums.cs")
@@ -74,6 +75,14 @@ If FORCE is non nil, override any existing file."
   (goto-char (point-max))
   (follow-mode))
 
+
+
+(defvar bunel-menu-lookups '()
+  "This is a list of name and a plist.
+Entries to the plist are
+:file the file name to generate the lookup in,
+:collect a symbol that should be bound to a function that collects the lookup")
+
 (defun bunel-regenerate-open-menu-lookups ()
   "Ensure open menu lookups.
 List for menus, overlays, windows to open."
@@ -84,6 +93,81 @@ List for menus, overlays, windows to open."
                 nil
                 bunel-window-name-lookup-file))
 
+
+;; TODO abstract, figure out makros
+
+(defun bunel-collect-menu-types ()
+  "Search enum syntax in idlegame and collect overlay types."
+  (split-string
+   (with-output-to-string
+     (with-temp-buffer
+       (insert-file-contents-literally bunel-menu-enums-file)
+       (search-forward "public enum MenuType {")
+       (while (and (forward-line 1) (not (looking-at "}")) (not (= (point) (point-min))))
+         (when (re-search-forward " +?\\(\\w+\\) = [0-9]+" (point-at-eol) t 1)
+           (princ (concat (match-string 1) "\n"))))))))
+
+
+(defun bunel-collect-overlay-types ()
+  "Search enum syntax in idlegame and collect overlay types."
+  (split-string
+   (with-output-to-string
+     (with-temp-buffer
+       (insert-file-contents-literally bunel-menu-enums-file)
+       (search-forward "public enum OverlayType {")
+       (while (and (forward-line 1) (not (looking-at "}")) (not (= (point) (point-min))))
+         (when (re-search-forward " +?\\(\\w+\\) = [0-9]+" (point-at-eol) t 1)
+           (princ (concat (match-string 1) "\n"))))))))
+
+;; (with-eval-after-load)
+
+
+(defun bunel-open-overlay ()
+  "Open overlay for default idlegame."
+  (interactive)
+  (shell-command (format "bunel %s open-overlay %s"
+                         bunel-default-unity-project
+                         (completing-read "Open overlay: " (bunel-collect-overlay-types)))))
+
+(defun bunel--cmd (cmd proj &rest args)
+  "Invoke bunel. PROJ default to `bunel-default-unity-project'.
+CMD should be something."
+  (interactive)
+  (benj-start-proccess-flatten-args "bunel" "*bunel*" "bunel" (or proj bunel-default-unity-project) cmd args))
+
+
+
+(defun bunel-open-prefab ()
+  "Open prefab in idlegame unity"
+  (interactive)
+  (bunel--cmd "open-prefab" nil (completing-read "Prefab: " (bunel--prefabs)))
+
+  ;; (bunel-create-handle-file bunel-default-unity-project 'bunel-open-prefab
+  ;;                           (completing-read "Prefab: " (bunel--prefabs)
+  ;;                                            ;; nil nil (when (string-equal (file-name-extension (buffer-file-name)) "prefab") (buffer-file-name))
+  ;;                                            )
+  ;;                           )
+  )
+
+;; (defun bunel-prefab-completing-read ()
+;;   "Select a prefab from assets folder."
+;;   (completing-read ))
+
+(defun bunel--prefabs ()
+  "Get prefabs in assets folder using fd."
+  (split-string
+   (let ((default-directory idlegame-project-root))
+     (shell-command-to-string
+      "fd -I -tf -0 -E Fonts/ -e prefab . Assets/"))
+   "\0"))
+
+
+;; (defun bunel--collect-enum ()
+;;   "Collect enum syntax, assumes format:
+;; public enum Type {
+;;    None = 100
+;; }
+;; ")
 
 
 (defun bunel-get-windows-list ()
