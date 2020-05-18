@@ -105,7 +105,7 @@ This function should only modify configuration layer settings."
      benj-trello
      helm-config
      sharpel
-     benj-slack
+     ;;benj-slack
 
      )
 
