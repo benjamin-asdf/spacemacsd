@@ -1,11 +1,5 @@
 ;; TODO make this thing here cleaner
 
-;; override some ESC stuff
-(define-key ctl-x-map (kbd "<ESC>" ) nil)
-(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
-
-
-
 (spacemacs/declare-prefix "o" "own")
 
 
