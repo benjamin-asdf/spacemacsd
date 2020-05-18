@@ -1,13 +1,20 @@
 (defconst benj-roslyn-proj-path (concat (file-name-as-directory cos-dir) "RoslynAnalyzers"))
 (defconst benj-cos-roslyn-sln-path (concat (file-name-as-directory benj-roslyn-proj-path) "RoslynAnalyzers.sln"))
 (defconst benj-roslyn-cli-bin (concat (file-name-as-directory benj-roslyn-proj-path) "EntityClosureCLI/" "bin/"))
+(defconst benj-roslyn-global-analzyers-file (concat (file-name-as-directory benj-roslyn-proj-path) "Analyzers/GlobalAnalysis/GlobalAnalyzers.cs"))
 (defconst benj-roslyn-cli-name "EntityClosureCLI.exe")
 (defconst idlegame-sln-path (concat idlegame-project-root "IdleGame.sln"))
 
-;; TODO program doesn't parse that
+(defvar benj-roslyn-default-slns (list benj-cos-roslyn-sln-path idlegame-sln-path))
+
+(with-eval-after-load 'helm (defvar helm-benj-roslyn-analzyers-source
+  (helm-build-sync-source "Analzyer"
+    :candidates (benj-roslyn-available-global-analzyers))))
+
 (defconst benj-roslyn-idlegame-analyzer-args
-  '("-x" "\"(Test)|(^Unity\\\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)\""
-    "-i" "\".*\\Assets\\.*\""))
+  '("-x" "(Test)|(^Unity\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)"
+    "-i" ".*Assets.*"
+    "--no-git"))
 
 
 ;; TODO
@@ -42,15 +49,40 @@ see `benj-roslyn-proj-configs'"
    benj-cos-roslyn-sln-path
    "-t" "Playground"))
 
+(defun benj-roslyn-do-run ()
+  "Ask user to run specific analyzer."
+  (interactive)
+  (let ((analzyer (helm :sources helm-benj-roslyn-analzyers-source))
+        (target (read-file-name "Target file, (C-Ret to not specify target file): " nil (buffer-file-name) nil (buffer-file-name)))
+        (sln (completing-read "Sln: " benj-roslyn-default-slns)))
+
+    (benj-roslyn-runner sln (when (not (string-empty-p target)) (list "-f" (file-name-nondirectory target))) "-v" "-a" analzyer
+                        (when (and (string-equal sln idlegame-sln-path) (yes-or-no-p "Selected idlegame sln. Use Default IdleGame proj inclution args? " )) benj-roslyn-idlegame-analyzer-args))))
+
+;; TODO sync and startup
+(defun benj-roslyn-available-global-analzyers ()
+  "Available global analzyers for roslyn project."
+  (benj-roslyn--collect-analzyers benj-roslyn-global-analzyers-file))
+
+(defun benj-roslyn--collect-analzyers (file)
+  "Search FILE for analzyer list pattern, return available analyzers."
+  (split-string (with-output-to-string
+                  (with-temp-file file
+                    (insert-file-contents-literally file)
+                    (while (re-search-forward ".Add<\\(\\w+\\)>()" nil t)
+                      (princ (concat (match-string 1) "\n")))))))
+
+
+
 (defun benj-roslyn-run-idlegame (&optional args)
   "Run release build on playground project. ARGS can be additional args."
   (interactive)
   (benj-roslyn-runner
    idlegame-sln-path
-   ;; benj-roslyn-idlegame-analyzer-args ;TODO
-   "-t" "Main"
+   benj-roslyn-idlegame-analyzer-args ;TODO
+   ;; "-t" "Main"
    "-v"
-   ;; "--no-git"
+   "--no-git"
    ))
 
 
@@ -58,10 +90,19 @@ see `benj-roslyn-proj-configs'"
 ;; "-e" "UNITY_EDITOR"
 ;; "-p" "UNITY_IOS"
 
+(defvar benj-roslyn-last-args '()
+  "list of sln and args of last roslyn run.")
+
+(defun benj-roslyn-rerun-last ()
+  "Rerun `benj-roslyn-runner' with previous args."
+  (interactive)
+  (if benj-roslyn-last-args
+      (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args))))
 
 (defun benj-roslyn-runner (sln &rest args)
   "Run release analzyers with SLN and additional ARGS"
   (interactive)
+  (setq benj-roslyn-last-args (list sln args))
   (let (
         (buff-name "*roslyn-analzyers*")
         (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
