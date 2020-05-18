@@ -6,4 +6,3 @@
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oo" 'omnisharp-show-overloads-at-point)
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "ol" 'omnisharp-show-last-auto-complete-result)
 
-(spacemacs/set-leader-keys "onc" 'benj-create-new-chsarp-sample)

@@ -86,6 +86,7 @@ This function should only modify configuration layer settings."
      substitute-utils
      csharp-config
      benj-csharp
+     csharp-scratches
      idlegame-special-config
      my-config-spellcheck
      redshiftel

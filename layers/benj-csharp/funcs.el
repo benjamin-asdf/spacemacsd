@@ -142,3 +142,9 @@ Optional BUFF-NAME to put proc output in a custom buffer. "
   (if benj-chsarp-working-projects
       (benj-msbuild-sln (benj-dotnet--read-near-proj nil benj-chsarp-working-projects) "Release" )
     (message "No recent projects.")))
+
+
+(defun benj-dotnet-run()
+  "Run dotnet run is current dir, open output in a dedicated buffer."
+  (interactive)
+  (benj-process-other-window "benj-dotnet-run-process" "*dotnet-run*" "dotnet" "run"))
