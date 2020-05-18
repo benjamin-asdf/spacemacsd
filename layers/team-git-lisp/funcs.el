@@ -31,6 +31,11 @@ if REVISIONS has the length 1, default to HEAD and arg"
     ;; (write-region (mapconcat (lambda (p) (string-trim-left p "IdleGame/")) prefabs "\n") nil "IdleGame/prefabs-for-rewrite.txt")
     (benj-checkout-stage "--theirs" prefabs)))
 
+(defun benj-our-prefabs ()
+  "See `benj-checkout-stage'"
+  (interactive)
+  (benj-checkout-stage "--ours" (benj-unmerged-prefabs)))
+
 (defun benj-merge-prefabs ()
   "Run mergetool with unmerged prefabs."
   (interactive)
@@ -67,6 +72,9 @@ TODO: --merge."
     (while (accept-process-output proc))
     proc))
 
+(defun benj-add-deletion-to-file (file)
+  "Run git rm on FILE"
+  (benj-run-git "rm" file))
 
 ;; todo
 (defun benj-find-git-lfs-obj ()
