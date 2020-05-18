@@ -59,3 +59,13 @@ See `orgtrello-controller-jump-to-card'
 
 
 ;; (run-at-time )
+
+
+;; TODO put an advice for this func, it did something shit with ido, just want helm
+;; (defun orgtrello-controller-choose-board (boards)
+;;   "Given a BOARDS map, ask the user to choose from.
+;; This returns the identifier of such board."
+;;   (-> (completing-read
+;;        "Board to install, you mofo: "
+;;        (orgtrello-hash-keys boards))
+;;       (gethash boards)))
