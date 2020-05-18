@@ -329,9 +329,9 @@ PROGRESS should be a float between 0 and 1."
 
 ;; TODO where to put this or rename this?
 ;; TODO debug
-;; (defvar helm-benj-best-message-source
-;;  (helm-build-sync-source "Best Message"
-;;    :candidates (benj-read-lines best-messages-file)))
+(with-eval-after-load 'helm (defvar helm-benj-best-message-source
+ (helm-build-sync-source "Best Message"
+   :candidates (benj-read-lines best-messages-file))))
 
 (defun minder-select-a-message ()
  "Use helm to select one of best messages and push it."
