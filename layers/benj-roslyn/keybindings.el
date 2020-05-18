@@ -32,6 +32,8 @@
           ("B" . (lambda () (interactive) (benj-roslyn--build-proj-worker "Release")))
           ("i" . benj-roslyn-run-idlegame)
           ("p" . benj-roslyn-run-playground)
+          ("A" . benj-roslyn-do-run)
+          ("a" . benj-roslyn-rerun-last)
           ("r" . sharpel-logsyntax-req)
           ("s" . sharpel-refresh-proc)
           ("F" . sharpel-send-file-name-command)
