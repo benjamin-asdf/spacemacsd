@@ -1,13 +1,7 @@
 
 
-
-
-
-;; TODO
-;; (require 'auth-source-pass)
+;; TODO figure out how to eval after slack
 (auth-source-pass-enable)
-;; auth-source-pass didn't load somehow
-;; or is auto sourc pass enable suffient, prob
 
 
 (slack-register-team :name "singularity-group"
@@ -21,3 +15,22 @@
                       :subscribed-channels '(general slackbot))
 
 (setq slack-prefer-current-team t)
+
+
+
+(defun benj-slack-updload (file &optional file-type)
+  "Upload FILE, if FILE-TYPE is not given, read from user."
+  (slack-file-upload file
+                     (or file-type (slack-file-select-filetype (file-name-extension file)))
+                     (read-from-minibuffer "Filename: " (file-name-nondirectory file))))
+
+
+(defun benj-latest-screenshot ()
+  "Get latest file located at \"~/Pictures/\" "
+  (latest-file "~/Pictures"))
+
+
+(defun benj-slack-upload-latest-screenshot ()
+  "Upload the latest file in pictures dir."
+  (interactive)
+  (benj-slack-updload (benj-latest-screenshot) "png"))
