@@ -49,7 +49,8 @@ This function should only modify configuration layer settings."
      (spell-checking :variables spell-checking-enable-by-default nil)
      syntax-checking
      (org :variables
-          org-enable-trello-support t)
+          ;; org-enable-trello-support t
+          )
      (helm :variables
            spacemacs-helm-rg-max-column-number 1024
            )
