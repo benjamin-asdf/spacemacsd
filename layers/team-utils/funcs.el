@@ -46,3 +46,10 @@ return the file name of the create file"
       (goto-char (point-min))
       (while (re-search-forward word-to-replace nil t)
         (replace-match replace-with t)))))
+
+
+;; TODO use (perf)
+;;(directory-files-and-attributes )
+(defun latest-file (path)
+  "Get latest file (including directory) in PATH."
+  (car (sort (--remove (member (file-name-nondirectory it) '(".." ".")) (directory-files path 'full nil t)) #'file-newer-than-file-p)))
