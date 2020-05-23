@@ -86,7 +86,7 @@ in the format described in `minder-play-sound'")
 
 (defun minder-push-message (msg)
   "Open the push messages file and push MSG."
-  (interactive "sWhat is the current meme?")
+  (interactive "sWhat is the current meme? ")
   (minder--push-message msg))
 
 (defun minder--push-message (msg &optional non-intrusive)
