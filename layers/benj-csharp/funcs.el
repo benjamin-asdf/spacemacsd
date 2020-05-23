@@ -25,9 +25,9 @@ bin/
 
 ;; TODO move these things here
 (defun benj-dotnet-add-proj-ref (&optional proj-or-sln ref-proj)
-  "See `benj-dotnet--add-proj-ref'."
+  "Add REF-PROJ to PROJ-OR-SLN"
   (interactive (let* ((projects (benj-near-proj-and-slns))
-                      (proj-or-sln (benj-dotnet--read-proj-or-sln-def-to-point))
+                      (proj-or-sln (benj-dotnet--read-proj-or-sln-def-to-point projects))
                       (ref-proj (or (and (boundp 'ref-proj)
                                          ref-proj)
                                     (benj-dotnet--read-near-proj "Add project ref: "
@@ -148,3 +148,14 @@ Optional BUFF-NAME to put proc output in a custom buffer. "
   "Run dotnet run is current dir, open output in a dedicated buffer."
   (interactive)
   (benj-process-other-window "benj-dotnet-run-process" "*dotnet-run*" "dotnet" "run"))
+
+
+(defun benj-dotnet-sln-project-list (sln)
+  "Get proj list from SLN."
+  (split-string
+   (with-output-to-string
+     (with-temp-buffer
+       (insert-file-contents-literally sln)
+       (while (re-search-forward "Project(\"{.*}\") = \"\\(\\w+\\)\"" nil t)
+         (princ (format "%s\0" (match-string 1))))))
+   "\0"))
