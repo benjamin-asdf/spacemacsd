@@ -1,4 +1,6 @@
 (defconst benj-backups-dir "~/.local/.backups/")
+(defvar benj-backups-timer '()
+  "The timer that is running `benj-backup-some-buffers' default is every 5 min")
 
 (defun benj-backups--file-name (file-name)
   "Get file name for a backup FILE-NAME"
@@ -10,6 +12,7 @@
 
 (defun benj-backup-some-buffers ()
   "Make backup of changed buffers that have files. in `benj-backups-dir'"
+  (message "Making best backups..")
   (unless (file-exists-p benj-backups-dir)
     (make-directory benj-backups-dir t))
   (--map-when
@@ -23,5 +26,7 @@
        (make-directory (file-name-directory file-name) t))
      (with-temp-file
          file-name
-      (insert-buffer it)))
-   (list (current-buffer))))
+       (insert-buffer it)
+       (message "wrote backup in %s" file-name)))
+   (buffer-list)))
+(setq benj-backups-timer (run-at-time (* 5 60) (* 5 60) 'benj-backup-some-buffers))
