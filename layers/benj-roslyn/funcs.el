@@ -7,9 +7,6 @@
 
 (defvar benj-roslyn-default-slns (list benj-cos-roslyn-sln-path idlegame-sln-path))
 
-(with-eval-after-load 'helm (defvar helm-benj-roslyn-analzyers-source
-  (helm-build-sync-source "Analzyer"
-    :candidates (benj-roslyn-available-global-analzyers))))
 
 (defconst benj-roslyn-idlegame-analyzer-args
   '("-x" "(Test)|(^Unity\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)"
@@ -49,23 +46,30 @@ see `benj-roslyn-proj-configs'"
    benj-cos-roslyn-sln-path
    "-t" "Playground"))
 
-(defun benj-roslyn-do-run ()
-  "Ask user to run specific analyzer."
-  (interactive)
-  (let ((analzyer (helm :sources helm-benj-roslyn-analzyers-source))
+(defun benj-roslyn-do-run (sln target analyzer)
+  "Run specific ANALYZER with SLN and TARGET."
+  (interactive
+   (benj-roslyn--read-args))
+  (benj-roslyn-runner sln (when (not (string-empty-p target)) (list "-f" (file-name-nondirectory target))) "-v" "-a" analyzer
+                      (when (and (string-equal sln idlegame-sln-path) (yes-or-no-p "Selected idlegame sln. Use Default IdleGame proj inclution args? " )) benj-roslyn-idlegame-analyzer-args)))
+
+
+(defun benj-roslyn--read-args ()
+  "Evaluates to a plist of (SLN TARGET ANALYZER)."
+  (let ((sln (completing-read "Sln: " benj-roslyn-default-slns))
         (target (read-file-name "Target file, (C-Ret to not specify target file): " nil (buffer-file-name) nil (buffer-file-name)))
-        (sln (completing-read "Sln: " benj-roslyn-default-slns)))
+        (analyzer (helm :sources helm-benj-roslyn-analzyers-source)))
+    (list sln target analyzer)))
 
-    (benj-roslyn-runner sln (when (not (string-empty-p target)) (list "-f" (file-name-nondirectory target))) "-v" "-a" analzyer
-                        (when (and (string-equal sln idlegame-sln-path) (yes-or-no-p "Selected idlegame sln. Use Default IdleGame proj inclution args? " )) benj-roslyn-idlegame-analyzer-args))))
-
-;; TODO sync and startup
 (defun benj-roslyn-available-global-analzyers ()
   "Available global analzyers for roslyn project."
   (benj-roslyn--collect-analzyers benj-roslyn-global-analzyers-file))
+(with-eval-after-load 'helm
+  (defvar helm-benj-roslyn-analzyers-source
+    (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-available-global-analzyers))))
 
 (defun benj-roslyn--collect-analzyers (file)
-  "Search FILE for analzyer list pattern, return available analyzers."
+  "Search FILE for analyzer list pattern, return available analyzers."
   (split-string (with-output-to-string
                   (with-temp-file file
                     (insert-file-contents-literally file)
@@ -73,17 +77,17 @@ see `benj-roslyn-proj-configs'"
                       (princ (concat (match-string 1) "\n")))))))
 
 
-
-(defun benj-roslyn-run-idlegame (&optional args)
+(defun benj-roslyn-run-idlegame (&rest args)
   "Run release build on playground project. ARGS can be additional args."
   (interactive)
   (benj-roslyn-runner
    idlegame-sln-path
-   benj-roslyn-idlegame-analyzer-args ;TODO
+   benj-roslyn-idlegame-analyzer-args
    ;; "-t" "Main"
    "-v"
    "--no-git"
-   ))
+   args))
+
 
 
 ;; "-a" "StartupMethodAnalyzer" "-startup"
