@@ -535,15 +535,9 @@ before packages are loaded."
 
   (setq-default avy-timeout-seconds 0.25)
 
-  ;; rg
-  (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
 
-  (setq-default helm-ag-use-grep-ignore-list 't)
 
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
-
-
-  (setq-default helm-candidate-number-limit 100)
 
 
   ;;projectile-fd
