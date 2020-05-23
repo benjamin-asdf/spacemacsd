@@ -41,4 +41,5 @@
           ("f" . sharpel-rerun-last-file-command)
           ("d" . sharpel-file-command-on-region)
           ("c" . sharpel-rewrite-file)
+          ("t" . (lambda () (interactive) (sharpel--start "--try-compilation")))
           )))
