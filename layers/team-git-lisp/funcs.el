@@ -140,7 +140,7 @@ If REV is non nil compare with REV instead of default develop."
 (defun team-make-merge-request-commit ()
   "Run 'git commit --allow-empty -m '\do merge' in the current project dir."
   (interactive)
-  (team-projectile-dir-command-to-string "git commit --allow-empty -m \"do /merge\""))
+  (benj-run-git "commit" "--allow-empty" "-m" "do /merge"))
 
 ;; NOTE way more zappy than magit
 (defun team-quick-commit (arg)
