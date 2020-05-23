@@ -60,6 +60,7 @@
 (spacemacs/set-leader-keys "oll" 'evil-complete-next)
 
 
+(spacemacs/set-leader-keys "off" 'find-file-at-point)
 
 ;; maybe something
 ;; (defvar benj-keybindings-prefixes '()
