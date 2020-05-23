@@ -141,7 +141,6 @@ CMD should be something."
   "Open prefab in idlegame unity"
   (interactive)
   (bunel--cmd "open-prefab" nil (completing-read "Prefab: " (bunel--prefabs)))
-
   ;; (bunel-create-handle-file bunel-default-unity-project 'bunel-open-prefab
   ;;                           (completing-read "Prefab: " (bunel--prefabs)
   ;;                                            ;; nil nil (when (string-equal (file-name-extension (buffer-file-name)) "prefab") (buffer-file-name))
@@ -189,10 +188,44 @@ CMD should be something."
 
 
 
+(defconst debug-method-file (concat idlegame-project-root "Assets/#/Sources/CheatTools/DebugMethods.cs"))
+;; TODO args, and use global to do the collecting
+(defun bunel-execute-debug-method (method)
+  "Execute debug METHOD."
+  (interactive
+   (let ((method (completing-read "Debug method: " (bunel--collect-parameterless-funcs debug-method-file))))
+     (list method)))
+  (bunel--cmd "execute-debug-method" nil method))
+
+;; (kill-new (completing-read "Debug method: " (bunel--collect-parameterless-funcs debug-method-file)))
+
+;; should use global instead
+(defun bunel--collect-parameterless-funcs (file)
+  "Hack get some parameterless funcs from FILE."
+  (split-string
+   (with-output-to-string
+     (with-temp-buffer
+       (insert-file-contents-literally file)
+       (while (re-search-forward "public void \\(\\w+\\)()"  nil t)
+         (princ (concat (match-string 1) "\n")))))))
+
+(defun bunel-cheat-advance-time (days)
+  "Cheat idlegame DAYS."
+  (interactive"nDays to cheat: ")
+  (bunel--cmd "cheat-advance-time" nil (number-to-string days)))
 
 
-;; (defmacro )
+(defun bunel-execute-menu-item ()
+  "Search menu item syntax, send command to execute."
+  ;; (process-lines "rg" )
+  ;; collect menu items with rg
+  ;;
+  ;;$ bunel IdleGame execute-menu-item "Tools/Generic/Toggle DebugOverlay &#c"
 
+  (let ((default-directory (concat idlegame-project-root "Assets/" "Editor/")))
+    (process-lines "rg" "--color=never" "--no-heading" "-IN" "-o" "-e" "'\[MenuItem\(\"(.*)\"\)\]'" ))
+
+  )
 
 
 ;; (defmacro t-becomes-nil )
