@@ -1,0 +1,76 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;; TODO
+(defconst benj-backups-dir "~/.local/.backups/")
+
+(defun benj-backups--file-name (file-name)
+  "Get file name for a backup FILE-NAME"
+  (let ((dir-name (file-name-directory file-name)))
+    (concat benj-backups-dir (format-time-string "%Y-%m-%d--%Hh-%Mm") (file-name-base dir-name) "-" (file-name-nondirectory file-name))))
+
+(defun benj-backups-make-backup (file)
+  "Make backup for FILE."
+  (interactive)
+  (copy-file file (benj-backups--file-name file)))
+
+
+;; periodically make backups of all changed buffers
+
+
+
+
+(defun benj-backup-some-buffers ()
+  (--map-when
+   (and
+    (buffer-modified-p it)
+    (buffer-file-name it)
+    (file-exists-p
+     (buffer-file-name it))
+    (write-region (buffer-string ))) ())
+
+  )
+
+
+(buffer-list)
+
+
+(defun buff-dirty (buff)
+  (and (file-exists-p file-name)
+       (buffer-modified-p buff))
+  )
+
+
+
+(let ((buff (current-buffer)))
+  (with-temp-file "best"
+    (insert-buffer buff)))

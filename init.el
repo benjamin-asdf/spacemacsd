@@ -107,6 +107,7 @@ This function should only modify configuration layer settings."
      helm-config
      sharpel
      ;;benj-slack
+     benj-backups
 
      )
 
