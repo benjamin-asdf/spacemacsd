@@ -42,3 +42,28 @@ If INIT is given, put it as start string for the method body."
 Add debug button with region as init method body."
   (interactive)
   (teamel-add-debug-button (buffer-substring-no-properties (region-beginning) (region-end))))
+
+
+
+(defun teamel-open-latest-video ()
+  "Open latest file in ~/Videos with vlc."
+  (interactive)
+  ;; TODO use prefered app instead of vlc
+  (start-process "latest-vid" "latest-vid" "vlc" (latest-file
+                                                  "~/Videos")))
+
+
+
+;; (helm :sources helm-benj-git-diff-lines-source)
+
+;; (defun benj-git-diff-lines ()
+;;   "Git diff output as lines."
+;;   (let ((default-directory (magit-toplevel)))
+;;     (process-lines "git" "diff" "-p" )))
+;; (with-eval-after-load 'helm
+;;   (defvar helm-benj-git-diff-lines-source
+;;     (helm-build-sync-source "GitDiff" :candidates (benj-git-diff-lines))))
+
+
+;; works
+;;(helm :sources (helm-build-sync-source "name" :candidates '(( "best" . "bestreal" ) ("hehe" . "hehereal"))))
