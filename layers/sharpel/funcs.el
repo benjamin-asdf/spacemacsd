@@ -15,6 +15,12 @@
     (setq sharpel-process (start-process "benj-roslyn" sharpel-buff-name "dotnet" "run"))
    (switch-to-buffer-other-window sharpel-buff-name)))
 
+(defun sharpel--start (&rest args)
+  "Start sharpel with ARGS"
+  (let ((default-directory sharpel-proj-dir))
+    (setq sharpel-process (benj-start-proccess-flatten-args "sharpel" sharpel-buff-name "dotnet" "run" args))
+    (switch-to-buffer-other-window sharpel-buff-name)))
+
 (defun sharpel-build (config)
   "Compile the sharpel project. CONFIG is either 'Release' or 'Debug' "
   (interactive)
@@ -123,3 +129,9 @@ Valid options for CMD are defined in `sharpel-command-kinds'."
 (defun sharpel-split-classes (file)
   "Call sharpel split classes with FILE arg"
   (sharpel-one-shot "--split-classes" file))
+
+
+(defun sharpel-try-compilation ()
+  (interactive)
+
+  (sharpel-one-shot "--try-compilation"))
