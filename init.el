@@ -109,6 +109,7 @@ This function should only modify configuration layer settings."
      sharpel
      ;;benj-slack
      benj-backups
+     benj-phone
 
      )
 
