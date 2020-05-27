@@ -21,4 +21,16 @@
   (setq tab-width 4)
   (setq evil-shift-width 4))
 
-(setq omnisharp-expected-server-version "1.35.0")
+;; building my own now
+;; (setq omnisharp-expected-server-version "1.35.2")
+
+
+;; TEMP HACK
+;; https://github.com/josteink/csharp-mode/issues/151
+(defun csharp-disable-clear-string-fences (orig-fun &rest args)
+  "This turns off `c-clear-string-fences' for `csharp-mode'. When
+on for `csharp-mode' font lock breaks after an interpolated string
+or terminating simple string."
+  (unless (equal major-mode 'csharp-mode)
+    (apply orig-fun args)))
+(advice-add 'c-clear-string-fences :around 'csharp-disable-clear-string-fences)
