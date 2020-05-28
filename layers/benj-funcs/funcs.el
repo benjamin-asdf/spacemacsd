@@ -219,7 +219,7 @@ ARG should be one of `benj-scratch-buffer-kinds'"
 (defun benj-unmerged-prefabs ()
   "List currently unmerged prefabs"
   (let ((default-directory (magit-toplevel)))
-    (seq-filter (lambda (s) (string-match-p "prefab" s)) (magit-unmerged-files))))
+    (seq-filter (lambda (s) (string-match-p "prefab$" s)) (magit-unmerged-files))))
 
 (defun benj-write-prefabs-for-rewrite (&optional prefabs)
   "Put PREFABS into a file for unity script processing.
