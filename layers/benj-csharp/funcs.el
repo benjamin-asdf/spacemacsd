@@ -1,5 +1,6 @@
-(defconst benj-omnisharp-repo-root "~/repos/omnisharp-roslyn/")
-(defconst benj-omnisharp-server-executable (concat benj-omnisharp-repo-root "artifacts/publish/OmniSharp.Stdio.Driver/mono/OmniSharp.exe"))
+(defconst benj/omnisharp-repo-root "~/repos/omnisharp-roslyn/")
+(defconst benj/omnisharp-server-executable (concat benj/omnisharp-repo-root "artifacts/scripts/OmniSharp.Stdio"))
+
 (defconst benj-csharp-empty-class-template
   "\npublic class %s {\n\n}")
 
@@ -25,7 +26,7 @@ bin/
 
 ;; TODO move these things here
 (defun benj-dotnet-add-proj-ref (&optional proj-or-sln ref-proj)
-  "Add REF-PROJ to PROJ-OR-SLN"
+  "Add REF-PROJ to PROJ-OR-SLN."
   (interactive (let* ((projects (benj-near-proj-and-slns))
                       (proj-or-sln (benj-dotnet--read-proj-or-sln-def-to-point projects))
                       (ref-proj (or (and (boundp 'ref-proj)
@@ -40,7 +41,7 @@ bin/
                                               ref-proj)))
 
 (defun benj-dotnet-sln-p (file)
-  "Evaluates to true if FILE is the path to a sln"
+  "Evaluate to true if FILE is the path to a sln."
   (string-equal (file-name-extension file) "sln"))
 
 (defun benj-dotnet-proj-p (file)
@@ -48,7 +49,7 @@ bin/
   (string-equal (file-name-extension file) "csproj"))
 
 (defun benj-dotnet-proj-or-sln-p (file)
-  "See `benj-dotnet-sln-p' and `benj-dotnet-proj-p'"
+  "Is FILE a sln or proj? See `benj-dotnet-sln-p' and `benj-dotnet-proj-p'."
   (or (benj-dotnet-proj-p file) (benj-dotnet-sln-p file)))
 
 (defun benj-dotnet--read-proj-or-sln-def-to-point (projects)
@@ -57,7 +58,7 @@ Use `dired-file-name-at-point' as default value.
 If PROJECTS is nil initialize new projects using `benj-near-proj-and-slns'"
   (let ((def (file-name-nondirectory (dired-file-name-at-point))))
     (benj-dotnet--read-near-proj "Project or sln: "
-                                 (-union projects benj-chsarp-working-projects) (and (benj-dotnet-proj-or-sln-p def) def))))
+                                 (or (and projects (-union projects benj-chsarp-working-projects)) benj-chsarp-working-projects) (and (benj-dotnet-proj-or-sln-p def) def))))
 
 (defun benj-dotnet--read-near-proj (prompt projects &optional def)
   "Completing read for projects, if PROJECTS is nil, initialize with fd.
@@ -80,19 +81,31 @@ PROMPT can be non nil and override the default."
 (defun benj-do-msbuild (sln-path config)
   "Build SLN-PATH with CONFIG.
 Args can be ommitted and queried by user."
-  (interactive (let ((sln-path (or (and (boundp 'sln-path) sln-path)
+  (interactive (let* ((sln-path (or (and (boundp 'sln-path) sln-path)
                                    (benj-dotnet--read-proj-or-sln-def-to-point nil)))
                      (config (or (and (boundp 'config) config)
-                                 (benj-dotnet-read-build-config))))
+                                 (benj-dotnet-read-build-config sln-path))))
                  (list sln-path config)))
 
   (benj-msbuild-sln sln-path config))
 
 
 ;; TODO actually read available configs from sln file
-(defun benj-dotnet-read-build-config ()
+(defun benj-dotnet-read-build-config (proj-or-sln)
   "Completing read from a list of configs."
-  (completing-read "config: " '("Release" "Debug")))
+  (completing-read "config: " (benj-dotnet-proj-configs proj-or-sln)))
+
+(defun benj-dotnet-proj-configs (proj-file)
+  "Read available configurations from PROJ-FILE."
+  (if (benj-dotnet-proj-p proj-file) (with-temp-buffer
+     (insert-file-contents-literally proj-file)
+     (progn (re-search-forward "<Configurations>\\(.*\\)</Configurations>" nil t)
+            (split-string (match-string-no-properties 1) ";")))
+    (progn
+      ;; TODO
+      (message "Reading config fromo sln not supported yet.")
+      '("Release" "Debug" "ReleaseLinux" "DebugLinux"))))
+
 
 (defun benj-dotnet--add-proj-ref (proj ref-proj)
   "Add REF-PROJ reference to PROJ.")
@@ -119,13 +132,13 @@ Args can be ommitted and queried by user."
   (evil-insert-state))
 
 
-(defun benj-msbuild-sln (sln-path config &optional buff-name)
+(defun benj-msbuild-sln (sln-path config &rest args)
   "Build sln at SLN-PATH using mono msbuild. CONFIG is a string passed as /p:Configuration=
 usually something like 'Release'.
 Optional BUFF-NAME to put proc output in a custom buffer. "
   (benj-csharp-push-working-proj sln-path)
-  (let ((buff-name (or buff-name (format "*msbuild-%s*" config))))
-    (start-process "benj-msbuild" buff-name "msbuild" sln-path (format "/p:Configuration=%s" config))
+  (let ((buff-name (or (and (boundp 'buffer-name) buff-name) (format "*msbuild-%s*" config))))
+    (benj-start-proccess-flatten-args "benj-msbuild" buff-name "msbuild" sln-path (format "/p:Configuration=%s" config args))
     (switch-to-buffer-other-window buff-name)))
 
 
@@ -159,3 +172,98 @@ Optional BUFF-NAME to put proc output in a custom buffer. "
        (while (re-search-forward "Project(\"{.*}\") = \"\\(\\w+\\)\"" nil t)
          (princ (format "%s\0" (match-string 1))))))
    "\0"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;; omnisharp
+
+(defun benj/omnisharp-start-near-proj ()
+  "Start with sln in projectile project root. Ask for sln if there is none.
+Depends on mono and an omnisharp build at `benj/omnisharp-server-executable'."
+  (interactive)
+  (let ((default-directory (projectile-project-root))
+        (sln-path (or
+                   (car (directory-files (projectile-project-root) t ".sln$"))
+                   (read-file-name "Sln file to use: " ))))
+    (unless (benj-dotnet-sln-p sln-path)
+      (user-error "Invalid sln path %s" sln-path))
+    (benj/omnisharp--do-server-start sln-path benj/omnisharp-server-executable)))
+
+
+(defun benj/omnisharp--do-server-start (sln server-executable-path &rest args)
+  "Start omnisharp process SERVER-EXECUTABLE-PATH with SLN and ARGS."
+    (message "benj-omnisharp: starting server with sln: \"%s\"" sln)
+
+   (omnisharp--log-reset)
+   (omnisharp--log (format "starting server with sln \"%s\"" sln))
+   (omnisharp--log (format "Using server executbale on %s" server-executable-path))
+
+   ;; Save all csharp buffers to ensure the server is in sync"
+   ;; (save-some-buffers t (lambda () (and (buffer-file-name) (string-equal (file-name-extension (buffer-file-name)) "cs"))))
+
+   (setq omnisharp--last-project-path (file-name-directory sln))
+
+   ;; this can be set by omnisharp-reload-solution to t
+   (setq omnisharp--restart-server-on-stop nil)
+
+   (setq omnisharp--server-info
+         (make-omnisharp--server-info
+          ;; use a pipe for the connection instead of a pty
+          (let* ((process-connection-type nil)
+                 (default-directory (expand-file-name (file-name-directory sln)))
+                 (omnisharp-process (start-process
+                                     "BenjOmniServer" ; process name
+                                     "BenjOmniServer" ; buffer name
+                                     ;; "mono" ;; if I use the script in artifacts/scripts/ that already uses mono
+                                     server-executable-path
+                                     "--encoding" "utf-8"
+                                     "--stdio"
+                                     "-v"
+                                     "-s"
+                                     sln
+                                     ;; Options:
+                                     ;; -? | -h | --help           Show help information
+                                     ;; -s | --source              Solution or directory for OmniSharp to point at (defaults to current directory).
+                                     ;; -l | --loglevel            Level of logging (defaults to 'Information').
+                                     ;; -v | --verbose             Explicitly set 'Debug' log level.
+                                     ;; -hpid | --hostPID          Host process ID.
+                                     ;; -z | --zero-based-indices  Use zero based indices in request/responses (defaults to 'false').
+                                     ;; -pl | --plugin             Plugin name(s).
+                                     ;; -d | --debug               Wait for debugger to attach
+                                     ;; -p | --port                OmniSharp port (defaults to 2000).
+                                     ;; -i | --interface           Server interface address (defaults to 'localhost').
+
+                                     )))
+            (buffer-disable-undo (process-buffer omnisharp-process))
+            (set-process-query-on-exit-flag omnisharp-process nil)
+            (set-process-filter omnisharp-process 'omnisharp--handle-server-message)
+            (set-process-sentinel omnisharp-process
+                                  (lambda (process event)
+                                    (when (memq (process-status process) '(exit signal))
+                                      (message "benj omnisharp: server has been terminated")
+                                      (setq omnisharp--server-info nil))))
+            omnisharp-process)
+          sln)))
+
+
+;; I don't want that
+(advice-add 'omnisharp--attempt-to-start-server-for-buffer :around (lambda (orig-fun)))
+
+;; (advice-add )
+
+
+(setq omnisharp-host "http://localhost:8083/")
