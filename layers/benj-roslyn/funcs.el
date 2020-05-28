@@ -25,7 +25,7 @@
 
 (defun benj-roslyn--build-proj-worker (config)
   "Build cos roslyn project, CONFIG should be a string of the form 'Release' or 'Debug'."
-  (benj-msbuild-sln benj-cos-roslyn-sln-path (concat config "Linux") (format "*build-roslyn-%s*" (concat config "Linux"))))
+  (benj-msbuild-sln benj-cos-roslyn-sln-path (concat config "Linux")))
 
 (defun benj-roslyn-cli-path (config)
   "Roslyn cli path for CONFIG.
