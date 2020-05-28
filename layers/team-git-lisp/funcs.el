@@ -28,7 +28,6 @@ if REVISIONS has the length 1, default to HEAD and arg"
   (let ((prefabs (benj-unmerged-prefabs)))
 
     (write-region (mapconcat 'identity prefabs "\n") nil "conflicted-prefabs")
-    ;; (write-region (mapconcat (lambda (p) (string-trim-left p "IdleGame/")) prefabs "\n") nil "IdleGame/prefabs-for-rewrite.txt")
     (benj-checkout-stage "--theirs" prefabs)))
 
 (defun benj-our-prefabs ()
@@ -41,7 +40,11 @@ if REVISIONS has the length 1, default to HEAD and arg"
   (interactive)
   (benj-run-git "mergetool" "--no-prompt" "--" (mapcar 'shell-quote-argument (benj-unmerged-prefabs))))
 
-
+(defun benj-write-unmerged-prefabs-to-prefabs-for-rewrite ()
+  "Write the currently unmerged prefabs into a file called Idlegame/prefabs-for-rewrite.txt."
+  (interactive)
+  (let ((default-directory idlegame-project-root))
+    (write-region (mapconcat (lambda (p) (string-trim-left p "IdleGame/")) (benj-unmerged-prefabs) "\n") nil "prefabs-for-rewrite.txt")))
 
 
 (defun benj-checkout-stage (arg files)
@@ -53,6 +56,11 @@ TODO: --merge."
     (benj-run-git-sync "checkout" arg "--" file-arg)
     (benj-run-git "add" "-u" "--" file-arg)))
 
+
+(defun benj/magit-resolve-all-files ()
+  "Ask user for each unmerged file which stage to checkout see `magit-discard-files--resolve'."
+  (interactive)
+  (while (magit-discard-files--resolve (magit-unmerged-files))))
 
 (defun benj-run-git (&rest args)
  "Run git in *benj-git* buffer with current `magit-toplevel' as default directory."
