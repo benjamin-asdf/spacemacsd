@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : lstd
+#key : lstd
+#contributor : benj
+# --
+Log.Stdout($"$0");
