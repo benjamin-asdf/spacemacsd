@@ -129,6 +129,14 @@ List for menus, overlays, windows to open."
                          bunel-default-unity-project
                          (completing-read "Open overlay: " (bunel-collect-overlay-types)))))
 
+
+(defun bunel-open-menu ()
+  "Open menu for default idlegame."
+  (interactive)
+  (shell-command (format "bunel %s open-menu %s"
+                         bunel-default-unity-project
+                         (completing-read "Open menu: " (bunel-collect-menu-types)))))
+
 (defun bunel--cmd (cmd proj &rest args)
   "Invoke bunel. PROJ default to `bunel-default-unity-project'.
 CMD should be something."
@@ -146,6 +154,11 @@ CMD should be something."
   ;;                                            ;; nil nil (when (string-equal (file-name-extension (buffer-file-name)) "prefab") (buffer-file-name))
   ;;                                            )
   ;;                           )
+  )
+
+;; TODO execute menu item
+(defun bunel-open-debug-panel ()
+  ""
   )
 
 ;; (defun bunel-prefab-completing-read ()
@@ -221,11 +234,44 @@ CMD should be something."
   ;; collect menu items with rg
   ;;
   ;;$ bunel IdleGame execute-menu-item "Tools/Generic/Toggle DebugOverlay &#c"
+  (interactive)
 
   (let ((default-directory (concat idlegame-project-root "Assets/" "Editor/")))
     (process-lines "rg" "--color=never" "--no-heading" "-IN" "-o" "-e" "'\[MenuItem\(\"(.*)\"\)\]'" ))
 
   )
+
+(defconst bunel-best-gloals-file (concat idlegame-project-root "Assets/#/Scripts/Misc/Globals/Globals.asset"))
+(defvar bunel-set-globals-hist '())
+
+(defun bunel-set-globals (item value)
+  "Set ITEM in globals to VALUE."
+  (interactive
+   (let* ((item (completing-read "Field to set: " (bunel-read-yaml-file-fields bunel-best-gloals-file) nil t nil 'bunel-set-globals-hist))
+          (value (read-from-minibuffer (format "Set %s to: " item))))
+     (list item value)))
+  (bunel--set-value-in-yaml bunel-best-gloals-file item value))
+
+(defun bunel--set-value-in-yaml (file item value)
+  "Try to set yaml syntax in FILE for ITEM to VALUE in current buffer."
+  (with-temp-file file
+    (insert-file-contents-literally file)
+    (when (re-search-forward (format "\\(.*%s: \\)\\(.*\\)$" item))
+      (replace-match (concat (match-string 1) (or (and (stringp value) value) (number-to-string value)))))))
+
+(defun bunel-read-yaml-file-fields (file)
+  ;; might want a list of key value pairs
+  "Evaluate to a list of yaml fields in FILE"
+  (split-string
+   (with-output-to-string
+     (with-temp-buffer
+       (insert-file-contents-literally file)
+       (while (re-search-forward "^\s+\\(\\w+\\): .+?$" nil t)
+         (princ (concat (match-string 1) "\n")))))))
+
+;; todo tests
+;; (assert (member "skipTutorial" (bunel-read-yaml-file-fields bunel-best-gloals-file)))
+
 
 
 ;; (defmacro t-becomes-nil )
