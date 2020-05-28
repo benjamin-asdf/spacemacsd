@@ -1,3 +1,4 @@
+(defconst surfel-best-search-page "https://g4gsearch.com")
 
 (defvar surfel-bookmars
   '()
@@ -29,5 +30,3 @@
   "Run browser with latest yank as url"
   (interactive)
   (surfel-run (evil-get-register ?\")))
-
-
