@@ -16,3 +16,9 @@ SOURCE is a file on the disk, DEST is an absolute on the phone."
   "Push FILE to `benj-phone-misc-dir'"
   (interactive "fFile to push: ")
   (benj-phone-push file benj-phone-misc-dir))
+
+
+(defun benj/youtube-dl-download-yank ()
+  "Download current yank into ~/Vidoes."
+  (let ((default-directory "~/Videos"))
+    (async-shell-command (format "youtube-dl \"%s\"" (evil-get-register ?\")))))
