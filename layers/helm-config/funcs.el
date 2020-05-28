@@ -10,4 +10,11 @@
 (setq-default helm-ag-base-command "rg --color=never --no-heading" )
 
 
+(defun benj/helm-find-file-recursively ()
+  "Recursively find files in glob manner, in the specified directory."
+  (interactive)
+  (helm-find 'ask-for-dir))
+
+;; (when )
+
 ;; (rg-enable-menu)

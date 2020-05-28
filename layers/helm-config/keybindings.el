@@ -19,4 +19,5 @@
         '(("t" . helm-top)
           ("o" . helm-occur)
           ("i" . helm-info)
+          ("d" . benj/helm-find-file-recursively)
           )))
