@@ -62,6 +62,9 @@
 
 (spacemacs/set-leader-keys "off" 'find-file-at-point)
 
+
+(spacemacs/set-leader-keys "oos" 'spacemacs/symbol-overlay-transient-state/body)
+
 ;; maybe something
 ;; (defvar benj-keybindings-prefixes '()
 ;;   "Should be a list of form '(PREFIX NAME) determining prefixes to be declared.")
