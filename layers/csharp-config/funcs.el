@@ -9,9 +9,31 @@
   (define-key evil-normal-state-map "ge" (lambda () (interactive)
                                            (flycheck-cancel-error-display-error-at-point-timer)
                                            (flycheck-display-error-at-point)))
-  ;; (electric-pair-mode -1)
   (smartparens-strict-mode -1)
-  (setq-local buffer-file-coding-system 'windows-1256-unix))
+  ;; TODO
+  (when (> (line-number-at-pos (point-max)) 500)
+    (jit-lock-mode nil)))
+
+
+;; fancy shvancy diable ggtags eldoc func
+(defgroup ggtags nil
+	"Options for ggtags"
+	:group 'init)
+
+(defcustom ggtags-eldoc-disabled-major-modes '()
+	"List of major modes in which ggtags-eldoc should not run"
+	:group 'ggtags
+	:type '(set symbol))
+
+(setq ggtags-eldoc-disabled-major-modes '(csharp-mode))
+
+(defun benj/ggtags-eldoc-advice (original-func &rest args)
+  "Advice around `ggtags-eldoc-function', do nothing if we are in one of `ggtags-eldoc-disabled-major-modes'."
+	(and (not (memq major-mode ggtags-eldoc-disabled-major-modes))
+	 (apply original-func args)))
+
+(advice-add 'ggtags-eldoc-function :around #'benj/ggtags-eldoc-advice)
+
 
 (defun benj-change-csharp-style()
   (setq indent-tabs-mode nil)
