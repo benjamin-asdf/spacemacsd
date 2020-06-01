@@ -195,26 +195,6 @@ Debug.Log("test)
 
 
 
-* todo ggtags eldoc with advice
- (defgroup ggtags nil
-	"Options for ggtags"
-	:group 'init)
-
-(defcustom ggtags-eldoc-disabled-major-modes '()
-	"List of major modes in which ggtags-eldoc should not run"
-	:group 'ggtags
-	:type '(set symbol))
-
-(setq ggtags-eldoc-disabled-major-modes '(csharp-mode))
-
-(defun my/ggtags-eldoc-advice (original-func &rest args)
-	(and
-	 (not (memq major-mode ggtags-eldoc-disabled-major-modes))
-	 (apply original-func args)
-	 ))
-
-(advice-add 'ggtags-eldoc-function :around #'my/ggtags-eldoc-advice)
-
 * todo bunel hack ggtags
 (defun track-ggtags-cmd (orig-fun &rest args)
   (let ((res (apply orig-fun args)))
@@ -222,3 +202,7 @@ Debug.Log("test)
     res))
 
 (advice-add 'ggtags-global-build-command :around #'track-ggtags-cmd)
+
+
+* I want to advice omnisharp go to definition + advice evil jump back,
+** to improve the behaviour of C-o with omnisharp
