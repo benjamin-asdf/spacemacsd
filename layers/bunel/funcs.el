@@ -11,6 +11,7 @@
 
 (defconst unity-log-file "~/.config/unity3d/Editor.log"
   "Location of the unity log file")
+(defconst benj-unity/idlegame-tmp-path "/tmp/The Naughty Cult Ltd_/Clash of Streamers/")
 
 (defconst bunel-method-names '((bunel-refresh . "refresh")
                                (bunel-open-scene . "open-scene")
@@ -219,7 +220,7 @@ CMD should be something."
    (with-output-to-string
      (with-temp-buffer
        (insert-file-contents-literally file)
-       (while (re-search-forward "public void \\(\\w+\\)()"  nil t)
+       (while (re-search-forward "public void \\(\\w+\\)\\s+?()"  nil t)
          (princ (concat (match-string 1) "\n")))))))
 
 (defun bunel-cheat-advance-time (days)
