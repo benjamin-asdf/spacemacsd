@@ -29,8 +29,8 @@
 
 (defun benj/ggtags-eldoc-advice (original-func &rest args)
   "Advice around `ggtags-eldoc-function', do nothing if we are in one of `ggtags-eldoc-disabled-major-modes'."
-	(and (not (memq major-mode ggtags-eldoc-disabled-major-modes))
-	 (apply original-func args)))
+  (unless (memq major-mode ggtags-eldoc-disabled-major-modes)
+    (apply original-func args)))
 
 (advice-add 'ggtags-eldoc-function :around #'benj/ggtags-eldoc-advice)
 
@@ -44,6 +44,7 @@
   (setq evil-shift-width 4))
 
 ;; building my own now
+;; use `benj/omnisharp-start-near-proj'
 ;; (setq omnisharp-expected-server-version "1.35.2")
 
 
