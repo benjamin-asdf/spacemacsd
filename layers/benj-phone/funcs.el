@@ -20,5 +20,6 @@ SOURCE is a file on the disk, DEST is an absolute on the phone."
 
 (defun benj/youtube-dl-download-yank ()
   "Download current yank into ~/Vidoes."
+  (interactive)
   (let ((default-directory "~/Videos"))
     (async-shell-command (format "youtube-dl \"%s\"" (evil-get-register ?\")))))
