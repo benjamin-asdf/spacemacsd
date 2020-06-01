@@ -7,11 +7,9 @@
 
 (defvar benj-roslyn-default-slns (list benj-cos-roslyn-sln-path idlegame-sln-path))
 
-
 (defconst benj-roslyn-idlegame-analyzer-args
   '("-x" "(Test)|(^Unity\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)"
-    "-i" ".*Assets.*"
-    "--no-git"))
+    "-i" ".*Assets.*"))
 
 
 ;; TODO
@@ -51,7 +49,7 @@ see `benj-roslyn-proj-configs'"
   (interactive
    (benj-roslyn--read-args))
   (benj-roslyn-runner sln (when (not (string-empty-p target)) (list "-f" (file-name-nondirectory target))) "-v" "-a" analyzer
-                      (when (and (string-equal sln idlegame-sln-path) (yes-or-no-p "Selected idlegame sln. Use Default IdleGame proj inclution args? " )) benj-roslyn-idlegame-analyzer-args)))
+                      (when (and (string-equal sln idlegame-sln-path) (yes-or-no-p "Selected idlegame sln. Use Default IdleGame proj inclution args? " )) (list benj-roslyn-idlegame-analyzer-args "--no-git"))))
 
 
 (defun benj-roslyn--read-args ()
@@ -77,15 +75,17 @@ see `benj-roslyn-proj-configs'"
                       (princ (concat (match-string 1) "\n")))))))
 
 
+(defun benj-roslyn/run-idlegame-default ()
+  "See `benj-roslyn-run-idlegame'."
+  (benj-roslyn-run-idlegame "--no-git"))
+
 (defun benj-roslyn-run-idlegame (&rest args)
   "Run release build on playground project. ARGS can be additional args."
   (interactive)
   (benj-roslyn-runner
    idlegame-sln-path
    benj-roslyn-idlegame-analyzer-args
-   ;; "-t" "Main"
    "-v"
-   "--no-git"
    args))
 
 
@@ -107,7 +107,7 @@ see `benj-roslyn-proj-configs'"
   "Run release analzyers with SLN and additional ARGS"
   (interactive)
   (setq benj-roslyn-last-args (list sln args))
-  (let (
+  (let ((default-directory (file-name-directory sln))
         (buff-name "*roslyn-analzyers*")
         (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
     (benj-start-proccess-flatten-args
