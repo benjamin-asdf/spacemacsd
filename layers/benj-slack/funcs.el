@@ -14,6 +14,7 @@
                       :subscribed-channels '(general slackbot))
 
 (setq slack-prefer-current-team t)
+(setq slack-thread-also-send-to-room nil)
 
 (slack-start)
 
@@ -22,7 +23,6 @@
   (slack-file-upload file
                      (or file-type (slack-file-select-filetype (file-name-extension file)))
                      (read-from-minibuffer "Filename: " (file-name-nondirectory file))))
-
 
 (defun benj-latest-screenshot ()
   "Get latest file located at \"~/Pictures/\" "
@@ -38,12 +38,13 @@
 ;; all of this already exists
 ;;`slack-message-custom-notifier'
 
-(defun benj/slack-notifier (msg room team)
+(defun benj/slack-notifier (message room team)
   "Custom notifier using notifiy send and a sound."
   ;; TODO I want to use alert.el
   ;; see `slack-message-notify-alert'
   (if (slack-message-notify-p message room team)
-      (let ((team-name (oref team name))
+      ;; hack
+      (let* ((team-name (or (oref team name) "SingularityGroup"))
             (room-name (slack-room-name room team))
             (text (with-temp-buffer
                     (goto-char (point-min))
@@ -70,14 +71,14 @@
         ;; in you face notifications
         (notifications-notify :body body
                :icon slack-alert-icon
-               :title tile
+               :title title
                :sound-file (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))
                :urgency 'critical)
 
         (alert body :icon slack-alert-icon :title title :category 'slack)))
 
-  ;; (alert (format "New slack message: %s" msg) :title room)
-  ;; (notifications-notify :title room :body msg :icon slack-alert-icon :title )
+  ;; (alert (format "New slack message: %s" message) :title room)
+  ;; (notifications-notify :title room :body message :icon slack-alert-icon :title )
   ;; (start-process "benj-slack-notifiy-sound" "*slack-notify-sound*" "aplay" (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root)))))
   )
 
