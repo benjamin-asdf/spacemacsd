@@ -12,7 +12,7 @@
           ("R" . (lambda () (interactive) (team-curr-revision-as-kill nil t)))
           ("b" . (lambda () (interactive) (team-curr-revision-as-kill t nil)))
           ("B" . (lambda () (interactive) (team-curr-revision-as-kill t t)))
-          ("D" . benj-diff-files)
+          ("D" . benj-git/diff-files-only)
           ("f" . magit-file-checkout)
           ("C" . benj-quick-commit)
           ("a" . team-git-common-ancestor-as-kill)

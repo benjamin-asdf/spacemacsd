@@ -19,8 +19,18 @@ if REVISIONS has the length 1, default to HEAD and arg"
 (defun team-git-clear-merge-temp-files ()
   "Use fd to find and delete temp files."
   (interactive)
-  (let ((default-directory (magit-toplevel)))
-    (async-shell-command "fd -I --full-path '\.orig$' -x rm")))
+  (let* ((default-directory (magit-toplevel))
+         (do-stash (not (null (magit-staged-files)))))
+    ;; (files (process-lines "fd" "-I" "--full-path" "'\.orig\(.meta\)?$'"  "-x" "rm"))
+    ;; todo find files recursive, git rm + git commit
+    (when do-stash
+      (benj-run-git-sync "stash"))
+    (shell-command "fd -I --full-path '\.orig\(.meta\)?$' -x git rm")
+    (when (magit-staged-files)
+      (benj-run-git-sync "commit" "-m" "Delete orig files\n\nThese should not be commited. Be more careful what you commit, bro"))
+    (when do-stash
+      (benj-run-git "stash" "pop"))))
+
 
 (defun benj-their-prefabs (&optional arg)
   "Checkout theirs for all unmerged prefabs. If ARG is non nil, also write a file for prefabs to rewrite."
@@ -48,7 +58,7 @@ if REVISIONS has the length 1, default to HEAD and arg"
 
 
 (defun benj-checkout-stage (arg files)
-  "Checkout FILES, which should be list of paths, ARG can be either
+  "Checkout FILES, which should be list of paths or a single string, ARG can be either
 --ours, --theirs,
 TODO: --merge."
   ;; See `magit-checkout-stage', but I wanted to not invoke it foreach file
@@ -69,6 +79,7 @@ TODO: --merge."
         (buff-name "*benj-git*")
         (proc (benj-start-proccess-flatten-args "benj-git" buff-name "git" args)))
    (pop-to-buffer buff-name)
+   ;; (insert (format "git.. %s" (mapconcat 'identity args " ")))
    proc))
 
 
@@ -135,15 +146,14 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
   "Current git revision. If BRANCH-NAME is non nil, evaluate to the branch name instead of the commit sha."
   (string-trim (shell-command-to-string (or (and branch-name "git branch --show-current") "git rev-parse HEAD"))))
 
-  (defun team-diff-files (&optional rev)
-    "Print the output of git diff --name-only to temp buffer.
-If REV is non nil compare with REV instead of default develop."
-    (interactive)
-    (let ((other-rev (or rev "develop")))
-      (with-output-to-temp-buffer (format "diff-%s..HEAD" other-rev)
-        (print (team--git-diff-files other-rev))
-        (print standard-output))))
-
+(defun benj-git/diff-files-only (rev-or-range &optional other-rev)
+  "Pop to a buffer to diff file names only against REV-OR-RANGE and optionaly OTHER-REV."
+  (interactive
+   (list (magit-read-branch-prefer-other "Ref or range to diff file names: ")))
+  (switch-to-buffer-other-window (format "*diff-files-against-%s" rev-or-range))
+  (insert
+   (with-output-to-string
+     (princ (mapconcat 'identity (magit-changed-files rev-or-range (and (boundp 'other-rev) other-rev)) "\n")))))
 
 (defun team-make-merge-request-commit ()
   "Run 'git commit --allow-empty -m '\do merge' in the current project dir."
@@ -164,78 +174,50 @@ If REV is non nil compare with REV instead of default develop."
   (team-projectile-dir-command-to-string (format "git diff --name-only %s..%s" rev1 (or rev2 "HEAD"))))
 
 
+(defun benj-git/resolve-conflicts-interactive ()
+  "Interactively resolve all merge conflicts, ask individually."
+  (interactive)
+  (--map
+   (let* ((arg (magit-read-char-case
+                   (format "%s is %s \ncheckout:\n" (car it) (cadr it))
+                   t
+                 (?o "[o]ur stage"   "--ours")
+                 (?t "[t]heir stage" "--theirs")))
+          (ours (string-equal arg "--ours")))
+     (pcase (cadr it)
+       ("AU"
+        (if ours
+            (benj-checkout-stage arg (car it))
+          ;; added by us, they don't have a version, so rm
+          (benj-run-git-sync "rm" "--" (car it))))
+       ("UA"
+        ;; added by them,
+        ;; actually not sure how you have that, not by deleting on our side, that would be DU.
+        ;; I think it only happens with renames maybe
+        (if ours
+            (benj-run-git-sync "rm" "--" (car it))
+            (benj-checkout-stage arg (car it))))
+       ("DD" (benj-run-git-sync "rm" "--" (car it)))
+       ("DU"
+        (if ours
+            (benj-run-git-sync "rm" "--" (car it))
+          (benj-checkout-stage arg (car it))))
+       ("UD"
+        (if ours
+            (benj-checkout-stage arg (car it))
+          (benj-run-git-sync "rm" "--" (car it))))
+       ("UU"  (benj-checkout-stage arg (car it)))))
+   (benj-git/unmerged-status)))
 
+(defun benj-git/unmerged-status ()
+  "Get unmerged files in the format defined by `benj-git/git-status-files'."
+  (let ((unmerged (magit-unmerged-files)))
+    (--filter (member (car it) unmerged) (benj-git/git-status-files))))
 
-  (defun benj-projectile-dir-command-to-string (command)
-    "Run COMMAND with the current projectile project root as default dir.
-Evaluate to the output string. See `shell-command-to-string'."
-    (let ((default-directory (projectile-ensure-project (projectile-project-root))))
-      (message (format "run command: %s in dir: %s" command default-directory))
-      (shell-command-to-string command)))
-
-
-  (defun benj--git-diff-files-list (rev1 &optional rev2)
-    "Get git diff files of REV1 against REV2, if REV2 is ommitted, default to HEAD."
-    (split-string (benj--git-diff-files rev1 rev2)))
-
-  (defun benj--file-diff-string-match (file regex rev1 &optional rev2)
-    "Evaluates to the matched STRING, in the output of git diff of FILE of REV1 agains REV2,
-  If rev2 is omitted, default to HEAD."
-    (let ((diff-output (benj-projectile-dir-command-to-string (format "git diff -p %s..%s -- %s" rev1 (or rev2 "HEAD") file))))
-      (if (string-match regex diff-output)
-          (match-string 0 diff-output)
-        nil)))
-
-  ;; (defun benj--get-diff-output-match-lines (regex rev1 &optional rev2)
-  ;;   "Evaluate to a string containg the file names and lines matching REGEX
-  ;; in the git diff output of REV1 against REV2,
-  ;; if REV2 is ommitted it defaults to HEAD.
-  ;; this also sets the return value of `match-string'."
-  ;;   ;; TODO line number would be cool
-  ;;   (let ((ret)
-  ;;         (files (benj--git-diff-files-list rev1 rev2)))
-  ;;     (dolist (file files)
-  ;;       (benj--log-to-diff-output (format "%s %d%%" file (/ (cl-position file files) (* (length files) 1.0)) 100))
-  ;;       (let ((match (benj--file-diff-string-match file regex rev1 rev2)))
-  ;;         (when match (setq ret (concat ret "\n" (format "File:%s : %s" file match) ret)))))
-  ;;     (or ret (format "No line differences found for %s against %s" regex rev1 rev2))))
-
-  (defun benj--diff-output-match-lines (regex rev1 &optional rev2)
-    "Open temp output buffer, show files and regex match of REGEX matching in the diff of REV1 against REV2
-If REV2 is ommitted, default to HEAD."
-    ;; (with-output-to-temp-buffer "*diff-match-lines*"
-    ;;   (print (format "Git diff %s..%s, searching matching lines for %s ..." rev1 (or rev2 "HEAD") regex))
-    ;;   (print (benj--get-diff-output-match-lines regex rev1 rev2))
-    ;;   (print standard-output))
-      (benj--log-to-diff-output (format "Git diff %s..%s, searching matching lines for %s ..." rev1 (or rev2 "HEAD") regex))
-      (benj--log-to-diff-output (benj--get-diff-output-match-lines regex rev1 rev2)))
-
-
-  (defun benj--log-to-diff-output (arg)
-    "Log ARG as line to default diff output buffer in other window."
-    (benj-log-output "*diff-match-lines*" arg))
-
-  ;; TODO func that asks me to put stuff
-
-  (defun benj-find-debugs-in-diff ()
-    "Open temp buffer informing the user about matching added Debug.Logs
-of HEAD agains develop."
-    (interactive)
-    (benj--diff-output-match-lines "^+.*Debug.Log(.*).*$" "develop"))
-
-
-(defun benj-log-output (buff-name log)
-  "Log string LOG in output buffer BUFF-NAME."
-  (let ((curr-buff (current-buffer)))
-    (unless (string-equal (buffer-name) buff-name)
-      (switch-to-buffer-other-window buff-name))
-    (insert (concat log "\n"))
-    (switch-to-buffer-other-window curr-buff)))
-
-(defun benj-remove-newline-end-of-string (string)
-  "Remove newline characters at the end of STRING."
-  (replace-regexp-in-string "\n\\'" "" string))
-
-(defun benj--git-diff-files (rev1 &optional rev2)
-  "Get shell output for git diff files of REV1 agains REV2, if REV2 is ommitted, default to HEAD."
-  (benj-projectile-dir-command-to-string (format "git diff --name-only %s..%s" rev1 (or rev2 "HEAD"))))
+(defun benj-git/git-status-files ()
+  "Return a list of unemerged file in the format (FILE STATUS).
+For documentation on the status codes see git-status man."
+  (let ((default-directory (magit-toplevel)))
+    (--map
+     (list (substring it 3 (length it)) (substring it 0 2))
+     (process-lines "git" "status" "--porcelain"))))
