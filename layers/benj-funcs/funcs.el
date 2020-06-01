@@ -334,10 +334,15 @@ NAME and BUFFNAME are allowed to be nil."
     (pop-to-buffer buffname)))
 
 
-
-
-
-
+(defun benj/find-worktree-file-for-buff ()
+  ;;   "This is because magit creates temp buffers when opening file history.
+  ;; I didn't have a convinient way to visit the actual file when I'm in a buffer like that."
+  "Try visit file without the ~ part of the buff name."
+  (interactive)
+  (let ((p (point)))
+    (find-file (car (split-string (concat (magit-toplevel) (buffer-name)) ".~")))
+    (goto-char p)
+    (evil-scroll-line-to-center)))
 
 
 

@@ -65,6 +65,11 @@
 
 (spacemacs/set-leader-keys "oos" 'spacemacs/symbol-overlay-transient-state/body)
 
+(spacemacs/set-leader-keys "ojb" 'pop-tag-mark)
+
+(spacemacs/set-leader-keys "ojf" 'benj/find-worktree-file-for-buff)
+
+
 ;; maybe something
 ;; (defvar benj-keybindings-prefixes '()
 ;;   "Should be a list of form '(PREFIX NAME) determining prefixes to be declared.")
