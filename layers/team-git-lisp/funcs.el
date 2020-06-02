@@ -126,13 +126,6 @@ IF REV2 is null, use develop."
   (interactive)
   (write-region (mapconcat 'identity (benj-unmerged-prefabs) " ") nil "unmerged-prefabs"))
 
-(defun benj-fetch-merge ()
-  "Fetch dev and merge."
-  (interactive)
-  (let ((default-directory (magit-toplevel)))
-    (start-process "fetchmerge" "*fetchmerge*" "sh" "-c" "gfetchmerge")))
-
-
 (defun team-curr-revision-as-kill (branch-name auto-insert)
   "Copy current git revision as kill.
 If BRANCH-NAME is non nil, copy the branch name instead of commit sha.
