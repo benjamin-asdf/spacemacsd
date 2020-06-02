@@ -221,3 +221,29 @@ For documentation on the status codes see git-status man."
     (--map
      (list (substring it 3 (length it)) (substring it 0 2))
      (process-lines "git" "status" "--porcelain"))))
+
+
+(defvar benj-git/last-visited-unmerged-cs-file "")
+(defun benj-git/goto-next-unmerged-cs-file ()
+  "Goto to the next unmerged cs file."
+  (interactive)
+  (let* ((default-directory (magit-toplevel))
+         (files (--filter (string-match-p "\.cs$" it) (magit-unmerged-files))))
+    (if files
+        (progn
+          (message "There are %d unmerged cs files still." (length files))
+          (find-file
+          (setq benj-git/last-visited-unmerged-cs-file
+                (nth (% (+ (or (cl-position benj-git/last-visited-unmerged-cs-file files :test 'equal) -1) 1) (length files)) files))))
+      (message "No more unmerged cs files!"))))
+
+(defun benj-git/send-input-to-process ()
+  "Ghetto send some string with newline to git process."
+  (send-string (get-process "benj-git") (format "%s\n" (read-from-minibuffer "Send string: "))))
+
+(defun benj-git/fetch-and-merge ()
+  "First fetch dev, then merge dev."
+  ;; TODO something with direnv where we check the primary fetch branch
+  (interactive)
+  (benj-run-git-sync "fetch" "origin" "develop:develop")
+  (benj-run-git "merge" "develop" "--no-edit"))
