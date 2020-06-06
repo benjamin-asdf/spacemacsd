@@ -67,3 +67,11 @@ Add debug button with region as init method body."
 
 ;; works
 ;;(helm :sources (helm-build-sync-source "name" :candidates '(( "best" . "bestreal" ) ("hehe" . "hehereal"))))
+
+
+(defun teamel/regenerate-purchase-idlegame ()
+  "Run cog idlegame."
+  (interactive)
+  (let ((default-directory (concat cos-dir "/modules" "/codegen")))
+    (start-process "generate-purchase-data" "*generate-purchase-data*" "python3" "runner.py" "-s"))
+  (pop-to-buffer "*generate-purchase-data*"))
