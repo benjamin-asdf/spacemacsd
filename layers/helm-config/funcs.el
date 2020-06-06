@@ -18,3 +18,33 @@
 ;; (when )
 
 ;; (rg-enable-menu)
+
+
+
+
+
+;; TEMP hack because somebody fucked up, the helm-aif part can return `t' instead of a number
+(defun benj/temp-helm-update-source-p-hack (source)
+  "Benj TEMP hack. Whether SOURCE needs updating or not."
+  (let ((len (string-width
+              (if (assq 'multimatch source)
+                  ;; Don't count spaces entered when using
+                  ;; multi-match.
+                  (replace-regexp-in-string " " "" helm-pattern)
+                helm-pattern))))
+    (and (or (not helm-source-filter)
+             (member (assoc-default 'name source) helm-source-filter))
+         (>= len
+             (let ((res (helm-aif (assq 'requires-pattern source) (or (cdr it) 1) 0)))
+               (or (and (number-or-marker-p res) res) 0)))
+         ;; Entering repeatedly these strings (*, ?) takes 100% CPU
+         ;; and hang emacs on MacOs preventing deleting backward those
+         ;; characters (issue #1802).
+         (not (string-match-p "\\`[*]+\\'" helm-pattern))
+         ;; These incomplete regexps hang helm forever
+         ;; so defer update. Maybe replace spaces quoted when using
+         ;; multi-match.
+         (not (member (replace-regexp-in-string "\\s\\ " " " helm-pattern)
+                      helm-update-blacklist-regexps)))))
+
+(advice-add 'helm-update-source-p :around #'(lambda (orig-func &rest args) (benj/temp-helm-update-source-p-hack (car args))))
