@@ -84,7 +84,6 @@ This function should only modify configuration layer settings."
      benj-keybindings
      benj-themes-config
      benj-tags
-     benj-external
      substitute-utils
      csharp-config
      benj-csharp
