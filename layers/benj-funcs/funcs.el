@@ -255,14 +255,18 @@ Default to develop and HEAD."
      (concat "git checkout develop -- " (combine-and-quote-strings (benj-all-changed-files "develop" "HEAD" regex))))))
 
 
+(defun benj-unity/file-usages-with-guid-at-point ()
+  "Use `benj-quick-file-usages' with the thing at point."
+  (interactive)
+  (benj-quick-file-usages (thing-at-point 'evil-word)))
 
-(defun benj-quick-file-usages ()
+(defun benj-quick-file-usages (&optional guid)
   "Search the project for the guid of the meta file you are visiting.
 Or try to use the meta file of the file that you are visiting."
   (interactive)
   (let* ((default-directory (projectile-project-root))
          (buff-name "*quick-file-usages*")
-         (guid (and buffer-file-name (benj-get-guid-with-meta buffer-file-name)))
+         (guid (or (and (boundp 'guid) guid) (and buffer-file-name (benj-get-guid-with-meta buffer-file-name))))
          (usages (and guid (benj-guid-file-usages guid))))
     (if usages
         (progn (pop-to-buffer buff-name)
@@ -274,7 +278,7 @@ Or try to use the meta file of the file that you are visiting."
 
 (defun benj-guid-file-usages (guid)
   "GUIDS file usages as list, non-zappy in large repos."
-  (let ((default-directory (projectile-project-root)))
+  (when-let ((default-directory (projectile-project-root)))
     (process-lines "git" "grep" "--files-with-matches" guid)))
 
 
