@@ -345,6 +345,10 @@ NAME and BUFFNAME are allowed to be nil."
     (evil-scroll-line-to-center)))
 
 
+(defun benj/describe-last-function ()
+  "Use `last-command' to bring up help of the last thing that happened."
+  (interactive)
+  (describe-function last-command))
 
 
 (defun benj/read-file (file)
