@@ -109,6 +109,7 @@ This function should only modify configuration layer settings."
      ;;benj-slack
      benj-backups
      benj-phone
+     benj-csharp-perf-hacks
      benj-ediff
 
      )
