@@ -361,6 +361,25 @@ NAME and BUFFNAME are allowed to be nil."
     (insert-file-contents-literally file)
     (princ (buffer-substring-no-properties (point-min) (point-max)))))
 
+(defun benj-text/add-crlf (&optional file)
+  "Add crlf to FILE."
+  (interactive"fFile to add crlf")
+  (with-temp-file
+      file
+    (insert-file-contents-literally file)
+    (while (re-search-forward "\n" nil t)
+      (replace-match "\r\n"))))
+
+(defun benj-text/add-crlf-this-file ()
+  "Add crlf to current file"
+  (interactive)
+  (if (buffer-file-name)
+      (benj-text/add-crlf (buffer-file-name))
+    (user-error "Buffer is not visiting a file.")))
+
+
+
+
 
 
 
