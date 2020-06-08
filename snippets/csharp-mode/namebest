@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+#name : namebest
+#key : namebest
+#contributor : benj
+# --
+void ClaimVipItemRewards(int vipLvl) {
+    var data = VipData.Lookup[vipLvl].itemRewards;
+
+    foreach (var rewardData in data) {
+        var reward = c.CreateItemReward($1);
+
+        c.ClaimRewardStack(reward);
+        c.CreateToastRewardCommand($1);
+    }
+}

@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-#name : idlegame-send-save-autosync-messp
-#key : comp-ssm
+#name : ssm
+#key : ssm
 #contributor : benj
 # --
 [Send, Save, MessagePackObject]

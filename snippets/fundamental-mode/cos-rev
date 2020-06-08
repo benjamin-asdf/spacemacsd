@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : cos-rev
+#key : cosrv
+#contributor : benj
+# --
+\``(let ((default-directory cos-dir)) (team-curr-revision))`\`

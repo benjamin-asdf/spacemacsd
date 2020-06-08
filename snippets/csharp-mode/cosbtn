@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : cosbtn
+#key : cosbtn
+#contributor : benj
+# --
+CoSButton(c,CoSButtonConfig.Create((c, executeAction) => {$0}));

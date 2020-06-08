@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : wind
+#key : wind
+#contributor : benj
+# --
+WindowDefinitions.GetOrDefault($1).$0

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : geww
+#key : geww
+#contributor : benj
+# --
+c.state.GetEntityWith<$1>($0);
