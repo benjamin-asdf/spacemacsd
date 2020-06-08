@@ -135,6 +135,12 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
     (when auto-insert (insert output))
     (kill-new output)))
 
+(defun benj-git/idlegame-rev-as-kill (branch-name auto-insert-mode)
+  "See `team-curr-revision-as-kill', use `cos-dir' as default dir."
+  (let ((default-directory cos-dir))
+    (team-curr-revision-as-kill branch-name auto-insert-mode)))
+
+
 (defun team-curr-revision (&optional branch-name)
   "Current git revision. If BRANCH-NAME is non nil, evaluate to the branch name instead of the commit sha."
   (string-trim (shell-command-to-string (or (and branch-name "git branch --show-current") "git rev-parse HEAD"))))
