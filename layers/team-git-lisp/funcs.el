@@ -205,7 +205,8 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
         (if ours
             (benj-checkout-stage arg (car it))
           (benj-run-git-sync "rm" "--" (car it))))
-       ("UU"  (benj-checkout-stage arg (car it)))))
+       ("UU"  (benj-checkout-stage arg (car it)))
+       ("AA"  (benj-checkout-stage arg (car it)))))
    (benj-git/unmerged-status)))
 
 (defun benj-git/unmerged-status ()
