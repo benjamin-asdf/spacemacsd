@@ -347,7 +347,11 @@ NAME and BUFFNAME are allowed to be nil."
 
 
 
-
+(defun benj/read-file (file)
+  "Read all contents of FILE."
+  (with-temp-file file
+    (insert-file-contents-literally file)
+    (princ (buffer-substring-no-properties (point-min) (point-max)))))
 
 
 
