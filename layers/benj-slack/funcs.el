@@ -94,3 +94,18 @@
     ;; todo if the behaviour is too shit, then I take their room select thing there and open the buffer
     (slack-im-select)
     (benj-slack-updload file)))
+
+
+;; TODO read, good resource
+;; https://medium.com/@justincbarclay/my-descent-into-madness-hacking-emacs-to-send-text-to-slack-bc6cf3780129
+(defun jb/send-region-to-slack-code ()
+  "Send selected region to slack"
+  (interactive)
+  (let ((team (slack-team-select)) ;; Select team
+        (room (slack-room-select
+               (cl-loop for team in (list team)
+                        for channels = (oref team channels)
+                        nconc channels)))) ;; Get all rooms from selected team
+    (slack-message-send-internal (concat "```" (filter-buffer-substring (region-beginning) (region-end)) "```")
+                                 (oref room id)
+                                 team)))
