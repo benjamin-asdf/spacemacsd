@@ -1,4 +1,5 @@
 (defconst surfel-best-search-page "https://g4gsearch.com")
+(defvar surfel/process-name "qutebrowser")
 
 (defvar surfel-bookmars
   '()
@@ -6,7 +7,7 @@
 
 (defun surfel-run (&rest args)
   "Run surf with ARGS"
-  (start-process "surf" "*surf*" "surf" (mapconcat 'identity args " ")))
+  (start-process "surfel" "*surfel*" surfel/process-name (mapconcat 'identity args " ")))
 
 ;; TODO get the current url from some running process
 (defun surfel-add-bookmark (url)
@@ -30,3 +31,12 @@
   "Run browser with latest yank as url"
   (interactive)
   (surfel-run (evil-get-register ?\")))
+
+
+;; TODO handle those args
+(defun surfel/browse-url-handler (url &rest args)
+  "Handler meant to be one of `browse-url-handlers'"
+  (surfel-run url))
+
+(let ((reg (regexp-opt (list "^https://" "^http://"))))
+  (setq browse-url-handlers '(((regexp-opt ) . surfel/browse-url-handler))))
