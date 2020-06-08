@@ -247,3 +247,28 @@ For documentation on the status codes see git-status man."
   (interactive)
   (benj-run-git-sync "fetch" "origin" "develop:develop")
   (benj-run-git "merge" "develop" "--no-edit"))
+
+
+(defun benj-git/fire-up-merge-sample ()
+  "Create an empty git repo, should put you in a state where doing \"git merge topic\"
+will create a conflict in a file called file."
+  (interactive)
+  (let ((dir (concat (temporary-file-directory) (make-temp-name "merge-sample"))))
+    (mkdir dir)
+    (let ((default-directory dir))
+      (write-region "" nil "file")
+      (shell-command "git init")
+      (benj-git//commit-with-msg "Initial commit")
+      (shell-command "git checkout -b topic")
+      (write-region "best line\n" nil "file")
+      (benj-git//commit-with-msg "Making a change on topic")
+      (shell-command "git checkout master")
+      (write-region "another line\n" nil "file")
+      (benj-git//commit-with-msg "Making a change on master")
+      (find-file "file"))))
+
+
+(defun benj-git//commit-with-msg (msg)
+  "Add everything and commit with MSG."
+  (shell-command "git add .")
+  (shell-command (format "git commit -m \"%s\"" msg)))
