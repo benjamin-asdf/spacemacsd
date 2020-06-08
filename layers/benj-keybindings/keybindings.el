@@ -69,6 +69,9 @@
 
 (spacemacs/set-leader-keys "ojf" 'benj/find-worktree-file-for-buff)
 
+(spacemacs/set-leader-keys "ohf" 'benj/describe-last-function)
+
+
 
 ;; maybe something
 ;; (defvar benj-keybindings-prefixes '()
