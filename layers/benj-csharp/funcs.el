@@ -175,6 +175,17 @@ Optional BUFF-NAME to put proc output in a custom buffer. "
 
 
 
+(defun benj-csharp/replace-wl-with-debug ()
+  "Replace console write line with debug.log in buff."
+  (interactive)
+  (benj//replace-match-buff "Console\\.WriteLine" "UnityEngine.Debug.Log"))
+
+(defun benj//replace-match-buff (match newtext)
+  "Repalce MATCH with NEXTEXT in buff."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward match nil t) (replace-match newtext))))
 
 
 
