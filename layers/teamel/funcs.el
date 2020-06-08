@@ -75,3 +75,13 @@ Add debug button with region as init method body."
   (let ((default-directory (concat cos-dir "/modules" "/codegen")))
     (start-process "generate-purchase-data" "*generate-purchase-data*" "python3" "runner.py" "-s"))
   (pop-to-buffer "*generate-purchase-data*"))
+
+
+
+(defun teamel/open-this-untiy-proj ()
+  "Open the untiy proj at PATH.
+Use `projectile-locate-dominating-file' to get the unity proj root"
+  (interactive)
+  (when-let* ((proj (projectile-locate-dominating-file default-directory "Assets"))
+              (name (file-name-nondirectory proj)))
+    (start-process (format "unity-open-%s" name) (format "*unity-s%*" name) "unity-open" name proj)))
