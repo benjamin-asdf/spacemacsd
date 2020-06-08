@@ -11,7 +11,7 @@
                                       :user "benjamin.schwerdtner@gamil.com")
                       :token (auth-source-pick-first-password :host "singularity-group-slack"
                                                               :user "benjamin.schwerdtner@gamil.com")
-                      :subscribed-channels '(general slackbot))
+                      :subscribed-channels '(general slackbot new-to-cos))
 
 (setq slack-prefer-current-team t)
 (setq slack-thread-also-send-to-room nil)
