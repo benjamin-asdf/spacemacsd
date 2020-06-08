@@ -45,20 +45,20 @@
   (if (slack-message-notify-p message room team)
       ;; hack
       (let* ((team-name (or (oref team name) "SingularityGroup"))
-            (room-name (slack-room-name room team))
-            (text (with-temp-buffer
-                    (goto-char (point-min))
-                    (insert (slack-message-to-alert message team))
-                    (slack-buffer-buttonize-link)
-                    (buffer-substring-no-properties (point-min)
-                                                    (point-max))))
-            (user-name (slack-message-sender-name message team))
-            (title (if (slack-im-p room)
-                       (funcall slack-message-im-notification-title-format-function
-                                team-name room-name (slack-thread-message-p message))
-                     (funcall slack-message-notification-title-format-function
-                              team-name room-name (slack-thread-message-p message))))
-            (body (if (slack-im-p room) text (format "%s: %s" user-name text))))
+             (room-name (slack-room-name room team))
+             (text (with-temp-buffer
+                     (goto-char (point-min))
+                     (insert (slack-message-to-alert message team))
+                     (slack-buffer-buttonize-link)
+                     (buffer-substring-no-properties (point-min)
+                                                     (point-max))))
+             (user-name (slack-message-sender-name message team))
+             (title (if (slack-im-p room)
+                        (funcall slack-message-im-notification-title-format-function
+                                 team-name room-name (slack-thread-message-p message))
+                      (funcall slack-message-notification-title-format-function
+                               team-name room-name (slack-thread-message-p message))))
+             (body (if (slack-im-p room) text (format "%s: %s" user-name text))))
         (if (and (eq alert-default-style 'notifier)
                  (slack-im-p room)
                  (or (eq (aref text 0) ?\[)
@@ -70,12 +70,15 @@
         ;; the only reason this exists is because I didnt' check `alert' enough to understand how to make it throw more
         ;; in you face notifications
         (notifications-notify :body body
-               :icon slack-alert-icon
-               :title title
-               :sound-file (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))
-               :urgency 'critical)
+                              ;; :icon slack-alert-icon
+                              :title title
+                              ;; :sound-file (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))
+                              ;; :urgency 'critical
+                              )
 
-        (alert body :icon slack-alert-icon :title title :category 'slack)))
+        (alert body :icon slack-alert-icon :title title :category 'slack)
+        (start-process "benj-slack-notifiy-sound" "*slack-notify-sound*" "aplay" (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root)))))
+        (start-process "notify-man" "*best-notify*" "notify-send" title body)))
 
   ;; (alert (format "New slack message: %s" message) :title room)
   ;; (notifications-notify :title room :body message :icon slack-alert-icon :title )
