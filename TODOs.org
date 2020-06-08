@@ -206,3 +206,7 @@ Debug.Log("test)
 
 * I want to advice omnisharp go to definition + advice evil jump back,
 ** to improve the behaviour of C-o with omnisharp
+
+
+* make sailor put initial selection in helm-do-ag, instead of running rg
+
