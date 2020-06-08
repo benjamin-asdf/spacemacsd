@@ -23,3 +23,11 @@ SOURCE is a file on the disk, DEST is an absolute on the phone."
   (interactive)
   (let ((default-directory "~/Videos"))
     (async-shell-command (format "youtube-dl \"%s\"" (evil-get-register ?\")))))
+
+
+(defun benj/play-vlc ()
+  "Play a vid with vlc."
+  (interactive)
+  (start-process "play-vlc" "*play-vlc*" "vlc"
+                 (read-file-name "Play vid: " "~/Videos/" nil nil nil
+                                 (lambda (file) (member (file-name-extension file) '("mp4" "mkv" "webm"))))))
