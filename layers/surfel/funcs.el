@@ -25,7 +25,7 @@
 (defun surfel-google ()
   "Open google."
   (interactive)
-  (surfel-run "google.com"))
+  (surfel-run "https://start.duckduckgo.com/"))
 
 (defun surfel-run-with-yank ()
   "Run browser with latest yank as url"
