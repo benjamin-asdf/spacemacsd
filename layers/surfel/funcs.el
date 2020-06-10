@@ -38,5 +38,8 @@
   "Handler meant to be one of `browse-url-handlers'"
   (surfel-run url))
 
-(let ((reg (regexp-opt (list "^https://" "^http://"))))
-  (setq browse-url-handlers '(((regexp-opt ) . surfel/browse-url-handler))))
+;; TODO how does that work?
+;; (let ((reg (regexp-opt (list "^https://" "^http://"))))
+;;   (setq browse-url-handlers (list (list reg 'surfel/browse-url-handler))))
+
+(setq browse-url-handlers '(("^https://" . surfel/browse-url-handler)))
