@@ -84,5 +84,5 @@ Add debug button with region as init method body."
 Use `projectile-locate-dominating-file' to get the unity proj root"
   (interactive)
   (when-let* ((proj (projectile-locate-dominating-file default-directory "Assets"))
-              (name (file-name-nondirectory proj)))
-    (start-process (format "unity-open-%s" name) (format "*unity-s%*" name) "unity-open" name proj)))
+              (name (file-name-base (directory-file-name proj))))
+    (shell-command (format "unity-open %s %s" name proj))))
