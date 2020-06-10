@@ -73,7 +73,8 @@ Add debug button with region as init method body."
   "Run cog idlegame."
   (interactive)
   (let ((default-directory (concat cos-dir "/modules" "/codegen")))
-    (start-process "generate-purchase-data" "*generate-purchase-data*" "python3" "runner.py" "-s"))
+    (shell-command "git pull origin master")
+    (start-process "generate-purchase-data" "*generate-purchase-data*" "python3" "benj-runner.py" "-s"))
   (pop-to-buffer "*generate-purchase-data*"))
 
 
