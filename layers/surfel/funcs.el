@@ -1,45 +1,60 @@
-(defconst surfel-best-search-page "https://g4gsearch.com")
-(defvar surfel/process-name "qutebrowser")
+(defconst surfel/best-search-page "https://g4gsearch.com")
+(defconst surfel/default-search-page "https://searx.pofilo.fr")
+(defconst surfel/default-search-page-input "https://searx.pofilo.fr/?q=%s")
 
-(defvar surfel-bookmars
+(defvar surfel/process-name "qutebrowser")
+(defconst surfel/moszen-types '("sea" "river" "lake"  "jungle" "forest" "wheather"))
+
+(defvar surfel/bookmars
   '()
   "Currently bookmarked urls.")
 
-(defun surfel-run (&rest args)
+(defun surfel/run (&rest args)
   "Run surf with ARGS"
   (start-process "surfel" "*surfel*" surfel/process-name (mapconcat 'identity args " ")))
 
 ;; TODO get the current url from some running process
-(defun surfel-add-bookmark (url)
+;; TODO use qute browser bookmarks
+(defun surfel/add-bookmark (url)
   "Add "
-  (push url surfel-bookmars))
+  (push url surfel/bookmars))
 
 
-(defun surfel-open-best-trello-board ()
+(defun surfel/open-best-trello-board ()
   (interactive)
-  (surfel-run "https://trello.com/b/5e62bac44a00757bfd0fdfe4"))
+  (surfel/run "https://trello.com/b/5e62bac44a00757bfd0fdfe4"))
 
 
-;; (surfel-run "google.com")
-
-(defun surfel-google ()
+(defun surfel/google (&optional arg)
   "Open google."
   (interactive)
-  (surfel-run "https://start.duckduckgo.com/"))
+  ;;(surfel/run "https://start.duckduckgo.com/")
+  (surfel/run (if arg (format surfel/default-search-page-input arg) surfel/default-search-page)))
 
-(defun surfel-run-with-yank ()
+(defun surfel/run-with-yank ()
   "Run browser with latest yank as url"
   (interactive)
-  (surfel-run (evil-get-register ?\")))
+  (surfel/run (evil-get-register ?\")))
+
+(defun surfel/moszen-open-rand ()
+  "Open a random moszen page."
+  (interactive)
+  (surfel/run (concat "https://www.moszen.com/" (rand-element surfel/moszen-types))))
 
 
 ;; TODO handle those args
 (defun surfel/browse-url-handler (url &rest args)
   "Handler meant to be one of `browse-url-handlers'"
-  (surfel-run url))
+  (surfel/run url))
+
+(defun surfel/search-for-region ()
+  "Open browser with current region."
+  (interactive)
+  (when (region-active-p)
+    (surfel/google (buffer-substring-no-properties (region-beginning) (region-end)))))
 
 ;; TODO how does that work?
 ;; (let ((reg (regexp-opt (list "^https://" "^http://"))))
 ;;   (setq browse-url-handlers (list (list reg 'surfel/browse-url-handler))))
 
-(setq browse-url-handlers '(("^https://" . surfel/browse-url-handler)))
+(setq browse-url-handlers '(("^https?://" . surfel/browse-url-handler)))
