@@ -21,4 +21,7 @@
           ("p" . bunel-open-prefab)
           ("d" . bunel-open-debug-panel)
           ("g" . bunel-set-globals)
+          ("u" . benj-unity/quick-file-usages)
+          ("U" . benj-unity/file-usages-with-guid-at-point)
+          ("l" . bunel/set-default-project)
           )))

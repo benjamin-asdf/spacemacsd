@@ -24,6 +24,12 @@
 (defconst bunel-menu-enums-file (concat idlegame-project-root "Assets/#/Sources/Menu/MenuEnums.cs")
   "The Idlegame menu enums file. Used to generate menu names lookups.")
 
+
+(defun bunel/set-default-project ()
+  "Set `bunel-default-unity-project'"
+  (interactive)
+  (setq bunel-default-unity-project (completing-read "Proj: " bunel-idlegame-projects)))
+
 (defun bunel-create-handle-file (project method &rest args)
   "Create a handle file for PROJECT.
 METHOD should be one of `bunel-method-names'. Optionally provide ARGS. "
@@ -287,3 +293,34 @@ CMD should be something."
 
 ;; (t-becomes-nil foo)
 ;; ≡ (if (eq foo t) (setq foo nil))
+
+
+
+
+
+
+(defun benj-unity/file-usages-with-guid-at-point ()
+  "Use `benj-unity/quick-file-usages' with the thing at point."
+  (interactive)
+  (benj-unity/quick-file-usages (thing-at-point 'evil-word)))
+
+(defun benj-unity/quick-file-usages (&optional guid)
+  "Search the project for the guid of the meta file you are visiting.
+Or try to use the meta file of the file that you are visiting."
+  (interactive)
+  (let* ((default-directory (projectile-project-root))
+         (buff-name "*quick-file-usages*")
+         (guid (or (and (boundp 'guid) guid) (and buffer-file-name (benj-get-guid-with-meta buffer-file-name))))
+         (usages (and guid (benj-unity/guid-file-usages guid))))
+    (if usages
+        (progn (pop-to-buffer buff-name)
+               (erase-buffer)
+               (insert (format "file usages for guid: %s\n" guid))
+               (insert (mapconcat 'identity usages "\n")))
+      (message "cannot get file usages"))))
+
+
+(defun benj-unity/guid-file-usages (guid)
+  "GUIDS file usages as list, non-zappy in large repos."
+  (when-let ((default-directory (projectile-project-root)))
+    (process-lines "git" "grep" "--files-with-matches" guid)))
