@@ -12,9 +12,6 @@
 (spacemacs/set-leader-keys "ojJ" 'evil-avy-goto-word-1-below)
 (spacemacs/set-leader-keys "ojW" 'evil-avy-goto-char-2)
 
-(spacemacs/declare-prefix "om" "move")
-(spacemacs/set-leader-keys "omr" 'avy-move-region)
-(spacemacs/set-leader-keys "oml" 'avy-move-line)
 
 (spacemacs/declare-prefix "oc" "copy")
 (spacemacs/set-leader-keys "ocl" 'avy-copy-line)
@@ -31,12 +28,6 @@
 (spacemacs/set-leader-keys "oxe" 'benj-remove-eol-from-file)
 (spacemacs/set-leader-keys "oxE" 'benj-remove-eol)
 
-
-
-(spacemacs/set-leader-keys "omi" 'benj-insert-other-line)
-(spacemacs/set-leader-keys "omn" 'benj-next-digit)
-
-
 (define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)
 (define-key evil-insert-state-map (kbd "C-y") 'benj-copy-word-from-above)
 
@@ -45,6 +36,7 @@
 (spacemacs/set-leader-keys "ons" 'benj-new-shell-script)
 
 (spacemacs/set-leader-keys "orr" 'benj-copy-last-yank-to-register)
+(spacemacs/set-leader-keys "ore" 'team/last-eldoc-message-to-reg)
 
 (spacemacs/declare-prefix "of" "file")
 (spacemacs/set-leader-keys "ofy" 'benj-copy-file-pos-pretty)

@@ -109,8 +109,10 @@ This function should only modify configuration layer settings."
      ;;benj-slack
      benj-backups
      benj-phone
+     benj-term
      benj-csharp-perf-hacks
      benj-ediff
+     benj-evil-motions
 
      )
 
@@ -123,7 +125,10 @@ This function should only modify configuration layer settings."
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(doom-themes
                                       emr
-                                      auth-source-pass)
+                                      auth-source-pass
+                                      gitlab
+                                      dired-x
+                                      )
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -311,7 +316,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil then the last auto saved layouts are resumed automatically upon
    ;; start. (default nil)
-   dotspacemacs-auto-resume-layouts t
+   dotspacemacs-auto-resume-layouts nil
 
    ;; If non-nil, auto-generate layout name when creating new layouts. Only has
    ;; effect when using the "jump to layout by number" commands. (default nil)
@@ -564,6 +569,23 @@ before packages are loaded."
 
   (show-smartparens-global-mode -1)
   (setq history-delete-duplicates t)
+
+  ;; TEMP TODO
+  (load "/home/benj/.spacemacs.d/layers/benj-slack/funcs.el")
+  (load "/home/benj/.spacemacs.d/layers/benj-slack/keybindings.el")
+
+
+  (run-at-time 10 10 #'benj-sys/invoke-watch-vbs)
+
+  (defun benj-sys/invoke-watch-vbs ()
+    "Invoke python script that kills vbs compiler processes."
+    (start-process-shell-command "watch-vbs" "*watch-vbs*" "watch_vbs.py"))
+
+  (run-at-time 20 20 #'benj-sys/invoke-kill-high-mem)
+
+  (defun benj-sys/invoke-kill-high-mem ()
+    "Invoke perl script that kills high mem procs"
+    (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs"))
 
   )
 
