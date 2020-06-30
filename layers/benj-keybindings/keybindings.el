@@ -27,9 +27,6 @@
 (spacemacs/set-leader-keys "ocr" 'avy-copy-region)
 
 
-(spacemacs/set-leader-keys "ss" 'spacemacs/helm-swoop-region-or-symbol)
-(spacemacs/set-leader-keys "sS" 'helm-swoop)
-
 (spacemacs/declare-prefix "og" "git")
 (spacemacs/declare-prefix "ogi" "git-idlegame")
 (spacemacs/set-leader-keys "ogic" 'benj-make-merge-request-commit)
