@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : HasEntityWith
+#key : hyw
+#contributor : benj
+# --
+c.state.HasEntityWith<$1>($0)

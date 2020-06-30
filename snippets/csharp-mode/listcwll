@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : listcwll
+#key : listcwll
+#contributor : benj
+# --
+foreach (var item in list) {
+    Console.WriteLine(item);
+}

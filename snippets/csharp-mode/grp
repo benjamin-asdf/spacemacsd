@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : grp
+#key : grp
+#contributor : benj
+# --
+c.state.GetGroup(Matcher.AllOf<$1>());

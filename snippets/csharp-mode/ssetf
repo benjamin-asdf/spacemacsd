@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : c.state.SetFalse
+#key : ssetf
+#contributor : benj
+# --
+c.state.Set<$0>(false)

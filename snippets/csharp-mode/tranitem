@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : tranitem
+#key : tranitem
+#contributor : benj
+# --
+[MenuItem("CONTEXT/" + nameof(Transform) + "/$1")]
+static void $1(MenuCommand cmd) {
+    var t = cmd.context as Transform;
+    $0
+}

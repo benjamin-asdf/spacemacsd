@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : c.state.Set<>(true)
+#key : ssett
+#contributor : benj
+# --
+c.state.Set<$0>(true)

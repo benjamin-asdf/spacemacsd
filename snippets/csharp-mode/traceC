@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : traceC
+#key : traceC
+#contributor : benj
+# --
+TraceDebugExt.AddDebugComponentChanged(${1:e});

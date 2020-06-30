@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : idldir
+#key : idldir
+#contributor : benj
+# --
+Environment.CurrentDirectory = Environment.GetEnvironmentVariable("IDLEGAMEDIR");

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : dls
+#key : dls
+#contributor : benj
+# --
+UnityEngine.Debug.Log("success.");

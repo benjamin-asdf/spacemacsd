@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : smearr
+#key : smearr
+#contributor : benj
+# --
+var arr = new int[] {1, 2, 3};

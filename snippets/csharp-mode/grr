@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : grr
+#key : grr
+#contributor : benj
+# --
+c.state.GetGroup()
