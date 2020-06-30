@@ -15,6 +15,8 @@
 
 (setq slack-prefer-current-team t)
 (setq slack-thread-also-send-to-room nil)
+(setq slack-typing-visibility 'never)
+(setq slack-enable-wysiwyg t)
 
 (slack-start)
 
@@ -77,7 +79,7 @@
                               )
 
         (alert body :icon slack-alert-icon :title title :category 'slack)
-        (start-process "benj-slack-notifiy-sound" "*slack-notify-sound*" "aplay" (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root)))))
+        (benj/play-idlegame-sound)
         (start-process "notify-man" "*best-notify*" "notify-send" title body)))
 
   ;; (alert (format "New slack message: %s" message) :title room)
@@ -109,3 +111,20 @@
     (slack-message-send-internal (concat "```" (filter-buffer-substring (region-beginning) (region-end)) "```")
                                  (oref room id)
                                  team)))
+
+
+(defun benj/play-idlegame-sound ()
+  "Play some random idlegame sound."
+  (interactive)
+  (start-process "benj-slack-notifiy-sound" "*slack-notify-sound*" "aplay" (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))))
+
+
+
+;; Seems to be a bug where it messages nil every second
+;; fucking annoying, but I don't care so much about this typing feature anyway
+;; (defun benj-slack/typing-display-advice (orig-func team-id)
+;;   "Advice meant for `slack-typing-display'."
+;;   )
+
+;; In case setting the variable doesn't work,
+;; advice `slack-typing-display' to nil
