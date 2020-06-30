@@ -1,11 +1,18 @@
-(defconst benj-roslyn-proj-path (concat (file-name-as-directory cos-dir) "RoslynAnalyzers"))
-(defconst benj-cos-roslyn-sln-path (concat (file-name-as-directory benj-roslyn-proj-path) "RoslynAnalyzers.sln"))
-(defconst benj-roslyn-cli-bin (concat (file-name-as-directory benj-roslyn-proj-path) "EntityClosureCLI/" "bin/"))
-(defconst benj-roslyn-global-analzyers-file (concat (file-name-as-directory benj-roslyn-proj-path) "Analyzers/GlobalAnalysis/GlobalAnalyzers.cs"))
-(defconst benj-roslyn-cli-name "EntityClosureCLI.exe")
+;; (defconst benj-roslyn-proj-path (concat (file-name-as-directory cos-dir) "RoslynAnalyzers"))
+(defconst benj-roslyn-cli-name "AnalyzerCLI.dll")
+(defconst benj-roslyn-proj-path (concat (file-name-as-directory cos-dir) "RoslynTools"))
+(defconst benj-cos-roslyn-sln-path (concat (file-name-as-directory benj-roslyn-proj-path) "RoslynTools.sln"))
+;; (defconst benj-cos-roslyn-sln-path (concat (file-name-as-directory benj-roslyn-proj-path) "RoslynAnalyzers.sln"))
+;; (defconst benj-roslyn-cli-bin (concat (file-name-as-directory benj-roslyn-proj-path) "EntityClosureCLI/" "bin/"))
+(defconst benj-roslyn-cli-bin (concat (file-name-as-directory benj-roslyn-proj-path) "output/"))
+(defconst benj-roslyn-cli-executable (concat (file-name-as-directory benj-roslyn-cli-bin) benj-roslyn-cli-name))
+(defconst benj-roslyn-global-analzyers-file (concat (file-name-as-directory benj-roslyn-proj-path) "src/Analyzers/GlobalAnalysis/GlobalAnalyzers.cs"))
+;; (defconst benj-roslyn-cli-name "EntityClosureCLI.exe")
 (defconst idlegame-sln-path (concat idlegame-project-root "IdleGame.sln"))
+(defconst benj-roslyn/playgroud-sln (concat (file-name-as-directory cos-dir) (file-name-as-directory "RoslynPlayground") "RoslynPlayground.sln"))
+;; (setq benj-roslyn/playgroud-sln (concat (file-name-as-directory cos-dir) (file-name-as-directory "RoslynPlayground") "RoslynPlayground.sln"))
 
-(defvar benj-roslyn-default-slns (list benj-cos-roslyn-sln-path idlegame-sln-path))
+(defvar benj-roslyn-default-slns (list benj-cos-roslyn-sln-path idlegame-sln-path benj-roslyn/playgroud-sln))
 
 (defconst benj-roslyn-idlegame-analyzer-args
   '("-x" "(Test)|(^Unity\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)"
@@ -23,7 +30,10 @@
 
 (defun benj-roslyn--build-proj-worker (config)
   "Build cos roslyn project, CONFIG should be a string of the form 'Release' or 'Debug'."
-  (benj-msbuild-sln benj-cos-roslyn-sln-path (concat config "Linux")))
+  (benj-msbuild-sln benj-cos-roslyn-sln-path
+                    config
+                    ;;(concat config "Linux")
+                    ))
 
 (defun benj-roslyn-cli-path (config)
   "Roslyn cli path for CONFIG.
@@ -59,6 +69,15 @@ see `benj-roslyn-proj-configs'"
         (analyzer (helm :sources helm-benj-roslyn-analzyers-source)))
     (list sln target analyzer)))
 
+(defun benj-roslyn--collect-analzyers (file)
+  "Search FILE for analyzer list pattern, return available analyzers."
+  (when (file-exists-p file)
+    (split-string (with-output-to-string
+                   (with-temp-file file
+                     (insert-file-contents-literally file)
+                     (while (re-search-forward ".Add<\\(\\w+\\)>()" nil t)
+                       (princ (concat (match-string 1) "\n"))))))))
+
 (defun benj-roslyn-available-global-analzyers ()
   "Available global analzyers for roslyn project."
   (benj-roslyn--collect-analzyers benj-roslyn-global-analzyers-file))
@@ -66,18 +85,15 @@ see `benj-roslyn-proj-configs'"
   (defvar helm-benj-roslyn-analzyers-source
     (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-available-global-analzyers))))
 
-(defun benj-roslyn--collect-analzyers (file)
-  "Search FILE for analyzer list pattern, return available analyzers."
-  (split-string (with-output-to-string
-                  (with-temp-file file
-                    (insert-file-contents-literally file)
-                    (while (re-search-forward ".Add<\\(\\w+\\)>()" nil t)
-                      (princ (concat (match-string 1) "\n")))))))
-
-
 (defun benj-roslyn/run-idlegame-default ()
   "See `benj-roslyn-run-idlegame'."
+  (interactive)
   (benj-roslyn-run-idlegame "--no-git"))
+
+(defun benj-roslyn/run-idlegame-sync ()
+  "Run idlegame synced analzyers."
+  (interactive)
+  (benj-roslyn-run-idlegame "-sync"))
 
 (defun benj-roslyn-run-idlegame (&rest args)
   "Run release build on playground project. ARGS can be additional args."
@@ -113,11 +129,43 @@ see `benj-roslyn-proj-configs'"
     (benj-start-proccess-flatten-args
      "run-analyzers"
      buff-name
-     "/usr/bin/mono"
-     "/home/benj/idlegame/RoslynAnalyzers/EntityClosureCLI/bin/Release/EntityClosureCLI.exe"
+     ;; "/usr/bin/mono"
+     benj-roslyn-cli-executable
      "-s" sln
      args)
     (pop-to-buffer buff-name)))
+
+(defun benj-roslyn//run-closure ()
+  "TEMP run closure."
+  (interactive)
+  (let ((default-directory benj-roslyn-proj-path))
+    (pop-to-buffer
+     (process-buffer
+      (start-process "roslyn-runner" "*roslyn-analzyers*"
+                     (if (yes-or-no-p "idlgame?")
+                         "/home/benj/idlegame/RoslynTools/run-idlgame.sh"
+                       "/home/benj/idlegame/RoslynTools/run-closure.sh"))))))
+
+(defun benj-roslyn-runner (sln &rest args)
+  "Run release analzyers with SLN and additional ARGS"
+  (interactive)
+  (setq benj-roslyn-last-args (list sln args))
+  (let ((default-directory (file-name-directory sln))
+        (buff-name "*roslyn-analzyers*")
+        (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/")))
+        )
+    (benj-start-proccess-flatten-args
+     "run-analyzers"
+     buff-name
+     "/usr/bin/mono"
+     ;; "dotnet"
+     benj-roslyn-cli-executable
+     "-s" sln
+     args)
+    (pop-to-buffer buff-name)))
+
+
+
 
 (defun benj-start-process-synchronously-flatten-args (name buffer program &rest program-args)
   "See `benj-start-proccess-flatten-args' use `accept-process-output' to run synchronously.
@@ -125,7 +173,6 @@ Returns the created proc."
   (let ((proc (benj-start-proccess-flatten-args name buffer program program-args)))
     (while (accept-process-output proc))
     proc))
-
 (defun benj-start-proccess-flatten-args (name buffer program &rest program-args)
   "See `start-process'. Uses `make-process.'
 Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatten'"

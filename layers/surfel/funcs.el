@@ -25,7 +25,7 @@
   (surfel/run "https://trello.com/b/5e62bac44a00757bfd0fdfe4"))
 
 
-(defun surfel/google (&optional arg)
+(defun surfel/search (&optional arg)
   "Open google."
   (interactive)
   ;;(surfel/run "https://start.duckduckgo.com/")
@@ -51,7 +51,12 @@
   "Open browser with current region."
   (interactive)
   (when (region-active-p)
-    (surfel/google (buffer-substring-no-properties (region-beginning) (region-end)))))
+    (surfel/search (buffer-substring-no-properties (region-beginning) (region-end)))))
+
+(defun surfel/search-word-at-point ()
+  "start browser searching for the evil WORD."
+  (interactive)
+  (surfel/search (thing-at-point 'evil-WORD)))
 
 ;; TODO how does that work?
 ;; (let ((reg (regexp-opt (list "^https://" "^http://"))))

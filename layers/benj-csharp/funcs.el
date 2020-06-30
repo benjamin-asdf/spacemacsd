@@ -278,3 +278,43 @@ Depends on mono and an omnisharp build at `benj/omnisharp-server-executable'."
 
 
 (setq omnisharp-host "http://localhost:8083/")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;; hack to remove some errors
+;; but atm the omnisharp get diagnostics is timing out in non-small files, so yea
+
+;; (advice-add 'omnisharp--flycheck-start  :around #'benj-omnisharp/flycheck-start-adviced)
+
+;;See `omnisharp--flycheck-start'.
+(defun benj-omnisharp/flycheck-start-adviced (orig-func checker callback)
+  "Start an OmniSharp syntax check with CHECKER.
+CALLBACK is the status callback passed by Flycheck."
+  ;; Put the current buffer into the closure environment so that we have access
+  ;; to it later.
+  (let ((buffer (current-buffer)))
+    (omnisharp--send-command-to-server
+     "codecheck"
+     (omnisharp--get-request-object)
+     (lambda (response)
+       (let ((errors (omnisharp--flycheck-error-parser response checker buffer)))
+         (funcall callback 'finished (delq nil (benj-omnisharp/filter-flycheck-errors errors))))))))
+
+(defun benj-omnisharp/filter-flycheck-errors (errors)
+  "Hack to filter omnisharp flycheck errors."
+  (--filter
+   (string-prefix-p
+    "Expression value is never used"
+    (flycheck-error-message it))
+   errors))

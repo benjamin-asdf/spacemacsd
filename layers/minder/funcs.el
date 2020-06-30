@@ -422,7 +422,10 @@ Use this to be able to close the eyes for 20 seconds and take a deep breath."
   (-dotimes 6
     #'(lambda (it)
         (async-start
-         (lambda ()
-           (sleep-for 10)
-           (minder-do-deed))
+         #'minder--take-one-min-interval ;; TODO figure out why symbols function definition is void
          'ignore))))
+
+(defun minder--take-one-min-interval ()
+  "Meant to use as the callback to `minder-take-one-min'"
+  (sleep-for 10)
+  (funcall #'minder-do-deed))

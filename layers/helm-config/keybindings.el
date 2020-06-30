@@ -20,4 +20,5 @@
           ("o" . helm-occur)
           ("i" . helm-info)
           ("d" . benj/helm-find-file-recursively)
+          ("/" . (lambda () (interactive) (spacemacs/helm-project-smart-do-search t)))
           )))

@@ -210,3 +210,14 @@ Debug.Log("test)
 
 * make sailor put initial selection in helm-do-ag, instead of running rg
 
+
+
+* phone funcs could have some love
+** put a sentinel to the download and push to phone instant
+** check if I can just push 'sync' up the vid dir
+** I need to clean up my phone storage
+
+
+* have this yank flash that doom has
+** clone doom and dig the code
+s

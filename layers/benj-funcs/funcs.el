@@ -163,7 +163,8 @@ Match file names for a PATTERN, if non nil."
 
 
 
-(defconst benj-scratch-buffer-kinds
+;; TODO add here and extension
+(defconst benj-scratches/buffer-kinds
   '((:csharp . csharp-mode)
     (:fundamental . fundamental-mode)
     (:lisp-interaction . lisp-interaction-mode)
@@ -172,12 +173,20 @@ Match file names for a PATTERN, if non nil."
   "Map scratch buffer kind names with respective mode.
 Form '(:key . MODE-FUNC)")
 
+(defconst benj-scratches/scratches-dir "~/.local/scratches/")
+
+(defun benj-scratches/file-name (mode)
+  "Get file name for todays scratch for MODE."
+  (format "%s%s%s" benj-scratches/scratches-dir (format-time-string "%Y-%m-%d/") mode))
+
+;; TODO functionality to open a second scratch for the day
 (defun benj--switch-to-scratch-buffer (arg)
   "Switch to one of the `'*scratch<name>*' buffers.
-ARG should be one of `benj-scratch-buffer-kinds'"
+ARG should be one of `benj-scratches/buffer-kinds'.
+There is a scratch file for each day and mode."
   (let* ((buff-name (format "*scratch%s*" arg))
          (exists (get-buffer buff-name))
-         (mode (cdr (assoc arg benj-scratch-buffer-kinds))))
+         (mode (cdr (assoc arg benj-scratches/buffer-kinds))))
     (switch-to-buffer (get-buffer-create buff-name))
     (when (and (not exists)
                (not (eq major-mode mode))
@@ -185,6 +194,16 @@ ARG should be one of `benj-scratch-buffer-kinds'"
       (funcall mode))))
 
 
+;; create dir
+
+;; (defun benj--switch-to-scratch-buffer (arg)
+;;   "Switch to one of the `'*scratch<name>*' buffers.
+;; ARG should be one of `benj-scratches/buffer-kinds'.
+;; There is a scratch file for each day and mode."
+;;   (find-file (benj-scratches/file-name (assoc-default arg benj-scratches/buffer-kinds)))
+;;   (when (and (not (eq major-mode mode))
+;;              (fboundp mode))
+;;     (funcall mode)))
 
 
 
@@ -376,6 +395,34 @@ NAME and BUFFNAME are allowed to be nil."
   (if (buffer-file-name)
       (benj-text/add-crlf (buffer-file-name))
     (user-error "Buffer is not visiting a file.")))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

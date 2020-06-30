@@ -272,3 +272,11 @@ will create a conflict in a file called file."
   "Add everything and commit with MSG."
   (shell-command "git add .")
   (shell-command (format "git commit -m \"%s\"" msg)))
+
+
+;; TODO
+(defun benj-git/open-diff-buff-logs-and-todos ()
+  "Open buffer for diffs with dev that contain logs or todos."
+  (interactive)
+
+  )

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
 using System.Diagnostics;
-
+using System.IO;
 
 public static class Programm {
 
@@ -110,3 +110,11 @@ args are key value pairs, meaningful:
     (search-backward "=")
     (evil-insert-state)
     (forward-char 2)))
+
+
+(defun benj-csharp/string-interp-sourrund ()
+  "Surround the active region with string interpolation syntax."
+  (interactive)
+  (let ((text (buffer-substring (region-beginning) (region-end))))
+    (kill-region (region-beginning) (region-end))
+    (insert (format "$\"{%s}\"" text))))

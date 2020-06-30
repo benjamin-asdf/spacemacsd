@@ -52,3 +52,32 @@ return the file name of the create file"
 (defun latest-file (path)
   "Get latest file (excluding directory) in PATH."
   (car (sort (--remove (member (file-name-nondirectory it) '(".." ".")) (directory-files path 'full nil t)) #'file-newer-than-file-p)))
+
+
+
+
+(defvar team/eldoc-previous-message "")
+(defun team/eldoc-save-last-message (orig &rest args)
+  "Meant as an advice for `eldoc-message'."
+  ;; override register e always with last msg
+  (evil-set-register
+   ?e
+   (setq team/eldoc-previous-message
+         ;; when eldoc clears the buffer this will be the empty string.
+         ;; only keep track of the actual value
+         (or (apply orig args) team/eldoc-previous-message))))
+(advice-add 'eldoc-message :around #'team/eldoc-save-last-message)
+
+
+(defun team/last-eldoc-message-to-reg (&optional register)
+  "Copy last eldoc message to REGISTER default to register k"
+  (interactive)
+  (when team/eldoc-previous-message
+    (evil-set-register (or register ?k) team/eldoc-previous-message)))
+
+
+(defun team/evil-pop-register ()
+  "Pop register 1, move all registers up. So 2 becomes and so on."
+  (interactive)
+
+  )

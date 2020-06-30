@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 #name : \\w+.forea
-#key : \\w+.forea
+#key : .forea
 #contributor : benj
 # --
 foreach (var item in `(with-save-excursion (re-search-backward "\\(\\w+\\)\\.forea" nil t))`) {

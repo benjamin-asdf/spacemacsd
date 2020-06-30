@@ -217,7 +217,6 @@ CMD should be something."
      (list method)))
   (bunel--cmd "execute-debug-method" nil method))
 
-;; (kill-new (completing-read "Debug method: " (bunel--collect-parameterless-funcs debug-method-file)))
 
 ;; should use global instead
 (defun bunel--collect-parameterless-funcs (file)

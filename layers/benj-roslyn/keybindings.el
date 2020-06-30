@@ -32,6 +32,7 @@
           ("B" . (lambda () (interactive) (benj-roslyn--build-proj-worker "Release")))
           ("i" . benj-roslyn/run-idlegame-default)
           ("I" . benj-roslyn-run-idlegame)
+          ("S" . benj-roslyn/run-idlegame-sync)
           ("p" . benj-roslyn-run-playground)
           ("A" . benj-roslyn-do-run)
           ("a" . benj-roslyn-rerun-last)
@@ -43,4 +44,7 @@
           ("d" . sharpel-file-command-on-region)
           ("c" . sharpel-rewrite-file)
           ("t" . (lambda () (interactive) (sharpel--start "--try-compilation")))
+          ;; TODO adapt to nuke
+          ;; build evrtim
+          (";" . benj-roslyn//run-closure)
           )))
