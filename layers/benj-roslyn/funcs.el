@@ -1,39 +1,81 @@
-;; (defconst benj-roslyn-proj-path (concat (file-name-as-directory cos-dir) "RoslynAnalyzers"))
 (defconst benj-roslyn-cli-name "AnalyzerCLI.dll")
-(defconst benj-roslyn-proj-path (concat (file-name-as-directory cos-dir) "RoslynTools"))
-(defconst benj-cos-roslyn-sln-path (concat (file-name-as-directory benj-roslyn-proj-path) "RoslynTools.sln"))
-;; (defconst benj-cos-roslyn-sln-path (concat (file-name-as-directory benj-roslyn-proj-path) "RoslynAnalyzers.sln"))
-;; (defconst benj-roslyn-cli-bin (concat (file-name-as-directory benj-roslyn-proj-path) "EntityClosureCLI/" "bin/"))
-(defconst benj-roslyn-cli-bin (concat (file-name-as-directory benj-roslyn-proj-path) "output/"))
-(defconst benj-roslyn-cli-executable (concat (file-name-as-directory benj-roslyn-cli-bin) benj-roslyn-cli-name))
-(defconst benj-roslyn-global-analzyers-file (concat (file-name-as-directory benj-roslyn-proj-path) "src/Analyzers/GlobalAnalysis/GlobalAnalyzers.cs"))
-;; (defconst benj-roslyn-cli-name "EntityClosureCLI.exe")
+(defconst benj-roslyn-tools/proj-path (concat (file-name-as-directory cos-dir) "RoslynTools"))
+(defconst benj-roslyn-tools/sln-path (concat (file-name-as-directory benj-roslyn-tools/proj-path) "RoslynTools.sln"))
+(defconst benj-roslyn-tools/cli-bin-dir (concat (file-name-as-directory benj-roslyn-tools/proj-path) "output/"))
+(defconst benj-roslyn-tools/cli-executable (concat (file-name-as-directory benj-roslyn-tools/cli-bin-dir) benj-roslyn-cli-name))
+(defconst benj-roslyn-tools/global-analyzers-file (concat (file-name-as-directory benj-roslyn-tools/proj-path) "src/Analyzers/GlobalAnalysis/GlobalAnalyzers.cs"))
 (defconst idlegame-sln-path (concat idlegame-project-root "IdleGame.sln"))
-(defconst benj-roslyn/playgroud-sln (concat (file-name-as-directory cos-dir) (file-name-as-directory "RoslynPlayground") "RoslynPlayground.sln"))
-;; (setq benj-roslyn/playgroud-sln (concat (file-name-as-directory cos-dir) (file-name-as-directory "RoslynPlayground") "RoslynPlayground.sln"))
+(defconst benj-roslyn-tools/playground-sln (concat (file-name-as-directory cos-dir) (file-name-as-directory "RoslynPlayground") "RoslynPlayground.sln"))
+(defvar benj-roslyn-tools/default-slns (list benj-roslyn-tools/sln-path idlegame-sln-path benj-roslyn-tools/playground-sln))
 
-(defvar benj-roslyn-default-slns (list benj-cos-roslyn-sln-path idlegame-sln-path benj-roslyn/playgroud-sln))
-
-(defconst benj-roslyn-idlegame-analyzer-args
+(defconst benj-roslyn-tools/idlegame-args
   '("-x" "(Test)|(^Unity\.)|(WIP)|(Editor)|(Plugins)|(TMPro)|(Assembly)|(Monkeys)"
     "-i" ".*Assets.*"))
 
+(defconst benj-roslyn-tools/nuke-targets-file (concat
+                                               (file-name-as-directory
+                                                benj-roslyn-tools/proj-path)
+                                               "build/Build.cs"))
 
-;; TODO
-(defconst benj-roslyn-proj-configs
-  '((:debug . "Debug")
-    (:release . "Release")))
+(defun benj-roslyn-tools/nuke-targets ()
+  "Split `benj-roslyn-tools/nuke-targets-file' for nuke targets."
+  (split-string
+   (with-output-to-string
+     (with-temp-file
+         "/home/benj/idlegame/RoslynTools/build/Build.cs"
+       (insert-file-contents-literally "/home/benj/idlegame/RoslynTools/build/Build.cs")
+       (while (re-search-forward "Target \\(\\w+\\)" nil t)
+         (princ (match-string-no-properties 0)))))))
 
-;; TODO
-;; would be trivial to have some helm selection of args
 
 
 (defun benj-roslyn--build-proj-worker (config)
   "Build cos roslyn project, CONFIG should be a string of the form 'Release' or 'Debug'."
-  (benj-msbuild-sln benj-cos-roslyn-sln-path
+  (benj-msbuild-sln benj-roslyn-tools/sln-path
                     config
                     ;;(concat config "Linux")
                     ))
+
+(defun benj-roslyn-tools/nuke-build ()
+  "Build RoslynTools with nuke."
+    (benj-roslyn-tools/run-nuke "Publish"))
+
+(defun benj-roslyn-tools/nuke-clean ()
+  "Run clean target roslyn tools."
+  (interactive)
+    (benj-roslyn-tools/run-nuke "Clean"))
+
+;; TODO
+;; (defun benj-roslyn-tools/clean-and-build ()
+;;   "Clean RoslynTools and build."
+;;   (interactive)
+;;   )
+
+(defun benj-roslyn-tools/run-nuke (target)
+  "Run nuke in `benj-roslyn-tools/proj-path'."
+  (let ((buff-name "*nuke-roslyn-tools*")
+        (default-directory benj-roslyn-tools/proj-path))
+    (pop-to-buffer buff-name)
+    (start-process
+     "roslyn-tools-nuke"
+     buff-name
+     "nuke"
+     "--target"
+     target)))
+
+(defun benj-roslyn-tools/run-nuke (target)
+  "Run nuke in `benj-roslyn-tools/proj-path'."
+  (let ((buff-name "*nuke-roslyn-tools*")
+        (default-directory benj-roslyn-tools/proj-path))
+    (call-process
+     "nuke"
+     nil
+     (get-buffer-create buff-name)
+     nil
+     "--target"
+     target)
+    (pop-to-buffer buff-name)))
+
 
 (defun benj-roslyn-cli-path (config)
   "Roslyn cli path for CONFIG.
@@ -41,7 +83,7 @@ Meaningfull values for CONFIG are
 :release
 :debug
 see `benj-roslyn-proj-configs'"
-  (concat benj-roslyn-cli-bin
+  (concat benj-roslyn-tools/cli-bin-dir
           (file-name-as-directory
            (cdr (assoc config benj-roslyn-proj-configs)))
           benj-roslyn-cli-name))
@@ -51,7 +93,7 @@ see `benj-roslyn-proj-configs'"
   "Run release build on playground project."
   (interactive)
   (benj-roslyn-runner
-   benj-cos-roslyn-sln-path
+   benj-roslyn-tools/sln-path
    "-t" "Playground"))
 
 (defun benj-roslyn-do-run (sln target analyzer)
@@ -59,12 +101,12 @@ see `benj-roslyn-proj-configs'"
   (interactive
    (benj-roslyn--read-args))
   (benj-roslyn-runner sln (when (not (string-empty-p target)) (list "-f" (file-name-nondirectory target))) "-v" "-a" analyzer
-                      (when (and (string-equal sln idlegame-sln-path) (yes-or-no-p "Selected idlegame sln. Use Default IdleGame proj inclution args? " )) (list benj-roslyn-idlegame-analyzer-args "--no-git"))))
+                      (when (and (string-equal sln idlegame-sln-path) (yes-or-no-p "Selected idlegame sln. Use Default IdleGame proj inclution args? " )) (list benj-roslyn-tools/idlegame-args "--no-git"))))
 
 
 (defun benj-roslyn--read-args ()
   "Evaluates to a plist of (SLN TARGET ANALYZER)."
-  (let ((sln (completing-read "Sln: " benj-roslyn-default-slns))
+  (let ((sln (completing-read "Sln: " benj-roslyn-tools/default-slns))
         (target (read-file-name "Target file, (C-Ret to not specify target file): " nil (buffer-file-name) nil (buffer-file-name)))
         (analyzer (helm :sources helm-benj-roslyn-analzyers-source)))
     (list sln target analyzer)))
@@ -80,7 +122,7 @@ see `benj-roslyn-proj-configs'"
 
 (defun benj-roslyn-available-global-analzyers ()
   "Available global analzyers for roslyn project."
-  (benj-roslyn--collect-analzyers benj-roslyn-global-analzyers-file))
+  (benj-roslyn--collect-analzyers benj-roslyn-tools/global-analyzers-file))
 (with-eval-after-load 'helm
   (defvar helm-benj-roslyn-analzyers-source
     (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-available-global-analzyers))))
@@ -100,10 +142,16 @@ see `benj-roslyn-proj-configs'"
   (interactive)
   (benj-roslyn-runner
    idlegame-sln-path
-   benj-roslyn-idlegame-analyzer-args
+   benj-roslyn-tools/idlegame-args
    "-v"
    args))
 
+(defun benj-roslyn-tools/clean-and-publish ()
+  "Run nuke clean and publish."
+
+
+
+  )
 
 
 ;; "-a" "StartupMethodAnalyzer" "-startup"
@@ -130,7 +178,7 @@ see `benj-roslyn-proj-configs'"
      "run-analyzers"
      buff-name
      ;; "/usr/bin/mono"
-     benj-roslyn-cli-executable
+     benj-roslyn-tools/cli-executable
      "-s" sln
      args)
     (pop-to-buffer buff-name)))
@@ -138,7 +186,7 @@ see `benj-roslyn-proj-configs'"
 (defun benj-roslyn//run-closure ()
   "TEMP run closure."
   (interactive)
-  (let ((default-directory benj-roslyn-proj-path))
+  (let ((default-directory benj-roslyn-tools/proj-path))
     (pop-to-buffer
      (process-buffer
       (start-process "roslyn-runner" "*roslyn-analzyers*"
@@ -159,7 +207,7 @@ see `benj-roslyn-proj-configs'"
      buff-name
      "/usr/bin/mono"
      ;; "dotnet"
-     benj-roslyn-cli-executable
+     benj-roslyn-tools/cli-executable
      "-s" sln
      args)
     (pop-to-buffer buff-name)))
