@@ -6,6 +6,7 @@
 (defconst benj-roslyn-tools/global-analyzers-file (concat (file-name-as-directory benj-roslyn-tools/proj-path) "src/Analyzers/GlobalAnalysis/GlobalAnalyzers.cs"))
 (defconst idlegame-sln-path (concat idlegame-project-root "IdleGame.sln"))
 (defconst benj-roslyn-tools/playground-sln (concat (file-name-as-directory cos-dir) (file-name-as-directory "RoslynPlayground") "RoslynPlayground.sln"))
+(defconst benj-roslyn-tools/analzyer-log-file (concat (temporary-file-directory) "analyzer-log"))
 (defvar benj-roslyn-tools/default-slns (list benj-roslyn-tools/sln-path idlegame-sln-path benj-roslyn-tools/playground-sln))
 
 (defconst benj-roslyn-tools/idlegame-args
@@ -38,12 +39,33 @@
 
 (defun benj-roslyn-tools/nuke-build ()
   "Build RoslynTools with nuke."
-    (benj-roslyn-tools/run-nuke "Publish"))
+  (interactive)
+  (write-region "" nil benj-roslyn-tools/analzyer-log-file)
+  (when-let ((buff (get-buffer (file-name-nondirectory benj-roslyn-tools/analzyer-log-file))))
+    (kill-buffer buff))
+  (find-file-other-window benj-roslyn-tools/analzyer-log-file)
+  (benj-roslyn-tools/run-nuke-target "Publish"))
+
 
 (defun benj-roslyn-tools/nuke-clean ()
   "Run clean target roslyn tools."
   (interactive)
-    (benj-roslyn-tools/run-nuke "Clean"))
+  (benj-roslyn-tools/run-nuke-target "Clean"))
+
+(defun benj-roslyn-tools/nuke-proc-buff ()
+  "Buffer for roslyn tools nuke proc."
+  (get-buffer-create "*nuke-roslyn-tools*"))
+
+(defun benj-roslyn-tools/pop-to-nuke-buff ()
+  "Pop to buff other frame returned by `benj-roslyn-tools/nuke-proc-buff'."
+  (interactive)
+  (let ((buff (benj-roslyn-tools/nuke-proc-buff)))
+    (unless (equal buff (current-buffer))
+      (switch-to-buffer-other-frame buff)
+      (goto-char (point-max))))
+
+  ;; (pop-to-buffer (benj-roslyn-tools/nuke-proc-buff))
+  )
 
 ;; TODO
 ;; (defun benj-roslyn-tools/clean-and-build ()
@@ -51,31 +73,67 @@
 ;;   (interactive)
 ;;   )
 
-(defun benj-roslyn-tools/run-nuke (target)
+(defun benj-roslyn-tools/run-nuke-target (target)
+  "Run nuke with TARGET in `benj-roslyn-tools/proj-path'."
+  (benj-roslyn-tools/run-nuke "--target" target))
+
+(defun benj-roslyn-tools/run-nuke (&rest args)
   "Run nuke in `benj-roslyn-tools/proj-path'."
-  (let ((buff-name "*nuke-roslyn-tools*")
-        (default-directory benj-roslyn-tools/proj-path))
-    (pop-to-buffer buff-name)
-    (start-process
+  (let ((default-directory benj-roslyn-tools/proj-path))
+    (benj-start-proccess-flatten-args
      "roslyn-tools-nuke"
-     buff-name
+     (benj-roslyn-tools/nuke-proc-buff)
      "nuke"
-     "--target"
-     target)))
+     args)
+    (benj-roslyn-tools/pop-to-nuke-buff)))
 
-(defun benj-roslyn-tools/run-nuke (target)
-  "Run nuke in `benj-roslyn-tools/proj-path'."
-  (let ((buff-name "*nuke-roslyn-tools*")
-        (default-directory benj-roslyn-tools/proj-path))
-    (call-process
-     "nuke"
-     nil
-     (get-buffer-create buff-name)
-     nil
-     "--target"
-     target)
-    (pop-to-buffer buff-name)))
 
+;; TODO with callback
+;; (defun benj-roslyn-tools/run-nuke (callback &rest args)
+;;   "Run nuke in `benj-roslyn-tools/proj-path'.
+;; If CALLBACK non nil, do not immediatly pop to buffer.
+;; if CALLBACK is a symbol bound to a function without parameters, it get's called after the process finishes.
+;; "
+;;   ;; todo callback could have the value 'pop-to-nuke-buff
+;;   (let* ((default-directory benj-roslyn-tools/proj-path)
+;;          (proc (benj-start-proccess-flatten-args
+;;                 "roslyn-tools-nuke"
+;;                 (benj-roslyn-tools/nuke-proc-buff)
+;;                 "nuke"
+;;                 args)))
+;;     (or (and
+;;          (fboundp callback)
+;;          (set-process-sentinel
+;;           proc
+;;           (lambda (proc evnt)
+;;             (apply callback))))
+;;         (benj-roslyn-tools/pop-to-nuke-buff))))
+
+;; (benj-roslyn-tools/run-nuke #'benj-roslyn-tools/pop-to-nuke-buff "--target" "Publish")
+
+
+;; (defun benj-roslyn-tools/run-nuke (target)
+;;   "Run nuke in `benj-roslyn-tools/proj-path'."
+;;   (let ((buff-name "*nuke-roslyn-tools*")
+;;         (default-directory benj-roslyn-tools/proj-path))
+;;     (call-process
+;;      "nuke"
+;;      nil
+;;      (get-buffer-create buff-name)
+;;      nil
+;;      "--target"
+;;      target)
+;;     (pop-to-buffer buff-name)))
+
+(defun benj-roslyn-tools/pop-to-analyzer-log ()
+  "Pop to `benj-roslyn-tools/analzyer-log-file'."
+  (interactive)
+  (cond
+   ((when-let ((buff (get-buffer (file-name-nondirectory benj-roslyn-tools/analzyer-log-file))))
+      (switch-to-buffer-other-window buff)))
+   ((file-exists-p benj-roslyn-tools/analzyer-log-file)
+    (find-file benj-roslyn-tools/analzyer-log-file))
+   (t (message "There is no current analyzer log file."))))
 
 (defun benj-roslyn-cli-path (config)
   "Roslyn cli path for CONFIG.
@@ -93,7 +151,7 @@ see `benj-roslyn-proj-configs'"
   "Run release build on playground project."
   (interactive)
   (benj-roslyn-runner
-   benj-roslyn-tools/sln-path
+   benj-roslyn-tools/playground-sln
    "-t" "Playground"))
 
 (defun benj-roslyn-do-run (sln target analyzer)
@@ -167,21 +225,34 @@ see `benj-roslyn-proj-configs'"
   (if benj-roslyn-last-args
       (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args))))
 
+(mapconcat (format "`%s`") )
+
 (defun benj-roslyn-runner (sln &rest args)
   "Run release analzyers with SLN and additional ARGS"
   (interactive)
   (setq benj-roslyn-last-args (list sln args))
-  (let ((default-directory (file-name-directory sln))
-        (buff-name "*roslyn-analzyers*")
-        (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
-    (benj-start-proccess-flatten-args
-     "run-analyzers"
-     buff-name
-     ;; "/usr/bin/mono"
-     benj-roslyn-tools/cli-executable
-     "-s" sln
-     args)
-    (pop-to-buffer buff-name)))
+
+    (benj-roslyn-tools/run-nuke
+     (format "Run-Analyzers --application-arguments '`%s`'" (mapconcat ))
+
+     (concat )
+     (concat (-flatten (list "" "-s" sln args)))
+     )
+
+
+
+
+  ;; (let ((default-directory (file-name-directory sln))
+  ;;       (buff-name "*roslyn-analzyers*"))
+  ;;   (benj-start-proccess-flatten-args
+  ;;    "run-analyzers"
+  ;;    buff-name
+  ;;    ;; "/usr/bin/mono"
+  ;;    benj-roslyn-tools/cli-executable
+  ;;    "-s" sln
+  ;;    args)
+  ;;   (pop-to-buffer buff-name))
+  )
 
 (defun benj-roslyn//run-closure ()
   "TEMP run closure."
@@ -205,8 +276,7 @@ see `benj-roslyn-proj-configs'"
     (benj-start-proccess-flatten-args
      "run-analyzers"
      buff-name
-     "/usr/bin/mono"
-     ;; "dotnet"
+     "dotnet"
      benj-roslyn-tools/cli-executable
      "-s" sln
      args)

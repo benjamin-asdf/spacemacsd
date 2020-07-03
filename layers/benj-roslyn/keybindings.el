@@ -31,6 +31,9 @@
         '(
           ("b" . benj-roslyn-tools/nuke-build)
           ("c" . benj-roslyn-tools/nuke-clean)
+          ("w" . benj-roslyn-tools/pop-to-nuke-buff)
+          ("s" . benj-roslyn-tools/pop-to-analyzer-log)
+
 
           ;; TODO
           ("i" . benj-roslyn/run-idlegame-default)
