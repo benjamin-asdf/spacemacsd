@@ -72,6 +72,7 @@ Add debug button with region as init method body."
   "Run cog idlegame."
   (interactive)
   (let ((default-directory "/home/benj/repos/codegen/"))
+    (magit-run-git-with-editor "pull" "origin" "refs/heads/master")
     (start-process "generate-purchase-data" "*generate-purchase-data*" "python3" "runner.py" "-s"))
   (pop-to-buffer "*generate-purchase-data*"))
 
