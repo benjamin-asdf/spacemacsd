@@ -68,28 +68,13 @@ Add debug button with region as init method body."
 ;; works
 ;;(helm :sources (helm-build-sync-source "name" :candidates '(( "best" . "bestreal" ) ("hehe" . "hehereal"))))
 
-
-;; could also checkout my local branch
-(defun teamel/regenerate-purchase-idlegame ()
+(defun teamel/idlegame-cog-purchase ()
   "Run cog idlegame."
   (interactive)
-  (let* ((default-directory (concat cos-dir "/modules" "/codegen"))
-        (runner-file-name "benj-runner.py")
-        (runner-save-file (concat (temporary-file-directory) runner-file-name)))
-    (copy-file runner-file-name runner-save-file t)
-    (with-temp-file "best-gitignore"
-      (insert-file-contents-literally ".gitignore")
-      (and (not (re-search-forward "best-gitignore" nil t))
-           (goto-char (point-max))
-           (insert "benj-runner.py\nbest-gitignore")))
-    (shell-command "git reset --hard")
-    (shell-command "git pull origin master")
-    (copy-file  "best-gitignore" ".gitignore" t)
-    (copy-file runner-save-file runner-file-name t)
-    (set-process-sentinel
-     (start-process "generate-purchase-data" "*generate-purchase-data*" "python3" "benj-runner.py" "-s")
-     (lambda (proc evnt)) (shell-command "git reset --hard")))
+  (let ((default-directory "/home/benj/repos/codegen/"))
+    (start-process "generate-purchase-data" "*generate-purchase-data*" "python3" "runner.py" "-s"))
   (pop-to-buffer "*generate-purchase-data*"))
+
 
 
 (defun teamel/open-this-untiy-proj ()
