@@ -79,7 +79,7 @@ Add debug button with region as init method body."
 
 
 
-(defun teamel/open-this-untiy-proj ()
+(defun teamel/open-this-unity-proj ()
   "Open the untiy proj at PATH.
 Use `projectile-locate-dominating-file' to get the unity proj root"
   (interactive)
