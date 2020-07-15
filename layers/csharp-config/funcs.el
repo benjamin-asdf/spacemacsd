@@ -43,6 +43,12 @@
   (setq tab-width 4)
   (setq evil-shift-width 4))
 
+(add-to-list 'auto-mode-alist '("\\.ruleset\\'" . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.csproj\\'" . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.props\\'" . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.targets\\'" . xml-mode))
+
+
 ;; building my own now
 ;; use `benj/omnisharp-start-near-proj'
 ;; (setq omnisharp-expected-server-version "1.35.2")

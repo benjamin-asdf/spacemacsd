@@ -588,10 +588,6 @@ before packages are loaded."
     (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs"))
 
 
-  (add-to-list 'auto-mode-alist '("\\.ruleset\\'" . xml-mode))
-  (add-to-list 'auto-mode-alist '("\\.csproj\\'" . xml-mode))
-
-
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
