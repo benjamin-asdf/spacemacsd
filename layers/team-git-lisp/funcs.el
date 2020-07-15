@@ -248,6 +248,10 @@ For documentation on the status codes see git-status man."
   (benj-run-git-sync "fetch" "origin" "develop:develop")
   (benj-run-git "merge" "develop" "--no-edit"))
 
+(defun benj-git/update-modules ()
+  "Update modules."
+  (interactive)
+  (magit-run-git-with-editor "submodule" "update" "--recursive"))
 
 (defun benj-git/fire-up-merge-sample ()
   "Create an empty git repo, should put you in a state where doing \"git merge topic\"
