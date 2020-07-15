@@ -34,17 +34,20 @@
           ("w" . benj-roslyn-tools/pop-to-nuke-buff)
           ("s" . benj-roslyn-tools/pop-to-analyzer-log)
 
+          ("P" . benj-roslyn-tools/run-playground-startup)
+          ("u" . benj-roslyn-tools/run-idlegame-sync)
 
-          ;; TODO
-          ("i" . benj-roslyn/run-idlegame-default)
-          ("I" . benj-roslyn-run-idlegame)
+          ("v" . benj-roslyn-tools/build-banned-analzyer)
+
+          ("i" . benj-roslyn-tools/run-idlegame-default)
+          ("I" . benj-roslyn-tools/run-idlegame)
           ("S" . benj-roslyn/run-idlegame-sync)
+
           ("p" . benj-roslyn-run-playground)
-          ("A" . benj-roslyn-do-run)
+          ("A" . benj-roslyn-tools/do-run-analyzers)
           ("a" . benj-roslyn-rerun-last)
 
           ;; TODO adapt to nuke
           ;; build evrtim
 
-          (";" . benj-roslyn//run-closure)
           )))

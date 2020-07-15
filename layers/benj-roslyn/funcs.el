@@ -1,11 +1,16 @@
 (defconst benj-roslyn-cli-name "AnalyzerCLI.dll")
-(defconst benj-roslyn-tools/proj-path (concat (file-name-as-directory cos-dir) "RoslynTools"))
+(defconst benj-roslyn-tools/proj-path (concat (file-name-as-directory cos-dir) "RoslynAnalyzers"))
+(defconst benj-roslyn-tools/analyzers-proj-path (concat (file-name-as-directory benj-roslyn-tools/proj-path) "source/" "Analyzers"))
 (defconst benj-roslyn-tools/sln-path (concat (file-name-as-directory benj-roslyn-tools/proj-path) "RoslynTools.sln"))
 (defconst benj-roslyn-tools/cli-bin-dir (concat (file-name-as-directory benj-roslyn-tools/proj-path) "output/"))
 (defconst benj-roslyn-tools/cli-executable (concat (file-name-as-directory benj-roslyn-tools/cli-bin-dir) benj-roslyn-cli-name))
 (defconst benj-roslyn-tools/global-analyzers-file (concat (file-name-as-directory benj-roslyn-tools/proj-path) "src/Analyzers/GlobalAnalysis/GlobalAnalyzers.cs"))
 (defconst idlegame-sln-path (concat idlegame-project-root "IdleGame.sln"))
-(defconst benj-roslyn-tools/playground-sln (concat (file-name-as-directory cos-dir) (file-name-as-directory "RoslynPlayground") "RoslynPlayground.sln"))
+(defconst benj-roslyn-tools/playground-proj (concat (file-name-as-directory cos-dir) (file-name-as-directory "RoslynPlayground")))
+(defconst benj-roslyn-tools/playground-sln (concat benj-roslyn-tools/playground-proj "RoslynPlayground.sln"))
+(defconst benj-roslyn-tools/playground-proj-csproj (concat benj-roslyn-tools/playground-proj "src/Playground.csproj"))
+(defconst benj-roslyn-tools/banned-analyzer-proj "/home/benj/repos/BannedApiAnalyzer/source/BannedApiAnalyzer.CSharp/")
+
 (defconst benj-roslyn-tools/analzyer-log-file (concat (temporary-file-directory) "analyzer-log"))
 (defvar benj-roslyn-tools/default-slns (list benj-roslyn-tools/sln-path idlegame-sln-path benj-roslyn-tools/playground-sln))
 
@@ -20,15 +25,30 @@
 
 (defun benj-roslyn-tools/nuke-targets ()
   "Split `benj-roslyn-tools/nuke-targets-file' for nuke targets."
+  (nuke/collect-targets-from-file benj-roslyn-tools/nuke-targets-file))
+
+(defun nuke/collect-targets ()
+  "Collect nuke targets from current buffer."
+  (while (re-search-forward "Target \\(\\w+\\) => _ => _" nil t)
+    (princ (concat (match-string 1) "\n"))))
+
+(defun nuke/collect-targets-from-file (file)
+  "Collect nuke targets from FILE. It should be a nuke build program."
   (split-string
    (with-output-to-string
-     (with-temp-file
-         "/home/benj/idlegame/RoslynTools/build/Build.cs"
-       (insert-file-contents-literally "/home/benj/idlegame/RoslynTools/build/Build.cs")
-       (while (re-search-forward "Target \\(\\w+\\)" nil t)
-         (princ (match-string-no-properties 0)))))))
+     (with-temp-file file
+       (insert-file-contents-literally file)
+       (nuke/collect-targets)))))
 
 
+(defun nuke/run-here (&optional target)
+  " Run nuke with TARGET. If TARGET is not given, assumes that current buffer is a nuke program and get target from user."
+  (interactive (let ((target (and buffer-file-name
+                                  (completing-read
+                                   "Nuke Target: "
+                                   (nuke/collect-targets-from-file buffer-file-name)))))
+                 (list target)))
+  (nuke/runner-core "--target" target))
 
 (defun benj-roslyn--build-proj-worker (config)
   "Build cos roslyn project, CONFIG should be a string of the form 'Release' or 'Debug'."
@@ -40,10 +60,13 @@
 (defun benj-roslyn-tools/nuke-build ()
   "Build RoslynTools with nuke."
   (interactive)
-  (write-region "" nil benj-roslyn-tools/analzyer-log-file)
-  (when-let ((buff (get-buffer (file-name-nondirectory benj-roslyn-tools/analzyer-log-file))))
-    (kill-buffer buff))
-  (find-file-other-window benj-roslyn-tools/analzyer-log-file)
+  (unless (file-exists-p benj-roslyn-tools/analzyer-log-file)
+    (write-region "" nil benj-roslyn-tools/analzyer-log-file))
+  ;; (when-let ((buff (get-buffer (file-name-nondirectory benj-roslyn-tools/analzyer-log-file))))
+  ;;   (switch-to-buffer-other-frame buff)
+  ;;   (erase-buffer)
+  ;;   (save-buffer))
+  ;; (find-file-other-window benj-roslyn-tools/analzyer-log-file)
   (benj-roslyn-tools/run-nuke-target "Publish"))
 
 
@@ -79,13 +102,17 @@
 
 (defun benj-roslyn-tools/run-nuke (&rest args)
   "Run nuke in `benj-roslyn-tools/proj-path'."
+  (save-some-buffers)
   (let ((default-directory benj-roslyn-tools/proj-path))
-    (benj-start-proccess-flatten-args
-     "roslyn-tools-nuke"
-     (benj-roslyn-tools/nuke-proc-buff)
-     "nuke"
-     args)
-    (benj-roslyn-tools/pop-to-nuke-buff)))
+    (nuke/runner-core args)))
+
+(defun nuke/runner-core (&rest args)
+  (benj-start-proccess-flatten-args
+   "roslyn-tools-nuke"
+   (benj-roslyn-tools/nuke-proc-buff)
+   "nuke"
+   args)
+  (benj-roslyn-tools/pop-to-nuke-buff))
 
 
 ;; TODO with callback
@@ -152,50 +179,47 @@ see `benj-roslyn-proj-configs'"
   (interactive)
   (benj-roslyn-runner
    benj-roslyn-tools/playground-sln
-   "-t" "Playground"))
+   "-t" "Playground")
+  )
 
-(defun benj-roslyn-do-run (sln target analyzer)
+(defun benj-roslyn-tools/run-playground-sync ()
+  "Run playground sync."
+  (interactive)
+  (benj-roslyn-runner
+   benj-roslyn-tools/playground-sln
+   "-t" "Playground"
+   "-sync"))
+
+(defun benj-roslyn-tools/do-run-analyzers (sln target analyzer)
   "Run specific ANALYZER with SLN and TARGET."
   (interactive
-   (benj-roslyn--read-args))
+   (benj-roslyn-tools/read-analzyer-runner-args))
   (benj-roslyn-runner sln (when (not (string-empty-p target)) (list "-f" (file-name-nondirectory target))) "-v" "-a" analyzer
                       (when (and (string-equal sln idlegame-sln-path) (yes-or-no-p "Selected idlegame sln. Use Default IdleGame proj inclution args? " )) (list benj-roslyn-tools/idlegame-args "--no-git"))))
 
 
-(defun benj-roslyn--read-args ()
+(defun benj-roslyn-tools/read-analzyer-runner-args ()
   "Evaluates to a plist of (SLN TARGET ANALYZER)."
   (let ((sln (completing-read "Sln: " benj-roslyn-tools/default-slns))
         (target (read-file-name "Target file, (C-Ret to not specify target file): " nil (buffer-file-name) nil (buffer-file-name)))
         (analyzer (helm :sources helm-benj-roslyn-analzyers-source)))
     (list sln target analyzer)))
 
-(defun benj-roslyn--collect-analzyers (file)
-  "Search FILE for analyzer list pattern, return available analyzers."
-  (when (file-exists-p file)
-    (split-string (with-output-to-string
-                   (with-temp-file file
-                     (insert-file-contents-literally file)
-                     (while (re-search-forward ".Add<\\(\\w+\\)>()" nil t)
-                       (princ (concat (match-string 1) "\n"))))))))
-
-(defun benj-roslyn-available-global-analzyers ()
-  "Available global analzyers for roslyn project."
-  (benj-roslyn--collect-analzyers benj-roslyn-tools/global-analyzers-file))
 (with-eval-after-load 'helm
   (defvar helm-benj-roslyn-analzyers-source
-    (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-available-global-analzyers))))
+    (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-tools/available-analzyer-names))))
 
-(defun benj-roslyn/run-idlegame-default ()
-  "See `benj-roslyn-run-idlegame'."
+(defun benj-roslyn-tools/run-idlegame-default ()
+  "See `benj-roslyn-tools/run-idlegame'."
   (interactive)
-  (benj-roslyn-run-idlegame "--no-git"))
+  (benj-roslyn-tools/run-idlegame "--no-git"))
 
-(defun benj-roslyn/run-idlegame-sync ()
+(defun benj-roslyn-tools/run-idlegame-sync ()
   "Run idlegame synced analzyers."
   (interactive)
-  (benj-roslyn-run-idlegame "-sync"))
+  (benj-roslyn-tools/run-idlegame "-sync"))
 
-(defun benj-roslyn-run-idlegame (&rest args)
+(defun benj-roslyn-tools/run-idlegame (&rest args)
   "Run release build on playground project. ARGS can be additional args."
   (interactive)
   (benj-roslyn-runner
@@ -204,12 +228,6 @@ see `benj-roslyn-proj-configs'"
    "-v"
    args))
 
-(defun benj-roslyn-tools/clean-and-publish ()
-  "Run nuke clean and publish."
-
-
-
-  )
 
 
 ;; "-a" "StartupMethodAnalyzer" "-startup"
@@ -225,45 +243,43 @@ see `benj-roslyn-proj-configs'"
   (if benj-roslyn-last-args
       (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args))))
 
-(mapconcat (format "`%s`") )
+;; (mapconcat (format "`%s`") )
 
-(defun benj-roslyn-runner (sln &rest args)
-  "Run release analzyers with SLN and additional ARGS"
-  (interactive)
-  (setq benj-roslyn-last-args (list sln args))
+;; (defun benj-roslyn-runner (sln &rest args)
+;;   "Run release analzyers with SLN and additional ARGS"
+;;   (interactive)
+;;   (setq benj-roslyn-last-args (list sln args))
 
-    (benj-roslyn-tools/run-nuke
-     (format "Run-Analyzers --application-arguments '`%s`'" (mapconcat ))
+;;     (benj-roslyn-tools/run-nuke
+;;      (format "Run-Analyzers --application-arguments '`%s`'" (mapconcat ))
 
-     (concat )
-     (concat (-flatten (list "" "-s" sln args)))
-     )
-
-
+;;      (concat )
+;;      (concat (-flatten (list "" "-s" sln args)))
+;;      )
 
 
-  ;; (let ((default-directory (file-name-directory sln))
-  ;;       (buff-name "*roslyn-analzyers*"))
-  ;;   (benj-start-proccess-flatten-args
-  ;;    "run-analyzers"
-  ;;    buff-name
-  ;;    ;; "/usr/bin/mono"
-  ;;    benj-roslyn-tools/cli-executable
-  ;;    "-s" sln
-  ;;    args)
-  ;;   (pop-to-buffer buff-name))
-  )
 
-(defun benj-roslyn//run-closure ()
-  "TEMP run closure."
-  (interactive)
-  (let ((default-directory benj-roslyn-tools/proj-path))
-    (pop-to-buffer
-     (process-buffer
-      (start-process "roslyn-runner" "*roslyn-analzyers*"
-                     (if (yes-or-no-p "idlgame?")
-                         "/home/benj/idlegame/RoslynTools/run-idlgame.sh"
-                       "/home/benj/idlegame/RoslynTools/run-closure.sh"))))))
+
+
+;;   ;; (let ((default-directory (file-name-directory sln))
+;;   ;;       (buff-name "*roslyn-analzyers*"))
+;;   ;;   (benj-start-proccess-flatten-args
+;;   ;;    "run-analyzers"
+;;   ;;    buff-name
+;;   ;;    ;; "/usr/bin/mono"
+;;   ;;    benj-roslyn-tools/cli-executable
+;;   ;;    "-s" sln
+;;   ;;    args)
+;;   ;;   (pop-to-buffer buff-name))
+;;   )
+
+
+;; (defun benj-roslyn-tools/clear-runner-buff ()
+;;   "Clear runner buff."
+;;   (get-buffer-create )
+;;   (erase-buffer )
+;;   )
+
 
 (defun benj-roslyn-runner (sln &rest args)
   "Run release analzyers with SLN and additional ARGS"
@@ -302,3 +318,68 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
 		                 (list :command (-flatten (cons program program-args)))))))
 
 
+
+(defconst benj-roslyn-tools/last-analzyer-id-file (concat (file-name-as-directory benj-roslyn-tools/proj-path) "last-analzyer-id"))
+
+(defun benj-roslyn-tools/get-next-analzyer-id ()
+  "Bump current analzyer id and return next id."
+  (interactive)
+  (let ((next (number-to-string (+ (string-to-number (car (benj-read-lines benj-roslyn-tools/last-analzyer-id-file))) 1))))
+    (write-region next nil benj-roslyn-tools/last-analzyer-id-file)
+    (kill-new next)))
+
+
+(defun benj-roslyn-tools/build-banned-analzyer ()
+  ""
+  (interactive)
+  (let ((default-directory benj-roslyn-tools/banned-analyzer-proj))
+    (pop-to-buffer
+     (process-buffer
+      (start-process
+       "build-banned-analzyer"
+       "*build-banned-analzyer*"
+       (concat benj-roslyn-tools/banned-analyzer-proj "scripts/build.sh"))))))
+
+
+(defun benj-roslyn-tools/banned-symbols-add-warn (&optional warn)
+  "Add warn level syntax to end of active lines."
+  (interactive
+   (let
+       ((warn
+         (completing-read
+          "Warn Level: "
+          '("Info" "Error" "Warning"))))
+     (list warn)))
+  (when (region-active-p)
+    (goto-char (region-beginning))
+    (while (re-search-forward "^.*$" (region-end) t)
+      (message (match-string 0))
+      ;; (let ((s (match-string 0)))
+      ;;   (replace-match
+      ;;    (concat
+      ;;     (or
+      ;;      (and
+      ;;       (string-match-p "^.*;$" s) s)
+      ;;      (concat s ";"))
+      ;;     (or warn ";Info"))))
+      )))
+
+
+(defun benj-roslyn-tools/available-analzyer-names ()
+  "Search `benj-roslyn-tools/analyzers-proj-path' for analzyer syntax, list names."
+  (let ((default-directory benj-roslyn-tools/proj-path)
+        (args '(
+                "-F"
+                "-N"
+                "-I"
+                "-A" "1"
+                "-e" "[DiagnosticAnalyzer(LanguageNames.CSharp)]")))
+    (with-temp-buffer
+      (let ((status (apply 'call-process "rg" nil (current-buffer) nil args)))
+        (unless (eq status 0)
+	        (error "%s exited with status %s" "rg" status))
+        (goto-char (point-min))
+        (split-string
+         (with-output-to-string
+           (while (re-search-forward "public class \\(\\w+\\) :"  nil t)
+             (princ (concat (match-string-no-properties 1) "\n")))))))))
