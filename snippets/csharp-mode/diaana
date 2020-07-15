@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : DiagnosticAnalyzer
+#key : diaana
+#contributor : benj
+# --
+[Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer(LanguageNames.CSharp)]

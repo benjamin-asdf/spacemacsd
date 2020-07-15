@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : AddSymbolAnalysis
+#key : addsym
+#contributor : benj
+# --
+AddSymbolAnalysis<$1>((${0:symbol} , reportDiagnostic) => {
+    $0
+});

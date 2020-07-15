@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : logVerbose
+#key : lverb
+#contributor : benj
+# --
+protected override bool logVerbose => true;

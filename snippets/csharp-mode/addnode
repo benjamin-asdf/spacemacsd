@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : AddNodeAnalysis
+#key : addnode
+#contributor : benj
+# --
+AddNodeAnalysis<$1>((node, model, reportDiagnostic) => {
+                           $0
+});

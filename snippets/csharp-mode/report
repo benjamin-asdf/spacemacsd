@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : reportDiagnostic
+#key : report
+#contributor : benj
+# --
+reportDiagnostic(Diagnostic.Create(diagnostic,node.GetLocation()));

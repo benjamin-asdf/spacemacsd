@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+#name : analyzer
+#key : anal
+#contributor : benj
+# --
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class $1Analzyer : GlobalAnalyzerBase {
+    protected override int id { get; } = `(benj-roslyn-tools/get-next-analzyer-id)`;
+    protected override string title { get; } = $2;
+    protected override string description { get; } = $3;
+    protected override DiagnosticSeverity severity => DiagnosticSeverity.Error;
+
+    protected override bool logVerbose => true;
+
+    public override void Setup() {
+        $0
+    }
+
+}

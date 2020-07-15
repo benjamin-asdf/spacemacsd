@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+#name : testanal
+#key : testanal
+#contributor : benj
+# --
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class BestTestAnalzyer : GlobalAnalyzerBase {
+    protected override int id { get; } = 1337;
+    protected override string title { get; } = "Test1337";
+    protected override string description { get; } = "Report test";
+    protected override DiagnosticSeverity severity => DiagnosticSeverity.Error;
+
+    protected override bool logVerbose => true;
+
+    public override void Setup() {
+           $0
+    }
+
+}

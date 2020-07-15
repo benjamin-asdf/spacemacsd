@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+#name : syncanal
+#key : syncanal
+#contributor : benj
+# --
+
+
+public class $1 : SyncAnalyzerBase {
+    protected override int id { get; } = $2;
+    protected override string title { get; } = $3;
+    protected override string description { get; } = $4;
+    protected override DiagnosticSeverity severity => DiagnosticSeverity.Error;
+    protected override bool logVerbose => true;
+
+    public override void Setup() {
+          $0
+    }
+
+}
