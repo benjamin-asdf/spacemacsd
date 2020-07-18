@@ -193,17 +193,6 @@ see `benj-roslyn-proj-configs'"
   (benj-roslyn-runner sln (when (not (string-empty-p target)) (list "-f" (file-name-nondirectory target))) "-a" analyzer
                       (when (and (string-equal sln idlegame-sln-path) (yes-or-no-p "Selected idlegame sln. Use Default IdleGame proj inclution args? " )) (list benj-roslyn-tools/idlegame-args "--no-git"))))
 
-(defun benj-roslyn-tools/run-test-file (analyzer file)
-  "Run ANALYZER with test FILE."
-  (interactive
-   (let ((analyzer (helm :sources helm-benj-roslyn-analzyers-source))
-         (file (benj-roslyn-tools/read-file-name)))
-     (list analyzer file)))
-  (benj-roslyn-runner benj-roslyn-tools/analyzers-sln-path
-                      "-t" "Analyzers.CSharp.UnitTests"
-                      "-a" analyzer
-                      "-f" (file-name-nondirectory file)))
-
 (defun benj-roslyn-tools/one-shot-playground (analyzer file)
   "Run one shot global ANALYZER on playground with target FILE."
   (interactive
@@ -213,10 +202,7 @@ see `benj-roslyn-proj-configs'"
   (benj-roslyn-runner benj-roslyn-tools/playground-sln
                       "-t" "Playground"
                       "-g" analyzer
-                      "-f" (file-name-nondirectory file)
-                      )
-  )
-
+                      (and (not (string-empty-p file)) (list "-f" (file-name-nondirectory file)))))
 
 (defun benj-roslyn-tools/read-analzyer-runner-args ()
   "Evaluates to a plist of (SLN TARGET ANALYZER)."
