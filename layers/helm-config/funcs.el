@@ -20,8 +20,20 @@
 ;; (rg-enable-menu)
 
 
+
+;; swoop advice against big buffers
+
+(advice-add 'helm-swoop :before-while #'benj/helm-swoop-advice)
+(defun benj/helm-swoop-advice (&rest args)
+  "Meant to advice before-until `helm-swoop'."
+  (if (> (line-number-at-pos (point-max)) 10000)
+      (progn
+        (message "Buffer is a bit big for swoop. Use `spc s f' instead.")
+        nil)
+    t))
 
 
+
 
 ;; TEMP hack because somebody fucked up, the helm-aif part can return `t' instead of a number
 (defun benj/temp-helm-update-source-p-hack (source)
