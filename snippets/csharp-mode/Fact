@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : Fact
+#key : Fact
+#contributor : benj
+# --
+[Fact]
+public async Task $1() {
+       $0
+}

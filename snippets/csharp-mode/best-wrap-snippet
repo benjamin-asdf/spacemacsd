@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# key: ifs
+# name: ifs
+# expand-env: ((yas-wrap-around-region t))
+# TODO binding:
+# --
+if ($0) {
+
+}

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : Log.Info
+#key : log
+#contributor : benj
+# --
+Log.Info($"$0");

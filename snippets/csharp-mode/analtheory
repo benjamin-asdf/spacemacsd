@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+#name : analtheory
+#key : analtheory
+#contributor : benj
+# --
+[Theory]
+[InlineData("../../../../TestAssets/",1,1)]
+public async Task TestFields(string path, int line, int pos) {
+    DiagnosticResult[] expected = {
+        AnalyzerVerifier<EntityClosureAnalyzer>.Diagnostic(ClosureAnalyzerRules.EntityLambdaRule)
+        .WithLocation(line,pos)
+    };
+    await test.Verify(path,expected);
+}

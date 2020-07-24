@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : Theory
+#key : Theory
+#contributor : benj
+# --
+[Theory]
+[InlineData($1)]
+public async Task $2($3) {
+       $0
+}

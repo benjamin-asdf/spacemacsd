@@ -3,4 +3,4 @@
 #key : report
 #contributor : benj
 # --
-reportDiagnostic(Diagnostic.Create(diagnostic,node.GetLocation()));
+reportDiagnostic(Diagnostic.Create(rule,node.GetLocation()));

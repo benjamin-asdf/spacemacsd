@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : NotImplementedException
+#key : notimpl
+#contributor : benj
+# --
+throw new NotImplementedException();

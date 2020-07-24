@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : RegisterOperationAction
+#key : reginvo
+#contributor : benj
+# --
+compilationContext.RegisterOperationAction(ctx => {
+    if (!(ctx.Operation is IInvocationOperation invocation)) return;
+   $0
+}, OperationKind.Invocation);
