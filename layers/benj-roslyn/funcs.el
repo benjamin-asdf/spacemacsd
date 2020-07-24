@@ -3,6 +3,10 @@
 (defconst benj-roslyn-tools/analyzers-proj-path (concat (file-name-as-directory benj-roslyn-tools/proj-path) "source/" "Analyzers"))
 (defconst benj-roslyn-tools/analyzers-sln-path
   (concat (file-name-as-directory benj-roslyn-tools/proj-path) "RoslynAnalyzers.sln"))
+(defconst benj-roslyn-tools/analyzers-test-proj-path (concat (file-name-as-directory benj-roslyn-tools/proj-path) "tests/" "Analyzers.Test"))
+(defconst benj-roslyn-tools/analyzers-tests-dir (concat (file-name-as-directory benj-roslyn-tools/analyzers-test-proj-path) "Tests"))
+
+(file-exists-p benj-roslyn-tools/analyzers-tests-dir)
 
 
 (defconst benj-roslyn-tools/cli-bin-dir (concat (file-name-as-directory benj-roslyn-tools/proj-path) "output/"))
@@ -25,6 +29,8 @@
                                                (file-name-as-directory
                                                 benj-roslyn-tools/proj-path)
                                                "build/Build.cs"))
+
+(defvar benj-roslyn-tools/buff-name "*roslyn-analzyers*")
 
 (defun benj-roslyn-tools/nuke-targets ()
   "Split `benj-roslyn-tools/nuke-targets-file' for nuke targets."
@@ -196,13 +202,27 @@ see `benj-roslyn-proj-configs'"
 (defun benj-roslyn-tools/one-shot-playground (analyzer file)
   "Run one shot global ANALYZER on playground with target FILE."
   (interactive
-   (let ((analyzer (helm :sources helm-benj-roslyn-analzyers-source))
-         (file (benj-roslyn-tools/read-file-name)))
-     (list analyzer file)))
+   (benj-roslyn-tools/read-analzyer-and-file))
   (benj-roslyn-runner benj-roslyn-tools/playground-sln
                       "-t" "Playground"
                       "-g" analyzer
                       (and (not (string-empty-p file)) (list "-f" (file-name-nondirectory file)))))
+
+(defun benj-roslyn-tools/read-analzyer-and-file ()
+  (let ((analyzer (helm :sources helm-benj-roslyn-analzyers-source))
+        (file (benj-roslyn-tools/read-file-name)))
+    (list analyzer file)))
+
+
+(defun benj-rosly-tools/one-shot-idlegame (analyzer file)
+  "Run one shot global ANALYZER on idegame with target FILE."
+  (interactive
+   (benj-roslyn-tools/read-analzyer-and-file))
+  (benj-roslyn-runner idlegame-sln-path
+                      "-g" analyzer
+                      (and (not (string-empty-p file)) (list "-f" (file-name-nondirectory file)))))
+
+
 
 (defun benj-roslyn-tools/read-analzyer-runner-args ()
   "Evaluates to a plist of (SLN TARGET ANALYZER)."
@@ -296,19 +316,18 @@ see `benj-roslyn-proj-configs'"
   (benj-roslyn-tools/erase-analyzer-log-buff-if-exists)
   (setq benj-roslyn-last-args (list sln args))
   (let ((default-directory (file-name-directory sln))
-        (buff-name "*roslyn-analzyers*")
         (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/")))
         )
     (benj-start-proccess-flatten-args
      "run-analyzers"
-     buff-name
+     benj-roslyn-tools/buff-name
      "dotnet"
      benj-roslyn-tools/cli-executable
      "-s" sln
      args
      "-no-stats"
      )
-    (pop-to-buffer buff-name)))
+    (pop-to-buffer benj-roslyn-tools/buff-name)))
 
 
 (defun benj-roslyn-tools/erase-analyzer-log-buff-if-exists ()
@@ -431,6 +450,8 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
   (setq helm-benj-roslyn-analzyers-source
         (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-tools/available-analzyer-names))))
 
+
+;; TODO would be nice figure out how to write macros
 (defun benj-roslyn-tools/comment-out-diagnostic-analzyers (&optional dir)
   "Find DiagnosticAnalyzer attributes DIR and comment them out."
   (interactive)
@@ -442,6 +463,21 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
        (while (re-search-forward "^\\[DiagnosticAnalyzer(LanguageNames.CSharp)\\]" nil t)
          (replace-match (concat "//" (match-string-no-properties 0)))))
      (directory-files-recursively dir "\\.cs"))))
+
+(defun benj-roslyn-tools/comment-in-diagnostic-analzyers (&optional dir)
+  "Find DiagnosticAnalyzer attributes DIR and comment them in."
+  (interactive)
+  (let ((dir (or dir benj-roslyn-tools/analyzers-proj-path)))
+    (save-some-buffers)
+    (--map
+     (with-temp-file it
+       (insert-file-contents-literally it)
+       (while (re-search-forward "^//\\[DiagnosticAnalyzer(LanguageNames.CSharp)\\]" nil t)
+         (replace-match "[DiagnosticAnalyzer(LanguageNames.CSharp)]")))
+     (directory-files-recursively dir "\\.cs"))))
+
+
+
 
 (defun benj-roslyn-tools/log-goto-warning-location ()
   "Meant to be used in an output buffer of analyzers, jump to location of log."
@@ -461,3 +497,39 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
         ;; since we 0 base in the output we don't have to -1 here
         (when line (forward-line (string-to-number line)))
         (when coll (forward-char (string-to-number coll)))))))
+
+
+(defun benj-roslyn-tools/make-relative-paths-from-test-dir ()
+  "Make all absolute paths in the file relative to the analyzer test default dir."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "/home/benj/idlegame/RoslynAnalyzers/tests" nil t)
+      (replace-match "../../../.."))))
+
+
+
+(defun benj-roslyn-tools/goto-test-create-if-not-exists ()
+  "Create test, try take word at point as default name base."
+  (interactive)
+  (let* ((class-name
+          (concat
+           (with-output-to-string
+             (save-excursion
+               (re-search-backward "^public class \\(\\w+\\).*Analyzer" nil t)
+               (princ (match-string-no-properties 1))))
+           "Tests"))
+         (file-name
+          (concat
+           (file-name-as-directory
+            benj-roslyn-tools/analyzers-tests-dir)
+           class-name
+           ".cs"))
+         (already-exists (file-exists-p file-name)))
+    (find-file file-name)
+    (unless already-exists
+      (yas-expand-snippet
+      (yas-lookup-snippet
+       "anal-test"
+       'csharp-mode))
+      (evil-insert-state))))

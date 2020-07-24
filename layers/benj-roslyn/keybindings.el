@@ -50,6 +50,11 @@
           ("a" . benj-roslyn-rerun-last)
           ("l" . benj-roslyn-tools/log-goto-warning-location)
 
+          ("t" . benj-roslyn-tools/goto-test-create-if-not-exists)
+
+          ("h" . benj-rosly-tools/one-shot-idlegame)
+
+
           ;; TODO adapt to nuke
           ;; build evrtim
 
