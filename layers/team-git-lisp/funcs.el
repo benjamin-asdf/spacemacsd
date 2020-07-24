@@ -173,8 +173,9 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
   (team-projectile-dir-command-to-string (format "git diff --name-only %s..%s" rev1 (or rev2 "HEAD"))))
 
 
-(defun benj-git/resolve-conflicts-interactive ()
-  "Interactively resolve all merge conflicts, ask individually."
+(defun benj-git/resolve-conflicts-interactive (&optional nocs)
+  "Interactively resolve all merge conflicts, ask individually.
+With non nil prefix arg NOCS, skip cs files."
   (interactive)
   (--map
    (let* ((arg (magit-read-char-case
@@ -207,12 +208,16 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
           (benj-run-git-sync "rm" "--" (car it))))
        ("UU"  (benj-checkout-stage arg (car it)))
        ("AA"  (benj-checkout-stage arg (car it)))))
-   (benj-git/unmerged-status)))
+   (benj-git/unmerged-status (when nocs "*.cs$"))))
 
-(defun benj-git/unmerged-status ()
-  "Get unmerged files in the format defined by `benj-git/git-status-files'."
+(defun benj-git/unmerged-status (&optional exclusion-regex)
+  "Get unmerged files in the format defined by `benj-git/git-status-files'.
+Ignore file matching EXLUSION-REGEX, it non-nil."
   (let ((unmerged (magit-unmerged-files)))
-    (--filter (member (car it) unmerged) (benj-git/git-status-files))))
+    (--filter (and  (member (car it) unmerged)
+                    (or (null exclusion-regex)
+                        (not (string-match-p exclusion-regex it))))
+              (benj-git/git-status-files))))
 
 (defun benj-git/git-status-files ()
   "Return a list of unemerged file in the format (FILE STATUS).
