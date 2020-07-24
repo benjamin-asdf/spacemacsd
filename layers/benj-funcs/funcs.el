@@ -226,13 +226,18 @@ There is a scratch file for each day and mode."
   (interactive"fRemove eol from file: ")
   (benj-remove-eol-from-file file))
 
+(defun benj/remove-eol-from-buff ()
+  "Remove crlf from buff."
+  (interactive)
+  (while (re-search-forward "\r\n" nil t) (replace-match "\n")))
+
 (defun benj-remove-eol-from-file (&optional file)
   "Remve crlf from FILE. Try buffer file if FILE is nil."
   (interactive)
   (setq file (or file buffer-file-name))
   (with-temp-file file
     (insert-file-contents-literally file)
-    (while (re-search-forward "\r\n" nil t) (replace-match "\n"))))
+    (benj/remove-eol-from-buff)))
 
 ;; see `magit-unmerged-files', stuff already exists
 (defun benj-unmerged-prefabs ()
@@ -395,6 +400,8 @@ NAME and BUFFNAME are allowed to be nil."
   (if (buffer-file-name)
       (benj-text/add-crlf (buffer-file-name))
     (user-error "Buffer is not visiting a file.")))
+
+
 
 
 
