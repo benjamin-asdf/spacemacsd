@@ -43,11 +43,24 @@
   (setq tab-width 4)
   (setq evil-shift-width 4))
 
+
+
 (add-to-list 'auto-mode-alist '("\\.ruleset\\'" . xml-mode))
 (add-to-list 'auto-mode-alist '("\\.csproj\\'" . xml-mode))
 (add-to-list 'auto-mode-alist '("\\.props\\'" . xml-mode))
 (add-to-list 'auto-mode-alist '("\\.targets\\'" . xml-mode))
 
+
+
+(defun benj-omnisharp/unit-test-advice (&rest args)
+  (save-some-buffers))
+(advice-add 'omnisharp-unit-test-at-point :before #'benj-omnisharp/unit-test-advice)
+(advice-add 'omnisharp-unit-test-buffer :before #'benj-omnisharp/unit-test-advice)
+(advice-add 'omnisharp-unit-test-last :before #'benj-omnisharp/unit-test-advice)
+
+
+
+
 
 ;; building my own now
 ;; use `benj/omnisharp-start-near-proj'
