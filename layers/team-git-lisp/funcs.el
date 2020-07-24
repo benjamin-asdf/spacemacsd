@@ -289,3 +289,13 @@ will create a conflict in a file called file."
   (interactive)
 
   )
+
+(defun benj-git/skip-worktree-file (file)
+  "Run git skip worktree with this file."
+  (interactive"fFile to skip worktree: ")
+  (magit-run-git-async "update-index" "--skip-worktree" "--" file))
+
+(defun benj-git/no-skip-worktree-file (file)
+  ""
+  (interactive"fFile to no-skip-worktree: ")
+  (magit-run-git-async "update-index" "--no-skip-worktree" "--" file))
