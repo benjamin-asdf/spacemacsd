@@ -15,22 +15,13 @@
   - emacs gitlab package, maybe a no brainer actually:
     - https://github.com/nlamirault/emacs-gitlab
 * Goals
-- learn about org
-- minder project
-- swith to a tiled window manager
-* Quick
-  - function to comment out all debug.logs in buffer
-  - sxhkd + autoclick script
-  - function copy-word-from-below
-  - function to put curlies around if
-  - function to delete the rest inside param syntax
-* Things I would like to have
-  - something to search whole project, basically fd with -I
-  - or something to search design dir
-  - Sailor:
-    - "SearchActionHandler"
-  - some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
-  - figure out how to trick rider, have a script for that
+** artix linux
+** try nicolas emacs config
+** try doom emacs
+*** if I am migrating my stuff I automatically change things so everybody can use it
+
+* Things I would like
+** some script that uses ffmpeg and creates screencasts for me, fuck simple screen recorded
 * bunel
   - fix symlink
     - save file hook, then move the file?
@@ -86,14 +77,12 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
   - zsh path inside spacemacs is not correct
   - projectile submodules issue
   - fix zsh git auto completion (Guess it still has old version)
-  - emacs string highlighting bug
   - emacs crashes
   - emacs performance
 * conky
 * tmux
-* emacs-roslyn-code-action program
-  - man imagine shit like I give you a syntax tree of the visual selection
-    - then it puts curlies around if blocks for example
+* i3
+* artix
 * make rider work
 ** try with docker
 *** milan notes
@@ -112,24 +101,6 @@ probably need to enable X if it is graphical app. I haven't done it, but it will
 
 
 
-
-* new script improvement
-** check all the cs files, or just the files in the dir for now
-** look at file, if it does not start with #if false, then run my function
-
-Debug.Log("test)
-
-
-
-* git-tools
-** put git-tools into idlegame repo
-** install.sh 'echo "export PATH" >> ~/.bashrc'
-** make a google doc explaining what it is and why
-** something to get develop from before the merge of a certain branch, then diff
-** something to get the branches that changed a file
-
-
-
 * bossel
 ** DONE send current region to bossel
    CLOSED: [2020-04-05 Sun 06:51]
@@ -142,12 +113,7 @@ Debug.Log("test)
 ** getting compilation once is easy.. then
 *** could generate some cache of components
 
-* bunel
-** need something for opening prefabs
-
 * helm ag fix crlf showing
-
-
 * githubbel
 ** achieve automatically getting new omnisharp release
 
@@ -155,45 +121,6 @@ Debug.Log("test)
 * TODO trello package
 
 * If you need to debug code run from jit-lock, see `jit-lock-debug-mode'."
-
-* nicholas list stuff
-  (defun clist-1 (new-el &rest args)
-	(cons new-el args))
-
-;; everything you put in &rest is put into a list so if you put a list it will be come a list of lists
-(clist-1 "blah" '("fjlsdk" "jfksaj"))
-=> ("blah" ("fjlsdk" "jfksaj"))
-
-(clist-1 "blah" "fjlsdk" "jfksaj")
-=> ("blah" "fjlsdk" "jfksaj")
-
-;; You can achieve what you want like this
-(defun clist (new-el &rest args)
-	(let ((res (or (and (listp new-el) new-el) (list new-el))))
-		(mapc (lambda (x)
-						(setq res
-									(or (and (listp x) (append res x))
-											(cons x res))))
-					args)
-		res))
-
-(clist "sldfjas" '("fdlsk" "fjasdl"))
-=> ("sldfjas" "fdlsk" "fjasdl")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 * todo bunel hack ggtags
 (defun track-ggtags-cmd (orig-fun &rest args)
@@ -218,6 +145,3 @@ Debug.Log("test)
 ** I need to clean up my phone storage
 
 
-* have this yank flash that doom has
-** clone doom and dig the code
-s
