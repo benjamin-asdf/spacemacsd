@@ -86,3 +86,15 @@ Use `projectile-locate-dominating-file' to get the unity proj root"
   (when-let* ((proj (projectile-locate-dominating-file default-directory "Assets"))
               (name (file-name-base (directory-file-name proj))))
     (shell-command (format "unity-open %s %s" name proj))))
+
+
+(defvar benj-flycheck/last-error-messages
+  nil
+  "Last error strings that `flycheck-pos-tip-error-messages' function was called with."
+  )
+(defun benj-flycheck/display-error-messages-advice (errors)
+  "Advice after `flycheck-display-error-messages'. Set `benj-flycheck/last-error-messages' and also set register f with it."
+  (evil-set-register
+   (setq benj-flycheck/last-error-messages (flycheck-help-echo-all-error-messages errors))))
+
+(advice-add 'flycheck-pos-tip-error-messages :after #'benj-flycheck/display-error-messages-advice)

@@ -58,6 +58,23 @@
   (interactive)
   (surfel/search (thing-at-point 'evil-WORD)))
 
+(defun surfel/search-last-flycheck-message ()
+  "Depends on `benj-flycheck/display-error-messages-advice'."
+  (interactive)
+  (when
+      (and
+       (boundp benj-flycheck/last-error-messages)
+       benj-flycheck/last-error-messages)
+    (surfel/search benj-flycheck/last-error-messages)))
+
+(defun surfel/search-last-eldoc-message ()
+  "Search last eldoc message, if set. Depends on `team/eldoc-save-last-message'."
+  (when
+      (and
+       (boundp team/eldoc-previous-message)
+       team/eldoc-previous-message)
+    (surfel/search team/eldoc-previous-message)))
+
 ;; TODO how does that work?
 ;; (let ((reg (regexp-opt (list "^https://" "^http://"))))
 ;;   (setq browse-url-handlers (list (list reg 'surfel/browse-url-handler))))
