@@ -6,6 +6,8 @@
 (defconst benj-roslyn-tools/analyzers-test-proj-path (concat (file-name-as-directory benj-roslyn-tools/proj-path) "tests/" "Analyzers.Test"))
 (defconst benj-roslyn-tools/analyzers-tests-dir (concat (file-name-as-directory benj-roslyn-tools/analyzers-test-proj-path) "Tests"))
 
+(defconst benj-roslyn-tools/common-types-filename (concat (file-name-as-directory benj-roslyn-tools/analyzers-proj-path) "CommonTypes.cs"))
+
 (file-exists-p benj-roslyn-tools/analyzers-tests-dir)
 
 
@@ -533,3 +535,47 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
        "anal-test"
        'csharp-mode))
       (evil-insert-state))))
+
+
+(defun benj-roslyn-tools/add-common-type (&optional name)
+  "Add a new commont type of NAME"
+  (interactive"sCommon type: ")
+  (find-file benj-roslyn-tools/common-types-filename)
+  (let* ((name-parts
+          (split-string name "\\."))
+         (type-name-base
+          (nth-value (- (length name-parts) 1) name-parts))
+         (snippet-env
+          `((type-name ,name)
+            (type-name-base ,type-name-base))))
+    (and (re-search-forward "public static CommonTypes I;" nil t)
+         (forward-line -1)
+         (yas-expand-snippet
+          (yas-lookup-snippet
+           "common-types-field"
+           'csharp-mode)
+          nil
+          nil
+          snippet-env)
+
+         (re-search-forward "FrozenCollections = ImmutableHashSet.Create(MetadataSymbolComparer.I," nil t)
+
+         (forward-line -1)
+         (yas-expand-snippet
+          (yas-lookup-snippet
+           "common-types-get-type"
+           'csharp-mode)
+          nil
+          nil
+          snippet-env)
+         (re-search-forward "compilation = l.compilation," nil t)
+
+         ;; (forward-line -1)
+
+         (yas-expand-snippet
+          (yas-lookup-snippet
+           "common-types-merge-template"
+           'csharp-mode)
+          nil
+          nil
+          snippet-env))))

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : common-types-field
+#key : common-types-field
+#contributor : benj
+
+# --
+    public INamedTypeSymbol `type-name-base` {get;private set;}

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : common-types-merge-template
+#key : common-types-merge-template
+#contributor : benj
+# --
+            `type-name-base` = MergeType(l,l.`type-name-base`,r,r.`type-name-base`),

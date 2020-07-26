@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : common-types-get-type
+#key : common-types-get-type
+#contributor : benj
+
+# --
+        `type-name-base` = GetType("`type-name`");
