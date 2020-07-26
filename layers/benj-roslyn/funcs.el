@@ -89,6 +89,7 @@
   (let ((buff (benj-roslyn-tools/nuke-proc-buff)))
     (unless (equal buff (current-buffer))
       (switch-to-buffer-other-frame buff)
+      (compilation-mode)
       (goto-char (point-max))))
 
   ;; (pop-to-buffer (benj-roslyn-tools/nuke-proc-buff))
@@ -329,7 +330,8 @@ see `benj-roslyn-proj-configs'"
      args
      "-no-stats"
      )
-    (pop-to-buffer benj-roslyn-tools/buff-name)))
+    (pop-to-buffer benj-roslyn-tools/buff-name)
+    (compilation-mode)))
 
 
 (defun benj-roslyn-tools/erase-analyzer-log-buff-if-exists ()
@@ -548,7 +550,8 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
          (snippet-env
           `((type-name ,name)
             (type-name-base ,type-name-base))))
-    (and (re-search-forward "public static CommonTypes I;" nil t)
+    (and (goto-char (point-min))
+     (re-search-forward "public static CommonTypes I;" nil t)
          (forward-line -1)
          (yas-expand-snippet
           (yas-lookup-snippet
@@ -569,9 +572,7 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
           nil
           snippet-env)
          (re-search-forward "compilation = l.compilation," nil t)
-
-         ;; (forward-line -1)
-
+         (forward-line -1)
          (yas-expand-snippet
           (yas-lookup-snippet
            "common-types-merge-template"
