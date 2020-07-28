@@ -160,12 +160,12 @@
 (defun benj-roslyn-tools/pop-to-analyzer-log ()
   "Pop to `benj-roslyn-tools/analzyer-log-file'."
   (interactive)
-  (cond
-   ((when-let ((buff (get-buffer (file-name-nondirectory benj-roslyn-tools/analzyer-log-file))))
-      (switch-to-buffer-other-window buff)))
-   ((file-exists-p benj-roslyn-tools/analzyer-log-file)
-    (find-file benj-roslyn-tools/analzyer-log-file))
-   (t (message "There is no current analyzer log file."))))
+  (if-let ((buff (get-buffer (file-name-nondirectory benj-roslyn-tools/analzyer-log-file))))
+      (switch-to-buffer-other-window buff)
+    (find-file benj-roslyn-tools/analzyer-log-file)))
+
+
+
 
 (defun benj-roslyn-cli-path (config)
   "Roslyn cli path for CONFIG.
@@ -241,10 +241,10 @@ see `benj-roslyn-proj-configs'"
   (defvar helm-benj-roslyn-analzyers-source
     (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-tools/available-analzyer-names))))
 
-(defun benj-roslyn-tools/run-idlegame-default ()
+(defun benj-roslyn-tools/run-idlegame-default (&rest args)
   "See `benj-roslyn-tools/run-idlegame'."
   (interactive)
-  (benj-roslyn-tools/run-idlegame "--no-git"))
+  (benj-roslyn-tools/run-idlegame args "--no-git"))
 
 (defun benj-roslyn-tools/run-idlegame-sync ()
   "Run idlegame synced analzyers."
@@ -275,42 +275,19 @@ see `benj-roslyn-proj-configs'"
   (if benj-roslyn-last-args
       (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args))))
 
-;; (mapconcat (format "`%s`") )
 
-;; (defun benj-roslyn-runner (sln &rest args)
-;;   "Run release analzyers with SLN and additional ARGS"
-;;   (interactive)
-;;   (setq benj-roslyn-last-args (list sln args))
-
-;;     (benj-roslyn-tools/run-nuke
-;;      (format "Run-Analyzers --application-arguments '`%s`'" (mapconcat ))
-
-;;      (concat )
-;;      (concat (-flatten (list "" "-s" sln args)))
-;;      )
+(define-derived-mode
+  analyzer-log-mode compilation-mode
+  "analyzer-log"
+  "Mode for benj roslyn tools analyzer logs.")
 
 
+(spacemacs|define-jump-handlers analyzer-log-mode)
 
-
-
-;;   ;; (let ((default-directory (file-name-directory sln))
-;;   ;;       (buff-name "*roslyn-analzyers*"))
-;;   ;;   (benj-start-proccess-flatten-args
-;;   ;;    "run-analyzers"
-;;   ;;    buff-name
-;;   ;;    ;; "/usr/bin/mono"
-;;   ;;    benj-roslyn-tools/cli-executable
-;;   ;;    "-s" sln
-;;   ;;    args)
-;;   ;;   (pop-to-buffer buff-name))
-;;   )
-
-
-;; (defun benj-roslyn-tools/clear-runner-buff ()
-;;   "Clear runner buff."
-;;   (get-buffer-create )
-;;   (erase-buffer )
-;;   )
+(add-to-list 'spacemacs-jump-handlers-analyzer-log-mode
+             'benj-roslyn-tools/diagnostic-jumper
+             'benj-roslyn-tools/log-goto-warning-location
+             )
 
 
 (defun benj-roslyn-runner (sln &rest args)
@@ -318,21 +295,37 @@ see `benj-roslyn-proj-configs'"
   (interactive)
   (benj-roslyn-tools/erase-analyzer-log-buff-if-exists)
   (setq benj-roslyn-last-args (list sln args))
-  (let ((default-directory (file-name-directory sln))
-        (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/")))
-        )
-    (benj-start-proccess-flatten-args
-     "run-analyzers"
-     benj-roslyn-tools/buff-name
-     "dotnet"
-     benj-roslyn-tools/cli-executable
-     "-s" sln
-     args
-     "-no-stats"
-     )
+  (let* ((default-directory (file-name-directory sln))
+         (proc
+          (benj-start-proccess-flatten-args
+           "run-analyzers"
+           benj-roslyn-tools/buff-name
+           "dotnet"
+           benj-roslyn-tools/cli-executable
+           "-s" sln
+           args
+           "-no-stats"
+           )))
+    (set-process-filter proc
+                        (benj-roslyn-tools/build-collect-diagnostic-filter
+                         (benj-roslyn/diagnostics-file-name sln)))
     (pop-to-buffer benj-roslyn-tools/buff-name)
-    (compilation-mode)))
+    (analyzer-log-mode)))
 
+
+
+(defun benj-roslyn-tools/build-collect-diagnostic-filter (file-name)
+  `(lambda (proc string)
+     (when (string-match-p "/home/benj/" string)
+       (write-region string nil ,file-name t))
+     (funcall #'benj-roslyn-tools/default-filter proc string)))
+
+(defun benj-roslyn/diagnostics-file-name (sln)
+  (concat
+   (temporary-file-directory)
+   (file-name-base (file-name-nondirectory sln))
+   "-"
+   (format-time-string "%T")))
 
 (defun benj-roslyn-tools/erase-analyzer-log-buff-if-exists ()
   "Erase buffer of `benj-roslyn-tools/analzyer-log-file', if existent."
@@ -344,23 +337,17 @@ see `benj-roslyn-proj-configs'"
       (save-buffer))))
 
 
-;; could run with nuke,
-;; atm there we dont find msbuild
-
-
-
-;; (defun benj-roslyn-runner (sln &rest args)
-;;   "Run release analzyers with SLN and additional ARGS"
-;;   (interactive)
-;;   (setq benj-roslyn-last-args (list sln args))
-;;   (let ((process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/"))))
-;;     (benj-roslyn-tools/run-nuke
-;;      "--target" "BuildAndRunAnalyzers"
-;;      "--application-arguments"
-;;      (format  "`-s %s %s`" sln (mapconcat 'identity (-flatten args) " "))
-;;      )))
-
-
+(defun benj-roslyn-tools/default-filter (proc string)
+  (let ((inhibit-read-only t))
+    (when (buffer-live-p (process-buffer proc))
+     (with-current-buffer (process-buffer proc)
+       (let ((moving (= (point) (process-mark proc))))
+         (save-excursion
+           ;; Insert the text, advancing the process marker.
+           (goto-char (process-mark proc))
+           (insert string)
+           (set-marker (process-mark proc) (point)))
+         (if moving (goto-char (process-mark proc))))))))
 
 (defun benj-start-process-synchronously-flatten-args (name buffer program &rest program-args)
   "See `benj-start-proccess-flatten-args' use `accept-process-output' to run synchronously.
@@ -529,12 +516,6 @@ LINE-FORM and COLL-FORM should evaluate to number strings."
        (throw 'done t))))
 
 
-;; (defvar benj-file-jump/jump-data ()
-;;   nil
-;;   "Used by ")
-
-
-
 (defun benj-roslyn-tools/make-relative-paths-from-test-dir ()
   "Make all absolute paths in the file relative to the analyzer test default dir."
   (interactive)
@@ -592,9 +573,7 @@ LINE-FORM and COLL-FORM should evaluate to number strings."
           nil
           nil
           snippet-env)
-
          (re-search-forward "FrozenCollections = ImmutableHashSet.Create(MetadataSymbolComparer.I," nil t)
-
          (forward-line -1)
          (yas-expand-snippet
           (yas-lookup-snippet
