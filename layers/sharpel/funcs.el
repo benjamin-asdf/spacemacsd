@@ -51,13 +51,8 @@
 (defun sharpel-logsyntax-req ()
   "Send active region as logsyntax request"
   (interactive)
-  (sharpel--runner
-   (concat ":logsyntax:\n"
-           (replace-regexp-in-string "[ \t\n\r]+" " " (buffer-substring (region-beginning) (region-end)))
-           ;; (replace-regexp-in-string "[\n\r]+" (make-string 1 ?\0) (buffer-substring (region-beginning) (region-end)))
-           "\n"))
+  (sharpel-run-cmd :logsyntax (team-create-temp-file-on-region))
   (org-mode))
-
 
 (defun sharpel-file-command-on-region ()
   "Create a file command using a temp file created from region."
@@ -82,12 +77,14 @@
 (defun sharpel-rewrite-file (file-name)
   "Run sharpel with rewrite reqeust and FILE-NAME"
   (interactive "fFile for const rewrite: ")
-  (sharpel-run-cmd :rewrite-file file-name))
+  (sharpel-run-cmd :rewrite-file file-name)
+  (csharp-mode))
 
 (defun sharpel--send-file-name-command (file-name)
   "Send FILE-NAME as input to sharpel."
   (setq sharpel-last-file-send file-name)
-  (sharpel-run-cmd :filename file-name))
+  (sharpel-run-cmd :filename file-name)
+  (csharp-mode))
 
 (defun sharpel--command (cmd body)
   "Build sharpel command input. With header CMD and BODY.
@@ -110,8 +107,7 @@ Valid options for CMD are defined in `sharpel-command-kinds'."
   (setq sharpel-last-input input)
   (process-send-string sharpel-process input)
   (unless (string-equal (buffer-name) sharpel-buff-name)
-    (pop-to-buffer sharpel-buff-name))
-  (csharp-mode))
+    (pop-to-buffer sharpel-buff-name)))
 
 (defun sharpel-rerun-last ()
   "Rerun the last sharpel command."
@@ -133,5 +129,4 @@ Valid options for CMD are defined in `sharpel-command-kinds'."
 
 (defun sharpel-try-compilation ()
   (interactive)
-
   (sharpel-one-shot "--try-compilation"))
