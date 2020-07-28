@@ -481,26 +481,58 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
      (directory-files-recursively dir "\\.cs"))))
 
 
-
-
 (defun benj-roslyn-tools/log-goto-warning-location ()
   "Meant to be used in an output buffer of analyzers, jump to location of log."
   (interactive)
-  (save-excursion
-    (goto-char (point-at-bol))
-    (when (or
-           (re-search-forward "SourceFile(\\(/.*\\)\\[\\([0-9]+\\)" (point-at-eol) t)
-           (re-search-forward "^\\(/.*\\)(\\([0-9]+\\),\\([0-9]+\\)):" (point-at-eol) t)
-           (re-search-forward "^\\(/.*\\) around Line \\([0-9]+\\)" (point-at-eol) t))
-      (let* ((file (match-string-no-properties 1))
-            (line (match-string-no-properties 2))
-            ;; FIXME not like this
-            (coll (match-string-no-properties (if line 3 2))))
-        (find-file file)
-        (goto-char (point-min))
-        ;; since we 0 base in the output we don't have to -1 here
-        (when line (forward-line (string-to-number line)))
-        (when coll (forward-char (string-to-number coll)))))))
+  (catch 'done
+    (benj-roslyn-tools/diagnostic-jumper)
+    (benj-rolsyn-tools/jump-line
+     "^\\(/.*\\) around Line \\([0-9]+\\)"
+     (match-string-no-properties 1)
+     (match-string-no-properties 2)
+     nil)
+    (benj-rolsyn-tools/jump-line
+     "SourceFile(\\(/.*\\)\\[\\([0-9]+\\)"
+     (match-string-no-properties 1)
+     (match-string-no-properties 2)
+     nil)))
+
+(defun benj-roslyn-tools/diagnostic-jumper ()
+  "Jump to default diagnostic ToString syntax."
+  (interactive)
+    (benj-rolsyn-tools/jump-line
+    "^\\(/.*\\)(\\([0-9]+\\),\\([0-9]+\\)):"
+    ((match-string-no-properties 1))
+    ((match-string-no-properties 2))
+    ((match-string-no-properties 3))))
+
+
+(defmacro benj-rolsyn-tools/jump-line (regex file-form line-form &optional coll-form)
+  "Apply REGEX to the current line.
+FILE-FORM should attempt to get a file namae from the match data, and return nil in the case of failure.
+LINE-FORM and COLL-FORM should evaluate to number strings."
+  `(let ((file)
+         (line)
+         (coll))
+     (save-excursion
+       (goto-char (point-at-bol))
+       (re-search-forward ,regex (point-at-eol) t)
+       (setq file ,@file-form)
+       (setq line ,@line-form)
+       (setq coll ,@coll-form))
+     (when file
+       (find-file file)
+       (goto-char (point-min))
+       ;; since we 0 base in the output we don't have to -1 here
+       (when line (forward-line (string-to-number line)))
+       (when coll (forward-char (string-to-number coll)))
+       (throw 'done t))))
+
+
+;; (defvar benj-file-jump/jump-data ()
+;;   nil
+;;   "Used by ")
+
 
 
 (defun benj-roslyn-tools/make-relative-paths-from-test-dir ()
