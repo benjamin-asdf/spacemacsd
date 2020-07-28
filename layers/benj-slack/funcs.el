@@ -14,9 +14,11 @@
                       :subscribed-channels '(general slackbot new-to-cos))
 
 (setq slack-prefer-current-team t)
+(setq slack-buffer-emojify t)
 (setq slack-thread-also-send-to-room nil)
 (setq slack-typing-visibility 'never)
 (setq slack-enable-wysiwyg t)
+(setq alert-default-style 'notifier)
 
 (slack-start)
 
