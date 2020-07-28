@@ -90,11 +90,11 @@ Use `projectile-locate-dominating-file' to get the unity proj root"
 
 (defvar benj-flycheck/last-error-messages
   nil
-  "Last error strings that `flycheck-pos-tip-error-messages' function was called with."
-  )
+  "Last error strings that `flycheck-pos-tip-error-messages' function was called with.")
 (defun benj-flycheck/display-error-messages-advice (errors)
   "Advice after `flycheck-display-error-messages'. Set `benj-flycheck/last-error-messages' and also set register f with it."
   (evil-set-register
+   ?f
    (setq benj-flycheck/last-error-messages (flycheck-help-echo-all-error-messages errors))))
 
 (advice-add 'flycheck-pos-tip-error-messages :after #'benj-flycheck/display-error-messages-advice)

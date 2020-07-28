@@ -7,4 +7,7 @@
           (spacemacs/set-leader-keys (concat surfel/leader-keys (car x)) (cdr x)))
         '(("t" . surfel/open-best-trello-board)
           ("g" . surfel/search)
-          ("r" . surfel/search-for-region))))
+          ("r" . surfel/search-for-region)
+          ("f" . surfel/search-last-flycheck-message)
+          ("e" . surfel/search-last-eldoc-message)
+          )))
