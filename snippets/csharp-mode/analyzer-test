@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
 namespace Analyzers.Tests {
-public class `(substring (file-name-nondirectory (buffer-file-name)) 0 (- (length (file-name-nondirectory (buffer-file-name))) 3))`: : AnalzyerTestsBase<`(substring (file-name-nondirectory (buffer-file-name)) 0 (- (length (file-name-nondirectory (buffer-file-name))) 8))`> {
+public class `(substring (file-name-nondirectory (buffer-file-name)) 0 (- (length (file-name-nondirectory (buffer-file-name))) 3))` : AnalzyerTestsBase<`(substring (file-name-nondirectory (buffer-file-name)) 0 (- (length (file-name-nondirectory (buffer-file-name))) 8))`> {
        $0
     }
 }
