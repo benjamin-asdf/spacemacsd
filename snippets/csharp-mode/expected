@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : expected
+#key : expected
+#contributor : benj
+# --
+DiagnosticResult[] expected = {
+AnalyzerVerifier<`(substring (file-name-nondirectory (buffer-file-name)) 0 (- (length (file-name-nondirectory (buffer-file-name))) 8))`>.Diagnostic($1)
+    .WithLocation($0)
+};
