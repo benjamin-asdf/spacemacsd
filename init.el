@@ -598,6 +598,11 @@ before packages are loaded."
   ;; `evil-goggles'
   (evil-goggles-mode)
 
+
+
+  (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
+
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
