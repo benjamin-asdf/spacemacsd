@@ -560,7 +560,7 @@ before packages are loaded."
   (setq-default projectile-generic-command my-fd-command)
   (setq projectile-enable-caching t)
 
-  (setq-default dotspacemacs-mode-line-unicode-symbols nil)
+  ;; (setq-default dotspacemacs-mode-line-unicode-symbols nil)
 
   (set-face-foreground 'spaceline-python-venv "SeaGreen")
 
