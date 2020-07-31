@@ -592,6 +592,9 @@ before packages are loaded."
     (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs"))
 
 
+  ;; `evil-goggles'
+  (evil-goggles-mode)
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
