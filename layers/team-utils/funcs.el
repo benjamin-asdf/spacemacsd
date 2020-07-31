@@ -78,6 +78,15 @@ return the file name of the create file"
 
 (defun team/evil-pop-register ()
   "Pop register 1, move all registers up. So 2 becomes and so on."
-  (interactive)
+  (interactive))
 
-  )
+
+(defmacro team/with-file (file &rest body)
+  "Goto temp file FILE, insert file contents and evaluate BODY in there.
+This also goes to point min point."
+  (declare (debug body))
+  `(with-temp-file
+      ,file
+    (insert-file-contents-literally ,file)
+    (goto-char (point-min))
+    ,@body))
