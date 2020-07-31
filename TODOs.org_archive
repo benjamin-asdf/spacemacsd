@@ -1,0 +1,48 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/benj/.spacemacs.d/TODOs.org
+
+
+* DONE have this yank flash that doom has
+  CLOSED: [2020-07-24 Fri 13:20]
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-07-24 Fri 13:20
+  :ARCHIVE_FILE: ~/.spacemacs.d/TODOs.org
+  :ARCHIVE_CATEGORY: TODOs
+  :ARCHIVE_TODO: DONE
+  :END:
+** clone doom and dig the code
+
+
+Archived entries from file /home/benj/.spacemacs.d/TODOs.org
+
+
+* nicholas list stuff
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-07-24 Fri 13:21
+  :ARCHIVE_FILE: ~/.spacemacs.d/TODOs.org
+  :ARCHIVE_CATEGORY: TODOs
+  :END:
+  (defun clist-1 (new-el &rest args)
+	(cons new-el args))
+
+;; everything you put in &rest is put into a list so if you put a list it will be come a list of lists
+(clist-1 "blah" '("fjlsdk" "jfksaj"))
+=> ("blah" ("fjlsdk" "jfksaj"))
+
+(clist-1 "blah" "fjlsdk" "jfksaj")
+=> ("blah" "fjlsdk" "jfksaj")
+
+;; You can achieve what you want like this
+(defun clist (new-el &rest args)
+	(let ((res (or (and (listp new-el) new-el) (list new-el))))
+		(mapc (lambda (x)
+						(setq res
+									(or (and (listp x) (append res x))
+											(cons x res))))
+					args)
+		res))
+
+(clist "sldfjas" '("fdlsk" "fjasdl"))
+=> ("sldfjas" "fdlsk" "fjasdl")
