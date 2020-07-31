@@ -130,6 +130,8 @@ This function should only modify configuration layer settings."
                                       auth-source-pass
                                       gitlab
                                       dired-x
+                                      nav-flash
+                                      minsk-theme
                                       )
 
    ;; A list of packages that cannot be updated.
