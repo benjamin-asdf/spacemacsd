@@ -568,8 +568,8 @@ before packages are loaded."
   (setq-default split-hight-threshold 500)
 
   ;; if using minder, insert some messages to remember into todays journal.
-  (when (configuration-layer/layer-used-p 'minder)
-    (minder-push-remembered-msgs))
+  ;; (when (configuration-layer/layer-used-p 'minder)
+  ;;   (minder-push-remembered-msgs))
 
   (show-smartparens-global-mode -1)
   (setq history-delete-duplicates t)
