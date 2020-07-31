@@ -57,6 +57,7 @@ This function should only modify configuration layer settings."
 
      ;; Langs
      emacs-lisp
+     common-lisp
      ;; semantic
      csharp
      (python :variables python-backend 'anaconda)
