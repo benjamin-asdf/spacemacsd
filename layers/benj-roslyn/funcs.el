@@ -20,7 +20,10 @@
 (defconst benj-roslyn-tools/playground-proj-csproj (concat benj-roslyn-tools/playground-proj "src/Playground.csproj"))
 (defconst benj-roslyn-tools/banned-analyzer-proj "/home/benj/repos/BannedApiAnalyzer/source/BannedApiAnalyzer.CSharp/")
 
-(defconst benj-roslyn-tools/analzyer-log-file (concat (temporary-file-directory) "analyzer-log"))
+(defconst benj-roslyn-tools/analzyer-log-file-ext ".analyzer-log")
+(defconst benj-roslyn-tools/analzyer-log-file (concat (temporary-file-directory) "out" benj-roslyn-tools/analzyer-log-file-ext))
+
+
 (defvar benj-roslyn-tools/default-slns (list benj-roslyn-tools/playground-sln idlegame-sln-path))
 
 (defconst benj-roslyn-tools/idlegame-args
@@ -222,6 +225,7 @@ see `benj-roslyn-proj-configs'"
   (interactive
    (benj-roslyn-tools/read-analzyer-and-file))
   (benj-roslyn-runner idlegame-sln-path
+                      benj-roslyn-tools/idlegame-args
                       "-g" analyzer
                       (and (not (string-empty-p file)) (list "-f" (file-name-nondirectory file)))))
 
@@ -279,58 +283,128 @@ see `benj-roslyn-proj-configs'"
 (define-derived-mode
   analyzer-log-mode compilation-mode
   "analyzer-log"
-  "Mode for benj roslyn tools analyzer logs.")
+  "Mode for benj roslyn tools analyzer logs."
+  ;; (read-only-mode -1)
 
+  ;; (font-lock-add-keywords)
+  (setq buffer-read-only nil)
+
+
+  )
+
+;;(evil-set-initial-state 'analyzer-log-mode 'normal)
 
 (spacemacs|define-jump-handlers analyzer-log-mode)
 
 (add-to-list 'spacemacs-jump-handlers-analyzer-log-mode
-             'benj-roslyn-tools/diagnostic-jumper
              'benj-roslyn-tools/log-goto-warning-location
              )
 
+(add-to-list 'auto-mode-alist `(,(format "\\%s$" benj-roslyn-tools/analzyer-log-file-ext) . analyzer-log-mode))
+
+
+;; TODO
+
+(defun benj-roslyn-tools/collect-diagnostics (proc string file-name)
+  (when (string-match-p (format "\\(Starting Analyzer CLI with arguments:\\)\\|\\(%s\\)"
+                                cos-dir)
+                        string)
+    (with-current-buffer
+        (get-buffer-create file-name)
+      (set-buffer file-name)
+      (goto-char (point-max))
+      (insert s))))
+
+
+(defun benj-roslyn-tools/write-diagnostic-out (proc code file-name)
+  (with-current-buffer
+      (get-buffer-create file-name)
+    (append-to-file
+     (buffer-substring-no-properties
+      (point-min)
+      (point-max))
+     nil
+     file-name)
+    (kill-buffer)))
 
 (defun benj-roslyn-runner (sln &rest args)
   "Run release analzyers with SLN and additional ARGS"
   (interactive)
   (benj-roslyn-tools/erase-analyzer-log-buff-if-exists)
   (setq benj-roslyn-last-args (list sln args))
-  (let* ((default-directory (file-name-directory sln))
-         (proc
-          (benj-start-proccess-flatten-args
-           "run-analyzers"
-           benj-roslyn-tools/buff-name
-           "dotnet"
-           benj-roslyn-tools/cli-executable
-           "-s" sln
-           args
-           "-no-stats"
-           )))
-    (set-process-filter proc
-                        (benj-roslyn-tools/build-collect-diagnostic-filter
-                         (benj-roslyn/diagnostics-file-name sln)))
-    (pop-to-buffer benj-roslyn-tools/buff-name)
-    (analyzer-log-mode)))
+  (let* ((file-var (benj-roslyn/diagnostics-file-name sln))
+         (filter
+          (benj-roslyn-tools/handle-proc
+           'p
+           's
+           file-var
+           (lambda (p s file-name)
+             (benj-roslyn-tools/collect-diagnostics p s file-name)
+             (benj-roslyn-tools/default-filter p s)
+             )))
+         (sentinel
+          (benj-roslyn-tools/handle-proc
+           'p
+           's
+           file-var
+           #'benj-roslyn-tools/write-diagnostic-out))
+         (default-directory (file-name-directory sln))
+         (proc (benj-start-proccess-flatten-args "run-analyzers"
+                                                 benj-roslyn-tools/buff-name "dotnet" benj-roslyn-tools/cli-executable
+                                                 "-s" sln args "-no-stats")))
+    (set-process-filter proc filter)
+    (set-process-sentinel proc sentinel))
+  (pop-to-buffer benj-roslyn-tools/buff-name)
+  ;; (analyzer-log-mode)
+  )
 
+(defun benj-roslyn-tools/handle-proc (p s file-name op)
+  "Eval OP with current handle buff."
+  `(lambda (,p ,s)
+    (when-let ((buff (get-buffer-create ,file-name)))
+      (with-current-buffer
+          buff
+        (funcall #',op ,p ,s ,file-name)))))
 
+;; (defmacro benj-roslyn-tools/proc-handle (file-var p s &rest body)
+;;   "Eval to a lambda, P: symbol to bind the proc to. S: symbol to bind the string to.
+;; BODY: body to evaluate with the current handle buffer."
+;;   (declare (debug body))
+;;   (let ((f-tmp (gensym)))
+;;     `(let ((,f-tmp ,file-var))
+;;        (lambda (,p ,s)
+;;          (when-let ((buff (get-buffer-create ,f-tmp)))
+;;            (with-current-buffer
+;;                buff
+;;              ,@body))))))
 
-(defun benj-roslyn-tools/build-collect-diagnostic-filter (file-name)
-  `(lambda (proc string)
-     (when (string-match-p "/home/benj/" string)
-       (write-region string nil ,file-name t))
-     (funcall #'benj-roslyn-tools/default-filter proc string)))
+;; (defun benj-roslyn-tools/build-collect-diagnostic-filter (file-name)
+;;   `(lambda (proc string)
+;;      (benj-roslyn-tools/collect-diagnostics string ,file-name)
+;;      (funcall #'benj-roslyn-tools/default-filter proc string)))
+
+;; (defsubst benj-roslyn-tools/collect-diagnostics (string file-name)
+;;   (when-let ((buff
+;;               (and )
+;;               (buffer-live-p benj-roslyn-tools/diagnostic-collect-buff)
+;;               benj-roslyn-tools/diagnostic-collect-buff)
+;;              (with-current-buffer benj-roslyn-tools/diagnostic-collect-buff
+;;                (goto-char (point-max))
+;;                (insert string)))))
 
 (defun benj-roslyn/diagnostics-file-name (sln)
   (concat
    (temporary-file-directory)
    (file-name-base (file-name-nondirectory sln))
    "-"
-   (format-time-string "%T")))
+   (format-time-string "%T")
+   benj-roslyn-tools/analzyer-log-file-ext))
 
 (defun benj-roslyn-tools/erase-analyzer-log-buff-if-exists ()
   "Erase buffer of `benj-roslyn-tools/analzyer-log-file', if existent."
   (interactive)
-  (when-let ((buff (get-buffer (file-name-nondirectory benj-roslyn-tools/analzyer-log-file))))
+  (when-let ((inhibit-read-only t)
+             (buff (get-buffer (file-name-nondirectory benj-roslyn-tools/analzyer-log-file))))
     (with-current-buffer
         buff
       (erase-buffer)
@@ -472,48 +546,40 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
   "Meant to be used in an output buffer of analyzers, jump to location of log."
   (interactive)
   (catch 'done
-    (benj-roslyn-tools/diagnostic-jumper)
+    (benj-rolsyn-tools/jump-line
+     "^\\(/.*\\)(\\([0-9]+\\),\\([0-9]+\\)):"
+     ((file (match-string-no-properties 1))
+      (line (match-string-no-properties 2))
+      (coll (match-string-no-properties 2))))
     (benj-rolsyn-tools/jump-line
      "^\\(/.*\\) around Line \\([0-9]+\\)"
-     (match-string-no-properties 1)
-     (match-string-no-properties 2)
-     nil)
+     ((file (match-string-no-properties 1))
+      (line (- (string-to-number (match-string-no-properties 2)) 1))
+      (coll nil)))
     (benj-rolsyn-tools/jump-line
      "SourceFile(\\(/.*\\)\\[\\([0-9]+\\)"
-     (match-string-no-properties 1)
-     (match-string-no-properties 2)
-     nil)))
+     ((file (match-string-no-properties 1))
+      (line (match-string-no-properties 2))
+      (coll nil)))))
 
-(defun benj-roslyn-tools/diagnostic-jumper ()
-  "Jump to default diagnostic ToString syntax."
-  (interactive)
-    (benj-rolsyn-tools/jump-line
-    "^\\(/.*\\)(\\([0-9]+\\),\\([0-9]+\\)):"
-    ((match-string-no-properties 1))
-    ((match-string-no-properties 2))
-    ((match-string-no-properties 3))))
-
-
-(defmacro benj-rolsyn-tools/jump-line (regex file-form line-form &optional coll-form)
+(defmacro benj-rolsyn-tools/jump-line (regex datas)
   "Apply REGEX to the current line.
-FILE-FORM should attempt to get a file namae from the match data, and return nil in the case of failure.
-LINE-FORM and COLL-FORM should evaluate to number strings."
-  `(let ((file)
-         (line)
-         (coll))
-     (save-excursion
-       (goto-char (point-at-bol))
-       (re-search-forward ,regex (point-at-eol) t)
-       (setq file ,@file-form)
-       (setq line ,@line-form)
-       (setq coll ,@coll-form))
-     (when file
-       (find-file file)
-       (goto-char (point-min))
-       ;; since we 0 base in the output we don't have to -1 here
-       (when line (forward-line (string-to-number line)))
-       (when coll (forward-char (string-to-number coll)))
-       (throw 'done t))))
+DATAS should be a let style list that optionally sets FILE, LINE and COLL,
+as appropriate.
+"
+  (declare (debug datas))
+  `(save-excursion
+    (goto-char (point-at-bol))
+    (when (re-search-forward ,regex (point-at-eol) t)
+      (let ,datas
+        (when file
+          (find-file file)
+          (goto-char (point-min))
+          ;; since we 0 base in the output we don't have to -1 here
+          ;; leaky abstraction
+          (when line (forward-line (or (and (number-or-marker-p line) line) (string-to-number line))))
+          (when coll (forward-char (string-to-number coll)))
+          (throw 'done t))))))
 
 
 (defun benj-roslyn-tools/make-relative-paths-from-test-dir ()
@@ -564,30 +630,208 @@ LINE-FORM and COLL-FORM should evaluate to number strings."
           `((type-name ,name)
             (type-name-base ,type-name-base))))
     (and (goto-char (point-min))
-     (re-search-forward "public static CommonTypes I;" nil t)
-         (forward-line -1)
-         (yas-expand-snippet
-          (yas-lookup-snippet
-           "common-types-field"
-           'csharp-mode)
-          nil
-          nil
+         (benj-roslyn-tools//yasnippet-insert
+          "common-types-field"
+          "public static CommonTypes I;"
           snippet-env)
-         (re-search-forward "FrozenCollections = ImmutableHashSet.Create(MetadataSymbolComparer.I," nil t)
-         (forward-line -1)
-         (yas-expand-snippet
-          (yas-lookup-snippet
-           "common-types-get-type"
-           'csharp-mode)
-          nil
-          nil
+         (benj-roslyn-tools//yasnippet-insert
+          "common-types-get-type"
+          "FrozenCollections = ImmutableHashSet.Create(MetadataSymbolComparer.I,"
           snippet-env)
-         (re-search-forward "compilation = l.compilation," nil t)
-         (forward-line -1)
-         (yas-expand-snippet
-          (yas-lookup-snippet
-           "common-types-merge-template"
-           'csharp-mode)
-          nil
-          nil
+         (benj-roslyn-tools//yasnippet-insert
+          "common-types-merge-template"
+          "compilation = l.compilation,"
           snippet-env))))
+
+(defun benj-roslyn-tools//yasnippet-insert (snippet-name line-regex snippet-env)
+  (benj-yasnippet/insert-snippet-before
+   (yas-lookup-snippet
+    snippet-name
+    'csharp-mode)
+   line-regex
+   snippet-env))
+
+(defmacro benj-yasnippet/insert-snippet-before (snippet line-regex snippet-env)
+  "Search forward for LINE-REGEX. Insert SNIPPET. SNIPPET-ENV expects a let style list. See `yas-insert-snippet'."
+  `(progn
+     (re-search-forward ,line-regex nil t)
+     (forward-line -1)
+     (yas-expand-snippet
+       ,snippet
+       nil
+       nil
+       ,snippet-env)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;;
+
+(defun benj-roslyn-tools/add-comments-to-warnings (in-file comment-string)
+  "Search IN-FILE for diagnostic warnings.
+Add COMMENT-STRING to the end of all the lines."
+  (with-temp-buffer
+    (insert-file-contents-literally in-file)
+    (--each
+        (benj-roslyn-tools/collect-lines-by-file)
+      (benj-roslyn-tools/add-comment-to-lines comment-string (car it) (cadr it)))))
+
+
+(defun benj-roslyn-tools/collect-lines-by-file ()
+  "Search the current buffer for diagnostic lines.
+Evaluate to an list of the form (FILE . (LINES))"
+  (let ((res nil))
+    (save-excursion
+      (goto-char (point-min))
+      (let ((-file)
+            (-lines))
+        (while
+            (benj-roslyn-tools//line-data
+             (unless
+                 (string-equal -file file)
+               (when -lines (setq res (cons (list -file (nreverse -lines)) res)))
+               (setq -lines nil)
+               (setq -file file))
+             (when line (setq -lines (cons (string-to-number line) -lines))))))
+      (when res (nreverse res)))))
+
+(defmacro benj-roslyn-tools//line-data (&rest body)
+  "Set Anaphoric FILE, LINE, if success evaluate BODY and return t, else return nil"
+  (declare (debug body))
+  `(let* ((success (re-search-forward "^\\(/.*\\)(\\([0-9]+\\),\\([0-9]+\\)):" nil t 1))
+          (file (and success (match-string-no-properties 1)))
+          (line (and success (match-string-no-properties 2))))
+     ,@body
+     success))
+
+
+(defun benj-roslyn-tools/add-comment-to-lines (comment-string file lines)
+  "Add chsarp comment COMMENT-STRING to all LINES in FILE.
+LINES is a list of numbers."
+  (let ((new-line-str))
+    (team/with-file
+    file
+    (setq new-line-str
+          (if (re-search-forward "\r\n" nil t 1)
+              "\r\n"
+            "\n"))
+    (--each lines
+      (goto-char (point-min))
+      (forward-line it)
+      (goto-char (point-at-eol))
+      (insert (concat "// " comment-string))))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;; (benj-roslyn-tools/run
+
+;;  )
+
+
+
+
+
+;; (defmacro benj-roslyn-tools/run (&rest args)
+;;   "Run analyzers with some configuration options:
+
+;; Ommitted options will default to something. Same for options of the symbol 'default.
+
+;; :sln  The solution to run the analyzer with. Default is playground.
+;;            Valid options are a string or 'ask.
+
+;; :filter    Filter output. This can be 'diagnostic-lines
+
+;; :args      Addional arguments passed to the analyzer command.
+
+;; "
+
+;;   `(let* ((args* (benj-roslyn-tools/run-args args))
+;;           (default-directory (file-name-directory sln))
+;;          (process-environment (append process-environment (list "CUSTOM_MSBUILD_PATH=/usr/lib/mono/msbuild/Current/bin/")))
+;;          (proc
+;;           (benj-start-proccess-flatten-args
+;;            "run-analyzers"
+;;            benj-roslyn-tools/buff-name
+;;            "dotnet"
+;;            benj-roslyn-tools/cli-executable
+;;            "-s" ,(or (plist-get args :sln) benj-roslyn-tools/playground-sln)
+;;            (plist-get args :args)
+;;            "-no-stats"
+;;            )))
+;;      (if-let filter (plist-get args :filter)
+;;        (set-process-filter proc filter)
+;;        (progn
+;;          (pop-to-buffer benj-roslyn-tools/buff-name)
+;;          (compilation-mode)))))
+
+
+;; (defun benj-roslyn-tools/run-args (&rest args)
+;;   (list
+;;    (benj-roslyn-tools/let-arg args :sln (or arg benj-roslyn-tools/playground-sln))
+;;    (benj-roslyn-tools/let-arg args :target arg)
+;;    (benj-roslyn-tools/let-arg args :filter (pcase arg)
+;;                               ('diagnostic-lines 'benj-roslyn-tools/playground-sln))
+;;    ))
+
+
+;; (benj-roslyn-tools/run-args :target "target")
+
+;; (defmacro benj-roslyn-tools/let-arg (args option form)
+;;   "Assuming ARGS is a plist, evaluate FORM where ARG is bound to the value of OPTION.
+;; FORM should evaluate to the value used."
+;;   `(let ((arg (plist-get ,args ,option)))
+;;      (list ,option ,form)))
+
+;; (benj-roslyn-tools/let-arg '(:target "ho") :target arg)
+
+
+;; (defconst benj-roslyn-tools/defaults
+;;   '(:sln benj-roslyn-tools/playground-sln
+;;          ;; :target nil
+;;          :filter '(diagnostic-lines . benj-roslyn-tools/diagnostic-lines-filter)
+
+;;          ))
+
+
+;; not like this
+;; (defun benj-roslyn-tools/wash-analzyer-log-file ()
+;;   "Wash current `benj-roslyn-tools/analzyer-log-file' to only show single line diagnositx"
+;;   (interactive)
+;;   (with-temp-file
+;;       benj-roslyn-tools/analzyer-log-file
+;;     (insert-file-contents-literally benj-roslyn-tools/analzyer-log-file)
+;;     (goto-char (point-min))
+;;     (while
+;;         (and (forward-line 1)
+;;              (not (eq (line-number-at-pos) (line-number-at-pos (point-max))))
+;;              (or (looking-at-p "/home/benj") (not (kill-line 1)))))))
