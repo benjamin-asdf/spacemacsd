@@ -145,3 +145,16 @@ probably need to enable X if it is graphical app. I haven't done it, but it will
 ** I need to clean up my phone storage
 
 
+* make a backup file of the current visited and put it into backups
+** if buffer is not visiting a file, create file with major mode name
+** file names have timestamps
+
+* move the shits I don't stage into own
+
+
+* find out how to ship packages
+* ship packages to for nikita and anybody willing
+
+
+* get into smartparens
+  https://smartparens.readthedocs.io/en/latest/automatic-escaping.html
