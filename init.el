@@ -592,6 +592,9 @@ before packages are loaded."
     (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs"))
 
 
+  ;; TODO investigate
+  (defun org-eldoc-documentation-function (arg))
+
   ;; `evil-goggles'
   (evil-goggles-mode)
 
