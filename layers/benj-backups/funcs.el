@@ -22,7 +22,7 @@
     (buffer-file-name it)
     (file-exists-p
      (buffer-file-name it)))
-   (benj-backups/make-backup)
+   (benj-backups/make-backup it)
    (buffer-list)))
 
 (defun benj-backup/make-curr-buff-backup ()
