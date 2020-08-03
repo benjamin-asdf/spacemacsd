@@ -291,6 +291,7 @@ see `benj-roslyn-proj-configs'"
   ;; (font-lock-add-keywords)
   (setq buffer-read-only nil)
 
+  (evil-set-initial-state 'normal)
 
   )
 
