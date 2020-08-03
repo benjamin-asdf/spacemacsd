@@ -91,6 +91,26 @@ This also goes to point min point."
     (goto-char (point-min))
     ,@body))
 
+
+
+
 (defmacro // (arglist &rest body)
   "Define a lambda with ARGLIST and BODY."
   `(lambda ,arglist ,@body))
+
+
+;; TODO move into some package "smoves.el" "moo.el" ?
+(defmacro line-> (line)
+  "Goto LINE in curr buffer.
+This is the version that the manual recommends for going to a line in lisp programs."
+  (declare (indent 1))
+  `(progn
+     (goto-char (point-min))
+     (forward-line (- ,line 1))))
+
+(defmacro line->> (line)
+  "Goto to the end of LINE. See `line->'"
+  `(progn
+     (line->
+         ,line)
+     (goto-char (point-at-eol))))
