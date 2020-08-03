@@ -721,28 +721,29 @@ Evaluate to an list of the form (FILE . (LINES))"
      success))
 
 
-(defun benj-roslyn-tools/add-comment-to-lines (comment-string file lines)
+(defun benj-roslyn-tools/add-to-lines (string file lines)
   "Add chsarp comment COMMENT-STRING to all LINES in FILE.
 LINES is a list of numbers."
-  (let ((new-line-str))
+  (team/with-file
+   file
+   (--each lines
+     (goto-char (point-min))
+     ;; line 1 means don't forward line, zero based
+     (forward-line (- it 1))
+     (goto-char (point-at-eol))
+     (when (looking-back "\r")
+       (forward-char -1))
+     (insert string))))
+
+
+(defun team/crlf-p (file)
+  "Test if FILE as crlf endings."
+  (let ((inhibit-changing-match-data t))
     (team/with-file
-    file
-    (setq new-line-str
-          (if (re-search-forward "\r\n" nil t 1)
-              "\r\n"
-            "\n"))
-    (--each lines
-      (goto-char (point-min))
-      (forward-line it)
-      (goto-char (point-at-eol))
-      (insert (concat "// " comment-string))))))
-
-
-
-
-
-
-
+     file
+     (if (re-search-forward "\r\n" nil t 1)
+         t
+       nil))))
 
 
 
