@@ -108,19 +108,21 @@
   "Run nuke with TARGET in `benj-roslyn-tools/proj-path'."
   (benj-roslyn-tools/run-nuke "--target" target))
 
+(defvar benj-roslyn-tools/nuke-build-proc nil)
 (defun benj-roslyn-tools/run-nuke (&rest args)
   "Run nuke in `benj-roslyn-tools/proj-path'."
   (save-some-buffers)
   (let ((default-directory benj-roslyn-tools/proj-path))
-    (nuke/runner-core args)))
+    (setq benj-roslyn-tools/nuke-build-proc (nuke/runner-core args))))
+
 
 (defun nuke/runner-core (&rest args)
-  (benj-start-proccess-flatten-args
-   "roslyn-tools-nuke"
-   (benj-roslyn-tools/nuke-proc-buff)
-   "nuke"
-   args)
-  (benj-roslyn-tools/pop-to-nuke-buff))
+  (prog1 (benj-start-proccess-flatten-args
+    "roslyn-tools-nuke"
+    (benj-roslyn-tools/nuke-proc-buff)
+    "nuke"
+    args)
+   (benj-roslyn-tools/pop-to-nuke-buff)))
 
 
 ;; TODO with callback
@@ -332,6 +334,15 @@ see `benj-roslyn-proj-configs'"
   (interactive)
   (benj-roslyn-tools/erase-analyzer-log-buff-if-exists)
   (setq benj-roslyn-last-args (list sln args))
+
+  (when (process-live-p benj-roslyn-tools/nuke-build-proc)
+    (set-process-sentinel benj-roslyn-tools/nuke-build-proc
+                          #'(lambda (proc code)
+                            (pcase code
+                              ("finished\n" (benj-roslyn-rerun-last))
+                              (code (error "nuke build exited abnormally with code %s" code)))))
+    (error "Scheduled rerun after nuke build..."))
+
   (let* ((file-var (benj-roslyn/diagnostics-file-name sln))
          (filter
           (benj-roslyn-tools/handle-proc
@@ -340,8 +351,7 @@ see `benj-roslyn-proj-configs'"
            file-var
            (lambda (p s file-name)
              (benj-roslyn-tools/collect-diagnostics p s file-name)
-             (benj-roslyn-tools/default-filter p s)
-             )))
+             (benj-roslyn-tools/default-filter p s))))
          (sentinel
           (benj-roslyn-tools/handle-proc
            'p
