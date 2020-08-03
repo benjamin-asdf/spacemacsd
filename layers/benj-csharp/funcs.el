@@ -274,8 +274,6 @@ Depends on mono and an omnisharp build at `benj/omnisharp-server-executable'."
 ;; I don't want that
 (advice-add 'omnisharp--attempt-to-start-server-for-buffer :around (lambda (orig-fun)))
 
-;; (advice-add )
-
 
 (setq omnisharp-host "http://localhost:8083/")
 
