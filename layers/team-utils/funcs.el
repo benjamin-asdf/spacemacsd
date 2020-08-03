@@ -90,3 +90,7 @@ This also goes to point min point."
     (insert-file-contents-literally ,file)
     (goto-char (point-min))
     ,@body))
+
+(defmacro // (arglist &rest body)
+  "Define a lambda with ARGLIST and BODY."
+  `(lambda ,arglist ,@body))
