@@ -244,6 +244,7 @@ Depends on mono and an omnisharp build at `benj/omnisharp-server-executable'."
                                      "--stdio"
                                      "-v"
                                      "-s"
+                                     "-p" "8083"
                                      sln
                                      ;; Options:
                                      ;; -? | -h | --help           Show help information
