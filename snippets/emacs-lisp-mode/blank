@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : blank
+#key : blank
+#contributor : benj
+# --
+"^[[:blank:]]*"

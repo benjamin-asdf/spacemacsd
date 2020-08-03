@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : succes
+#key : succes
+#contributor : benj
+# --
+        if ($0) {
+            Console.WriteLine("success.");
+        }

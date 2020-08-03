@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : gomin
+#key : gomin
+#contributor : benj
+# --
+(goto-char (point-min))
