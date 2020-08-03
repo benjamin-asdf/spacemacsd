@@ -675,33 +675,23 @@ as appropriate.
 
 
 
+
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-;;
-
-(defun benj-roslyn-tools/add-comments-to-warnings (in-file comment-string)
+(defun benj-roslyn-tools/add-comments-to-warnings (in-file string)
   "Search IN-FILE for diagnostic warnings.
 Add COMMENT-STRING to the end of all the lines."
+  (benj-roslyn/with-collected-lines #'benj-roslyn-tools/add-to-lines string))
+
+
+(defun benj-roslyn/with-collected-lines (in-file op &rest args)
+  "Collect diagnostic lines for IN-FILE and call OP with arguments
+FILE and a LIST of lines. And rest ARGS"
   (with-temp-buffer
     (insert-file-contents-literally in-file)
     (--each
         (benj-roslyn-tools/collect-lines-by-file)
-      (benj-roslyn-tools/add-comment-to-lines comment-string (car it) (cadr it)))))
+      (funcall op (car it) (cadr it) args))))
 
 
 (defun benj-roslyn-tools/collect-lines-by-file ()
@@ -732,7 +722,7 @@ Evaluate to an list of the form (FILE . (LINES))"
      success))
 
 
-(defun benj-roslyn-tools/add-to-lines (string file lines)
+(defun benj-roslyn-tools/add-to-lines (file lines &rest arg)
   "Add chsarp comment COMMENT-STRING to all LINES in FILE.
 LINES is a list of numbers."
   (team/with-file
@@ -744,7 +734,7 @@ LINES is a list of numbers."
      (goto-char (point-at-eol))
      (when (looking-back "\r")
        (forward-char -1))
-     (insert string))))
+     (insert (car arg)))))
 
 
 (defun team/crlf-p (file)
