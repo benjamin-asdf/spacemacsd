@@ -98,3 +98,8 @@ Use `projectile-locate-dominating-file' to get the unity proj root"
    (setq benj-flycheck/last-error-messages (flycheck-help-echo-all-error-messages errors))))
 
 (advice-add 'flycheck-pos-tip-error-messages :after #'benj-flycheck/display-error-messages-advice)
+
+
+(defun teamel/yank-idlegame-sln ()
+  (interactive)
+  (kill-new (string-trim idlegame-sln-path)))
