@@ -182,32 +182,34 @@ With non nil prefix arg NOCS, skip cs files."
                    (format "%s is %s \ncheckout:\n" (car it) (cadr it))
                    t
                  (?o "[o]ur stage"   "--ours")
-                 (?t "[t]heir stage" "--theirs")))
+                 (?t "[t]heir stage" "--theirs")
+                 (?s "[s]kip")))
           (ours (string-equal arg "--ours")))
-     (pcase (cadr it)
-       ("AU"
-        (if ours
-            (benj-checkout-stage arg (car it))
-          ;; added by us, they don't have a version, so rm
-          (benj-run-git-sync "rm" "--" (car it))))
-       ("UA"
-        ;; added by them,
-        ;; actually not sure how you have that, not by deleting on our side, that would be DU.
-        ;; I think it only happens with renames maybe
-        (if ours
-            (benj-run-git-sync "rm" "--" (car it))
-            (benj-checkout-stage arg (car it))))
-       ("DD" (benj-run-git-sync "rm" "--" (car it)))
-       ("DU"
-        (if ours
-            (benj-run-git-sync "rm" "--" (car it))
-          (benj-checkout-stage arg (car it))))
-       ("UD"
-        (if ours
-            (benj-checkout-stage arg (car it))
-          (benj-run-git-sync "rm" "--" (car it))))
-       ("UU"  (benj-checkout-stage arg (car it)))
-       ("AA"  (benj-checkout-stage arg (car it)))))
+     (when arg
+       (pcase (cadr it)
+        ("AU"
+         (if ours
+             (benj-checkout-stage arg (car it))
+           ;; added by us, they don't have a version, so rm
+           (benj-run-git-sync "rm" "--" (car it))))
+        ("UA"
+         ;; added by them,
+         ;; actually not sure how you have that, not by deleting on our side, that would be DU.
+         ;; I think it only happens with renames maybe
+         (if ours
+             (benj-run-git-sync "rm" "--" (car it))
+           (benj-checkout-stage arg (car it))))
+        ("DD" (benj-run-git-sync "rm" "--" (car it)))
+        ("DU"
+         (if ours
+             (benj-run-git-sync "rm" "--" (car it))
+           (benj-checkout-stage arg (car it))))
+        ("UD"
+         (if ours
+             (benj-checkout-stage arg (car it))
+           (benj-run-git-sync "rm" "--" (car it))))
+        ("UU"  (benj-checkout-stage arg (car it)))
+        ("AA"  (benj-checkout-stage arg (car it))))))
    (benj-git/unmerged-status (when nocs "*.cs$"))))
 
 (defun benj-git/unmerged-status (&optional exclusion-regex)
