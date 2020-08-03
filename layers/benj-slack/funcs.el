@@ -81,8 +81,7 @@
                               )
 
         (alert body :icon slack-alert-icon :title title :category 'slack)
-        (benj/play-idlegame-sound)
-        (start-process "notify-man" "*best-notify*" "notify-send" title body)))
+        (benj/play-idlegame-sound)))
 
   ;; (alert (format "New slack message: %s" message) :title room)
   ;; (notifications-notify :title room :body message :icon slack-alert-icon :title )
