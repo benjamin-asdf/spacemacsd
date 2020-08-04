@@ -526,6 +526,15 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   ;; TODO to not need  to have it?
   (setq package-check-signature nil)
 
+
+  (defun team/spacemacs-define-keys (leader-keys prefix-name &rest bindings)
+    "Define spacemacs keys."
+    (spacemacs/declare-prefix leader-keys prefix-name)
+    (eval
+     `(mapc (lambda (x) (spacemacs/set-leader-keys (concat ,leader-keys (car x)) (cdr x)))
+            '(,@bindings))))
+
+
   )
 
 (defun dotspacemacs/user-load ()

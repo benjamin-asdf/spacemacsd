@@ -94,6 +94,22 @@ This also goes to point min point."
 
 
 
+
+(defun team/regex-builder-with-region ()
+  "Copy region into a temp file and start regex builder there"
+  (interactive)
+  (let ((str (region-str)))
+    (find-file (team-create-temp-file-on-region))
+    (delete-other-windows)
+    (regexp-builder)
+    (with-current-buffer
+        (get-buffer reb-buffer)
+      (insert (regexp-opt (list str) nil)))))
+
+
+
+
+
 (defmacro // (arglist &rest body)
   "Define a lambda with ARGLIST and BODY."
   `(lambda ,arglist ,@body))
@@ -114,3 +130,6 @@ This is the version that the manual recommends for going to a line in lisp progr
      (line->
          ,line)
      (goto-char (point-at-eol))))
+
+(defun region-str ()
+  (buffer-substring-no-properties (region-beginning) (region-end)))
