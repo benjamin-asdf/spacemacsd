@@ -508,15 +508,17 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
                 "-I"
                 "-A" "1"
                 "-e" "[DiagnosticAnalyzer(LanguageNames.CSharp)]")))
-    (with-temp-buffer
-      (let ((status (apply 'call-process "rg" nil (current-buffer) nil args)))
-        (unless (eq status 0)
-	        (error "%s exited with status %s" "rg" status))
-        (goto-char (point-min))
-        (split-string
-         (with-output-to-string
-           (while (re-search-forward "public class \\(\\w+\\) :"  nil t)
-             (princ (concat (match-string-no-properties 1) "\n")))))))))
+    (concat
+     "bannedapianalyzer"
+     (with-temp-buffer
+       (let ((status (apply 'call-process "rg" nil (current-buffer) nil args)))
+         (unless (eq status 0)
+	         (error "%s exited with status %s" "rg" status))
+         (goto-char (point-min))
+         (split-string
+          (with-output-to-string
+            (while (re-search-forward "public class \\(\\w+\\) :"  nil t)
+              (princ (concat (match-string-no-properties 1) "\n"))))))))))
 
 
 
