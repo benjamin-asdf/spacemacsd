@@ -439,7 +439,7 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
                 "-I"
                 "-A" "1"
                 "-e" "[DiagnosticAnalyzer(LanguageNames.CSharp)]")))
-    (concat
+    (cons
      "bannedapianalyzer"
      (with-temp-buffer
        (let ((status (apply 'call-process "rg" nil (current-buffer) nil args)))
