@@ -285,11 +285,17 @@ see `benj-roslyn-proj-configs'"
       (point-max))
      nil
      file-name)
+    (write-region (buffer-substring-no-properties
+                   (point-min)
+                   (point-max))
+                  nil
+                  "/tmp/last-roslyn-run")
     (kill-buffer)))
 
 (defun benj-roslyn-runner (sln &rest args)
   "Run release analzyers with SLN and additional ARGS"
   (interactive)
+  (pushnew "-all-diagnostics" place :test 'equal)
   (benj-roslyn-tools/erase-analyzer-log-buff-if-exists)
   (setq benj-roslyn-last-args (list sln args))
 
