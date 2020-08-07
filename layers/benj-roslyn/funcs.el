@@ -8,14 +8,12 @@
 
 (defconst benj-roslyn-tools/common-types-filename (concat (file-name-as-directory benj-roslyn-tools/analyzers-proj-path) "CommonTypes.cs"))
 
-(file-exists-p benj-roslyn-tools/analyzers-tests-dir)
-
 
 (defconst benj-roslyn-tools/cli-bin-dir (concat (file-name-as-directory benj-roslyn-tools/proj-path) "output/"))
 (defconst benj-roslyn-tools/cli-executable (concat (file-name-as-directory benj-roslyn-tools/cli-bin-dir) benj-roslyn-cli-name))
 (defconst benj-roslyn-tools/global-analyzers-file (concat (file-name-as-directory benj-roslyn-tools/proj-path) "src/Analyzers/GlobalAnalysis/GlobalAnalyzers.cs"))
 (defconst idlegame-sln-path (concat idlegame-project-root "IdleGame.sln"))
-(defconst benj-roslyn-tools/playground-proj (concat (file-name-as-directory cos-dir) (file-name-as-directory "RoslynPlayground")))
+(defconst benj-roslyn-tools/playground-proj (concat (file-name-as-directory benj-roslyn-tools/proj-path) (file-name-as-directory "RoslynPlayground")))
 (defconst benj-roslyn-tools/playground-sln (concat benj-roslyn-tools/playground-proj "RoslynPlayground.sln"))
 (defconst benj-roslyn-tools/playground-proj-csproj (concat benj-roslyn-tools/playground-proj "src/Playground.csproj"))
 (defconst benj-roslyn-tools/banned-analyzer-proj "/home/benj/repos/BannedApiAnalyzer/source/BannedApiAnalyzer.CSharp/")
