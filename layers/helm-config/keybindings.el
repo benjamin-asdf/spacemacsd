@@ -7,19 +7,20 @@
   )
 
 
+(team/spacemacs-define-keys
+ "oh"
+ "helm"
+  '("t" . helm-top)
+  '("o" . helm-occur)
+  '("i" . helm-info)
+  '("d" . benj/helm-find-file-recursively)
+  '("/" . (lambda () (interactive) (spacemacs/helm-project-smart-do-search t)))
+  '("m" . helm-multi-swoop-current-mode))
+
+(spacemacs/declare-prefix "ohs" "swwop")
+(spacemacs/set-leader-keys
+  "ohsb" 'team-helm/swoop-block-swoop
+  "ohsf" 'team-helm/swoop-narrow-fun)
 
 
-(defconst benj-helm-leader-keys "oh")
-
-(spacemacs/declare-prefix benj-helm-leader-keys "helm")
-
-(progn
-  (mapc (lambda (x)
-          (spacemacs/set-leader-keys (concat benj-helm-leader-keys (car x)) (cdr x)))
-        '(("t" . helm-top)
-          ("o" . helm-occur)
-          ("i" . helm-info)
-          ("d" . benj/helm-find-file-recursively)
-          ("/" . (lambda () (interactive) (spacemacs/helm-project-smart-do-search t)))
-          ("s" . helm-multi-swoop-current-mode)
-          )))
+;; (spacemacs/set-leader-keys "ohqq" '#(lambda () (interactive)))

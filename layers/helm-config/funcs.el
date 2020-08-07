@@ -26,12 +26,57 @@
 
 
 
+;; blockwise swoop
+
+(defun team-helm/hs-block ()
+  "Set point to beginning of block, evaluate to point at end of block. See `hs-hide-block'"
+  (require 'hideshow)
+  (interactive)
+  (let ((comment-reg (hs-inside-comment-p)))
+    (cond
+     ((and comment-reg (or (null (nth 0 comment-reg))
+                     (<= (count-lines (car comment-reg) (nth 1 comment-reg)) 1)))
+      (message "(Not enough comment lines)"))
+     ((or comment-reg
+	        (hs-looking-at-block-start-p)
+          (hs-find-block-beginning))
+      (if comment-reg
+          (error "Comments not supported yet.")
+          ;; (hs-hide-comment-region (car comment-reg) (cadr comment-reg) end)
+        (when (hs-looking-at-block-start-p)
+          (let ((mdata (match-data t))
+                (header-end (match-end 0))
+                p q ov)
+	          ;; `p' is the point at the end of the block beginning, which
+	          ;; may need to be adjusted
+	          (save-excursion
+	            (goto-char (funcall (or hs-adjust-block-beginning #'identity)
+			                            header-end))
+	            (setq p (line-end-position)))
+
+	          ;; `q' is the point at the end of the block
+	          (hs-forward-sexp mdata 1)
+	          (setq q (if (looking-back hs-block-end-regexp nil)
+		                    (match-beginning 0)
+		                  (point)))
+            (when (and (< p q) (> (count-lines p q) 1))
+              (set-mark q))
+            (goto-char (min p header-end)))))))))
 
 
-;; helm rg
+(defun team-helm/swoop-block-swoop ()
+  "Narrow the buffer to the current block and run `helm-swoop'.
+For many use cases, see `narrow-to-defun', "
+  (interactive)
+  (team-helm/hs-block)
+  (narrow-to-region (point) (mark))
+  (helm-swoop))
 
-
-
+(defun team-helm/swoop-narrow-fun ()
+  "Narrow the buffer to the current defun and run `helm-swoop'."
+  (interactive)
+  (narrow-to-defun)
+  (helm-swoop))
 
 
 
