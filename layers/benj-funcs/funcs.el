@@ -119,6 +119,11 @@ Default is register a."
   (interactive)
   (evil-set-register (or reg ?a) (evil-get-register ?\" t)))
 
+(defun team/pull-register-2-to-b ()
+  "Not documented."
+  (interactive)
+  (evil-set-register ?b (evil-get-register ?2 t)))
+
 
 ;; TODO fix case where there are no lines above us here
 (defun benj-delete-some-whitespace ()
