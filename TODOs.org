@@ -158,3 +158,13 @@ probably need to enable X if it is graphical app. I haven't done it, but it will
 
 * get into smartparens
   https://smartparens.readthedocs.io/en/latest/automatic-escaping.html
+
+
+* juggle registers
+** func to move a -> b, b -> c etc
+   - define registers that are already taken and skip them for this thing
+   -
+** another version that puts 0 -> a, 1 -> b etc
+
+
+* goto to projectile project, start smart project search
