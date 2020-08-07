@@ -458,38 +458,51 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
               (princ (concat (match-string-no-properties 1) "\n"))))))))))
 
 
-
 ;; obviously you should figure out, async source..?
 (defun benj-roslyn-tools/rebuild-helm-analyzer-source ()
   (interactive)
   (setq helm-benj-roslyn-analzyers-source
         (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-tools/available-analzyer-names))))
 
+(defmacro team/--with-cs-files (dir &rest forms)
+  "Eval FORMS with all cs files. Anaphoric it as the file name."
+  `(--map
+    (team/with-file it ,@forms)
+    (directory-files-recursively ,dir "\\.cs")))
 
-;; TODO would be nice figure out how to write macros
-(defun benj-roslyn-tools/comment-out-diagnostic-analzyers (&optional dir)
-  "Find DiagnosticAnalyzer attributes DIR and comment them out."
-  (interactive)
-  (let ((dir (or dir benj-roslyn-tools/analyzers-proj-path)))
-    (save-some-buffers)
-    (--map
-     (with-temp-file it
-       (insert-file-contents-literally it)
-       (while (re-search-forward "^\\[DiagnosticAnalyzer(LanguageNames.CSharp)\\]" nil t)
-         (replace-match (concat "//" (match-string-no-properties 0)))))
-     (directory-files-recursively dir "\\.cs"))))
+(defmacro benj-roslyn-tools/foreach-proj-file (&rest forms)
+  "Eval form with temp file for each cs file inside `benj-roslyn-tools/proj-path'."
+  (let ((dir (make-symbol "directory")))
+    `(let ((,dir benj-roslyn-tools/analyzers-proj-path))
+       (save-some-buffers)
+       (team/--with-cs-files ,dir ,@forms))))
 
-(defun benj-roslyn-tools/comment-in-diagnostic-analzyers (&optional dir)
-  "Find DiagnosticAnalyzer attributes DIR and comment them in."
-  (interactive)
-  (let ((dir (or dir benj-roslyn-tools/analyzers-proj-path)))
-    (save-some-buffers)
-    (--map
-     (with-temp-file it
-       (insert-file-contents-literally it)
-       (while (re-search-forward "^//\\[DiagnosticAnalyzer(LanguageNames.CSharp)\\]" nil t)
-         (replace-match "[DiagnosticAnalyzer(LanguageNames.CSharp)]")))
-     (directory-files-recursively dir "\\.cs"))))
+(defmacro benj-roslyn-tools/define-reg-repl (name doc regex replace)
+  `(defun ,name ()
+     (interactive)
+     (benj-roslyn-tools/regex-repl-whole-proj
+      ,regex
+      ,replace)))
+
+;; we could define a comment out - in thing instead
+;; that would only take the string
+(benj-roslyn-tools/define-reg-repl
+ benj-roslyn-tools/comment-in-analyzers
+ "Find DiagnosticAnalyzer attributes and comment them in."
+ "^//\\[DiagnosticAnalyzer(LanguageNames.CSharp)\\]"
+ "[DiagnosticAnalyzer(LanguageNames.CSharp)]")
+
+(benj-roslyn-tools/define-reg-repl
+ benj-roslyn-tools/comment-out-diagnostic-analzyers-best
+ "Find DiagnosticAnalyzer attributes and comment them out."
+ "^\\[DiagnosticAnalyzer(LanguageNames.CSharp)\\]"
+ "//[DiagnosticAnalyzer(LanguageNames.CSharp)")
+
+(defun benj-roslyn-tools/regex-repl-whole-proj (regex replace)
+  "Not documented."
+  (eval `(benj-roslyn-tools/foreach-proj-file
+     (while (re-search-forward regex nil t)
+       (replace-match ,replace)))))
 
 
 (defun benj-roslyn-tools/log-goto-warning-location ()
