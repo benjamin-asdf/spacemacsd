@@ -96,12 +96,6 @@
   ;; (pop-to-buffer (benj-roslyn-tools/nuke-proc-buff))
   )
 
-;; TODO
-;; (defun benj-roslyn-tools/clean-and-build ()
-;;   "Clean RoslynTools and build."
-;;   (interactive)
-;;   )
-
 (defun benj-roslyn-tools/run-nuke-target (target)
   "Run nuke with TARGET in `benj-roslyn-tools/proj-path'."
   (benj-roslyn-tools/run-nuke "--target" target))
@@ -122,43 +116,6 @@
     args)
    (benj-roslyn-tools/pop-to-nuke-buff)))
 
-
-;; TODO with callback
-;; (defun benj-roslyn-tools/run-nuke (callback &rest args)
-;;   "Run nuke in `benj-roslyn-tools/proj-path'.
-;; If CALLBACK non nil, do not immediatly pop to buffer.
-;; if CALLBACK is a symbol bound to a function without parameters, it get's called after the process finishes.
-;; "
-;;   ;; todo callback could have the value 'pop-to-nuke-buff
-;;   (let* ((default-directory benj-roslyn-tools/proj-path)
-;;          (proc (benj-start-proccess-flatten-args
-;;                 "roslyn-tools-nuke"
-;;                 (benj-roslyn-tools/nuke-proc-buff)
-;;                 "nuke"
-;;                 args)))
-;;     (or (and
-;;          (fboundp callback)
-;;          (set-process-sentinel
-;;           proc
-;;           (lambda (proc evnt)
-;;             (apply callback))))
-;;         (benj-roslyn-tools/pop-to-nuke-buff))))
-
-;; (benj-roslyn-tools/run-nuke #'benj-roslyn-tools/pop-to-nuke-buff "--target" "Publish")
-
-
-;; (defun benj-roslyn-tools/run-nuke (target)
-;;   "Run nuke in `benj-roslyn-tools/proj-path'."
-;;   (let ((buff-name "*nuke-roslyn-tools*")
-;;         (default-directory benj-roslyn-tools/proj-path))
-;;     (call-process
-;;      "nuke"
-;;      nil
-;;      (get-buffer-create buff-name)
-;;      nil
-;;      "--target"
-;;      target)
-;;     (pop-to-buffer buff-name)))
 
 (defun benj-roslyn-tools/pop-to-analyzer-log ()
   "Pop to `benj-roslyn-tools/analzyer-log-file'."
@@ -289,7 +246,7 @@ see `benj-roslyn-proj-configs'"
   ;; (font-lock-add-keywords)
   (setq buffer-read-only nil)
 
-  (evil-set-initial-state 'normal)
+  ;; (evil-set-initial-state 'normal)
 
   )
 
@@ -304,7 +261,9 @@ see `benj-roslyn-proj-configs'"
 (add-to-list 'auto-mode-alist `(,(format "\\%s$" benj-roslyn-tools/analzyer-log-file-ext) . analyzer-log-mode))
 
 
-;; TODO
+;; TODO in order to get the buffer in the lambda
+;; I have to use make symbol
+
 
 (defun benj-roslyn-tools/collect-diagnostics (proc string file-name)
   (when (string-match-p (format "\\(Starting Analyzer CLI with arguments:\\)\\|\\(%s\\)"
@@ -374,32 +333,6 @@ see `benj-roslyn-proj-configs'"
       (with-current-buffer
           buff
         (funcall #',op ,p ,s ,file-name)))))
-
-;; (defmacro benj-roslyn-tools/proc-handle (file-var p s &rest body)
-;;   "Eval to a lambda, P: symbol to bind the proc to. S: symbol to bind the string to.
-;; BODY: body to evaluate with the current handle buffer."
-;;   (declare (debug body))
-;;   (let ((f-tmp (gensym)))
-;;     `(let ((,f-tmp ,file-var))
-;;        (lambda (,p ,s)
-;;          (when-let ((buff (get-buffer-create ,f-tmp)))
-;;            (with-current-buffer
-;;                buff
-;;              ,@body))))))
-
-;; (defun benj-roslyn-tools/build-collect-diagnostic-filter (file-name)
-;;   `(lambda (proc string)
-;;      (benj-roslyn-tools/collect-diagnostics string ,file-name)
-;;      (funcall #'benj-roslyn-tools/default-filter proc string)))
-
-;; (defsubst benj-roslyn-tools/collect-diagnostics (string file-name)
-;;   (when-let ((buff
-;;               (and )
-;;               (buffer-live-p benj-roslyn-tools/diagnostic-collect-buff)
-;;               benj-roslyn-tools/diagnostic-collect-buff)
-;;              (with-current-buffer benj-roslyn-tools/diagnostic-collect-buff
-;;                (goto-char (point-max))
-;;                (insert string)))))
 
 (defun benj-roslyn/diagnostics-file-name (sln)
   (concat
