@@ -10,6 +10,11 @@
     (find-file file)
     (goto-char point)))
 
+;; some of these are literally the first lisp I ever put,
+;; take these as examples of bad/ beginner style
+;; benj--word-in-column should not exist. In elisp, the paradign is to move around in the buffer
+;; use funcs like `forward-line', `skip-chars-backward', `exchange-point-and-mark'
+
 (defun benj-copy-word-from-above ()
   "Copy the word or space from next non-empty line above."
   (interactive)
