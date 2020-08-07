@@ -85,6 +85,7 @@ return the file name of the create file"
   "Goto temp file FILE, insert file contents and evaluate BODY in there.
 This also goes to point min point."
   (declare (debug body))
+  (declare (indent 2))
   `(with-temp-file
       ,file
     (insert-file-contents-literally ,file)
@@ -104,7 +105,7 @@ This also goes to point min point."
     (regexp-builder)
     (with-current-buffer
         (get-buffer reb-buffer)
-      (insert (regexp-opt (list str) nil)))))
+      (insert str))))
 
 
 
