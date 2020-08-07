@@ -614,7 +614,7 @@ as appropriate.
 (defun benj-roslyn-tools/add-comments-to-warnings (in-file string)
   "Search IN-FILE for diagnostic warnings.
 Add COMMENT-STRING to the end of all the lines."
-  (benj-roslyn/with-collected-lines #'benj-roslyn-tools/add-to-lines string))
+  (benj-roslyn/with-collected-lines in-file #'benj-roslyn-tools/add-to-lines string))
 
 
 (defun benj-roslyn/with-collected-lines (in-file op &rest args)
@@ -622,9 +622,9 @@ Add COMMENT-STRING to the end of all the lines."
 FILE and a LIST of lines. And rest ARGS"
   (with-temp-buffer
     (insert-file-contents-literally in-file)
-    (--each
-        (benj-roslyn-tools/collect-lines-by-file)
-      (funcall op (car it) (cadr it) args))))
+    (eval `(--each
+         (benj-roslyn-tools/collect-lines-by-file)
+       (funcall op (car it) (cadr it) ,@args)))))
 
 
 (defun benj-roslyn-tools/collect-lines-by-file ()
