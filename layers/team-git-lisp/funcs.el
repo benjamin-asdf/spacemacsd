@@ -272,6 +272,7 @@ will create a conflict in a file called file."
       (benj-git//commit-with-msg "Initial commit")
       (shell-command "git checkout -b topic")
       (write-region "best line\n" nil "file")
+      (write-region "unrelated file\n" nil "unrelated-file")
       (benj-git//commit-with-msg "Making a change on topic")
       (shell-command "git checkout master")
       (write-region "another line\n" nil "file")
