@@ -438,24 +438,25 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
 
 (defun benj-roslyn-tools/available-analzyer-names ()
   "Search `benj-roslyn-tools/analyzers-proj-path' for analzyer syntax, list names."
-  (let ((default-directory benj-roslyn-tools/proj-path)
-        (args '(
-                "-F"
-                "-N"
-                "-I"
-                "-A" "1"
-                "-e" "[DiagnosticAnalyzer(LanguageNames.CSharp)]")))
-    (cons
-     "bannedapianalyzer"
-     (with-temp-buffer
-       (let ((status (apply 'call-process "rg" nil (current-buffer) nil args)))
-         (unless (eq status 0)
-	         (error "%s exited with status %s" "rg" status))
-         (goto-char (point-min))
-         (split-string
-          (with-output-to-string
-            (while (re-search-forward "public class \\(\\w+\\) :"  nil t)
-              (princ (concat (match-string-no-properties 1) "\n"))))))))))
+  (with-demoted-errors
+      (let ((default-directory benj-roslyn-tools/proj-path)
+         (args '(
+                 "-F"
+                 "-N"
+                 "-I"
+                 "-A" "1"
+                 "-e" "[DiagnosticAnalyzer(LanguageNames.CSharp)]")))
+     (cons
+      "bannedapianalyzer"
+      (with-temp-buffer
+        (let ((status (apply 'call-process "rg" nil (current-buffer) nil args)))
+          (unless (eq status 0)
+	          (error "Error during finding available analyzer names %s exited with status %s" "rg" status))
+          (goto-char (point-min))
+          (split-string
+           (with-output-to-string
+             (while (re-search-forward "public class \\(\\w+\\) :"  nil t)
+               (princ (concat (match-string-no-properties 1) "\n")))))))))))
 
 
 ;; obviously you should figure out, async source..?
