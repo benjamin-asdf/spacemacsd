@@ -79,6 +79,9 @@ For many use cases, see `narrow-to-defun', "
   (helm-swoop))
 
 
+;; TODO i though about advising `helm-swoop--get-content' or something inside thre
+;; (defvar team-helm/narrow-swoop-to-region nil)
+;; to have a helm swoop without narrowing the buffer
 
 
 
@@ -86,13 +89,40 @@ For many use cases, see `narrow-to-defun', "
 
 
 
+
+
+;; helm rg
+
+;; put the sailor stuff here
+
+(defun benj-helm-ag/comp-value-access ()
+  (interactive)
+  (helm-do-ag
+   (projectile-project-root)
+   nil
+   (format "\\.((Add)|(Set)|(Replace))<%s>\\("
+           (thing-at-point 'evil-word))))
+
+(advice-add 'sailor-find-comp-set :around
+            #'(lambda (func &rest args)
+                  (funcall-interactively #'benj-helm-ag/comp-value-access)))
 
 
 
 
+;; actually it's the other way around and the ingore doesn't work
+;; (defun benj-helm-search-many ()
+;;   (interactive)
+;;   (let ((helm-ag-use-grep-ignore-list nil))
+;;     (helm-do-ag
+;;      (projectile-project-root)
+;;      nil
+;;      nil
+;;      )))
 
 
-
+;; something where you (first) fuzzily filter for files
+;; and then only search matching files
 
 
 
