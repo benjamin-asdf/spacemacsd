@@ -275,29 +275,6 @@ CMD should be something."
        (while (re-search-forward "^\s+\\(\\w+\\): .+?$" nil t)
          (princ (concat (match-string 1) "\n")))))))
 
-;; todo tests
-;; (assert (member "skipTutorial" (bunel-read-yaml-file-fields bunel-best-gloals-file)))
-
-
-
-;; (defmacro t-becomes-nil )
-
-
-;; (defmacro t-becomes-nil (variable)
-;;   `(if (eq ,variable t)
-;;        (setq ,variable nil)))
-
-;; (t-becomes-nil 10)
-
-
-;; (t-becomes-nil foo)
-;; ≡ (if (eq foo t) (setq foo nil))
-
-
-
-
-
-
 (defun benj-unity/file-usages-with-guid-at-point ()
   "Use `benj-unity/quick-file-usages' with the thing at point."
   (interactive)
