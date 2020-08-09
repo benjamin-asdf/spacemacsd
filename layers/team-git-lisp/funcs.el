@@ -1,3 +1,4 @@
+(require 'magit)
 
 ;;; Code:
 (defun team-git-common-ancestor-as-kill ()
@@ -40,6 +41,11 @@ if REVISIONS has the length 1, default to HEAD and arg"
     (write-region (mapconcat 'identity prefabs "\n") nil "conflicted-prefabs")
     (benj-checkout-stage "--theirs" prefabs)))
 
+(defun benj-all-theirs ()
+  (interactive)
+  (benj-checkout-stage "--theirs" (magit-unmerged-files)))
+
+
 (defun benj-our-prefabs ()
   "See `benj-checkout-stage'"
   (interactive)
@@ -72,6 +78,7 @@ TODO: --merge."
   (interactive)
   (while (magit-discard-files--resolve (magit-unmerged-files))))
 
+;; TODO refactor using `magit-call-git' etc.
 (defun benj-run-git (&rest args)
  "Run git in *benj-git* buffer with current `magit-toplevel' as default directory."
  ;; TODO put the command in the buffer
@@ -82,9 +89,6 @@ TODO: --merge."
    ;; (insert (format "git.. %s" (mapconcat 'identity args " ")))
    proc))
 
-
-
-;; TODO just use `call-process'
 (defun benj-run-git-sync (&rest args)
   "Use `benj-run-git' and wait for process to finish. Returns the process"
   (let ((proc (benj-run-git args)))
@@ -226,7 +230,9 @@ Ignore file matching EXLUSION-REGEX, it non-nil."
 For documentation on the status codes see git-status man."
   (let ((default-directory (magit-toplevel)))
     (--map
-     (list (substring it 3 (length it)) (substring it 0 2))
+     (progn (unless (stringp it)
+              (error "git status doesn't return a string?"))
+            (list (substring it 3 (length it)) (substring it 0 2)))
      (process-lines "git" "status" "--porcelain"))))
 
 
@@ -244,21 +250,59 @@ For documentation on the status codes see git-status man."
                 (nth (% (+ (or (cl-position benj-git/last-visited-unmerged-cs-file files :test 'equal) -1) 1) (length files)) files))))
       (message "No more unmerged cs files!"))))
 
+(defmacro benj-git/with-unmerged-files (&rest body)
+  "Run BODY with the anaphoric 'files'."
+  (require 'magit)
+  `(if-let ((files (magit-unmerged-files)))
+       (progn ,@body)
+     (message "No more unmerged files.")))
+
+(defun benj-magit/ediff-resolve ()
+  "Start `magit-ediff-resolve' with first unmerged file."
+  (interactive)
+  (benj-git/with-unmerged-files
+   (magit-ediff-resolve (first files))))
+
+(defun benj-git/yank-first-unmerged-file ()
+  "Yank first unmerged file into clipboard using `magit-unmerged-files'"
+  (interactive)
+  (benj-git/with-unmerged-files
+   (kill-new (first files))))
+
+
 (defun benj-git/send-input-to-process ()
   "Ghetto send some string with newline to git process."
   (send-string (get-process "benj-git") (format "%s\n" (read-from-minibuffer "Send string: "))))
 
+;; (defun benj-git/fetch-and-merge ()
+;;   "First fetch dev, then merge dev."
+;;   ;; TODO something with direnv where we check the primary fetch branch
+;;   (interactive)
+;;   (benj-run-git-sync "fetch" "origin" "develop:develop")
+;;   (benj-run-git "merge" "develop" "--no-edit"))
+
 (defun benj-git/fetch-and-merge ()
   "First fetch dev, then merge dev."
   ;; TODO something with direnv where we check the primary fetch branch
+  (require 'magit)
   (interactive)
-  (benj-run-git-sync "fetch" "origin" "develop:develop")
-  (benj-run-git "merge" "develop" "--no-edit"))
+  (magit-run-git-async
+   "fetch" "origin" "develop:develop")
+  (benj-git/after-magit
+   (magit-merge-plain "develop")))
 
 (defun benj-git/update-modules ()
   "Update modules."
+  (require 'magit)
   (interactive)
   (magit-run-git-with-editor "submodule" "update" "--recursive"))
+
+(defun benj-git/reset-modules ()
+  "Reset modules."
+  (interactive)
+  (magit-run-git-async "submodule" "foreach" "git" "reset" "--hard")
+  (benj-git/after-magit
+   (magit-run-git-async "submodule" "foreach" "git" "clean" "-fd")))
 
 (defun benj-git/fire-up-merge-sample ()
   "Create an empty git repo, should put you in a state where doing \"git merge topic\"
@@ -277,7 +321,8 @@ will create a conflict in a file called file."
       (shell-command "git checkout master")
       (write-region "another line\n" nil "file")
       (benj-git//commit-with-msg "Making a change on master")
-      (find-file "file"))))
+      (find-file "file")
+      (magit-status))))
 
 
 (defun benj-git//commit-with-msg (msg)
@@ -302,3 +347,18 @@ will create a conflict in a file called file."
   ""
   (interactive"fFile to no-skip-worktree: ")
   (magit-run-git-async "update-index" "--no-skip-worktree" "--" file))
+
+
+
+;;; Utils
+
+(defun benj-git/after-magit (&rest body)
+  (set-process-sentinel
+   magit-this-process
+   `(lambda (process event)
+      (when (memq (process-status process) '(exit signal))
+        (if (> (process-exit-status process) 0)
+            (magit-process-sentinel process event)
+          (process-put process 'inhibit-refresh t)
+          (magit-process-sentinel process event)
+          ,@body)))))
