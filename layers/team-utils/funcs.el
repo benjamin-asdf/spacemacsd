@@ -134,3 +134,16 @@ This is the version that the manual recommends for going to a line in lisp progr
 
 (defun region-str ()
   (buffer-substring-no-properties (region-beginning) (region-end)))
+
+(defmacro team/--each-file (files &rest body)
+  `(--map
+    (team/with-file
+     it
+     ,@body)
+    ,files))
+
+(defmacro team/while-reg (reg &rest body)
+  `(while (re-search-forward
+           ,reg
+           nil t)
+     ,@body))
