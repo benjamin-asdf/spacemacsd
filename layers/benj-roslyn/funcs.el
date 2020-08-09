@@ -295,7 +295,7 @@ see `benj-roslyn-proj-configs'"
 (defun benj-roslyn-runner (sln &rest args)
   "Run release analzyers with SLN and additional ARGS"
   (interactive)
-  (pushnew "-all-diagnostics" place :test 'equal)
+  (pushnew "-all-diagnostics" args :test 'equal)
   (benj-roslyn-tools/erase-analyzer-log-buff-if-exists)
   (setq benj-roslyn-last-args (list sln args))
 
