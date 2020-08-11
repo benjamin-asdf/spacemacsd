@@ -39,6 +39,8 @@
 (spacemacs/set-leader-keys "orb" 'team/pull-register-2-to-b)
 (spacemacs/set-leader-keys "ore" 'team/last-eldoc-message-to-reg)
 
+(spacemacs/set-leader-keys "occ" 'quick-calc)
+
 (spacemacs/declare-prefix "of" "file")
 (spacemacs/set-leader-keys "ofy" 'benj-copy-file-pos-pretty)
 
