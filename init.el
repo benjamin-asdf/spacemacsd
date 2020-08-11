@@ -614,6 +614,12 @@ before packages are loaded."
   (setq org-agenda-files '("/home/benj/org/notes.org"))
 
 
+  ;; TEMP
+  ;; until they make the clone workspace nice again
+  (defadvice eyebrowse-create-window-config
+      (after benj-eyebrowse/create-config-adv last activate)
+    (--dotimes 2 (funcall #'winner-undo)))
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
