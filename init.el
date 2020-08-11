@@ -620,6 +620,12 @@ before packages are loaded."
       (after benj-eyebrowse/create-config-adv last activate)
     (--dotimes 2 (funcall #'winner-undo)))
 
+
+
+  (defun my/update-spacemacs ()
+    (let ((default-directory "~/.emacs.d"))
+      (magit-pull "spacemacs_public" "refs/heads/develop")))
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
