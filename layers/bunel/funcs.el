@@ -1,5 +1,3 @@
-(defconst bunel-handle-path "/tmp/bunel-handles"
-  "Directory path where the bunel bridge searches for handle files")
 (defconst bunel-idlegame-projects '("IdleGame" "IdleGameSymbolicLink" "IdleGameSymbolicLink-Extra")
   "List of possible projects to create handles for")
 (defconst bunel-default-unity-project "IdleGame"
