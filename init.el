@@ -611,6 +611,9 @@ before packages are loaded."
 
   (set-face-foreground 'line-number "slateBlue")
 
+  (setq org-agenda-files '("/home/benj/org/notes.org"))
+
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
