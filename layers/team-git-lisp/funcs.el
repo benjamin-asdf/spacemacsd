@@ -1,4 +1,4 @@
-(require 'magit)
+;;(require 'magit)
 
 ;;; Code:
 (defun team-git-common-ancestor-as-kill ()
