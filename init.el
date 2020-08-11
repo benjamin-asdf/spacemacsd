@@ -63,13 +63,13 @@ This function should only modify configuration layer settings."
      (python :variables python-backend 'anaconda)
      windows-scripts
      javascript
-     ruby
+     ;; ruby
      shell-scripts
      systemd
      html
      markdown
      yaml
-     typescript
+     ;; typescript
      nim
      c-c++
      vimscript
@@ -128,7 +128,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-additional-packages '(doom-themes
                                       emr
                                       auth-source-pass
-                                      gitlab
+                                      ;; gitlab
                                       dired-x
                                       nav-flash
                                       minsk-theme
