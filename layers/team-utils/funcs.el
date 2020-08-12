@@ -147,3 +147,19 @@ This is the version that the manual recommends for going to a line in lisp progr
            ,reg
            nil t)
      ,@body))
+
+
+(defmacro team/re-replace (reg replace)
+  `(team/while-reg
+    ,reg
+    (replace-match ,replace)))
+
+(defun ->$ (&optional text)
+  "Goto the end of the line.
+With TEXT, insert TEXT at the end of the line."
+  (goto-char (point-at-eol))
+  (when text (insert text)))
+
+
+(defun team/touch-empty-file (file)
+  (write-region "" nil file))
