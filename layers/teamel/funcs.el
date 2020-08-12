@@ -182,3 +182,23 @@ Use `projectile-locate-dominating-file' to get the unity proj root"
 (defun teamel/yank-idlegame-sln ()
   (interactive)
   (kill-new (string-trim idlegame-sln-path)))
+
+
+(defun teamel/yank-prefabs-for-rewrite ()
+  "Try to search /IdleGame/prefab-analzyer-warnings.txt for paths and put them into /IdleGame/prefabs-for-rewrite.txt."
+  (interactive)
+  (let ((default-directory cos-dir))
+    (team/with-file
+     "IdleGame/prefabs-for-rewrite.txt"
+     (insert
+      (mapconcat
+       #'identity
+       (-uniq
+        (team/with-file
+         "prefab-analzyer-warnings.txt"
+         (let ((res))
+           (while (re-search-forward "Assets/Prefabs" nil t)
+             (push (cadr (split-string (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+                   res))
+           res)))
+       "\n")))))
