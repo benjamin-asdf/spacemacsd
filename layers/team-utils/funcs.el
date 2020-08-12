@@ -111,6 +111,35 @@ This also goes to point min point."
 
 
 
+(defun team/relative-path (a-path b-path)
+  "The relative path looking from B-PATH to A-PATH, which should be
+absolute paths. B-PATH can either be a directory, or a file name."
+  (let ((a-parts (team/path-parts a-path))
+        (b-parts (team/path-parts (file-name-directory b-path)))
+        (res)
+        (common-part-index)
+        (common-part-over))
+    (--map-indexed
+     (when (not common-part-over)
+       (if (equal (nth-value it-index b-parts) it)
+           (setq common-part-index it-index)
+         (setq common-part-over t)))
+     a-parts)
+    (setq res
+          (subseq a-parts (+ common-part-index 1)))
+    (--dotimes (- (length b-parts) (+ common-part-index 1))
+      (push ".." res))
+    (mapconcat #'identity res "/")))
+
+(defun team/path-parts (path)
+  (--filter (not
+             (string-empty-p it))
+            (split-string path "/")))
+
+
+
+
+
 (defmacro // (arglist &rest body)
   "Define a lambda with ARGLIST and BODY."
   `(lambda ,arglist ,@body))
