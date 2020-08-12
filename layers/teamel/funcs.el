@@ -1,15 +1,94 @@
 (defconst teamel-debug-buttons-file (concat idlegame-project-root "Assets/Editor/BestGlobals/DebugButtons.cs"))
 
-
-(defun teamel-view-log ()
+(defun teamel/curl-yank ()
   "Usage: Click view complete raw in the job log, copy url into clipboard.
 Expects some valid url in the unamed register"
   (interactive)
-  (let ((buff-name "logs"))
-    (pop-to-buffer buff-name)
-    (erase-buffer)
-    (follow-mode)
-    (start-process "get-logs" buff-name "curl" (format "%s"(evil-get-register ?\")))))
+  (with-current-buffer-window
+      "*curl-yank*"
+      nil
+      nil
+      (teamel/curl-last-yank-this-buff)))
+
+(defun teamel/curl-last-yank-this-buff ()
+  (start-process
+   "curl-website"
+   (current-buffer)
+   "curl"
+   (teamel/last-yank)))
+
+(defun teamel/digest-resharper-warnings ()
+  "Invoke curl with the current yank.
+Parse output for resharper warnings, this sets `teamel/these-resharper-warnings'."
+  (interactive)
+  (with-temp-buffer
+    "*resharper-warnings*"
+      nil
+      nil
+    (let ((exit-status
+           (call-process
+            "curl"
+            nil
+            (current-buffer)
+            nil
+            (teamel/last-yank))))
+      (unless (eql exit-status 0)
+        (error "err getting reshaper warnings: curl exited abnormally"))
+      (teamel/parse-resharper-warnings))))
+
+(defvar teamel/these-resharper-warnings '())
+
+(defun teamel/parse-resharper-warnings ()
+  "Evaluate to a list of the form (FILE . LINE)"
+  (let ((res))
+    (teamel/fix-backward-slashes)
+    (goto-char (point-min))
+    (while
+        (and
+         (skip-chars-forward "^<")
+         (looking-at "<Issue")
+         (re-search-forward ".+File=\"\\(.+?\\)\".*Line=\"\\([[0-9]+?\\)\"" (point-at-eol) t))
+      (push
+       (cons
+        (concat
+         (file-name-as-directory
+          idlegame-project-root)
+         (match-string-no-properties 1))
+        (string-to-number (match-string-no-properties 2)))
+       res))
+    res))
+
+(defun teamel/fix-backward-slashes ()
+  (goto-char (point-min))
+  (while (re-search-forward "\\\\" nil t)
+    (replace-match "/")))
+
+(defun teamel/last-yank ()
+  (with-temp-buffer
+    (yank)
+    (buffer-string)))
+
+(defun teamel/these-resharper-warning-files ()
+  (-uniq (-map #'car teamel/these-resharper-warnings)))
+
+
+(defun teamel/fix-menu-items-for-these-resharper-warnings ()
+  "Depends on `teamel/these-resharper-warnings' being set,
+add UsedImplicitly to all menu item syntax."
+  (--map
+   (team/with-file
+    it
+    (open-line 1)
+    ;; FIXME there is a potential bug it the file already has
+    ;; this names space
+    (insert "using JetBrains.Annotations;")
+    (team/while-reg
+     "MenuItem"
+     (->$ "[UsedImplicitly]")))
+   (teamel/these-resharper-warning-files)))
+
+
+
 
 ;; todo
 ;;(defun teamel-delete-scriptass ())
