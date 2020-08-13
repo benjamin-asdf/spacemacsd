@@ -252,10 +252,11 @@ For documentation on the status codes see git-status man."
 
 (defmacro benj-git/with-unmerged-files (&rest body)
   "Run BODY with the anaphoric 'files'."
-  (require 'magit)
-  `(if-let ((files (magit-unmerged-files)))
-       (progn ,@body)
-     (message "No more unmerged files.")))
+  `(progn
+     (require 'magit)
+      (if-let ((files (magit-unmerged-files)))
+            (progn ,@body)
+          (message "No more unmerged files."))))
 
 (defun benj-magit/ediff-resolve ()
   "Start `magit-ediff-resolve' with first unmerged file."
