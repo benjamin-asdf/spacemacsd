@@ -30,9 +30,10 @@
 
 (defun team/csharp-superior-post-self-insert-function ()
   (when (and team/chsarp-superior-mode
-             (looking-back "\\(\\(if\\)\\|\\(foreach\\)\\)(.*)[[:blank:]]+?{")
-             (looking-at "[^;]+?;"))
-
+             (looking-back
+              (concat (regexp-opt '("if" "foreach" "using"))
+                      "[[:blank:]]*([^;]+)[[:blank:]]*{"))
+             (looking-at-p ".*;"))
     (let ((indent (current-indentation)))
       (kill-line)
       (team/->new-line)
@@ -42,10 +43,7 @@
       (insert "}")
       (forward-line -1)
       (evil-normal-state 1)
-      (skip-chars-forward "[:blank:]")
-      )
-    )
-  )
+      (skip-chars-forward "[:blank:]"))))
 
 
 (defun team/->new-line ()
