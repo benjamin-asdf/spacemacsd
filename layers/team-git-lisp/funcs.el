@@ -374,7 +374,7 @@ With ARG, default to 'develop'."
          (if arg
              "develop"
            (magit-read-branch-prefer-other
-            "Branch to fetch: "))))
+            "Branch to fetch"))))
     (magit-run-git-async
      "fetch"
      (magit-get-upstream-remote branch-name)
