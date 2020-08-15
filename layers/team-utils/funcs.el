@@ -192,3 +192,21 @@ With TEXT, insert TEXT at the end of the line."
 
 (defun team/touch-empty-file (file)
   (write-region "" nil file))
+
+
+(defmacro team/collect-reg (reg match)
+  "Collect REG matches into a list.
+MATCH: The match data group to collect."
+  `(let ((res '()))
+     (goto-char (point-min))
+     (team/while-reg
+      ,reg
+      (setq res (cons (match-string-no-properties ,match) res)))
+     res))
+
+(defun team/collect-reg (file reg match)
+  "Collect all REG matcher in FILE.
+MATCH: The match data group to collect."
+  (team/with-file
+   file
+   (team/collect-reg "^  m_Name: \\(\\w+\\)$" 1)))
