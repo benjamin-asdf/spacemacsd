@@ -109,6 +109,37 @@ For many use cases, see `narrow-to-defun', "
 
 
 
+(defmacro benj-helm-ag/define-proj-search (name init-form &rest args)
+  "Define a proj search. INIT-FORMAT is a form that evaluates to the initial helm input.
+ARGS are additional arguments for the rg search."
+  (let ((name (intern (concat "benj-helm-ag/" name))))
+    `(defun ,name ()
+     (interactive)
+     (let ((helm-ag-base-command ,(if args (concat helm-ag-base-command " " (mapconcat #'identity (-flatten args) " ")) helm-ag-base-command)))
+        (helm-do-ag
+         (projectile-project-root)
+         nil
+         ,init-form
+         )
+        ))))
+
+
+;; TODO
+(benj-helm-ag/define-proj-search
+ "comp-matcher"
+ (format "Matcher \\. ((\\n)|(\\r\\n))? %s" (thing-at-point 'evil-word))
+ "-U")
+
+(benj-helm-ag/define-proj-search
+ "comp-value"
+ (format "\\.((Get)|(Is))<%s>\\(\\)\(\\.value\)?" (thing-at-point 'evil-word)))
+
+;; (helm-do-ag
+;;  (projectile-project-root)
+;;  nil
+;;  "\\(defun"
+;;  )
+
 
 ;; actually it's the other way around and the ingore doesn't work
 ;; (defun benj-helm-search-many ()

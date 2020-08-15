@@ -23,4 +23,11 @@
   "ohsf" 'team-helm/swoop-narrow-fun)
 
 
+(team/spacemacs-define-keys
+ "os"
+ "search"
+ '("v" . benj-helm-ag/comp-value)
+ )
+
+
 ;; (spacemacs/set-leader-keys "ohqq" '#(lambda () (interactive)))
