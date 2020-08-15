@@ -1,20 +1,12 @@
 ;;(require 'magit)
 
 ;;; Code:
-(defun team-git-common-ancestor-as-kill ()
-  "Copy common ancestor with develpo as kill."
+(defun team/magit-common-ancestor ()
   (interactive)
-  (kill-new (team-git-common-ancestor)))
+  (kill-new (magit-git-string-ng "merge-base" "HEAD" (magit-read-branch-prefer-other "Get ancestor with"))))
 
-(defun team-git-common-ancestor (&rest revisions)
-  "Get last common ancestor between REVISIONS.
-Default to develop and HEAD, if REVISIONS has zero length,
-if REVISIONS has the length 1, default to HEAD and arg"
-  (let ((default-directory (projectile-project-root)))
-    (string-trim (shell-command-to-string
-                  (format "git merge-base %s %s"
-                          (or (and revisions (car revisions)) "develop")
-                          (or (and revisions (cadr revisions)) "HEAD"))))))
+;; (defun team/magit-common-ancestor-many ()
+;;   (interactive)
 
 
 (defun team-git-clear-merge-temp-files ()
@@ -348,6 +340,47 @@ will create a conflict in a file called file."
   ""
   (interactive"fFile to no-skip-worktree: ")
   (magit-run-git-async "update-index" "--no-skip-worktree" "--" file))
+
+(defun team/magit-unstage-regex (arg)
+  "Unstage all files matching `arg' using magit.
+If arg is 0, use 'prefab."
+  (interactive"P")
+  (require 'magit)
+  (unless arg (user-error "Prefix arg is either a string,
+or 0 to use .prefab$
+or 1 to use .meta$"))
+  (magit-with-toplevel
+    (if-let* ((match
+               (pcase arg
+                 (0 ".prefab$")
+                 (1 ".meta$")
+                 (_ arg)))
+              (files (--filter (string-match match it) (magit-unstaged-files))))
+        (magit-run-git-async
+         "checkout"
+         "--"
+         (mapcar
+          'identity
+          files))
+      (message "There are no unstaged files for %s" arg))))
+
+
+(defun team/magit-fetch-any (&optional arg)
+  "Read branch and fetch upstream into local.
+With ARG, default to 'develop'."
+  (interactive)
+  (require 'magit)
+  (let ((branch-name
+         (if arg
+             "develop"
+           (magit-read-branch-prefer-other
+            "Branch to fetch: "))))
+    (magit-run-git-async
+     "fetch"
+     (magit-get-upstream-remote branch-name)
+     (format "%1$s:%1$s" branch-name))))
+
+
 
 
 
