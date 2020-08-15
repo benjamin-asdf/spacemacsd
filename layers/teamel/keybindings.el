@@ -15,4 +15,6 @@
         '(("l" . teamel/curl-yank)
           ("b" . teamel-add-debug-button)
           ("B" . teamel-add-debug-button-with-region)
-          ("S" . teamel/yank-idlegame-sln))))
+          ("S" . teamel/yank-idlegame-sln)
+          ("s" . teamel/open-sources)
+          )))

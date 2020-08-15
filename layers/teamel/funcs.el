@@ -202,3 +202,10 @@ Use `projectile-locate-dominating-file' to get the unity proj root"
                    res))
            res)))
        "\n")))))
+
+(defun teamel/open-sources ()
+  (interactive)
+  (let ((default-directory (concat idlegame-assets-dir "#/Sources")))
+    (helm-find-files-1 " ")))
+
+
