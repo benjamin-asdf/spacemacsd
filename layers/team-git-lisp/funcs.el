@@ -362,7 +362,7 @@ or 1 to use .meta$"))
          (mapcar
           'identity
           files))
-      (message "There are no unstaged files for %s" arg))))
+      (message "There are no unstaged files for %s" match))))
 
 
 (defun team/magit-fetch-any (&optional arg)
