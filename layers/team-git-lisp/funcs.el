@@ -381,6 +381,10 @@ With ARG, default to 'develop'."
      (format "%1$s:%1$s" branch-name))))
 
 
+(defun team/magit-rebase-onto (target)
+  (interactive
+   (list (magit-read-other-branch-or-commit "Rebase onto")))
+  (magit-rebase-branch target (list "--autosquash" "--autostash" "-i")))
 
 
 

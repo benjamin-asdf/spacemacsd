@@ -208,4 +208,32 @@ Use `projectile-locate-dominating-file' to get the unity proj root"
   (let ((default-directory (concat idlegame-assets-dir "#/Sources")))
     (helm-find-files-1 " ")))
 
+(defun teamel/add-config-here ()
+  "Take the current field at point. Search in the same file for some config syntax
+and expand a snippet for a 'With...(this config)' method."
+  (interactive)
+  (let ((class-name)
+        (field-name)
+        (type))
+    (save-excursion
+      (line->0)
+      (re-search-forward
+       "public \\(\\w+\\) \\(\\w+\\)"
+       (line-end-position))
+      (setq field-name (match-string-no-properties 2))
+      (setq type (match-string-no-properties 1))
+      (re-search-backward
+       "public struct \\(\\w+\\) {"
+       nil)
+      (setq class-name (match-string-no-properties 1)))
+    (benj-roslyn-tools//yasnippet-insert
+     "autobconf"
+     (format "public static %s With" class-name)
+     `((class-name ,class-name)
+      (field-name ,field-name)
+      (type ,type)
+      (field-name-capital ,(capitalize field-name)))))
+  (re-search-backward "public static class" nil)
+  (open-line 1))
+
 

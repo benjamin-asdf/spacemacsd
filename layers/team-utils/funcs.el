@@ -210,3 +210,11 @@ MATCH: The match data group to collect."
   (team/with-file
    file
    (team/collect-reg "^  m_Name: \\(\\w+\\)$" 1)))
+
+(defun line->0 ()
+  "Goto beginning of line"
+  (goto-char (point-at-bol)))
+
+
+(defun team/capitalize-first-letter (s)
+  (concat (capitalize (substring s 0 1)) (substring s 1)))
