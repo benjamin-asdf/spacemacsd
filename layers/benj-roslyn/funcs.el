@@ -615,16 +615,15 @@ as appropriate.
    line-regex
    snippet-env))
 
-(defmacro benj-yasnippet/insert-snippet-before (snippet line-regex snippet-env)
+(defun benj-yasnippet/insert-snippet-before (snippet line-regex snippet-env)
   "Search forward for LINE-REGEX. Insert SNIPPET. SNIPPET-ENV expects a let style list. See `yas-insert-snippet'."
-  `(progn
-     (re-search-forward ,line-regex nil t)
-     (forward-line -1)
-     (yas-expand-snippet
-       ,snippet
-       nil
-       nil
-       ,snippet-env)))
+  (re-search-forward line-regex nil t)
+  (forward-line -1)
+  (yas-expand-snippet
+   snippet
+   nil
+   nil
+   snippet-env))
 
 
 
