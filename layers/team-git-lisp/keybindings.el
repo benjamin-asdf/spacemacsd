@@ -7,10 +7,14 @@
  '("s" . vc-revision-other-window)
  '("c" . vc-find-conflicted-file)
  '("n" . benj-git/goto-next-unmerged-cs-file)
+
+ ;; not really needed because we have the snippet
  ;; '("r" . (lambda () (interactive) (team-curr-revision-as-kill nil nil)))
- '("R" . (lambda () (interactive) (team-curr-revision-as-kill nil t)))
- '("b" . (lambda () (interactive) (team-curr-revision-as-kill t nil)))
- '("B" . (lambda () (interactive) (team-curr-revision-as-kill t t)))
+ ;; '("R" . (lambda () (interactive) (team-curr-revision-as-kill nil t)))
+ ;; '("b" . (lambda () (interactive) (team-curr-revision-as-kill t nil)))
+ ;; '("B" . (lambda () (interactive) (team-curr-revision-as-kill t t)))
+
+
  '("D" . benj-git/diff-files-only)
  '("f" . magit-file-checkout)
  '("C" . benj-quick-commit)
@@ -22,6 +26,7 @@
  '("0" . comm)
  '("r" . team/magit-unstage-regex)
  '("o" . team/magit-fetch-any)
+ '("R" . team/magit-rebase-onto)
 
  )
 
