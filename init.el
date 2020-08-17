@@ -626,6 +626,24 @@ before packages are loaded."
     (let ((default-directory "~/.emacs.d"))
       (magit-pull "spacemacs_public" "refs/heads/develop")))
 
+
+
+
+
+
+  (defadvice spacemacs/open-file-or-directory-in-external-app (around my/open-file-external-advice (&optional arg) activate)
+    (interactive"P")
+    (when (yes-or-no-p "Open file or dir externally? ")
+      ad-do-it))
+
+
+  (defadvice spacemacs/prompt-kill-emacs (around my/kill-emacs-adv activate)
+    (interactive)
+    (when (yes-or-no-p "Kill emacs? ")
+      ad-do-it))
+
+
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
