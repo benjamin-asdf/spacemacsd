@@ -116,6 +116,8 @@ This function should only modify configuration layer settings."
      benj-ediff
      benj-evil-motions
 
+     team-csharp
+
      )
 
    ;; List of additional packages that will be installed without being
