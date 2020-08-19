@@ -20,6 +20,14 @@
 (setq slack-enable-wysiwyg t)
 (setq alert-default-style 'notifier)
 
+
+(add-hook
+ 'slack-file-info-buffer-mode-hook
+ #'(lambda ()
+     (flyspell-mode -1)))
+
+
+
 (slack-start)
 
 (defun benj-slack-updload (file &optional file-type)
