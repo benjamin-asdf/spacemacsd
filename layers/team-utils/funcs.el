@@ -108,6 +108,51 @@ This also goes to point min point."
       (insert str))))
 
 
+
+
+(defvar team/yank-to-letter nil
+  "The last used register for `yanks-to-letter-registers'")
+(defun team/toggle-yank-to-letter ()
+  "Toggle putting yanks into letter registers."
+  (interactive)
+  (setq  team/yank-to-letter (if team/yank-to-letter nil (- ?a 1)))
+  (message
+   (if team/yank-to-letter
+       "yanks are stored in a,b,c.."
+     "not yanking to a,b,c.. anymore")))
+
+(defun team/yank--to-register-adv (func &rest args)
+  "Advice for `evil-set-register'."
+  (when (characterp team/yank-to-letter)
+    (setq team/yank-to-letter
+          (team/next-letter-register team/yank-to-letter))
+    (evil-set-register team/yank-to-letter (teamel/last-yank))
+    (when (> team/yank-to-letter
+             (+ ?a 24))
+      (setq team/yank-to-letter ?a))))
+
+
+
+
+
+
+(advice-add #'evil-yank :after #'team/yank--to-register-adv)
+
+(defun team/special-register-p (character)
+  (pcase character
+    (?e t)
+    (?f t)
+    (_ nil)))
+
+(defun team/next-letter-register (it)
+  (let ((next (+ 1 it)))
+    (or
+     (and (team/special-register-p
+           next)
+          (team/next-letter-register next))
+     next)))
+
+
 
 
 
