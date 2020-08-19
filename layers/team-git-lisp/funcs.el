@@ -7,6 +7,14 @@
 
 ;; (defun team/magit-common-ancestor-many ()
 ;;   (interactive)
+;;   (catch 'user-error "Nothing selected"
+;;          (let ((next))
+;;            (while (not (equal next "Nothing selected"))
+;;              (magit-read-branch-or-commit "Next rev for ancestors"))))
+;;   )
+
+(defun team//magit-common-ancestor (&rest revs)
+  (magit-git-string-ng "merge-base" revs))
 
 
 (defun team-git-clear-merge-temp-files ()
@@ -135,7 +143,6 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
   "See `team-curr-revision-as-kill', use `cos-dir' as default dir."
   (let ((default-directory cos-dir))
     (team-curr-revision-as-kill branch-name auto-insert-mode)))
-
 
 (defun team-curr-revision (&optional branch-name)
   "Current git revision. If BRANCH-NAME is non nil, evaluate to the branch name instead of the commit sha."
