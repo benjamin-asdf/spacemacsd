@@ -218,7 +218,7 @@ and expand a snippet for a 'With...(this config)' method."
     (save-excursion
       (line->0)
       (re-search-forward
-       "public \\(\\w+\\) \\(\\w+\\)"
+       "public \\([^ ]+\\) \\(\\w+\\)"
        (line-end-position))
       (setq field-name (match-string-no-properties 2))
       (setq type (match-string-no-properties 1))
@@ -232,8 +232,59 @@ and expand a snippet for a 'With...(this config)' method."
      `((class-name ,class-name)
       (field-name ,field-name)
       (type ,type)
-      (field-name-capital ,(capitalize field-name)))))
+      (field-name-capital ,(team/capitalize-first-letter field-name)))))
   (re-search-backward "public static class" nil)
+  (forward-line 1)
   (open-line 1))
 
 
+
+
+
+(defface teamel/flycheck-err-face
+  '(
+    (((class grayscale) (background light))
+     :foreground "DimGray" :weight bold :slant italic)
+    (((class grayscale) (background dark))
+     :foreground "LightGray" :weight bold :slant italic)
+    (((class color) (min-colors 88) (background light))
+     :foreground "Firebrick")
+    (((class color) (min-colors 88) (background dark))
+     :foreground "chocolate1"
+     :background "DarkSlateBlue")
+    (((class color) (min-colors 16) (background light))
+     :foreground "red")
+    (((class color) (min-colors 16) (background dark))
+     :foreground "red1")
+    (((class color) (min-colors 8) (background light))
+     :foreground "red")
+    (((class color) (min-colors 8) (background dark))
+     :foreground "yellow")
+    (t :weight bold :slant italic))
+  "Face to display team flycheck errs."
+  :group 'teamel/faces)
+
+
+(defun teamel/flycheck-momentary-string-display-function (errors)
+  "Not documented."
+  (momentary-string-display
+   (with-temp-buffer
+     (insert (flycheck-help-echo-all-error-messages errors))
+     (put-text-property
+      (point-min) (point-max)
+      'face 'teamel/flycheck-err-face
+      )
+     (buffer-string))
+   (save-excursion
+     (forward-line -10)
+     (re-search-forward
+      "^$" (save-excursion
+             (forward-line 20)
+             (point-at-eol))
+      t
+      1)
+     (point-at-bol))))
+
+
+(setq flycheck-display-errors-function
+      #'teamel/flycheck-momentary-string-display-function)

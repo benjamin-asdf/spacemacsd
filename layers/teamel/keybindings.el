@@ -1,20 +1,14 @@
+(team/spacemacs-define-keys
+ "oi"
+ "teamel"
+ '("l" . teamel/curl-yank)
+ '("b" . teamel-add-debug-button)
+ '("B" . teamel-add-debug-button-with-region)
+ '("S" . teamel/yank-idlegame-sln)
+ '("s" . teamel/open-sources)
+ '("k" . teamel/add-config-here)
+ )
 
 
-
-
-
-
-
-(defconst teamel-leader-keys "oi")
-
-(spacemacs/declare-prefix teamel-leader-keys "team-funcs")
-
-(progn
-  (mapc (lambda (x)
-          (spacemacs/set-leader-keys (concat teamel-leader-keys (car x)) (cdr x)))
-        '(("l" . teamel/curl-yank)
-          ("b" . teamel-add-debug-button)
-          ("B" . teamel-add-debug-button-with-region)
-          ("S" . teamel/yank-idlegame-sln)
-          ("s" . teamel/open-sources)
-          )))
+(spacemacs/set-leader-keys
+  "a"  'flycheck-display-error-at-point)
