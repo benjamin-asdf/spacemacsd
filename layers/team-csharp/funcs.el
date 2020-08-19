@@ -1,21 +1,5 @@
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (define-minor-mode team/chsarp-superior-mode
   "This mode adds chsarp syntax to strings when you put them on multiple lines."
   :group 'electricity
@@ -24,9 +8,18 @@
 	      (add-hook 'post-self-insert-hook
                   #'team/csharp-superior-post-self-insert-function
         )
+
+        ;; (font-lock-add-keywords
+        ;;  ;; nil
+        ;;  'csharp-mode
+        ;;                         '("\\(Matcher\\)\\.AllOf" 1 'info-single-quote)
+        ;;                         )
+
+        (font-lock-fontify-buffer)
         )
-    (remove-hook 'post-self-insert-hook #'team/csharp-superior-post-self-insert-function)
-    ))
+    (remove-hook 'post-self-insert-hook #'team/csharp-superior-post-self-insert-function)))
+
+(add-hook 'csharp-mode-hook #'team/chsarp-superior-mode)
 
 (defun team/csharp-superior-post-self-insert-function ()
   (when (and team/chsarp-superior-mode

@@ -81,7 +81,7 @@ This function should only modify configuration layer settings."
      pass
      ;; github
 
-     ;; benj
+     benj
      benj-funcs
      benj-keybindings
      benj-themes-config
@@ -134,6 +134,7 @@ This function should only modify configuration layer settings."
                                       dired-x
                                       nav-flash
                                       minsk-theme
+                                      ;; evil-quick-diff
                                       )
 
    ;; A list of packages that cannot be updated.
