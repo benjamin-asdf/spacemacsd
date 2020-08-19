@@ -6,7 +6,7 @@
 # --
 
 
-    public static `class-name` With`field-name-capital`(this AutoBuyRewardConfig config, `type` `field-name`) {
+    public static `class-name` With`field-name-capital`(this `class-name` config, `type` `field-name`) {
         config.`field-name` = `field-name`;
         return config;
     }
