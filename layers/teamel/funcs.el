@@ -147,14 +147,34 @@ Add debug button with region as init method body."
 ;; works
 ;;(helm :sources (helm-build-sync-source "name" :candidates '(( "best" . "bestreal" ) ("hehe" . "hehereal"))))
 
-(defun teamel/idlegame-cog-purchase ()
+(defun teamel/idlegame-cog (&optional target)
   "Run cog idlegame."
   (interactive)
   (let ((default-directory "/home/benj/repos/codegen/"))
-    (magit-run-git-with-editor "clean" "-fd")
-    (magit-run-git-with-editor "pull" "origin" "refs/heads/master")
-    (start-process "generate-purchase-data" "*generate-purchase-data*" "python3" "runner.py" "-s"))
-  (pop-to-buffer "*generate-purchase-data*"))
+    (magit-run-git "clean" "-fd")
+    (magit-run-git "pull" "origin" "refs/heads/master")
+    (with-current-buffer-window
+        "*cogg-idlegame*"
+        nil
+        nil
+      (start-process
+       "cogg-idlegame"
+       (current-buffer)
+       "python3"
+       "runner.py"
+       (or target idlegame-project-root)
+       "-s"))))
+
+(defun teamel/cog-target (&optional arg)
+  "Run cog with file or directory.
+If prefix ARG is non nil, ask for the file,
+else run with current file"
+  (interactive"P")
+  (teamel/idlegame-cog
+   (if arg (read-file-name "File to cogg: ")
+     (progn
+      (unless (buffer-file-name) (user-error "Buffer is not visiting a file."))
+      (buffer-file-name)))))
 
 
 
