@@ -554,17 +554,7 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
-  (setq-default evil-escape-key-sequence "fq")
-
-  (setq-default spacemacs-show-trailing-whitespace nil)
-
-  (setq-default avy-timeout-seconds 0.25)
-
-
-
-  (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
-
-
+ 
   ;;projectile-fd
   (defconst my-fd-command "fd -H -E=.git -tf . -0")
   (setq-default projectile-indexing-method 'alien)
@@ -572,23 +562,52 @@ before packages are loaded."
   (setq-default projectile-generic-command my-fd-command)
   (setq projectile-enable-caching t)
 
-  ;; (setq-default dotspacemacs-mode-line-unicode-symbols nil)
+
 
+  (setq-default evil-escape-key-sequence "fq")
+  (setq-default spacemacs-show-trailing-whitespace nil)
+  (setq-default avy-timeout-seconds 0.25)
+  (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
   (set-face-foreground 'spaceline-python-venv "SeaGreen")
-
   (setq-default split-width-threshold 80)
   (setq-default split-hight-threshold 500)
-
-  ;; if using minder, insert some messages to remember into todays journal.
-  ;; (when (configuration-layer/layer-used-p 'minder)
-  ;;   (minder-push-remembered-msgs))
-
   (show-smartparens-global-mode -1)
   (setq history-delete-duplicates t)
+  (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
+  (set-face-foreground 'line-number "slateBlue")
+  (setq org-agenda-files '("/home/benj/org/notes.org"))
 
-  ;; TEMP TODO
-  (load "/home/benj/.spacemacs.d/layers/benj-slack/funcs.el")
-  (load "/home/benj/.spacemacs.d/layers/benj-slack/keybindings.el")
+
+
+  ;; `evil-goggles'
+  (evil-goggles-mode)
+
+
+  (defun my/update-spacemacs ()
+    (let ((default-directory "~/.emacs.d"))
+      (magit-pull "spacemacs_public" "refs/heads/develop")))
+
+
+
+
+  (defadvice spacemacs/open-file-or-directory-in-external-app (around my/open-file-external-advice (&optional arg) activate)
+    (interactive"P")
+    (when (yes-or-no-p "Open file or dir externally? ")
+      ad-do-it))
+
+
+  (defadvice spacemacs/prompt-kill-emacs (around my/kill-emacs-adv activate)
+    (interactive)
+    (when (yes-or-no-p "Kill emacs? ")
+      ad-do-it))
+
+
+
+
+  (load (expand-file-name "named-macros.el"))
+
+
+
 
 
   (run-at-time 10 10 #'benj-sys/invoke-watch-vbs)
@@ -604,18 +623,8 @@ before packages are loaded."
     (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs"))
 
 
-  ;; TODO investigate
-  (defun org-eldoc-documentation-function (arg))
-
-  ;; `evil-goggles'
-  (evil-goggles-mode)
-
-  (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
-
-  (set-face-foreground 'line-number "slateBlue")
-
-  (setq org-agenda-files '("/home/benj/org/notes.org"))
-
+
+  ;; temp hacks
 
   ;; TEMP
   ;; until they make the clone workspace nice again
@@ -623,27 +632,15 @@ before packages are loaded."
       (after benj-eyebrowse/create-config-adv last activate)
     (--dotimes 2 (funcall #'winner-undo)))
 
+  ;; TODO investigate
+  (defun org-eldoc-documentation-function (arg))
 
-
-  (defun my/update-spacemacs ()
-    (let ((default-directory "~/.emacs.d"))
-      (magit-pull "spacemacs_public" "refs/heads/develop")))
-
-
+  ;; TEMP TODO
+  (load "/home/benj/.spacemacs.d/layers/benj-slack/funcs.el")
+  (load "/home/benj/.spacemacs.d/layers/benj-slack/keybindings.el")
 
 
 
-
-  (defadvice spacemacs/open-file-or-directory-in-external-app (around my/open-file-external-advice (&optional arg) activate)
-    (interactive"P")
-    (when (yes-or-no-p "Open file or dir externally? ")
-      ad-do-it))
-
-
-  (defadvice spacemacs/prompt-kill-emacs (around my/kill-emacs-adv activate)
-    (interactive)
-    (when (yes-or-no-p "Kill emacs? ")
-      ad-do-it))
 
 
 
