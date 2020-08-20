@@ -232,30 +232,32 @@ Use `projectile-locate-dominating-file' to get the unity proj root"
   "Take the current field at point. Search in the same file for some config syntax
 and expand a snippet for a 'With...(this config)' method."
   (interactive)
-  (let ((class-name)
-        (field-name)
-        (type))
-    (save-excursion
-      (line->0)
-      (re-search-forward
-       "public \\([^ ]+\\) \\(\\w+\\)"
-       (line-end-position))
-      (setq field-name (match-string-no-properties 2))
-      (setq type (match-string-no-properties 1))
-      (re-search-backward
-       "public struct \\(\\w+\\) {"
-       nil)
-      (setq class-name (match-string-no-properties 1)))
-    (benj-roslyn-tools//yasnippet-insert
-     "autobconf"
-     (format "public static %s With" class-name)
-     `((class-name ,class-name)
-      (field-name ,field-name)
-      (type ,type)
-      (field-name-capital ,(team/capitalize-first-letter field-name)))))
-  (re-search-backward "public static class" nil)
-  (forward-line 1)
-  (open-line 1))
+  (save-excursion
+    (let ((class-name)
+          (field-name)
+          (type))
+      (save-excursion
+        (line->0)
+        (re-search-forward
+         "public \\([^ ]+\\) \\(\\w+\\)"
+         (line-end-position))
+        (setq field-name (match-string-no-properties 2))
+        (setq type (match-string-no-properties 1))
+        (re-search-backward
+         "public struct \\(\\w+\\) "
+         nil)
+        (setq class-name (match-string-no-properties 1)))
+      (benj-roslyn-tools//yasnippet-insert
+       "autobconf"
+       (format "public static %s With" class-name)
+       `((class-name ,class-name)
+         (field-name ,field-name)
+         (type ,type)
+         (field-name-capital ,(team/capitalize-first-letter field-name)))))
+    (re-search-backward "public static class" nil)
+    (forward-line 1)
+    (open-line 1))
+  (forward-line 1))
 
 
 
