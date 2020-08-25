@@ -148,14 +148,20 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
   "Current git revision. If BRANCH-NAME is non nil, evaluate to the branch name instead of the commit sha."
   (string-trim (shell-command-to-string (or (and branch-name "git branch --show-current") "git rev-parse HEAD"))))
 
-(defun benj-git/diff-files-only (rev-or-range &optional other-rev)
+defun benj-git/diff-files-only (&rest refs)
   "Pop to a buffer to diff file names only against REV-OR-RANGE and optionaly OTHER-REV."
   (interactive
-   (list (magit-read-branch-prefer-other "Ref or range to diff file names: ")))
-  (switch-to-buffer-other-window (format "*diff-files-against-%s" rev-or-range))
-  (insert
-   (with-output-to-string
-     (princ (mapconcat 'identity (magit-changed-files rev-or-range (and (boundp 'other-rev) other-rev)) "\n")))))
+   (list
+    (magit-diff-read-range-or-commit "other")
+    (magit-diff-read-range-or-commit "Ref or range to diff file names")))
+  (with-current-buffer-window
+      (format "diff-files-%s-%s" (first refs) (second refs))
+      nil
+      nil
+    (erase-buffer)
+      (--map
+       (insert (concat it "\n"))
+       (magit-changed-files (first refs) (second refs)))))
 
 (defun team-make-merge-request-commit ()
   "Run 'git commit --allow-empty -m '\do merge' in the current project dir."
