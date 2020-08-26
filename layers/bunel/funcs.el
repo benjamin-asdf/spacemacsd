@@ -153,22 +153,7 @@ CMD should be something."
 (defun bunel-open-prefab ()
   "Open prefab in idlegame unity"
   (interactive)
-  (bunel--cmd "open-prefab" nil (completing-read "Prefab: " (bunel--prefabs)))
-  ;; (bunel-create-handle-file bunel-default-unity-project 'bunel-open-prefab
-  ;;                           (completing-read "Prefab: " (bunel--prefabs)
-  ;;                                            ;; nil nil (when (string-equal (file-name-extension (buffer-file-name)) "prefab") (buffer-file-name))
-  ;;                                            )
-  ;;                           )
-  )
-
-;; TODO execute menu item
-(defun bunel-open-debug-panel ()
-  ""
-  )
-
-;; (defun bunel-prefab-completing-read ()
-;;   "Select a prefab from assets folder."
-;;   (completing-read ))
+  (bunel--cmd "open-prefab" nil (completing-read "Prefab: " (bunel--prefabs))))
 
 (defun bunel--prefabs ()
   "Get prefabs in assets folder using fd."
@@ -177,14 +162,6 @@ CMD should be something."
      (shell-command-to-string
       "fd -I -tf -0 -E Fonts/ -e prefab . Assets/"))
    "\0"))
-
-
-;; (defun bunel--collect-enum ()
-;;   "Collect enum syntax, assumes format:
-;; public enum Type {
-;;    None = 100
-;; }
-;; ")
 
 
 (defun bunel-get-windows-list ()
@@ -245,16 +222,18 @@ CMD should be something."
 
   )
 
-(defconst bunel-best-gloals-file (concat idlegame-project-root "Assets/#/Scripts/Misc/Globals/Globals.asset"))
+(defconst bunel/globals-asset-path "Assets/#/Scripts/Misc/Globals/Globals.asset")
+(defconst bunel/globals-file (concat idlegame-project-root bunel/globals-asset-path))
 (defvar bunel-set-globals-hist '())
 
 (defun bunel-set-globals (item value)
   "Set ITEM in globals to VALUE."
   (interactive
-   (let* ((item (completing-read "Field to set: " (bunel-read-yaml-file-fields bunel-best-gloals-file) nil t nil 'bunel-set-globals-hist))
+   (let* ((item (completing-read "Field to set: " (bunel-read-yaml-file-fields bunel/globals-file) nil t nil 'bunel-set-globals-hist))
           (value (read-from-minibuffer (format "Set %s to: " item))))
      (list item value)))
-  (bunel--set-value-in-yaml bunel-best-gloals-file item value))
+  (bunel--set-value-in-yaml bunel/globals-file item value)
+  (bunel--cmd "import-assets" nil bunel/globals-asset-path))
 
 (defun bunel--set-value-in-yaml (file item value)
   "Try to set yaml syntax in FILE for ITEM to VALUE in current buffer."
@@ -298,3 +277,160 @@ Or try to use the meta file of the file that you are visiting."
   "GUIDS file usages as list, non-zappy in large repos."
   (when-let ((default-directory (projectile-project-root)))
     (process-lines "git" "grep" "--files-with-matches" guid)))
+
+
+
+
+
+;; implement timeout?
+
+;; (let ((temp-sym (gensym)))
+;;   (eval `
+;;    (progn (defvar ,temp-sym "hello")
+;;           (run-at-time 3 nil (// () (message ,temp-sym))))))
+
+
+(defvar team-entr/when-laat-line-timeout 60)
+(defmacro team-entr/when-last-line (file reg &rest body)
+  "Use entr to wait until the last line of FILE matches REG.
+Then execute BODY.
+Use `team-entr/when-laat-line-timeout' for the timeout, default is 60. Binding `team-entr/when-laat-line-timeout' to nil will omitt a timout."
+  (let ((proc-sym (gensym)))
+    `(let* ((proc-name "entr")
+            (proc
+             (start-process-shell-command
+              "entr"
+              (format
+               "*entr-%s*"
+               (file-name-base ,file))
+              (format
+               "echo %1$s | entr -sp 'tac %1$s | head -n 1'"
+               ,file))))
+       (set-process-filter
+        proc
+        (// (proc string)
+            (when (string-match-p ,reg string)
+              (kill-process proc)
+              ,@body)))
+       ;; (when team-entr/when-laat-line-timeout
+       ;;   (run-at-time team-entr/when-laat-line-timeout
+       ;;                (// () (get-process ))))
+       )))
+
+
+
+
+
+(defvar bunel/unity-tests-last '())
+
+(defun bunel/unity-unit-test-last ()
+  (interactive)
+  (unless bunel/unity-tests-last
+    (user-error "no last test methods."))
+  (bunel/unity-unit-test2 bunel/unity-tests-last))
+
+(defun bunel/unity-unit-test-buffer ()
+  "Runs all test cases defined in the current buffer.
+see `omnisharp-unit-test-buffer'."
+  (interactive)
+  (omnisharp--cs-inspect-buffer #'bunel/unity-unit-test1))
+
+(defun bunel/unity-unit-test1 (elements)
+  "Start unit test with some omnisharp csharp data ELEMENTS."
+  (let* ((test-methods (omnisharp--cs-filter-resursively
+                        'omnisharp--cs-unit-test-method-p
+                        elements))
+         (test-method-framework (car (cdr (omnisharp--cs-unit-test-method-p (car test-methods)))))
+         (test-method-names (mapcar (lambda (method)
+                                      (car (omnisharp--cs-unit-test-method-p method)))
+                                    test-methods))
+         )
+    (bunel/unity-unit-test2 test-method-names)))
+
+(defun bunel/unity-test-at-point ()
+  "Runs test case under point, if any. See `omnisharp-unit-test-at-point'"
+  (interactive)
+  (omnisharp--cs-element-stack-at-point
+   (lambda (stack)
+     (let* ((element-on-point (car (last stack)))
+            (test-method (omnisharp--cs-unit-test-method-p element-on-point))
+            (test-method-name (car test-method))
+            (test-method-framework (car (cdr test-method))))
+       (bunel/unity-unit-test2 (list test-method-name))))))
+
+(defun bunel/unity-unit-test2 (method-names)
+  (setq bunel/unity-tests-last
+        (--mapcat
+         (last (split-string it "\\."))
+         method-names))
+  (let ((out-file (make-temp-file "unity-test")))
+    (apply #'bunel--cmd
+           `("refresh-and"
+             nil
+             "run-tests"
+             "-o" ,out-file
+             ,@bunel/unity-tests-last))
+    (message "Running %d unity tests..."
+             (length bunel/unity-tests-last))
+    (eval
+     `(team-entr/when-last-line
+       ,out-file
+       "finished"
+       (with-current-buffer-window
+           "unity-tests"
+           nil
+           nil
+         (erase-buffer)
+         (insert-file-contents-literally
+          ,out-file)
+         (bunel/unity-test-mode))
+       (delete-file ,out-file)))))
+
+
+
+(define-derived-mode
+  bunel/unity-test-mode
+  fundamental-mode
+  "bunel-unity-test"
+  "Mode for team unity test commands"
+
+  (font-lock-add-keywords
+   'bunel/unity-test-mode
+   '(("### PASSED" . 'unity-test-passed-face))))
+
+(defface
+  unity-test-passed-face
+  '((((class color) (background dark))
+     :foreground "green"))
+  "")
+
+
+
+;; (defun team-entr/watcher-window (out-file)
+;;   "Open a window, start entr and cat the file."
+;;   (with-current-buffer-window
+;;       (format
+;;        "*entr-%s*"
+;;        (file-name-base out-file))
+;;       nil
+;;       nil
+;;     (let ((proc
+;;            (start-process-shell-command
+;;             "entr"
+;;             (current-buffer)
+;;             (format
+;;              "echo %1$s | entr -s 'cat %1$s'"
+;;              out-file))))
+;;       (set-process-filter
+;;        proc
+;;        (// (proc string)
+;;            (internal-default-process-filter proc string)
+;;            (when
+;;                (string-match-p "FINISHED" string)
+;;              (kill-process proc)))))))
+
+
+;; (team-entr/when-last-line
+;;  "out-file"
+;;  "FINISHED"
+;;  (message "finished bois"))

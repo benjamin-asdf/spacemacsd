@@ -24,4 +24,17 @@
           ("u" . benj-unity/quick-file-usages)
           ("U" . benj-unity/file-usages-with-guid-at-point)
           ("l" . bunel/set-default-project)
+
           )))
+
+
+
+(spacemacs/declare-prefix
+  "out"
+  "tests")
+(spacemacs/set-leader-keys
+  "outb" 'bunel/unity-unit-test-buffer
+  "outl" 'bunel/unity-unit-test-last
+  ;; todo at point
+  "outt" 'bunel/unity-test-at-point
+  )
