@@ -127,7 +127,9 @@ This function should only modify configuration layer settings."
    ;; To use a local version of a package, use the `:location' property:
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '(doom-themes
+   dotspacemacs-additional-packages '(
+                                      rg
+                                      doom-themes
                                       emr
                                       auth-source-pass
                                       ;; gitlab
@@ -604,7 +606,8 @@ before packages are loaded."
 
 
 
-  (load (expand-file-name "named-macros.el"))
+  (let ((default-directory "~/.spacemacs.d/"))
+    (load (expand-file-name "named-macros.el")))
 
 
 
@@ -621,7 +624,6 @@ before packages are loaded."
   (defun benj-sys/invoke-kill-high-mem ()
     "Invoke perl script that kills high mem procs"
     (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs"))
-
 
 
   ;; temp hacks
