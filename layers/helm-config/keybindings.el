@@ -15,7 +15,7 @@
   '("i" . helm-info)
   '("d" . benj/helm-find-file-recursively)
   '("/" . (lambda () (interactive) (spacemacs/helm-project-smart-do-search t)))
-  '("m" . helm-multi-swoop-current-mode))
+  '("M" . helm-multi-swoop-current-mode))
 
 (spacemacs/declare-prefix "ohs" "swwop")
 (spacemacs/set-leader-keys
@@ -26,7 +26,13 @@
 (team/spacemacs-define-keys
  "os"
  "search"
+ '("c" . benj-helm-ag/comp-value-set)
  '("v" . benj-helm-ag/comp-value)
+ '("f" . benj-helm-ag/flag-set)
+ '("i" . benj-helm-ag/implementations)
+ '("m" . benj-helm-ag/comp-matcher)
+ '("p" . benj-helm-ag/do-ag-prefixed)
+
  )
 
 

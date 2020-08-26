@@ -93,63 +93,68 @@ For many use cases, see `narrow-to-defun', "
 
 ;; helm rg
 
-;; put the sailor stuff here
-
-(defun benj-helm-ag/comp-value-access ()
-  (interactive)
-  (helm-do-ag
-   (projectile-project-root)
-   nil
-   (format "\\.((Add)|(Set)|(Replace))<%s>\\("
-           (thing-at-point 'evil-word))))
-
-(advice-add 'sailor-find-comp-set :around
-            #'(lambda (func &rest args)
-                  (funcall-interactively #'benj-helm-ag/comp-value-access)))
-
-
-
 (defmacro benj-helm-ag/define-proj-search (name init-form &rest args)
   "Define a proj search. INIT-FORMAT is a form that evaluates to the initial helm input.
 ARGS are additional arguments for the rg search."
-  (let ((name (intern (concat "benj-helm-ag/" name))))
+  (let ((name (intern (concat "benj-helm-ag/" (symbol-name name)))))
     `(defun ,name ()
      (interactive)
-     (let ((helm-ag-base-command ,(if args (concat helm-ag-base-command " " (mapconcat #'identity (-flatten args) " ")) helm-ag-base-command)))
+     (let ((helm-ag-base-command
+            ,(if args
+                 (concat helm-ag-base-command " "
+                         (mapconcat #'identity (-flatten args) " "))
+               helm-ag-base-command)))
         (helm-do-ag
          (projectile-project-root)
          nil
-         ,init-form
-         )
-        ))))
+         ,init-form)))))
 
-
-;; TODO
 (benj-helm-ag/define-proj-search
- "comp-matcher"
- (format "Matcher \\. ((\\n)|(\\r\\n))? %s" (thing-at-point 'evil-word))
+ comp-matcher
+ (format "Matcher(?s:.)? \\. (?s:.)? %s" (thing-at-point 'evil-word))
  "-U")
 
 (benj-helm-ag/define-proj-search
- "comp-value"
+ comp-value
  (format "\\.((Get)|(Is))<%s>\\(\\)\(\\.value\)?" (thing-at-point 'evil-word)))
 
-;; (helm-do-ag
-;;  (projectile-project-root)
-;;  nil
-;;  "\\(defun"
-;;  )
+(benj-helm-ag/define-proj-search
+ comp-value-set
+ (format "\\.((Add)|(Set)|(Replace))<%s>\\(" (thing-at-point 'evil-word)))
+
+(benj-helm-ag/define-proj-search
+ flag-set
+ (format "\\.Set<%1$s>\\(%1$s\\)" (thing-at-point 'evil-word)))
+
+(benj-helm-ag/define-proj-search
+ implementations
+ (format "\\w+\\s+%s\\(.*\\{" (thing-at-point 'evil-word)))
 
 
-;; actually it's the other way around and the ingore doesn't work
-;; (defun benj-helm-search-many ()
-;;   (interactive)
-;;   (let ((helm-ag-use-grep-ignore-list nil))
-;;     (helm-do-ag
-;;      (projectile-project-root)
-;;      nil
-;;      nil
-;;      )))
+;; helm-do-ag
+;; targets
+;; eg
+;; (list "Market" "Merchant")
+
+
+
+(defun benj-helm-ag/do-ag-prefixed (&optional arg)
+  "Run `helm-do-ag'.
+Prefix arg can be:
+0 - public
+1 - public class {
+2 - public \\\( \\\)
+3 - public static \\\( \\\)"
+  (interactive"P")
+  (helm-do-ag
+   (projectile-project-root)
+   nil
+   (pcase arg
+     (0 "public")
+     (1 "public class {")
+     (2 "public \\( \\)")
+     (3 "public static \\( \\)")
+     (_ (user-error "invalid prefix arg %d" arg)))))
 
 
 ;; something where you (first) fuzzily filter for files
@@ -161,12 +166,7 @@ ARGS are additional arguments for the rg search."
 
 
 
-
 
-
-
-
-
 
 
 
