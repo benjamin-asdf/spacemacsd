@@ -125,7 +125,11 @@
 (defun benj/play-idlegame-sound ()
   "Play some random idlegame sound."
   (interactive)
-  (start-process "benj-slack-notifiy-sound" "*slack-notify-sound*" "aplay" (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))))
+  (start-process
+   "benj-slack-notifiy-sound"
+   "*slack-notify-sound*"
+   "aplay"
+   (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))))
 
 
 
