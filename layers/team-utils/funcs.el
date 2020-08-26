@@ -239,15 +239,17 @@ With TEXT, insert TEXT at the end of the line."
   (write-region "" nil file))
 
 
-(defmacro team/collect-reg (reg match)
+(defmacro team/collect-reg (reg &optional match)
   "Collect REG matches into a list.
 MATCH: The match data group to collect."
   `(let ((res '()))
      (goto-char (point-min))
      (team/while-reg
       ,reg
-      (setq res (cons (match-string-no-properties ,match) res)))
+      (setq res (cons (match-string-no-properties ,(or match 0)) res)))
      res))
+
+;; (defmacro team/collect-reg-)
 
 (defun team/collect-reg (file reg match)
   "Collect all REG matcher in FILE.
@@ -263,3 +265,9 @@ MATCH: The match data group to collect."
 
 (defun team/capitalize-first-letter (s)
   (concat (capitalize (substring s 0 1)) (substring s 1)))
+
+(defun team/nums (until)
+  (let ((res))
+    (--dotimes until
+      (push it res))
+    (nreverse res)))

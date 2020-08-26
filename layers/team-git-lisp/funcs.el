@@ -1,9 +1,25 @@
 ;;(require 'magit)
 
 ;;; Code:
+
+
+(defun team/magit-is-ancestor ()
+  "Use magit to read 2 revs, print message if A is ancestor of B."
+  (interactive)
+  (let ((a (magit-read-branch-or-commit "Ancestor"))
+         (b (magit-read-branch-or-commit "Descendant")))
+    (message
+     "%s is %sancestor of %s"
+     a
+     (if (magit-rev-ancestor-p a b)
+         ""
+       "not ")
+     b)))
+
 (defun team/magit-common-ancestor ()
   (interactive)
   (kill-new (magit-git-string-ng "merge-base" "HEAD" (magit-read-branch-prefer-other "Get ancestor with"))))
+
 
 ;; (defun team/magit-common-ancestor-many ()
 ;;   (interactive)
@@ -148,7 +164,7 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
   "Current git revision. If BRANCH-NAME is non nil, evaluate to the branch name instead of the commit sha."
   (string-trim (shell-command-to-string (or (and branch-name "git branch --show-current") "git rev-parse HEAD"))))
 
-defun benj-git/diff-files-only (&rest refs)
+(defun benj-git/diff-files-only (&rest refs)
   "Pop to a buffer to diff file names only against REV-OR-RANGE and optionaly OTHER-REV."
   (interactive
    (list
@@ -294,6 +310,7 @@ For documentation on the status codes see git-status man."
   (interactive)
   (magit-run-git-async
    "fetch" "origin" "develop:develop")
+  ;; FIXME there is a bug where the body of after git runs instant
   (benj-git/after-magit
    (magit-merge-plain "develop")))
 

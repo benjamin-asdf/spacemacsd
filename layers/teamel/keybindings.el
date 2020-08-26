@@ -7,8 +7,9 @@
  '("S" . teamel/yank-idlegame-sln)
  '("s" . teamel/open-sources)
  '("k" . teamel/add-config-here)
+ '("r" . teamel/add-config-here)
  )
 
 
 (spacemacs/set-leader-keys
-  "a"  'flycheck-display-error-at-point)
+  "ea"  'flycheck-display-error-at-point)

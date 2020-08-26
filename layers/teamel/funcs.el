@@ -264,8 +264,7 @@ and expand a snippet for a 'With...(this config)' method."
 
 
 (defface teamel/flycheck-err-face
-  '(
-    (((class grayscale) (background light))
+  '((((class grayscale) (background light))
      :foreground "DimGray" :weight bold :slant italic)
     (((class grayscale) (background dark))
      :foreground "LightGray" :weight bold :slant italic)
@@ -287,6 +286,7 @@ and expand a snippet for a 'With...(this config)' method."
   :group 'teamel/faces)
 
 
+
 (defun teamel/flycheck-momentary-string-display-function (errors)
   "Not documented."
   (momentary-string-display
@@ -298,15 +298,47 @@ and expand a snippet for a 'With...(this config)' method."
       )
      (buffer-string))
    (save-excursion
-     (forward-line -10)
-     (re-search-forward
-      "^$" (save-excursion
-             (forward-line 20)
-             (point-at-eol))
-      t
-      1)
-     (point-at-bol))))
+     (team/search-proximite "^$" -10))))
 
 
-(setq flycheck-display-errors-function
-      #'teamel/flycheck-momentary-string-display-function)
+(defun team/search-proximite (reg reach)
+  "Search for REG around point, going REACH forward and backward.
+If REACH is a negative number, search backward first, else search forward first."
+  (or (team/search-proximite1 reg reach)
+      (team/search-proximite1 reg (* -1 reach))))
+
+(defun team/search-proximite1 (reg reach)
+  "Not documented."
+  (funcall
+   (if (= -1 (signum reach))
+       #'re-search-backward
+     #'re-search-forward)
+   reg
+   (save-excursion
+     (forward-line reach)
+     (point))
+   t 1))
+
+(add-hook
+ 'flycheck-mode-hook
+ #'(lambda ()
+     (setq flycheck-display-errors-function
+           #'teamel/flycheck-momentary-string-display-function)))
+
+
+
+
+(defun teamel/open-rider-dwm ()
+  "Open some rider sln."
+  (interactive)
+  (let ((sln
+         (catch 'done
+           (--map
+            (let ((v (funcall it)))
+              (when (string-match-p "sln$" v)
+                (throw 'done v)))
+            (list #'teamel/last-yank
+                  #'(lambda ()
+                      (benj-dotnet--read-near-proj nil nil)))))))
+    (unless sln (user-error "failed to get a sln"))
+    (shell-command (format "open-rider %s" sln))))
