@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : sitem
+#key : sitem
+#contributor : benj
+# --
+c.state.GetEntityWith<ShoppingItemIdx>($0)

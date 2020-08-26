@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : feature-sys
+#key : feature-sys
+#contributor : benj
+# --
+Add(new `sys-name`(`contexts`));

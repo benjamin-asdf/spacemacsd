@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : eget
+#key : eget
+#contributor : benj
+# --
+
+
+e.Get<${2:$$(yas-choose-value (helm :sources teamel/helm-all-comps-source))}>

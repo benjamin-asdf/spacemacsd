@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : destes
+#key : destes
+#contributor : benj
+# --
+c.state.DestroyEntities<$0>();

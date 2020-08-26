@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : mslo
+#key : mslo
+#contributor : benj
+# --
+c.state.GetEntityWith<MerchantSlotId>(slotId)

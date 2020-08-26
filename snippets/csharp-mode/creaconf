@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : creaconf
+#key : creaconf
+#contributor : benj
+# --
+
+
+public static MarketRefreshPromptConfig Create() => new MarketRefreshPromptConfig();

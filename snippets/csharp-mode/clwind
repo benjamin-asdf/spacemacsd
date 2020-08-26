@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : clwind
+#key : clwind
+#contributor : benj
+# --
+c.CloseWindow(WindowType.$0);
