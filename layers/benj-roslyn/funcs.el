@@ -292,10 +292,12 @@ see `benj-roslyn-proj-configs'"
                   "/tmp/last-roslyn-run")
     (kill-buffer)))
 
+
 (defun benj-roslyn-runner (sln &rest args)
   "Run release analzyers with SLN and additional ARGS"
   (interactive)
-  (pushnew "-all-diagnostics" args :test 'equal)
+  (setq args (-flatten args))
+  (pushnew "-all-diagnostics" args :test 'string-equal)
   (benj-roslyn-tools/erase-analyzer-log-buff-if-exists)
   (setq benj-roslyn-last-args (list sln args))
 
@@ -697,6 +699,5 @@ LINES is a list of numbers."
      (if (re-search-forward "\r\n" nil t 1)
          t
        nil))))
-
 
 
