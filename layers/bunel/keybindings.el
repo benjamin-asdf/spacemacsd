@@ -8,24 +8,32 @@
 (progn
   (mapc (lambda (x)
           (spacemacs/set-leader-keys (concat bunel-leader-keys (car x)) (cdr x)))
-        '(("s" . bunel-save-and-refresh)
-          ("S" . (lambda () (interactive) (bunel-save-and-refresh "with-playmode")))
-          ("c" . bunel-refresh-client)
-          ("C" . (lambda () (interactive) (bunel-refresh-client "with-playmode")))
-          ("a" . bunel-refresh-all)
-          ("A" . (lambda () (interactive) (bunel-refresh-all "with-playmode")))
-          ("L" . bunel-open-unity-editor-log)
-          ("e" . bunel-execute-debug-method)
-          ("o" . bunel-open-overlay)
-          ("m" . bunel-open-menu)
-          ("p" . bunel-open-prefab)
-          ("d" . bunel-open-debug-panel)
-          ("g" . bunel-set-globals)
-          ("u" . benj-unity/quick-file-usages)
-          ("U" . benj-unity/file-usages-with-guid-at-point)
-          ("l" . bunel/set-default-project)
+        '(
 
           )))
+
+(team/spacemacs-define-keys
+ "ou"
+ "unity"
+ '("s" . bunel-save-and-refresh)
+ '("S" . (lambda () (interactive) (bunel-save-and-refresh "with-playmode")))
+ '("c" . bunel/refresh-and-play)
+ '("C" . (lambda () (interactive) (bunel-refresh-client "with-playmode")))
+ '("a" . bunel-refresh-all)
+ '("A" . (lambda () (interactive) (bunel-refresh-all "with-playmode")))
+ '("L" . bunel-open-unity-editor-log)
+ '("e" . bunel-execute-debug-method)
+ '("o" . bunel-open-overlay)
+ '("m" . bunel-open-menu)
+ '("p" . bunel-open-prefab)
+ '("d" . bunel-open-debug-panel)
+ '("g" . bunel-set-globals)
+ '("u" . benj-unity/quick-file-usages)
+ '("U" . benj-unity/file-usages-with-guid-at-point)
+ '("l" . bunel/set-default-project)
+ '("L" . bunel/loading-scene-and-play)
+
+ )
 
 
 

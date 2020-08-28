@@ -416,6 +416,24 @@ With ARG, default to 'develop'."
    (list (magit-read-other-branch-or-commit "Rebase onto")))
   (magit-rebase-branch target (list "--autosquash" "--autostash" "-i")))
 
+(defun team/list-current-unmerged-files ()
+  "Show current unmerged files in a window"
+  (interactive)
+  (team/show-in-window (magit-unmerged-files)))
+
+(defun team/show-in-window (list &optional buff-name)
+  "Flatten LIST and insert into a temp window.
+Optionally set BUFF-NAME or default to  'out'"
+  (with-current-buffer-window
+      (or buff-name "out")
+      nil
+      nil
+    (--map
+     (insert (concat it "\n"))
+     (-flatten list))))
+
+
+
 
 
 ;;; Utils

@@ -191,15 +191,13 @@ absolute paths. B-PATH can either be a directory, or a file name."
 
 
 ;; TODO move into some package "smoves.el" "moo.el" ?
-(defmacro line-> (line)
+(defun line-> (line)
   "Goto LINE in curr buffer.
 This is the version that the manual recommends for going to a line in lisp programs."
-  (declare (indent 1))
-  `(progn
-     (goto-char (point-min))
-     (forward-line (- ,line 1))))
+  (goto-char (point-min))
+  (forward-line (- line 1)))
 
-(defmacro line->> (line)
+(defun line->> (line)
   "Goto to the end of LINE. See `line->'"
   `(progn
      (line->
@@ -262,6 +260,13 @@ MATCH: The match data group to collect."
   "Goto beginning of line"
   (goto-char (point-at-bol)))
 
+(defun ->gg ()
+  "Go to char min."
+  (goto-char (point-min)))
+
+(defun ->G ()
+  "Go to char max"
+  (goto-char (point-max)))
 
 (defun team/capitalize-first-letter (s)
   (concat (capitalize (substring s 0 1)) (substring s 1)))
@@ -271,3 +276,21 @@ MATCH: The match data group to collect."
     (--dotimes until
       (push it res))
     (nreverse res)))
+
+
+(defmacro teamel/a-indent (&rest body)
+  "Bind current indent to indent and execute body"
+  (declare (indent 2))
+  `(let ((indent (current-indentation)))
+     ,@body))
+
+
+
+(defun team/start-proc (name buffer program &rest args)
+  "Flatten ARGS and start proc, see `start-process'. If BUFFER is nil, user current buffer."
+  (apply #'start-process
+         (-flatten
+          `(,name
+            ,(or buffer (current-buffer))
+            ,program
+            ,args))))

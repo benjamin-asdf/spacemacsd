@@ -25,10 +25,6 @@
   (re-search-forward "\\(Matcher\\)\\." arg t)
   )
 
-(re-search-forward "\\(Matcher\\)\\." arg t)
-
-
-
 (defun team/csharp-superior-post-self-insert-function ()
   (when team/chsarp-superior-mode
     (or

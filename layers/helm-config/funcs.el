@@ -111,7 +111,7 @@ ARGS are additional arguments for the rg search."
 
 (benj-helm-ag/define-proj-search
  comp-matcher
- (format "Matcher(?s:.)? \\. (?s:.)? %s" (thing-at-point 'evil-word))
+ (format "Matcher(?s:.)? \\. (?s:.)? \\b%s\\b" (thing-at-point 'evil-word))
  "-U")
 
 (benj-helm-ag/define-proj-search
@@ -163,6 +163,22 @@ Prefix arg can be:
 
 
 
+(with-eval-after-load
+    'rg
+    (rg-define-search sailor-rg-project-multiline
+      "See `sailor-rg-search-in-project' allow multiline matches"
+      :files current
+      :dir project
+      :flags '("--multiline"))
+
+    (defun sailor-find-comp-matched ()
+      "Search for matcher syntax with things at point."
+      (interactive)
+      (sailor-rg-project-multiline (sailor--matcher-syntax (thing-at-point 'evil-word))))
+
+    (defun sailor--matcher-syntax (comp)
+      "Get matcher syntax for COMP."
+      (format "Matcher(\n)?(\n\r)?\.(\n)?(\n\r)?.*%s\\b" comp)))
 
 
 

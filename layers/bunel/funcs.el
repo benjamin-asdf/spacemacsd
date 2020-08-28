@@ -44,23 +44,6 @@ If ARG is non-nil, also enter playmode."
   (bunel-create-handle-file bunel-default-unity-project
                             'bunel-refresh arg))
 
-(defun bunel-refresh-all (&optional arg)
-  "Refresh all Idlegames.
-If ARG is non-nil, also enter playmode"
-  (interactive)
-  (mapcar (lambda (project)
-            (bunel-create-handle-file project 'bunel-refresh
-                                      arg))
-          bunel-idlegame-projects))
-
-(defun bunel-save-and-refresh (&optional arg)
-  "Save some buffers and refresh all Idlegames.
-If ARG is non-nil, also enter playmode"
-  (interactive)
-  (save-some-buffers t)
-  (bunel-refresh-all arg))
-
-
 (defun bunel-ensure-bridge-file (&optional force)
   "Ensure bridge file is in the idlegame project.
 If FORCE is non nil, override any existing file."
@@ -146,7 +129,25 @@ List for menus, overlays, windows to open."
   "Invoke bunel. PROJ default to `bunel-default-unity-project'.
 CMD should be something."
   (interactive)
-  (benj-start-proccess-flatten-args "bunel" "*bunel*" "bunel" (or proj bunel-default-unity-project) cmd args))
+  (team/start-proc "bunel" "*bunel*" "bunel" (or proj bunel-default-unity-project) cmd args))
+
+
+(defun bunel/refresh-and-play ()
+  (interactive)
+  (save-some-buffers)
+  (bunel--cmd
+   "refresh-and"
+   nil
+   "playmode"))
+
+
+(defun bunel/loading-scene-and-play ()
+  (interactive)
+  (bunel--cmd
+   "refresh-and"
+   nil
+   "open-scene"
+   "Assets/Scenes/LoadingScene.unity"))
 
 
 

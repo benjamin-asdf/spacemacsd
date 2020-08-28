@@ -643,9 +643,10 @@ Add COMMENT-STRING to the end of all the lines."
 FILE and a LIST of lines. And rest ARGS"
   (with-temp-buffer
     (insert-file-contents-literally in-file)
-    (eval `(--each
-         (benj-roslyn-tools/collect-lines-by-file)
-       (funcall op (car it) (cadr it) ,@args)))))
+    (--each
+        (benj-roslyn-tools/collect-lines-by-file)
+      (apply op `(,(first it) ,(second it) ,(car (last it)) ,@args))
+        )))
 
 
 (defun benj-roslyn-tools/collect-lines-by-file ()

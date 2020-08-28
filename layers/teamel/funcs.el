@@ -21,8 +21,9 @@ Expects some valid url in the unamed register"
   "Invoke curl with the current yank.
 Parse output for resharper warnings, this sets `teamel/these-resharper-warnings'."
   (interactive)
-  (with-temp-buffer
-    "*resharper-warnings*"
+  (with-current-buffer
+      (setq teamel/these-resharper-warnings-buff
+            (get-buffer-create "*resharper-warnings*"))
       nil
       nil
     (let ((exit-status
@@ -34,19 +35,53 @@ Parse output for resharper warnings, this sets `teamel/these-resharper-warnings'
             (teamel/last-yank))))
       (unless (eql exit-status 0)
         (error "err getting reshaper warnings: curl exited abnormally"))
-      (teamel/parse-resharper-warnings))))
+      (teamel/parse-resharper-warnings)
+      (message "Parsed %d resharper warnings.
+Use `teamel/next-resharper-warning' now to jump through the warnings." (line-number-at-pos (point-max))))))
+
+(defun teamel/next-resharper-warning ()
+  (interactive)
+  (unless teamel/these-resharper-warnings-buff
+    (user-error "Fetch resharper warnings with `temel/digest-reshaper-warnings' first"))
+  (with-current-buffer
+      teamel/these-resharper-warnings-buff
+    (unless (and (mark)
+                 (not
+                  (eq
+                   (point)
+                   (point-max))))
+      (message "Going from top (again)")
+      (set-mark (point-min)))
+    (goto-char (mark))
+    (when (re-search-forward "\\(.*\\)+?:\\([0-9]+\\)" nil (point-at-eol))
+      (let ((file (match-string-no-properties 1))
+            (line (string-to-number (match-string-no-properties 2))))
+        (forward-line 1)
+        (set-mark (point))
+        (message "Resharper warning [%d/%d]"
+                 (- (line-number-at-pos) 1)
+                 (line-number-at-pos (point-max)))
+        (find-file file)
+        (line-> line)))))
 
 (defvar teamel/these-resharper-warnings '())
+(defvar teamel/these-resharper-warnings-buff '())
 
 (defun teamel/parse-resharper-warnings ()
   "Evaluate to a list of the form (FILE . LINE)"
-  (let ((res))
+  (interactive)
+  (let ((res)
+        (inhibit-read-only t))
+    (->gg)
+    (set-mark (point-min))
+    (re-search-forward "--------------- START OF NEW WARNINGS ----------------" nil)
+    (delete-region (mark) (point))
     (teamel/fix-backward-slashes)
-    (goto-char (point-min))
+    (->gg)
+    (re-search-forward "  <Issues>" nil)
     (while
         (and
-         (skip-chars-forward "^<")
-         (looking-at "<Issue")
+         (re-search-forward "      <Issue TypeId" nil t)
          (re-search-forward ".+File=\"\\(.+?\\)\".*Line=\"\\([[0-9]+?\\)\"" (point-at-eol) t))
       (push
        (cons
@@ -56,7 +91,14 @@ Parse output for resharper warnings, this sets `teamel/these-resharper-warnings'
          (match-string-no-properties 1))
         (string-to-number (match-string-no-properties 2)))
        res))
-    res))
+    (erase-buffer)
+    (--each (setq teamel/these-resharper-warnings res)
+      (insert (concat idlegame-project-root (car it)
+                      ":"
+                      (number-to-string (cdr it))
+                      "\n"))))
+  (current-buffer))
+
 
 (defun teamel/fix-backward-slashes ()
   (goto-char (point-min))
@@ -342,3 +384,28 @@ If REACH is a negative number, search backward first, else search forward first.
                       (benj-dotnet--read-near-proj nil nil)))))))
     (unless sln (user-error "failed to get a sln"))
     (shell-command (format "open-rider %s" sln))))
+
+
+
+
+(defun teamel/wrap-in-this ()
+  "Wrap the region into what ever bracket structure is in register a"
+  (interactive)
+  (kill-region (region-beginning) (region-end))
+  (set-mark (point))
+  (let ((indent (current-indentation)))
+    (insert
+     (with-temp-buffer
+       (insert (get-register ?a))
+       (csharp-mode)
+       (->gg)
+       (unless (re-search-forward "{" nil t)
+         (user-error "%s\n was probably not some csharp block"
+                     (buffer-string)))
+       (helm-aif (team-helm/hs-block)
+           (delete-region (point) (mark)))
+       (insert "\n")
+       (yank)
+       (indent-region (point-min) (point-max))
+       (buffer-string))))
+  (indent-region (mark) (point)))

@@ -41,12 +41,6 @@ With WORD as component. Defaults to thing at point."
   (interactive)
   (sailor-rg-project-multiline (sailor--matcher-syntax (thing-at-point 'evil-word))))
 
-;; TODO
-;; (defun sailor-find-react-to-comp ()
-;;   "Search for reactive system syntax with thing at point."
-;;   (interactive)
-;;   )
-
 (defun sailor--matcher-syntax (comp)
   "Get matcher syntax for COMP."
   (format "Matcher(\n)?(\n\r)?\.(\n)?(\n\r)?.*%s\\b" comp))

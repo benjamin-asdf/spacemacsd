@@ -10,6 +10,13 @@
  '("r" . teamel/add-config-here)
  )
 
+(team/spacemacs-declare-keys
+    "oi1"
+    "gitlab"
+  "R" #'teamel/digest-resharper-warnings
+  "r" #'teamel/next-resharper-warning
+    )
+
 
 (spacemacs/set-leader-keys
   "ea"  'flycheck-display-error-at-point)
