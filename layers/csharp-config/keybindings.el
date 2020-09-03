@@ -1,4 +1,25 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (spacemacs/declare-prefix-for-mode 'csharp-mode "o" "own")
+;; (spacemacs/declare-prefix-for-mode 'csharp-mode "oc" "class")
 
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "or" 'benj-dotnet-run)
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oE" 'benj-csharp-exclude-region)
@@ -6,3 +27,14 @@
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oo" 'omnisharp-show-overloads-at-point)
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "ol" 'omnisharp-show-last-auto-complete-result)
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "os" 'benj-csharp/string-interp-sourrund)
+
+
+
+
+(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "og" #'csharp-move-back-to-beginning-of-class)
+(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oG" #'csharp-move-fwd-to-end-of-class)
+
+(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "of" #'csharp-move-back-to-beginning-of-defun)
+(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oF" #'csharp-move-fwd-to-end-of-defun)
+
+(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "ob" #'csharp-move-back-to-beginning-of-block)
