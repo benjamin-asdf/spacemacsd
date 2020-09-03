@@ -596,20 +596,20 @@ as appropriate.
           `((type-name ,name)
             (type-name-base ,type-name-base))))
     (and (goto-char (point-min))
-         (benj-roslyn-tools//yasnippet-insert
+         (team/chsarp-snippet-insert
           "common-types-field"
           "public static CommonTypes I;"
           snippet-env)
-         (benj-roslyn-tools//yasnippet-insert
+         (team/chsarp-snippet-insert
           "common-types-get-type"
           "FrozenCollections = ImmutableHashSet.Create(MetadataSymbolComparer.I,"
           snippet-env)
-         (benj-roslyn-tools//yasnippet-insert
+         (team/chsarp-snippet-insert
           "common-types-merge-template"
           "compilation = l.compilation,"
           snippet-env))))
 
-(defun benj-roslyn-tools//yasnippet-insert (snippet-name line-regex snippet-env)
+(defun team/chsarp-snippet-insert (snippet-name line-regex snippet-env)
   (benj-yasnippet/insert-snippet-before
    (yas-lookup-snippet
     snippet-name
@@ -632,52 +632,67 @@ as appropriate.
 
 
 
-(defun benj-roslyn-tools/add-comments-to-warnings (in-file string)
-  "Search IN-FILE for diagnostic warnings.
-Add COMMENT-STRING to the end of all the lines."
-  (benj-roslyn/with-collected-lines in-file #'benj-roslyn-tools/add-to-lines string))
+;; (defun benj-roslyn-tools/add-comments-to-warnings (in-file string)
+;;   "Search IN-FILE for diagnostic warnings.
+;; Add COMMENT-STRING to the end of all the lines."
+;;   (benj-roslyn/with-collected-lines in-file #'benj-roslyn-tools/add-to-lines string))
+
+(defun benj-roslyn-tools/disable-warnings (&optional in-file)
+  "Add disable comments to all warning lines in IN-FILE."
+  (interactive"f")
+  (benj-roslyn/with-collected-lines
+   in-file
+   (// (file lines warn &rest _)
+       (benj-roslyn-tools/add-to-lines
+        file
+        lines
+        (format " // disable %s" warn)))))
 
 
 (defun benj-roslyn/with-collected-lines (in-file op &rest args)
-  "Collect diagnostic lines for IN-FILE and call OP with arguments
-FILE and a LIST of lines. And rest ARGS"
+  "Collect diagnostic lines for IN-FILE and call OP with arguments:
+first arg is the filename, second arg a list of lines, third arg is the warning name
+and rest ARGS"
   (with-temp-buffer
     (insert-file-contents-literally in-file)
     (--each
         (benj-roslyn-tools/collect-lines-by-file)
-      (apply op `(,(first it) ,(second it) ,(car (last it)) ,@args))
-        )))
+      (apply op (append it args)))))
 
 
 (defun benj-roslyn-tools/collect-lines-by-file ()
   "Search the current buffer for diagnostic lines.
-Evaluate to an list of the form (FILE . (LINES))"
+Evaluate to a list lists of the form ((FILE (LINES) warn))"
   (let ((res nil))
     (save-excursion
       (goto-char (point-min))
       (let ((-file)
-            (-lines))
+            (-lines)
+            (-warn))
         (while
             (benj-roslyn-tools//line-data
              (unless
                  (string-equal -file file)
-               (when -lines (setq res (cons (list -file (nreverse -lines)) res)))
+               (when -lines (push (list -file (nreverse -lines) -warn) res))
                (setq -lines nil)
-               (setq -file file))
+               (setq -file file)
+               (setq -warn warn))
              (when line (setq -lines (cons (string-to-number line) -lines))))))
-      (when res (nreverse res)))))
+      res)))
+
 
 (defmacro benj-roslyn-tools//line-data (&rest body)
-  "Set Anaphoric FILE, LINE, if success evaluate BODY and return t, else return nil"
+  "Set Anaphoric FILE, LINE, and WARN if success evaluate BODY and return t, else return nil"
   (declare (debug body))
-  `(let* ((success (re-search-forward "^\\(/.*\\)(\\([0-9]+\\),\\([0-9]+\\)):" nil t 1))
+  `(let* ((success (re-search-forward "^\\(/.*\\)(\\([0-9]+\\),\\([0-9]+\\)): warning \\(\\w+\\):" nil t 1))
           (file (and success (match-string-no-properties 1)))
-          (line (and success (match-string-no-properties 2))))
+          (line (and success (match-string-no-properties 2)))
+          (warn (and success (match-string-no-properties 4))))
      ,@body
      success))
 
 
-(defun benj-roslyn-tools/add-to-lines (file lines &rest arg)
+(defun benj-roslyn-tools/add-to-lines (file lines s)
   "Add chsarp comment COMMENT-STRING to all LINES in FILE.
 LINES is a list of numbers."
   (team/with-file
@@ -689,7 +704,7 @@ LINES is a list of numbers."
      (goto-char (point-at-eol))
      (when (looking-back "\r")
        (forward-char -1))
-     (insert (car arg)))))
+     (insert s))))
 
 
 (defun team/crlf-p (file)
