@@ -8,6 +8,7 @@
  '("s" . teamel/open-sources)
  '("k" . teamel/add-config-here)
  '("r" . teamel/add-config-here)
+ '("a" . teamel/do-awk)
  )
 
 (team/spacemacs-declare-keys

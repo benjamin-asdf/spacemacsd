@@ -409,3 +409,55 @@ If REACH is a negative number, search backward first, else search forward first.
        (indent-region (point-min) (point-max))
        (buffer-string))))
   (indent-region (mark) (point)))
+
+
+
+
+(defvar teamel/current-awk-script-func '())
+;; (defvar teamel/current-awk-script-proc-func '())
+(defun teamel/fire-up-awk ()
+  (interactive)
+  (unless (buffer-file-name)
+    (user-error "You should visit a file for this."))
+  (let ((target-file (buffer-file-name))
+        (script-file "/tmp/awk-script.awk"))
+    (split-window)
+    (find-file script-file)
+    (insert "{print $1}")
+    ;; (setq teamel/current-awk-script-proc-func
+
+    ;;       )
+    (setq
+     teamel/current-awk-script-func
+     `(lambda (&optional buff)
+         (interactive)
+       (with-current-buffer-window
+           "out"
+           nil
+           nil
+         (start-process
+          "awk"
+          (or buff (current-buffer))
+          "awk"
+          "-f"
+          ,script-file
+          ,target-file))))))
+
+(defun teamel/do-awk (arg)
+  "Start an awk scripting session.
+Abort current if ARG is non nil"
+  (interactive"P")
+  (when arg
+    (setq teamel/current-awk-script-func nil))
+  (funcall
+   (--first
+    (and (functionp it) it)
+    (list
+     teamel/current-awk-script-func
+     #'teamel/fire-up-awk))))
+
+(defun teamel/insert-this-awk ()
+  "Take current `teamel/current-awk-script-func', put the output into the current buffer."
+  (interactive)
+  (when (functionp teamel/current-awk-script-func)
+    (apply teamel/current-awk-script-func (list (current-buffer)))))
