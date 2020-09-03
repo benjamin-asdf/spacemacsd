@@ -32,6 +32,7 @@
  '("U" . benj-unity/file-usages-with-guid-at-point)
  '("l" . bunel/set-default-project)
  '("L" . bunel/loading-scene-and-play)
+ '("0" . bunel-open-unity-editor-log)
 
  )
 
