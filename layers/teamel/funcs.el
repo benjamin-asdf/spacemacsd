@@ -93,7 +93,7 @@ Use `teamel/next-resharper-warning' now to jump through the warnings." (line-num
        res))
     (erase-buffer)
     (--each (setq teamel/these-resharper-warnings res)
-      (insert (concat idlegame-project-root (car it)
+      (insert (concat (car it)
                       ":"
                       (number-to-string (cdr it))
                       "\n"))))
@@ -101,6 +101,7 @@ Use `teamel/next-resharper-warning' now to jump through the warnings." (line-num
 
 
 (defun teamel/fix-backward-slashes ()
+  (interactive)
   (goto-char (point-min))
   (while (re-search-forward "\\\\" nil t)
     (replace-match "/")))
@@ -289,7 +290,7 @@ and expand a snippet for a 'With...(this config)' method."
          "public struct \\(\\w+\\) "
          nil)
         (setq class-name (match-string-no-properties 1)))
-      (benj-roslyn-tools//yasnippet-insert
+      (team/chsarp-snippet-insert
        "autobconf"
        (format "public static %s With" class-name)
        `((class-name ,class-name)

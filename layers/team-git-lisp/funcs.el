@@ -432,6 +432,10 @@ Optionally set BUFF-NAME or default to  'out'"
      (insert (concat it "\n"))
      (-flatten list))))
 
+(defun team/magit-log-merge (&optional files)
+  "Show log for merge conflicts"
+  (interactive"f")
+  (magit-log-setup-buffer (list "HEAD") '("--graph" "-n256" "--decorate" "--merge" "--no-merges") files))
 
 
 

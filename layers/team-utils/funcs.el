@@ -187,6 +187,7 @@ absolute paths. B-PATH can either be a directory, or a file name."
 
 (defmacro // (arglist &rest body)
   "Define a lambda with ARGLIST and BODY."
+  (declare (indent 2))
   `(lambda ,arglist ,@body))
 
 
