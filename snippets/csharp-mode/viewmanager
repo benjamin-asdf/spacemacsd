@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : viewmanager
+#key : viewmanager
+#contributor : benj
+# --
+public class $1 : ViewManager {
+
+       $0
+
+}

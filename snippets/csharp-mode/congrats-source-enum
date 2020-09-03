@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : congrats-source-enum
+#key : congrats-source-enum
+#contributor : benj
+
+# --
+    `name` = `(+ 1 cnt)`,

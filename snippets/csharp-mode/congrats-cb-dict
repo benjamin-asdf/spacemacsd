@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : congrats-cb-dict
+#key : congrats-cb-dict
+#contributor : benj
+# --
+        {CongratsSource.`name`, m => new `name`CongratsCallbacks(m)},

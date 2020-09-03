@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : windowopen
+#key : windowopen
+#contributor : benj
+# --
+AddOnWindowOpen(WindowType.$1, () => {
+                               $0
+});

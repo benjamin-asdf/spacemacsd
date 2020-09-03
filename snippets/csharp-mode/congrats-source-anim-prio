@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : congrats-source-anim-prio
+#key : congrats-source-anim-prio
+#contributor : benj
+# --
+            case CongratsSource.`name`:
+                return AnimPrio.Swip3LBRewardCongrats;

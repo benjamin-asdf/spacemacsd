@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : animcomp
+#key : animcomp
+#contributor : benj
+
+# --
+public class `name`Congrats : FlagComponent, IAnimFlag { }
