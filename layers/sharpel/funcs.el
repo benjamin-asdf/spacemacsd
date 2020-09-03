@@ -1,19 +1,28 @@
-(defconst sharpel-repo-root "/home/benj/repos/csharp/roslyn-stuff/Sharpel/")
-(defconst sharpel-proj-dir (concat sharpel-repo-root "Sharpel/"))
-(defconst sharpel-sln-path (concat sharpel-repo-root "Sharpel.sln"))
-(defconst sharpel-release-exe-dir (concat sharpel-proj-dir "bin/Release/netcoreapp3.0/"))
-(defconst sharpel-debug-exe-dir (concat sharpel-proj-dir "bin/Debug/netcoreapp3.0/"))
-(defconst sharpel-release-exe-path (concat sharpel-release-exe-dir "Sharpel.dll"))
-(defconst sharpel-debug-exe-path (concat sharpel-debug-exe-dir "Sharpel.dll"))
-(defconst sharpel-buff-name "*sharpel*")
+(defconst sharpel-repo-root "/home/benj/idlegame/RoslynTools/AdjConstRewriter/")
+(defconst sharpel-proj-dir (concat sharpel-repo-root "RewriterCli/"))
+(defconst sharpel-sln-path (concat sharpel-repo-root "AdjConstRewriter.sln"))
+(defconst sharpel-release-exe-dir (concat sharpel-proj-dir "bin/Release/netcoreapp3.1/"))
+(defconst sharpel-debug-exe-dir (concat sharpel-proj-dir "bin/Debug/netcoreapp3.1/"))
+(defconst sharpel-release-exe-path (concat sharpel-release-exe-dir "RewriterCli.dll"))
+(defconst sharpel-debug-exe-path (concat sharpel-debug-exe-dir "RewriterCli.dll"))
+(defconst sharpel-buff-name "*team-sharper*")
 
 (defvar sharpel-process nil)
 
 (defun sharpel-start-proc ()
   "Start roslyn proc and switch to output buffer"
   (let ((default-directory sharpel-proj-dir))
-    (setq sharpel-process (start-process "benj-roslyn" sharpel-buff-name "dotnet" "run"))
-   (switch-to-buffer-other-window sharpel-buff-name)))
+    (with-current-buffer-window
+        sharpel-buff-name
+        nil
+        nil
+        (setq sharpel-process
+              (start-process
+               "team-sharper"
+               (current-buffer)
+               "dotnet"
+               "run"
+               "--stdio")))))
 
 (defun sharpel--start (&rest args)
   "Start sharpel with ARGS"
@@ -94,8 +103,9 @@ Valid options for CMD are defined in `sharpel-command-kinds'."
 (defun sharpel-rerun-last-file-command ()
   "Rerun last file command, if set."
   (interactive)
-  (if sharpel-last-file-send (sharpel--send-file-name-command sharpel-last-file-send)
-    (message "No previous file send command.")))
+  (unless sharpel-last-file-send
+    (user-error "No previous file send command."))
+  (sharpel--send-file-name-command sharpel-last-file-send))
 
 (defun sharpel-run-cmd (cmd body)
   "See `sharpel--runner'. Run sharpel with command CMD, which must be one of `sharpel-command-kinds' and input BODY."
