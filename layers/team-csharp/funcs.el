@@ -28,6 +28,7 @@
 (defun team/csharp-superior-post-self-insert-function ()
   (when team/chsarp-superior-mode
     (or
+     (team/catch-comp-on-line)
      ;; brackets
      (and
       (looking-back "{" (point-at-bol))
@@ -78,3 +79,12 @@
 (defun line->$ ()
   "Goto end of line."
   (goto-char (point-at-eol)))
+
+(defun team/catch-comp-on-line ()
+  "Try search for comp syntax on current line,
+if successfull, set to register m and return non nil.
+Nil otherwise."
+  (interactive)
+  (prog1 (team/re-this-line
+          "public class \\(\\w+\\) : \\w+Component.*{ }" t)
+    (evil-set-register ?m (match-string-no-properties 1))))
