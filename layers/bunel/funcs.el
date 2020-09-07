@@ -189,8 +189,7 @@ CMD should be something."
 (defun bunel-execute-debug-method (method)
   "Execute debug METHOD."
   (interactive
-   (let ((method (completing-read "Debug method: " (bunel--collect-parameterless-funcs debug-method-file))))
-     (list method)))
+   (list (completing-read "Debug method: " (bunel--collect-parameterless-funcs debug-method-file))))
   (bunel--cmd "execute-debug-method" nil method))
 
 
