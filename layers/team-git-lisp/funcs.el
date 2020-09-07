@@ -168,8 +168,8 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
   "Pop to a buffer to diff file names only against REV-OR-RANGE and optionaly OTHER-REV."
   (interactive
    (list
-    (magit-diff-read-range-or-commit "other")
-    (magit-diff-read-range-or-commit "Ref or range to diff file names")))
+    (magit-diff-read-range-or-commit "First" "HEAD")
+    (magit-diff-read-range-or-commit "Second")))
   (with-current-buffer-window
       (format "diff-files-%s-%s" (first refs) (second refs))
       nil

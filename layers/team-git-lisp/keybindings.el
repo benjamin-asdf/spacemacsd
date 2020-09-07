@@ -1,14 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
 (defun team/git-update-modules (&optional arg)
   (interactive"P")
   (funcall (if arg #'benj-git/reset-modules #'benj-git/update-modules)))
@@ -33,8 +22,7 @@
  "r" #'team/magit-unstage-regex
  "o" #'team/magit-fetch-any
  "R" #'team/magit-rebase-onto
- "z" #'team/magit-stash-curr
- )
+ "z" #'team/magit-stash-curr)
 
 (team/spacemacs-declare-keys "ogi" "git-idlegame"
   "c" #'benj-make-merge-request-commit)
@@ -45,5 +33,7 @@
   "S" #'git-gutter+-show-hunk-inline-at-point)
 
 (team/spacemacs-declare-keys "ogu" "merging"
-  "l" #'team/list-current-unmerged-files
-  "i" #'benj-git/resolve-conflicts-interactive)
+  "f" #'team/list-current-unmerged-files
+  "i" #'benj-git/resolve-conflicts-interactive
+  "p" #'benj-merge-prefabs
+  "l" #'team/magit-log-merge)
