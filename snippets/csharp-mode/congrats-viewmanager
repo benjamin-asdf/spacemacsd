@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+#name : congrats-viewmanager
+#key : congrats-viewmanager
+#contributor : benj
+# --
+using UnityEngine;
+using System.Collections.Generic;
+using TMPro;
+
+public class `(format "%sCongratsView" name)` : ViewManager, IPreloadable {
+
+    public void OnPreloaded(GameObject parentPrefab) {
+        parentPrefab.GetComponent<CongratulationsScreen>().`name-downcase` = this;
+    }
+}

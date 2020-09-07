@@ -20,7 +20,7 @@
 Purpose is to not load all the stuff always."
   (when path
     (load
-     (concat (spacemacs--directory-path) path))
+     (concat dotspacemacs-directory "layers/team-snippets/" path))
     (team-snippets/load-snipptes (car more) (cdr more))))
 
 

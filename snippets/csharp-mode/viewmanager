@@ -3,7 +3,7 @@
 #key : viewmanager
 #contributor : benj
 # --
-public class $1 : ViewManager {
+public class `(file-name-base (buffer-file-name))` : ViewManager {
 
        $0
 

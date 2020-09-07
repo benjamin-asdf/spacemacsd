@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : congrats-debug-method
+#key : congrats-debug-method
+#contributor : benj
+# --
+    public void `name`Congrats() {
+        c.`name`Congrats();
+    }

@@ -10,4 +10,6 @@ public class `name`CongratsCallbacks : CongratsCallbacksBase {
     public override void OnNextButtonClick() { }
     public override void OnShareButtonClick() { }
     public override void OnPostButtonClick() { }
+    public override void OnSpotlightBadgeButtonClick() { }
+    public override void OnBulkBtnClick() { }
 }

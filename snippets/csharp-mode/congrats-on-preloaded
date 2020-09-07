@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : congrats-on-preloaded
+#key : congrats-on-preloaded
+#contributor : benj
+# --
+    public void OnPreloaded(GameObject parentPrefab) {
+        parentPrefab.GetComponent<CongratulationsScreen>().`name` = this;
+    }

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : feature-sys-congrats
+#key : feature-sys-congrats
+#contributor : benj
+
+# --
+        Add(new `name`CongratsSystem(c));

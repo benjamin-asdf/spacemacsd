@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+#name : congrats-render
+#key : congrats-render
+#contributor : benj
+
+# --
+
+    void _render`name`(CongratsConfig config) {
+        if (config.source == CongratsSource.`name`) {
+
+        }
+        `name-downcase`.SetActive(config.source == CongratsSource.`name`);
+    }

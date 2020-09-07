@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+#name : congrats-system
+#key : congrats-system
+#contributor : benj
+# --
+public class `name`CongratsSystem : CompositeGameSystem {
+  public `name`CongratsSystem(Contexts c) : base(c) {
+
+
+	}
+}

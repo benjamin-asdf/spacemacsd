@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+#name : congrats-ext-method
+#key : congrats-ext-method
+#contributor : benj
+# --
+
+    public static void `name`Congrats(this Contexts c) {
+        var e = c.CreateCongratsAnim<`name`Congrats>(
+          CongratsDefaults.BestGame
+          .WithSource(CongratsSource.`name`)
+        );
+    }
