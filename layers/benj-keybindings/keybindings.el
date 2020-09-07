@@ -35,10 +35,6 @@
 (spacemacs/declare-prefix "on" "new")
 (spacemacs/set-leader-keys "ons" 'benj-new-shell-script)
 
-(spacemacs/set-leader-keys "orr" 'benj-copy-last-yank-to-register)
-(spacemacs/set-leader-keys "orb" 'team/pull-register-2-to-b)
-(spacemacs/set-leader-keys "ore" 'team/last-eldoc-message-to-reg)
-
 (spacemacs/set-leader-keys "occ" 'quick-calc)
 
 (spacemacs/declare-prefix "of" "file")
