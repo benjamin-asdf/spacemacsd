@@ -117,6 +117,8 @@ This function should only modify configuration layer settings."
     benj-evil-motions
 
     team-csharp
+    ;team-snippets
+    sxhkd-mode
 
      )
 
