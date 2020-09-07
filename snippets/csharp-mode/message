@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : message
+#key : message
+#contributor : benj
+#expand-env : ((msg  (teamel/last-yank)))
+# --
+
+public string `(string-trim-right (upcase (team/re-replace-in-string msg " " "_")) "!")` => L._("`msg`");

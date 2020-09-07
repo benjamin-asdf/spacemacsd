@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : some-branch
+#key : some-branch
+#contributor : benj
+# --
+\``(let ((default-directory cos-dir)) (magit-read-branch-or-commit "Insert:"))`\`
