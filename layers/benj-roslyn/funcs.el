@@ -467,12 +467,6 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
   (setq helm-benj-roslyn-analzyers-source
         (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-tools/available-analzyer-names))))
 
-(defmacro team/--with-cs-files (dir &rest forms)
-  "Eval FORMS with all cs files. Anaphoric it as the file name."
-  `(--map
-    (team/with-file it ,@forms)
-    (directory-files-recursively ,dir "\\.cs")))
-
 (defmacro benj-roslyn-tools/foreach-proj-file (&rest forms)
   "Eval form with temp file for each cs file inside `benj-roslyn-tools/proj-path'."
   (let ((dir (make-symbol "directory")))
