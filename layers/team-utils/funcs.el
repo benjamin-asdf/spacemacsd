@@ -1,18 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (defun team-create-temp-file-on-region ()
   "Create a file in temp data folder from active region,
 return the file name of the create file"
@@ -69,11 +54,16 @@ return the file name of the create file"
 (advice-add 'eldoc-message :around #'team/eldoc-save-last-message)
 
 
-(defun team/last-eldoc-message-to-reg (&optional register)
-  "Copy last eldoc message to REGISTER default to register k"
+;; (defun team/last-eldoc-message-to-reg (&optional register)
+;;   "Copy last eldoc message to REGISTER default to register k"
+;;   (interactive)
+;;   (when team/eldoc-previous-message
+;;     (evil-set-register (or register ?k) team/eldoc-previous-message)))
+
+(defun team/last-eldoc-csharp-no-type ()
   (interactive)
   (when team/eldoc-previous-message
-    (evil-set-register (or register ?k) team/eldoc-previous-message)))
+    (evil-set-register ?a (string-trim-left team/eldoc-previous-message "\\w+ "))))
 
 
 (defun team/evil-pop-register ()
@@ -92,6 +82,14 @@ This also goes to point min point."
     (goto-char (point-min))
     ,@body))
 
+(defmacro team/--with-cs-files (dir &rest forms)
+  "Eval FORMS with all cs files. Anaphoric it as the file name."
+  `(--map
+    (team/with-file it ,@forms)
+    (directory-files-recursively ,dir "\\.cs$")))
+
+(defmacro team/regexp-opt (&rest strings)
+  `(regexp-opt '(,@strings)))
 
 
 
@@ -156,6 +154,12 @@ This also goes to point min point."
 
 
 
+(defun team/path-parts (path)
+  (--filter (not
+             (string-empty-p it))
+            (split-string path "/")))
+
+
 (defun team/relative-path (a-path b-path)
   "The relative path looking from B-PATH to A-PATH, which should be
 absolute paths. B-PATH can either be a directory, or a file name."
@@ -175,11 +179,6 @@ absolute paths. B-PATH can either be a directory, or a file name."
     (--dotimes (- (length b-parts) (+ common-part-index 1))
       (push ".." res))
     (mapconcat #'identity res "/")))
-
-(defun team/path-parts (path)
-  (--filter (not
-             (string-empty-p it))
-            (split-string path "/")))
 
 
 
@@ -205,10 +204,28 @@ This is the version that the manual recommends for going to a line in lisp progr
          ,line)
      (goto-char (point-at-eol))))
 
+(defun ->$ (&optional text)
+  "Goto the end of the line.
+With TEXT, insert TEXT at the end of the line."
+  (goto-char (point-at-eol))
+  (when text (insert text)))
+
+(defun ->0 ()
+  "Goto beginning of line"
+  (goto-char (point-at-bol)))
+
+(defun team/re-this-line (reg &optional no-error)
+  "Search for REG on current line. If NO-ERROR is non nil,
+ do not err, if there is no match"
+  (save-excursion
+    (->0)
+    (re-search-forward reg (point-at-eol) no-error)))
+
 (defun region-str ()
   (buffer-substring-no-properties (region-beginning) (region-end)))
 
 (defmacro team/--each-file (files &rest body)
+  (declare (debug body))
   `(--map
     (team/with-file
      it
@@ -227,35 +244,46 @@ This is the version that the manual recommends for going to a line in lisp progr
     ,reg
     (replace-match ,replace)))
 
-(defun ->$ (&optional text)
-  "Goto the end of the line.
-With TEXT, insert TEXT at the end of the line."
-  (goto-char (point-at-eol))
-  (when text (insert text)))
 
+
+(defun team/in-new-line (string)
+  "Insert STRING in new line and indent."
+  (line->$)
+  (team/->new-line)
+  (insert string)
+  (when (looking-back "\n")
+    (forward-line -1))
+  (indent-according-to-mode))
+
+;; the default func for that is really wierd to use
+(defun team/re-replace-in-string (string re replace)
+  (with-temp-buffer
+    (insert string)
+    (->gg)
+    (team/re-replace re replace)
+    (buffer-string)))
+
+
 
 (defun team/touch-empty-file (file)
   (write-region "" nil file))
 
 
-(defmacro team/collect-reg (reg &optional match)
+(defun team/collect--reg (reg &optional match)
   "Collect REG matches into a list.
 MATCH: The match data group to collect."
-  `(let ((res '()))
-     (goto-char (point-min))
+  (let ((res '()))
      (team/while-reg
-      ,reg
-      (setq res (cons (match-string-no-properties ,(or match 0)) res)))
+      reg
+      (setq res (cons (match-string-no-properties (or match 0)) res)))
      res))
-
-;; (defmacro team/collect-reg-)
 
 (defun team/collect-reg (file reg match)
   "Collect all REG matcher in FILE.
 MATCH: The match data group to collect."
   (team/with-file
    file
-   (team/collect-reg "^  m_Name: \\(\\w+\\)$" 1)))
+   (team/collect--reg reg match)))
 
 (defun line->0 ()
   "Goto beginning of line"
@@ -271,6 +299,10 @@ MATCH: The match data group to collect."
 
 (defun team/capitalize-first-letter (s)
   (concat (capitalize (substring s 0 1)) (substring s 1)))
+
+(defun team/un-capitalize (s)
+  (concat (downcase (subseq s 0 1)) (subseq s 1)))
+
 
 (defun team/nums (until)
   (let ((res))
