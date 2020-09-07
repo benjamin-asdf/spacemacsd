@@ -197,12 +197,10 @@ CMD should be something."
 ;; should use global instead
 (defun bunel--collect-parameterless-funcs (file)
   "Hack get some parameterless funcs from FILE."
-  (split-string
-   (with-output-to-string
-     (with-temp-buffer
-       (insert-file-contents-literally file)
-       (while (re-search-forward "public void \\(\\w+\\)\\s+?()"  nil t)
-         (princ (concat (match-string 1) "\n")))))))
+  (team/collect-reg
+   file
+   "void \\(\\w+\\)\\s+?()"
+   1))
 
 (defun bunel-cheat-advance-time (days)
   "Cheat idlegame DAYS."
