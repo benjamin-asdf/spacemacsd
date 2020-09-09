@@ -36,3 +36,5 @@
 
 ;; (defun my-projectile-switch-project-hook()
 ;;   (message "hello projectile switched project"))
+
+(provide 'idlegame-definitions)
