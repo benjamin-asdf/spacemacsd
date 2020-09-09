@@ -1,3 +1,4 @@
+;;; Code:
 (defun team-create-temp-file-on-region ()
   "Create a file in temp data folder from active region,
 return the file name of the create file"
@@ -71,16 +72,32 @@ return the file name of the create file"
   (interactive))
 
 
+
+
+
+
+(defmacro team/with-default-dir (dir &rest body)
+  "Set `default-directory' to DIR and eval BODY."
+  (declare (debug body))
+  `(let ((default-directory ,dir))
+     ,@body))
+
+
+(defun team/mklist (obj)
+  (if (listp obj) obj (list obj)))
+
 (defmacro team/with-file (file &rest body)
   "Goto temp file FILE, insert file contents and evaluate BODY in there.
 This also goes to point min point."
   (declare (debug body))
   (declare (indent 2))
-  `(with-temp-file
-      ,file
-    (insert-file-contents-literally ,file)
-    (goto-char (point-min))
-    ,@body))
+  (let ((file-g (gensym)))
+    `(let ((,file-g ,file))
+       (with-temp-file
+            ,file-g
+          (insert-file-contents-literally ,file-g)
+          (goto-char (point-min))
+          ,@body))))
 
 (defmacro team/--with-cs-files (dir &rest forms)
   "Eval FORMS with all cs files. Anaphoric it as the file name."
@@ -190,7 +207,38 @@ absolute paths. B-PATH can either be a directory, or a file name."
   `(lambda ,arglist ,@body))
 
 
-;; TODO move into some package "smoves.el" "moo.el" ?
+(defmacro team/when1 (form &rest forms)
+  "Eval FORM, and then FORMS, if FORM returns non nil.
+Return FORM value like `prog1' and `when' combined."
+  `(let ((res ,form))
+     (when res
+       ,@forms)
+     res))
+
+(defun team/nums (until)
+  (let ((res))
+    (--dotimes until
+      (push it res))
+    (nreverse res)))
+
+
+
+;; procs
+
+
+
+(defun team/start-proc (name buffer program &rest args)
+  "Flatten ARGS and start proc, see `start-process'. If BUFFER is nil, user current buffer."
+  (apply #'start-process
+         (-flatten
+          `(,name
+            ,(or buffer (current-buffer))
+            ,program
+            ,args))))
+
+
+;; elisp
+
 (defun line-> (line)
   "Goto LINE in curr buffer.
 This is the version that the manual recommends for going to a line in lisp programs."
@@ -245,6 +293,13 @@ With TEXT, insert TEXT at the end of the line."
     (replace-match ,replace)))
 
 
+(defmacro team/re-replace-in-file (file reg replace)
+  `(team/with-file
+    ,file
+    (team/while-reg
+     ,reg
+     (replace-match ,replace))))
+
 
 (defun team/in-new-line (string)
   "Insert STRING in new line and indent."
@@ -263,7 +318,6 @@ With TEXT, insert TEXT at the end of the line."
     (team/re-replace re replace)
     (buffer-string)))
 
-
 
 (defun team/touch-empty-file (file)
   (write-region "" nil file))
@@ -304,13 +358,6 @@ MATCH: The match data group to collect."
   (concat (downcase (subseq s 0 1)) (subseq s 1)))
 
 
-(defun team/nums (until)
-  (let ((res))
-    (--dotimes until
-      (push it res))
-    (nreverse res)))
-
-
 (defmacro teamel/a-indent (&rest body)
   "Bind current indent to indent and execute body"
   (declare (indent 2))
@@ -319,11 +366,14 @@ MATCH: The match data group to collect."
 
 
 
-(defun team/start-proc (name buffer program &rest args)
-  "Flatten ARGS and start proc, see `start-process'. If BUFFER is nil, user current buffer."
-  (apply #'start-process
-         (-flatten
-          `(,name
-            ,(or buffer (current-buffer))
-            ,program
-            ,args))))
+(defun team/make-null-term (&optional file)
+  "Replace newline for null char in FILE, or the buffer file."
+  (interactive)
+  (team/re-replace-in-file
+   (or file
+       (buffer-file-name)
+       (user-error "No file provided and buffer is not visiting a file either."))
+   "\n"
+   "\0"))
+
+(provide 'team-utils)
