@@ -107,6 +107,26 @@
     (benj-slack-updload file)))
 
 
+(defun benj-slack/default-candidates ()
+  "See `slack-im-select'"
+  (cl-loop for team in (list team)
+           for ims = (cl-remove-if #'(lambda (im)
+                                       (not (oref im is-open)))
+                                   (slack-team-ims team))
+           nconc ims))
+
+(defun benj-slack/im-select-pure ()
+  (interactive)
+  (let* ((team (slack-team-select))
+         (candidates (cl-loop for team in (list team)
+                              for ims = (cl-remove-if #'(lambda (im)
+                                                          (not (oref im is-open)))
+                                                      (slack-team-ims team))
+                              nconc ims)))
+    (slack-room-select candidates team)))
+
+
+
 ;; TODO read, good resource
 ;; https://medium.com/@justincbarclay/my-descent-into-madness-hacking-emacs-to-send-text-to-slack-bc6cf3780129
 (defun jb/send-region-to-slack-code ()
