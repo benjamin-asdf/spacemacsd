@@ -88,6 +88,7 @@
 if successfull, set to register m and return non nil.
 Nil otherwise."
   (interactive)
-  (prog1 (team/re-this-line
-          "public class \\(\\w+\\) : \\w+Component.*{ }" t)
-    (evil-set-register ?m (match-string-no-properties 1))))
+  (team/when1
+   (team/re-this-line
+    "public class \\(\\w+\\) : \\(?:\\w+\\)?Component.*{ }" t)
+   (evil-set-register ?m (match-string-no-properties 1))))
