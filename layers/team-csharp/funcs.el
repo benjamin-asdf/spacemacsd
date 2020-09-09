@@ -39,7 +39,10 @@
              (progn
                (kill-line)
                (team/->new-line)
-               (insert "});")
+               (insert "}")
+               (yank)
+               (unless (looking-back ";")
+                 (insert ";"))
                (indent-line-to indent)
                (forward-line -1)
                (goto-char (point-at-eol))
