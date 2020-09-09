@@ -49,12 +49,13 @@
      (when (re-search-forward "Banners, set by code" nil t)
        (team/in-new-line
         (format "public %sCongratsView %s;" name name-downcase)))
+     (->gg)
      (when (re-search-forward
-            "_renderMysteryGfit(config);"
+            "_renderMysteryReward(config)"
             nil
             t)
        (team/in-new-line
-        (format "_render%s(config);\n" name))))
+        (format "_render%s(config);" name))))
     (when (re-search-forward
            "salePointBanner.SetActive(false);"
            nil
@@ -96,7 +97,30 @@
         "*scratch:org*"
       (insert "* Add references for %s" name)
       (org-mode)
-      (pop-to-buffer (current-buffer)))))
+      (pop-to-buffer (current-buffer))))
+  (team/with-idlegame-git-toplevel
+   (team/
+    )
+   (magit-run-git-async
+    "add"
+    "--"
+    (list
+     "IdleGame/Assets/#/Sources/CongratsScreen/MonoBehaviours/CongratulationsScreen.cs"
+     "IdleGame/Assets/#/Sources/CongratsScreen/CongratsCallbacks.cs"
+     "IdleGame/Assets/#/Sources/CongratsScreen/CongratsComponents.cs"
+     "IdleGame/Assets/#/Sources/CongratsScreen/MoreBanners.cs"
+     "IdleGame/Assets/#/Sources/CheatTools/DebugMethods.cs"))))
+
+
+(defmacro team/with-idlegame-proj (&rest body)
+  `(team/with-default-dir
+    idlegame-project-root
+    ,@body))
+
+(defmacro team/with-idlegame-git-toplevel (&rest body)
+  `(team/with-idlegame-proj
+   (magit-with-toplevel
+     ,@body)))
 
 ;; TOOD add to enum
 (defun team-congrats/source-count ()
