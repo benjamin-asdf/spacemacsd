@@ -11,18 +11,25 @@
  "c" #'vc-find-conflicted-file
  "n" #'benj-git/goto-next-unmerged-cs-file
  "D" #'benj-git/diff-files-only
- "f" #'magit-file-checkout
  "C" #'benj-quick-commit
  "a" #'team/magit-common-ancestor
  "F" #'benj-git/fetch-and-merge
  "'" #'team/git-update-modules
  "e" #'benj-magit/ediff-resolve
  "y" #'benj-git/yank-first-unmerged-file
- "0" #'comm
- "r" #'team/magit-unstage-regex
  "o" #'team/magit-fetch-any
  "R" #'team/magit-rebase-onto
  "z" #'team/magit-stash-curr)
+
+(team/spacemacs-declare-keys
+    "ogf"
+    "files"
+  "f" #'magit-file-checkout
+  "u" #'team/magit-unstage-files
+  "d" #'team/magit-clean-files
+  "a" #'team/magit-add-untracked
+  "c" #'team/magit-checkout-changed
+  )
 
 (team/spacemacs-declare-keys "ogi" "git-idlegame"
   "c" #'benj-make-merge-request-commit)

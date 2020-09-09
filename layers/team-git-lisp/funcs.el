@@ -371,28 +371,84 @@ will create a conflict in a file called file."
   (interactive"fFile to no-skip-worktree: ")
   (magit-run-git-async "update-index" "--no-skip-worktree" "--" file))
 
-(defun team/magit-unstage-regex (arg)
-  "Unstage all files matching `arg' using magit.
-If arg is 0, use 'prefab."
-  (interactive"P")
-  (require 'magit)
-  (unless arg (user-error "Prefix arg is either a string,
-or 0 to use .prefab$
-or 1 to use .meta$"))
+
+
+(defun team/filtered-file-op (arg get-files op)
+  "Apply a list of files to OP. GET-FILES should return the initial list of files.
+ARG is the filter string to filter files for. It can also be a special number
+to use instead
+0: .prefab$
+1: .meta$
+2: .cs$
+3: .asset$"
+  (unless arg (user-error "Arg a string or one of
+0: .prefab$
+1: .meta$
+2: .cs$
+3: .asset$"))
   (magit-with-toplevel
-    (if-let* ((match
-               (pcase arg
-                 (0 ".prefab$")
-                 (1 ".meta$")
-                 (_ arg)))
-              (files (--filter (string-match match it) (magit-unstaged-files))))
-        (magit-run-git-async
-         "checkout"
-         "--"
-         (mapcar
-          'identity
-          files))
-      (message "There are no unstaged files for %s" match))))
+    (funcall
+     op
+     (or
+      (--filter
+       (string-match
+        (pcase arg
+          (0 ".prefab$")
+          (1 ".meta$")
+          (2 ".cs$")
+          (3 ".asset$")
+          (_ arg))
+        it)
+       (funcall get-files))
+      (user-error "No files like that anymore")))))
+
+(defmacro team/define-filtered-file-op (name get-files &rest body)
+  "Define a function of NAME, use `team/filtered-file-op', wich see.
+Eval BODY with anaphoric files set to the filtered files."
+  (declare (indent defun))
+  (declare (debug body))
+  `(defun ,name (arg)
+     (interactive"P")
+     (team/filtered-file-op
+      arg
+      ,get-files
+      (// (files)
+          ,@body))))
+
+(defun team/magit-checkout (files)
+  (magit-run-git-async
+   "checkout"
+   "--"
+   (mapcar
+    'identity
+    files)))
+
+(team/define-filtered-file-op
+  team/magit-unstage-files
+  #'magit-staged-files
+  #'team/magit-checkout)
+
+(team/define-filtered-file-op
+  team/magit-clean-files
+  #'magit-untracked-files
+  (mapc #'delete-file files)
+  (message "Deleted %d files" (length files)))
+
+(team/define-filtered-file-op
+  team/magit-add-untracked
+  #'magit-untracked-files
+  (magit-run-git
+   "add"
+   "--"
+   files))
+
+(team/define-filtered-file-op
+  team/magit-checkout-changed
+  (lambda () (magit-changed-files "HEAD"))
+  #'team/magit-checkout)
+
+
+
 
 
 (defun team/magit-fetch-any (&optional arg)
