@@ -82,6 +82,8 @@ This function should only modify configuration layer settings."
     ;; github
 
     ;; benj
+    team-utils
+    idlegame-special-config
     benj-funcs
     benj-keybindings
     benj-themes-config
@@ -90,7 +92,6 @@ This function should only modify configuration layer settings."
     csharp-config
     benj-csharp
     csharp-scratches
-    idlegame-special-config
     my-config-spellcheck
     redshiftel
     ;; sailor
@@ -101,7 +102,6 @@ This function should only modify configuration layer settings."
     benj-pomodoro
     benj-roslyn
     team-projectile
-    team-utils
     team-git-lisp
     teamel
     surfel
@@ -648,9 +648,6 @@ before packages are loaded."
   (defadvice eyebrowse-create-window-config
       (after benj-eyebrowse/create-config-adv last activate)
     (--dotimes 2 (funcall #'winner-undo)))
-
-  ;; TODO investigate
-  (defun org-eldoc-documentation-function (arg))
 
   ;; TEMP TODO
   (load "/home/benj/.spacemacs.d/layers/benj-slack/funcs.el")
