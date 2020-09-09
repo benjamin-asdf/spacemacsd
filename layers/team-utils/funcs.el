@@ -257,7 +257,7 @@ Return FORM value like `prog1' and `when' combined."
   "If TEST form returns non nil, bind anaphoric it to it, then
 eval THEN-FORM and return the return value of THEN-FORM.
 Else eval ELSE-FORMS with implicit progn."
-  `(let ((it ,test)) (if it ,then-form) ,@else-forms))
+  `(let ((it ,test)) (if it ,then-form ,@else-forms)))
 
 
 
