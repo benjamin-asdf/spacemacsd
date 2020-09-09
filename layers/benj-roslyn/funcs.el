@@ -1,3 +1,6 @@
+(require 'idlegame-definitions)
+(require 'team-utils)
+
 (defconst benj-roslyn-cli-name "AnalyzerCLI.dll")
 (defconst benj-roslyn-tools/proj-path (concat (file-name-as-directory cos-dir) "RoslynAnalyzers"))
 (defconst benj-roslyn-tools/analyzers-proj-path (concat (file-name-as-directory benj-roslyn-tools/proj-path) "source/" "Analyzers"))
@@ -109,7 +112,7 @@
 
 
 (defun nuke/runner-core (&rest args)
-  (prog1 (benj-start-proccess-flatten-args
+  (prog1 (team/start-proc
     "roslyn-tools-nuke"
     (benj-roslyn-tools/nuke-proc-buff)
     "nuke"
@@ -711,3 +714,5 @@ LINES is a list of numbers."
        nil))))
 
 
+
+(provide 'team/roslyn-tools)
