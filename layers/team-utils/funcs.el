@@ -253,10 +253,15 @@ Return FORM value like `prog1' and `when' combined."
     (nreverse res)))
 
 
+(defmacro team/a-if (test then-form &rest else-forms)
+  "If TEST form returns non nil, bind anaphoric it to it, then
+eval THEN-FORM and return the return value of THEN-FORM.
+Else eval ELSE-FORMS with implicit progn."
+  `(let ((it ,test)) (if it ,then-form) ,@else-forms))
+
+
 
 ;; procs
-
-
 
 (defun team/start-proc (name buffer program &rest args)
   "Flatten ARGS and start proc, see `start-process'. If BUFFER is nil, user current buffer."

@@ -12,8 +12,9 @@
   "p" #'bunel-open-prefab
   "d" #'bunel-open-debug-panel
   "g" #'bunel-set-globals
-  "u" #'benj-unity/quick-file-usages
-  "U" #'benj-unity/file-usages-with-guid-at-point
+  "u" #'team-unity/rg-guid-search
+  "U" #'team-unity/rg-guid-search-at-point
+  "f" #'team-unity/rg-guid-search-ask-file
   "l" #'bunel/set-default-project
   "L" #'bunel/loading-scene-and-play
   "0" #'bunel-open-unity-editor-log

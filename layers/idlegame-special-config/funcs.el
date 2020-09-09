@@ -37,4 +37,15 @@
 ;; (defun my-projectile-switch-project-hook()
 ;;   (message "hello projectile switched project"))
 
+
+
+(defun team/cut-path-to-idlegame ()
+  (interactive)
+  (save-excursion
+    (->0)
+    (when (re-search-forward (format "\\(.*\\)\\(%s/\\)\\(.*\\)" cos-dir nil) (point-at-eol) t)
+      (replace-match (format "%s%s" (match-string 1) (match-string 3))))))
+
+
+
 (provide 'idlegame-definitions)

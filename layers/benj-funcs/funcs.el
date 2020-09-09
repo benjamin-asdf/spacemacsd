@@ -289,31 +289,7 @@ Default to develop and HEAD."
      (concat "git checkout develop -- " (combine-and-quote-strings (benj-all-changed-files "develop" "HEAD" regex))))))
 
 
-(defun benj-unity/file-usages-with-guid-at-point ()
-  "Use `benj-quick-file-usages' with the thing at point."
-  (interactive)
-  (benj-quick-file-usages (thing-at-point 'evil-word)))
 
-(defun benj-quick-file-usages (&optional guid)
-  "Search the project for the guid of the meta file you are visiting.
-Or try to use the meta file of the file that you are visiting."
-  (interactive)
-  (let* ((default-directory (projectile-project-root))
-         (buff-name "*quick-file-usages*")
-         (guid (or (and (boundp 'guid) guid) (and buffer-file-name (benj-get-guid-with-meta buffer-file-name))))
-         (usages (and guid (benj-guid-file-usages guid))))
-    (if usages
-        (progn (pop-to-buffer buff-name)
-               (erase-buffer)
-               (insert (format "file usages for guid: %s\n" guid))
-               (insert (mapconcat 'identity usages "\n")))
-      (message "cannot get file usages"))))
-
-
-(defun benj-guid-file-usages (guid)
-  "GUIDS file usages as list, non-zappy in large repos."
-  (when-let ((default-directory (projectile-project-root)))
-    (process-lines "git" "grep" "--files-with-matches" guid)))
 
 
 (defun benj-git-repo-root ()
@@ -332,33 +308,6 @@ Depends on `default-directory'"
     res))
 
 
-(defun benj-msg-time-string ()
-  "Put curr time string in the echo area."
-  (interactive)
-  (message (current-time-string)))
-
-
-(defun benj-get-guid-with-meta (file)
-  "Get guid for FILE. If FILE is not a meta file, try to use the corresponding meta file."
-  (benj-get-guid
-   (or (and (string-equal (file-name-extension file) "meta") file)
-       (concat file ".meta"))))
-
-
-(defun benj-get-guid (meta-file)
-  "Get guid for META-FILE. Or the empty string.
-If META-FILE is not a valid meta file."
-  (with-output-to-string
-    (with-temp-buffer
-      (insert-file-contents-literally meta-file)
-      (when (re-search-forward "guid: \\(\\w+\\)" nil t)
-        (princ (match-string 1))))))
-
-
-(defun benj-all-guids-at-path (dir)
-  "All unity guids of metas in DIR"
-  (mapcar 'benj-get-guid
-          (benj-directory-files dir ".*meta")))
 
 
 

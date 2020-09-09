@@ -250,31 +250,72 @@ CMD should be something."
        (while (re-search-forward "^\s+\\(\\w+\\): .+?$" nil t)
          (princ (concat (match-string 1) "\n")))))))
 
-(defun benj-unity/file-usages-with-guid-at-point ()
-  "Use `benj-unity/quick-file-usages' with the thing at point."
+
+
+
+;; guid searches
+
+(defun team-unity/file-or-meta (file)
+  (if (string-equal (file-name-extension file) "meta")
+      file
+    (concat file ".meta")))
+
+(defun benj-all-guids-at-path (dir)
+  "All unity guids of metas in DIR"
+  (mapcar 'benj-get-guid
+          (benj-directory-files dir ".*meta")))
+
+(defun team-unity/file-guid (file)
+  "Get guid for FILE. If FILE is not a meta file, try to use the corresponding meta file."
+  (car
+   (team/collect-reg
+    (team-unity/file-or-meta file)
+    "guid: \\(\\w+\\)" 1)))
+
+(defun team-unity/rg-guid-search (&optional file)
+  "Use rg to search the project for the guid of the visiting file."
   (interactive)
-  (benj-unity/quick-file-usages (thing-at-point 'evil-word)))
+  (team/a-if
+   (or file (buffer-file-name))
+   (team-unity/rg--guid-search
+    (team-unity/file-guid
+     it))
+   (user-error "Not visiting a file.")))
 
-(defun benj-unity/quick-file-usages (&optional guid)
-  "Search the project for the guid of the meta file you are visiting.
-Or try to use the meta file of the file that you are visiting."
+(defun team-unity/rg--guid-search (guid)
+  "Use rg to search the project GUID. Put output in a temp buffer."
+  (require 'idlegame-definitions)
+  (team/with-default-dir
+   idlegame-assets-dir
+   (with-current-buffer-window
+       "*unity-guid-search*"
+       nil
+       nil
+     (erase-buffer)
+     (team/insert-line (format "file usages for guid: %s ...\n" guid))
+     (start-process
+      "*unity-guid-search*"
+      (current-buffer)
+      "rg"
+      "-IlN"
+      (format "guid: %s" guid)))))
+
+(defun team-unity/rg-guid-search-at-point ()
   (interactive)
-  (let* ((default-directory (projectile-project-root))
-         (buff-name "*quick-file-usages*")
-         (guid (or (and (boundp 'guid) guid) (and buffer-file-name (benj-get-guid-with-meta buffer-file-name))))
-         (usages (and guid (benj-unity/guid-file-usages guid))))
-    (if usages
-        (progn (pop-to-buffer buff-name)
-               (erase-buffer)
-               (insert (format "file usages for guid: %s\n" guid))
-               (insert (mapconcat 'identity usages "\n")))
-      (message "cannot get file usages"))))
+  (team-unity/rg--guid-search
+   (thing-at-point 'evil-word)))
 
+(defun team-unity/rg-guid-search-ask-file (file)
+  (interactive"f")
+  (team-unity/rg-guid-search file))
 
-(defun benj-unity/guid-file-usages (guid)
-  "GUIDS file usages as list, non-zappy in large repos."
-  (when-let ((default-directory (projectile-project-root)))
-    (process-lines "git" "grep" "--files-with-matches" guid)))
+
+
+(defun benj-msg-time-string ()
+  "Put curr time string in the echo area."
+  (interactive)
+  (message (current-time-string)))
+
 
 
 
