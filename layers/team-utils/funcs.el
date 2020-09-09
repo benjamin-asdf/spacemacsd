@@ -9,7 +9,7 @@ return the file name of the create file"
       file)))
 
 
-(defun stack-overlow-find-duplicates (list)
+(defun team/find-duplicates (list)
   "Return a list that contains each element from LIST that occurs more than once."
   (--> list
        (-group-by #'identity it)
@@ -72,6 +72,36 @@ return the file name of the create file"
   (interactive))
 
 
+
+
+(defalias 'team/push-to-stack-buff (team/build-append-to-buff team/stack-buff t))
+
+(defconst team/stack-buff "*team/stack*")
+
+(defun team/push-to-stack-buff ()
+  (interactive)
+  (team/build-append-to-buff team/stack-buff))
+
+(defun team/push-region-to-stack ()
+  (interactive)
+  (team/push-to-stack-buff (region-str)))
+
+(defun team/stack-buff-contents ()
+  (team/buff-content
+   team/stack-buff))
+
+;; (defun benj-slack/msg-stack-buff ()
+;;   (interactive)
+;;   (slack-im-select)
+;;   (slack-message-send-from-buffer)
+;;   (insert team/stack-buff-contents))
+
+(defun team/pop-stack-buff ()
+  (interactive)
+  "Flush the whole contents of `team/stack-buff' into the current buffer."
+  (insert (team/stack-buff-contents))
+  (team/erase-that-buff team/stack-buff))
+
 
 
 
@@ -79,6 +109,7 @@ return the file name of the create file"
 (defmacro team/with-default-dir (dir &rest body)
   "Set `default-directory' to DIR and eval BODY."
   (declare (debug body))
+  (declare (indent 2))
   `(let ((default-directory ,dir))
      ,@body))
 
@@ -239,6 +270,27 @@ Return FORM value like `prog1' and `when' combined."
 
 ;; elisp
 
+(defun team/buff-content (buffer-or-name)
+  (with-current-buffer
+      buffer-or-name
+    (buffer-string)))
+
+(defun team/erase-that-buff (buffer-or-name)
+  "Erase contents of BUFFER-OR-NAME."
+  (with-current-buffer
+      (get-buffer-create buffer-or-name)
+    (erase-buffer)))
+
+(defun team/build-append-to-buff (buffer-or-name &optional command)
+  "Return a closure that takes one argument STRING and
+appends STRING into BUFFER-OR-NAME."
+  `(lambda (string)
+     ,(when command
+        '(interactive))
+     (with-current-buffer
+         (get-buffer-create ,buffer-or-name)
+       (team/insert-line string))))
+
 (defun line-> (line)
   "Goto LINE in curr buffer.
 This is the version that the manual recommends for going to a line in lisp programs."
@@ -286,6 +338,12 @@ With TEXT, insert TEXT at the end of the line."
            nil t)
      ,@body))
 
+(defmacro team/while-file-reg (file reg &rest body)
+  `(team/with-file
+    ,file
+    (team/while-reg
+     ,reg
+     ,@body)))
 
 (defmacro team/re-replace (reg replace)
   `(team/while-reg
@@ -296,10 +354,13 @@ With TEXT, insert TEXT at the end of the line."
 (defmacro team/re-replace-in-file (file reg replace)
   `(team/with-file
     ,file
-    (team/while-reg
-     ,reg
-     (replace-match ,replace))))
+    (team/re-replace
+     reg replace)))
 
+
+(defun team/insert-line (string)
+  (insert string)
+  (team/->new-line))
 
 (defun team/in-new-line (string)
   "Insert STRING in new line and indent."
@@ -364,6 +425,36 @@ MATCH: The match data group to collect."
   `(let ((indent (current-indentation)))
      ,@body))
 
+(defun team/collect-reg-to-buff (file reg match)
+  "Collec REG in FILE. Put the output into a buffer and return that buffer."
+  (let ((buff (get-buffer-create "collect-reg-buff")))
+    (with-current-buffer buff
+      (erase-buffer))
+    (cl-flet
+        ((insert-it
+          (it)
+          (with-current-buffer
+              buff
+            (team/insert-line it))))
+      (team/while-file-reg
+       file
+       (insert-it (match-string-no-properties match))))
+    buff))
+
+(defun team/insert-indented (&rest strings)
+  (team/then-indent-like-here
+   (--each
+       strings
+     (insert it))))
+
+(defmacro team/then-indent-like-here (&rest body)
+  "Take the current indent and point, execute body.
+Then indent between current point and the old point."
+  (declare (debug body))
+  `(let ((p (point-marker))
+         (indent (current-indentation)))
+     ,@body
+     (indent-region (min p (point)) (max p (point)) indent)))
 
 
 (defun team/make-null-term (&optional file)
