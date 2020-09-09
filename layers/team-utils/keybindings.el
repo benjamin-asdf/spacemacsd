@@ -16,6 +16,7 @@
     "o0"
     "utils"
     "r" #'team/regex-builder-with-region
+    "m" #'macrostep-expand
     )
 
 (team/spacemacs-declare-keys
