@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-#name : grp
+#name : entitas-group
 #key : grp
 #contributor : benj
 # --
-c.state.GetGroup(Matcher.AllOf<$1>());
+c.state.GetGroup(Matcher.AllOf<$1>())

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-get
+#key : csg
+#contributor : benj
+# --
+c.state.Get<$0>().value

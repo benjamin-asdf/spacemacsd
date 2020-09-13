@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-group-m
+#key : entitas-group-m
+#contributor : benj
+# --
+c.state.GetGroup(Matcher.AllOf<`(team-electric/comp-name)`>())

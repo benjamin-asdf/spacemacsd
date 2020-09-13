@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-set-m
+#key : sm
+#contributor : benj
+# --
+.Set<`(team-electric/comp-name)`>(true)

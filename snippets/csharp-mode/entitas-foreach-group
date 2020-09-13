@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : entitas-foreach-group
+#key : foregr
+#contributor : benj
+# --
+foreach (var ${1:e} in c.state.GetGroup(Matcher.AllOf<$2>())) {
+        $1
+}

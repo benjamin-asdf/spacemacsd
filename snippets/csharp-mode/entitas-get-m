@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-m
+#key : gm
+#contributor : benj
+# --
+Get<`(team-electric/comp-name)`>().value
