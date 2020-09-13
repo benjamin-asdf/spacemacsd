@@ -162,7 +162,8 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
 
 (defun team-curr-revision (&optional branch-name)
   "Current git revision. If BRANCH-NAME is non nil, evaluate to the branch name instead of the commit sha."
-  (string-trim (shell-command-to-string (or (and branch-name "git branch --show-current") "git rev-parse HEAD"))))
+  (require 'magit)
+  (funcall (if branch-name #'magit-rev-name #'magit-rev-hash) "HEAD"))
 
 (defun benj-git/diff-files-only (&rest refs)
   "Pop to a buffer to diff file names only against REV-OR-RANGE and optionaly OTHER-REV."
@@ -197,6 +198,7 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
   "Get shell output for git diff files of REV1 agains REV2, if REV2 is ommitted, default to HEAD."
   (team-projectile-dir-command-to-string (format "git diff --name-only %s..%s" rev1 (or rev2 "HEAD"))))
 
+
 
 (defun benj-git/resolve-conflicts-interactive (&optional nocs)
   "Interactively resolve all merge conflicts, ask individually.
@@ -256,6 +258,7 @@ For documentation on the status codes see git-status man."
             (list (substring it 3 (length it)) (substring it 0 2)))
      (process-lines "git" "status" "--porcelain"))))
 
+
 
 (defvar benj-git/last-visited-unmerged-cs-file "")
 (defun benj-git/goto-next-unmerged-cs-file ()
@@ -291,10 +294,12 @@ For documentation on the status codes see git-status man."
   (benj-git/with-unmerged-files
    (kill-new (first files))))
 
+
 
-(defun benj-git/send-input-to-process ()
+(defun benj-git/send-input-to-process (&optional string)
   "Ghetto send some string with newline to git process."
-  (send-string (get-process "benj-git") (format "%s\n" (read-from-minibuffer "Send string: "))))
+  (interactive"sSend string: ")
+  (send-string (get-process "benj-git") (format "%s\n" string)))
 
 ;; (defun benj-git/fetch-and-merge ()
 ;;   "First fetch dev, then merge dev."
@@ -447,6 +452,16 @@ Eval BODY with anaphoric files set to the filtered files."
   (lambda () (magit-changed-files "HEAD"))
   #'team/magit-checkout)
 
+
+
+(defun team/magit-log-rev ()
+  (interactive)
+  (team/a-if (buffer-file-name)
+             (let ((magit-buffer-refname
+                    (magit-read-branch-prefer-other "%s: log:" (file-name-nondirectory it))))
+               (magit-log-buffer-file))
+             (user-error "Buffer is not visiting a file.")))
+
 
 
 
@@ -475,7 +490,8 @@ With ARG, default to 'develop'."
 (defun team/list-current-unmerged-files ()
   "Show current unmerged files in a window"
   (interactive)
-  (team/show-in-window (magit-unmerged-files)))
+  (magit-with-toplevel
+   (team/show-in-window (magit-unmerged-files))))
 
 (defun team/show-in-window (list &optional buff-name)
   "Flatten LIST and insert into a temp window.
@@ -488,13 +504,21 @@ Optionally set BUFF-NAME or default to  'out'"
      (insert (concat it "\n"))
      (-flatten list))))
 
-(defun team/magit-log-merge (&optional files)
-  "Show log for merge conflicts"
-  (interactive"f")
-  (magit-log-setup-buffer (list "HEAD") '("--graph" "-n256" "--decorate" "--merge" "--no-merges") files))
 
+
 
+(defun team/magit-read-unmerged (prompt)
+  (team/magit--read-file prompt #'magit-unmerged-files t))
 
+(defun team/magit--read-file (prompt file-op &optional tracked-only)
+  "See `magit-read-file'"
+  (let ((choices (nconc (funcall file-op)
+                        (unless tracked-only (magit-untracked-files)))))
+    (magit-completing-read
+     prompt choices nil t nil nil
+     (car (member (or (magit-section-value-if '(file submodule))
+                      (magit-file-relative-name nil tracked-only))
+                  choices)))))
 
 ;;; Utils
 
@@ -508,3 +532,8 @@ Optionally set BUFF-NAME or default to  'out'"
           (process-put process 'inhibit-refresh t)
           (magit-process-sentinel process event)
           ,@body)))))
+(defun team/magit-log-merge (&optional files)
+  "Show log for merge conflicts"
+  (interactive
+   (list (team/magit-read-unmerged "Unmerged file to log merge:")))
+  (magit-log-setup-buffer (list "HEAD") '("--graph" "-n256" "--decorate" "--merge" "--no-merges") (team/mklist files)))

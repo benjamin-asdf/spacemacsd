@@ -43,4 +43,7 @@
   "f" #'team/list-current-unmerged-files
   "i" #'benj-git/resolve-conflicts-interactive
   "p" #'benj-merge-prefabs
-  "l" #'team/magit-log-merge)
+  "l" #'team/magit-log-merge
+  "T" #'team/magit-all-theirs
+  "O" #'team/magit-all-ours
+  )
