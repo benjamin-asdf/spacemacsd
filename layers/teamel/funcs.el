@@ -436,13 +436,17 @@ If REACH is a negative number, search backward first, else search forward first.
            "out"
            nil
            nil
-         (start-process
-          "awk"
-          (or buff (current-buffer))
-          "awk"
-          "-f"
-          ,script-file
-          ,target-file))))))
+         (set-process-sentinel
+          (start-process
+           "awk"
+           (or buff (current-buffer))
+           "awk"
+           "-f"
+           ,script-file
+           ,target-file)
+          (lambda (proc evnt)
+            (pop-to-buffer (process-buffer proc))
+            (->gg))))))))
 
 (defun teamel/do-awk (arg)
   "Start an awk scripting session.
@@ -462,3 +466,26 @@ Abort current if ARG is non nil"
   (interactive)
   (when (functionp teamel/current-awk-script-func)
     (apply teamel/current-awk-script-func (list (current-buffer)))))
+
+
+;; cos fixes
+
+(defun team/cos-delete-metas-with-conflict-markers ()
+  (team/with-default-dir
+   cos-dir
+   (let ((buff-name "meta-conflicts"))
+     (with-current-buffer
+         (get-buffer-create buff-name)
+       (erase-buffer)
+       (team/proc-cb-sentinel
+        (start-process-shell-command
+         "rg"
+         (current-buffer)
+         "rg -lN \"<<<<<<<\"")
+        (lambda ()
+          (with-current-buffer
+              buff-name
+            (->gg)
+            (team/while-reg
+             ".*\.meta$"
+             (delete-file (match-string-no-properties 0))))))))))

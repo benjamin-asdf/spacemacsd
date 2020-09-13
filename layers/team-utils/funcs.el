@@ -74,9 +74,10 @@ return the file name of the create file"
 
 
 
+(defconst team/stack-buff "*team/stack*")
+(defun team/build-append-to-buff (a b) nil)
 (defalias 'team/push-to-stack-buff (team/build-append-to-buff team/stack-buff t))
 
-(defconst team/stack-buff "*team/stack*")
 
 (defun team/push-to-stack-buff ()
   (interactive)
@@ -109,7 +110,6 @@ return the file name of the create file"
 (defmacro team/with-default-dir (dir &rest body)
   "Set `default-directory' to DIR and eval BODY."
   (declare (debug body))
-  (declare (indent 2))
   `(let ((default-directory ,dir))
      ,@body))
 
@@ -259,6 +259,10 @@ eval THEN-FORM and return the return value of THEN-FORM.
 Else eval ELSE-FORMS with implicit progn."
   `(let ((it ,test)) (if it ,then-form ,@else-forms)))
 
+(defmacro team/a-when (test &rest body)
+  "Bind the value of TEST to it. When it is non nil, eval BODY with implicit progn, ."
+  `(let ((it ,test)) (when it ,@body)))
+
 
 
 ;; procs
@@ -274,6 +278,28 @@ Else eval ELSE-FORMS with implicit progn."
 
 
 ;; elisp
+
+(defun team/proc-cb-sentinel (procc op)
+  "Set PROCCs sentinel to a lambda that executes OP with no arguments,
+if the exit status is 0. Else throw an error."
+  (set-process-sentinel
+   procc
+   (lambda (p e)
+     (when (string-equal "finished\n" e)
+       (if (= 0 (process-exit-status p))
+           (funcall op)
+         (error  "Process %s exited abnormally with code %d"
+                 (process-name p)
+                 (process-exit-status p)))))))
+
+(defmacro team/a-when-reg-this-line (reg match &rest body)
+  "Search for REG on this line.
+If search was succesfull bind match MATCH to it and eval BODY
+with implicit progn"
+  `(when (team/re-this-line ,reg t)
+     (let ((it (match-string-no-properties ,match)))
+       ,@body)))
+
 
 (defun team/buff-content (buffer-or-name)
   (with-current-buffer
@@ -362,6 +388,13 @@ With TEXT, insert TEXT at the end of the line."
     (team/re-replace
      reg replace)))
 
+(defun team/->new-line ()
+  "Open new line and forward to there."
+  (open-line 1)
+  (forward-line 1))
+
+
+
 
 (defun team/insert-line (string)
   (insert string)
@@ -404,6 +437,10 @@ MATCH: The match data group to collect."
   (team/with-file
    file
    (team/collect--reg reg match)))
+
+(defun line->$ ()
+  "Goto end of line."
+  (goto-char (point-at-eol)))
 
 (defun line->0 ()
   "Goto beginning of line"
