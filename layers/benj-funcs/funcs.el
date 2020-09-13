@@ -39,12 +39,10 @@ single space if char at point is a space. Nil for empty lines."
           ((string-equal (thing-at-point 'char) " ") " ")
           (t (thing-at-point 'evil-word)))))
 
-
-(defun benj-read-lines (filePath)
-  "Return a list of lines of a file at FILEPATH."
-  (with-temp-buffer
-    (insert-file-contents filePath)
-    (split-string (buffer-string) "\n" t)))
+(defun team/file-lines (file)
+  "Return a list of lines of FILE."
+  (team/with-file
+   (split-string (buffer-string) "\n" t)))
 
 (defun benj-flush-empty-lines ()
   "Delete empty lines on selection."
