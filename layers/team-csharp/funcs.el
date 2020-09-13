@@ -32,9 +32,9 @@
      ;; brackets
      (and
       (looking-back "{" (point-at-bol))
-      (looking-at "\\([[:blank:]]*)[[:blank:]]*\\(;\\)?\\)\\|\\(.*\"\\)\\|\\([[:blank:]]*.+\\)")
+      (looking-at "\\([[:blank:]]*)[[:blank:]]*\\(;\\)?\\)\\|\\|\\(.+?\".+?\"\\)\\|\\(.*\"\\)\\|\\([[:blank:]]*.+\\)")
       (let ((indent (current-indentation)))
-        (unless (match-string 3)
+        (unless (match-string 4)
           (if (match-string 1)
              (progn
                (kill-line)
@@ -47,7 +47,8 @@
                (forward-line -1)
                (goto-char (point-at-eol))
                (team/->new-line)
-               (indent-line-to (+ 4 indent)))
+               (indent-line-to (+ 4 indent))
+               (skip-chars-forward "[:blank:]"))
             (if (looking-back "=>[[:blank:]]*{" (point-at-bol))
                 (progn
                   (team/->new-line)
@@ -57,7 +58,8 @@
                   (forward-line 1)
                   (indent-line-to  indent)
                   (forward-line -1)
-                  (indent-line-to (+ indent 4)))
+                  (indent-line-to (+ indent 4))
+                  (skip-chars-forward "[:blank:]"))
               (kill-line)
               (team/->new-line)
               (yank)
@@ -65,21 +67,23 @@
               (indent-line-to indent)
               (insert "}")
               (forward-line -1)
-              (evil-normal-state 1))))
-        (skip-chars-forward "[:blank:]")))
+              (skip-chars-forward "[:blank:]")
+              (evil-normal-state 1))))))
 
      ;; strings across lines
      (and
       (looking-back "\n")
       (save-excursion
         (forward-line -1)
-        (re-search-forward "\\(.+?\".+?\"\\)\\|\\(.+?\"\\)" (point-at-eol) t))
-      (match-string 2)
+        (re-search-forward "\\(.+?\".+?\"\\)\\|\\(.+?\\$\"\\)\\|\\(.+?\"\\)" (point-at-eol) t))
+      (or (match-string 2) (match-string 3))
       (let ((indent (current-indentation)))
         (forward-line -1)
         (line->$)
         (insert "\" +")
         (forward-line 1)
+        (when (match-string 2)
+          (insert "$"))
         (insert "\"")
         (indent-line-to indent))))))
 
