@@ -18,7 +18,7 @@ If the file specified in best-banners-messages-file matches the saved file, we t
   (unless (file-exists-p spacemacs-private-banner-directory)
       (make-directory spacemacs-private-banner-directory))
   (benj-delete-all-files spacemacs-private-banner-directory)
-  (dolist (msg (benj-read-lines best-messages-file))
+  (dolist (msg (team/file-lines best-messages-file))
     (best-banners-create-new msg)))
 
 (defun best-banners-next-banner-file (&optional n)

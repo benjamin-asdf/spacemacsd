@@ -199,7 +199,7 @@ You are allowed to think about food once per day. For `minder-think-about-food-d
 
 (defun minder--push-nogo-message ()
   "Push a random message read from `minder-nogo-messages-file'."
-  (minder--push-message (rand-element (benj-read-lines minder-nogo-messages-file))))
+  (minder--push-message (rand-element (team/file-lines minder-nogo-messages-file))))
 
 
 (defun minder-remember-last-msg ()
