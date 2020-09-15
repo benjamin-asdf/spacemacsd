@@ -331,7 +331,7 @@ PROGRESS should be a float between 0 and 1."
 ;; TODO debug
 (with-eval-after-load 'helm (defvar helm-benj-best-message-source
  (helm-build-sync-source "Best Message"
-   :candidates (benj-read-lines best-messages-file))))
+   :candidates (team/file-lines best-messages-file))))
 
 (defun minder-select-a-message ()
  "Use helm to select one of best messages and push it."
