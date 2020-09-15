@@ -210,6 +210,8 @@ absolute paths. B-PATH can either be a directory, or a file name."
 (defmacro team/when1 (form &rest forms)
   "Eval FORM, and then FORMS, if FORM returns non nil.
 Return FORM value like `prog1' and `when' combined."
+  (declare (debug form))
+  (declare (debug forms))
   `(let ((res ,form))
      (when res
        ,@forms)
@@ -226,6 +228,8 @@ Return FORM value like `prog1' and `when' combined."
   "If TEST form returns non nil, bind anaphoric it to it, then
 eval THEN-FORM and return the return value of THEN-FORM.
 Else eval ELSE-FORMS with implicit progn."
+  (declare (debug then-form))
+  (declare (debug else-forms))
   `(let ((it ,test)) (if it ,then-form ,@else-forms)))
 
 (defmacro team/a-when (test &rest body)
@@ -237,16 +241,54 @@ Else eval ELSE-FORMS with implicit progn."
 ;; procs
 
 (defun team/start-proc (name buffer program &rest args)
-  "Flatten ARGS and start proc, see `start-process'. If BUFFER is nil, user current buffer."
-  (apply #'start-process
-         (-flatten
-          `(,name
-            ,(or buffer (current-buffer))
-            ,program
-            ,args))))
+  "See `start-process', flatten args. If BUFFER is nil, user current buffer."
+  (apply
+   #'start-process
+   (-flatten
+    `(,name
+      ,(or buffer (current-buffer))
+      ,program
+      ,@args))))
+
+(defun team/start-buffer-process (name program &rest args)
+  "Start proccess in a buffer NAME. See `start-process'. Return the buffer."
+  (let ((buff (get-buffer-create name)))
+    (with-current-buffer
+        name
+      (erase-buffer)
+      (team/start-proc name nil program `,@args))
+    buff))
+
 
 
 ;; elisp
+
+(defmacro team/each-line (buffer-or-name-form &rest body)
+  "Set buffer current to what BUFFER-OR-NAME-FORM evals.
+Froeach line anaphorically set it to the line content, then run body."
+  `(with-current-buffer
+       ,buffer-or-name-form
+     (->gg)
+     (while (and (> (point-max) (point))
+                 (re-search-forward "^.*$" nil t))
+       (let ((it (match-string-no-properties 0)))
+         ,@body))))
+
+;; This doesn't exist in my whole emacs?
+(defun my/marker-there (p)
+  "Return the marker at point p."
+  (save-excursion
+    (progn (goto-char p) (point-marker))))
+
+(defun my/region-end-marker ()
+  "Return the marker at region end, when region is active."
+  (when (region-active-p)
+    (my/marker-there (region-end))))
+
+(defun my/region-beginning-marker ()
+  "Return the marker at region beginning, when region is active."
+  (when (region-active-p)
+    (my/marker-there (region-beginning))))
 
 (defun team/proc-cb-sentinel (procc op)
   "Set PROCCs sentinel to a lambda that executes OP with no arguments,
