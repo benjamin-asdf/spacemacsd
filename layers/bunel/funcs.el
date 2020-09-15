@@ -22,6 +22,33 @@
 (defconst bunel-menu-enums-file (concat idlegame-project-root "Assets/#/Sources/Menu/MenuEnums.cs")
   "The Idlegame menu enums file. Used to generate menu names lookups.")
 
+
+
+(defvar bunel/last-cmd '()
+  "Flat list of cmd and args")
+(defun bunel--cmd (cmd proj &rest args)
+  "Invoke bunel. PROJ default to `bunel-default-unity-project'.
+CMD should be something."
+  (interactive)
+  (setq bunel/last-cmd `(,cmd ,@args))
+  (team/start-proc "bunel" "*bunel*" "bunel" (or proj bunel-default-unity-project) cmd args))
+
+
+(defmacro bunel/chain (cmd &rest more)
+  "Create a cmd chain. Forms
+Project will be `bunel-default-unity-project'."
+  (if (null cmd)
+      nil
+    `(progn
+       (apply
+        #'bunel--cmd
+        (append
+         (list ,cmd nil)
+         ,(when (listp (car more)) `,@(pop more))))
+       (bunel/chain ,(car more) ,@(cdr more)))))
+
+
+
 
 (defun bunel/set-default-project ()
   "Set `bunel-default-unity-project'"
@@ -125,20 +152,28 @@ List for menus, overlays, windows to open."
                          bunel-default-unity-project
                          (completing-read "Open menu: " (bunel-collect-menu-types)))))
 
-(defun bunel--cmd (cmd proj &rest args)
-  "Invoke bunel. PROJ default to `bunel-default-unity-project'.
-CMD should be something."
+
+
+(defun bunel/rerun-last ()
   (interactive)
-  (team/start-proc "bunel" "*bunel*" "bunel" (or proj bunel-default-unity-project) cmd args))
+  (team/a-if
+   team-unity/last-cmd
+   (progn (bunel--cmd
+           (car it)
+           nil
+           (cdr it))
+          (message "rerun %s" (car it)))
+   (user-error "No last unity cmd.")))
 
 
 (defun bunel/refresh-and-play ()
   (interactive)
   (save-some-buffers)
-  (bunel--cmd
-   "refresh-and"
-   nil
+  (bunel/chain
+   "refresh"
    "playmode"))
+
+
 
 
 (defun bunel/loading-scene-and-play ()
@@ -149,12 +184,40 @@ CMD should be something."
    "open-scene"
    "Assets/Scenes/LoadingScene.unity"))
 
+(defun team/import-asset (f)
+  (interactive"f")
+  (bunel--cmd
+   "import-assets"
+   nil
+   f))
 
+(defun team-unity/open-prefab-at-point ()
+  (interactive)
+  (team/a-when-reg-this-line
+   "\\(.*\.prefab\\)" 0
+   (bunel-open-prefab
+    (if (string-prefix-p "Assets/" it)
+        it
+      (concat "Assets/" it)))))
 
-(defun bunel-open-prefab ()
+(defun bunel-open-prefab (&optional prefab)
   "Open prefab in idlegame unity"
   (interactive)
-  (bunel--cmd "open-prefab" nil (completing-read "Prefab: " (bunel--prefabs))))
+  (bunel--cmd
+   "open-prefab"
+   nil
+   (or
+    prefab
+    (completing-read "Prefab: " (bunel--prefabs)))))
+
+(defun bunel/scene-view ()
+  (interactive)
+  (bunel--cmd
+   "scene-view"
+   nil
+   (or
+    prefab
+    (completing-read "Prefab: " (bunel--prefabs)))))
 
 (defun bunel--prefabs ()
   "Get prefabs in assets folder using fd."
