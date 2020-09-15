@@ -34,7 +34,6 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-    ;; basic
     version-control
     gtags
     (auto-completion  :variables
@@ -75,6 +74,7 @@ This function should only modify configuration layer settings."
     vimscript
     go
     perl5
+    clojure
 
     ;; features
     slack
