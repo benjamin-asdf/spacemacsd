@@ -596,6 +596,10 @@ before packages are loaded."
 
 
 
+  (spacemacs/set-leader-keys "km" #'spacemacs/macrostep-transient-state/body)
+
+  
+
   ;; `evil-goggles'
   (evil-goggles-mode)
 
