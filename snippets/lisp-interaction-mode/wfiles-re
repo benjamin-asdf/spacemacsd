@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+#name : wfiles-re
+#key : wfiles-re
+#contributor : benj
+# --
+(team/--with-cs-files
+  $1
+ (when
+     (re-search-forward $2 nil t)
+   (line->$)
+   (team/->new-line)
+   (insert $0)
+   ))
