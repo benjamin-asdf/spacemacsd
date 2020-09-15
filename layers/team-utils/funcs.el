@@ -72,37 +72,6 @@ return the file name of the create file"
   (interactive))
 
 
-
-
-(defconst team/stack-buff "*team/stack*")
-(defun team/build-append-to-buff (a b) nil)
-(defalias 'team/push-to-stack-buff (team/build-append-to-buff team/stack-buff t))
-
-
-(defun team/push-to-stack-buff ()
-  (interactive)
-  (team/build-append-to-buff team/stack-buff))
-
-(defun team/push-region-to-stack ()
-  (interactive)
-  (team/push-to-stack-buff (region-str)))
-
-(defun team/stack-buff-contents ()
-  (team/buff-content
-   team/stack-buff))
-
-;; (defun benj-slack/msg-stack-buff ()
-;;   (interactive)
-;;   (slack-im-select)
-;;   (slack-message-send-from-buffer)
-;;   (insert team/stack-buff-contents))
-
-(defun team/pop-stack-buff ()
-  (interactive)
-  "Flush the whole contents of `team/stack-buff' into the current buffer."
-  (insert (team/stack-buff-contents))
-  (team/erase-that-buff team/stack-buff))
-
 
 
 
@@ -508,5 +477,38 @@ Then indent between current point and the old point."
        (user-error "No file provided and buffer is not visiting a file either."))
    "\n"
    "\0"))
+
+
+
+
+;; should move stuff that is not really utils
+(defconst team/stack-buff "*team/stack*")
+(defalias 'team/push-to-stack-buff (team/build-append-to-buff team/stack-buff t))
+
+(defun team/push-to-stack-buff ()
+  (interactive)
+  (team/build-append-to-buff team/stack-buff))
+
+(defun team/push-region-to-stack ()
+  (interactive)
+  (team/push-to-stack-buff (region-str)))
+
+(defun team/stack-buff-contents ()
+  (team/buff-content
+   team/stack-buff))
+
+;; (defun benj-slack/msg-stack-buff ()
+;;   (interactive)
+;;   (slack-im-select)
+;;   (slack-message-send-from-buffer)
+;;   (insert team/stack-buff-contents))
+
+(defun team/pop-stack-buff ()
+  (interactive)
+  "Flush the whole contents of `team/stack-buff' into the current buffer."
+  (insert (team/stack-buff-contents))
+  (team/erase-that-buff team/stack-buff))
+
+
 
 (provide 'team-utils)
