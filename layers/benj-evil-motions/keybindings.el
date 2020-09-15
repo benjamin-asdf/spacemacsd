@@ -12,3 +12,26 @@
 
 
     )
+
+
+(team/spacemacs-declare-keys
+    "ot"
+    "devel & misc"
+  ;; t is reserved - temp kbd
+  "d" #'my/assign-temp-kbd
+
+    )
+
+
+(team/spacemacs-declare-keys
+    "oe"
+    "transformations"
+  "r" 'spacemacs/redshiftel-transient-state/body
+
+    )
+
+(team/spacemacs-declare-keys
+    "oes"
+    "substitute"
+  "l" #'my/re-left-right
+  )

@@ -105,3 +105,30 @@ Start either at 0 or prefix ARG, if given."
          (+ num
             (let ((it (evil-mc-get-cursor-property cursor :index)))
               (if (= it 0) (length evil-mc-cursor-list) (- it 1))))))))))
+
+
+
+
+
+(defun my/re-left-right ()
+  "Replace occurances of left to right in active region."
+  (interactive)
+  (unless (region-active-p) (user-error "Region not active"))
+  (save-excursion
+    (goto-char (region-beginning))
+    (while
+        (re-search-forward "left" (save-excursion
+                                    (progn (goto-char (region-end))
+                                           (my/marker-there (point-at-eol)))) t)
+     (replace-match "right"))))
+
+
+
+;; meta the meta
+
+;; TODO eval , e f and this at once
+(defvar my/temp-devel-kbd "ott")
+(defun my/assign-temp-kbd ()
+  "Assume `symbol-at-point' is a command and assign `my/temp-devel-kbd' to it."
+  (interactive)
+  (spacemacs/set-leader-keys my/temp-devel-kbd (symbol-at-point)))
