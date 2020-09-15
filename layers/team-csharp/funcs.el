@@ -87,22 +87,45 @@
         (insert "\"")
         (indent-line-to indent))))))
 
+
 
-(defun team/->new-line ()
-  "Open new line and forward to there."
-  (open-line 1)
-  (forward-line 1))
+(defvar team-electric/catched-comp '())
+(defun team-electric/comp-name ()
+  (when team-electric/catched-comp
+    (car team-electric/catched-comp)))
 
-(defun line->$ ()
-  "Goto end of line."
-  (goto-char (point-at-eol)))
 
 (defun team/catch-comp-on-line ()
   "Try search for comp syntax on current line,
 if successfull, set to register m and return non nil.
 Nil otherwise."
   (interactive)
-  (team/when1
+  (when
    (team/re-this-line
-    "public class \\(\\w+\\) : \\(?:\\w+\\)?Component.*{ }" t)
-   (evil-set-register ?m (match-string-no-properties 1))))
+    "public class \\(\\w+\\) : \\(\\w+\\)?Component.*{ }" t)
+   (setq
+    team-electric/catched-comp
+    (list (match-string-no-properties 1)
+          (or (match-string-no-properties 2) "Value")))
+   (evil-set-register ?m (team-electric/comp-name))))
+
+
+(defun team-electric/flag-comp-p (type)
+  (string-match-p "Flag" type))
+
+(defmacro team-electric/a-catched-comp (&rest body)
+  "When we have a catched comp, bind name and type anaphorically and eval BODY."
+  (declare (debug body))
+  `(team/a-when
+   team-electric/catched-comp
+   (cl-destructuring-bind (name type) team-electric/catched-comp
+     ,@body)))
+
+
+(defun team-electric/resolve-cached-comp-set-part ()
+  (team-electric/a-catched-comp
+   (format
+    (if (team-electric/flag-comp-p type)
+        "Add<%s>()"
+      "Set<%s>(true)"))
+   name))
