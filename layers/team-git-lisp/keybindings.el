@@ -31,6 +31,10 @@
   "c" #'team/magit-checkout-changed
   )
 
+(team/spacemacs-declare-keys "ogl" "log"
+  "l" #'team/magit-log-rev
+  )
+
 (team/spacemacs-declare-keys "ogi" "git-idlegame"
   "c" #'benj-make-merge-request-commit)
 
@@ -46,4 +50,5 @@
   "l" #'team/magit-log-merge
   "T" #'team/magit-all-theirs
   "O" #'team/magit-all-ours
+  "s" #'team/list-current-unmerged-status
   )

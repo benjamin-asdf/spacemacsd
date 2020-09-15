@@ -2,6 +2,55 @@
 
 ;;; Code:
 
+(defvar-local benj-git/after-magit-op nil)
+(defun benj-git/after--magit (op)
+  "Call OP after magit process finished with a single arg, the exit status."
+  (when
+   magit-this-process
+   (with-current-buffer (process-buffer magit-this-process)
+     (setq-local benj-git/after-magit-op op))
+   (set-process-sentinel
+    magit-this-process
+    (lambda (process event)
+      (with-current-buffer (process-buffer process)
+        (when (memq (process-status process) '(exit signal))
+          (if (> (process-exit-status process) 0)
+              (magit-process-sentinel process event)
+            (process-put process 'inhibit-refresh t)
+            (magit-process-sentinel process event)
+            (funcall benj-git/after-magit-op (process-exit-status process)))))))))
+
+(defmacro benj-git/after-magit-success (&rest body)
+  (declare (debug body))
+  `(benj-git/after--magit
+    (lambda (e)
+      (when (= 0 e)
+        ,@body))))
+
+(defmacro team/magit-pipe (&optional form &rest forms)
+  "Assume each form starts a new magit process.
+Run FORM, then each of FORMS after the previous git process exited with status 0.
+When there is no magit process or it returns non 0, stop.
+If you want to eval multiple forms for side effects. Put some progn that also sets the next git proccess."
+  (if (null form)
+      nil
+    `(progn ,form
+            (benj-git/after-magit-success
+             (team/magit-pipe ,(car forms) ,@(cdr forms))))))
+
+
+
+(defun team/git-ls-tree-files (rev)
+  (team/start-buffer-process
+   "*ls-tree*"
+   "git"
+   "ls-tree"
+   "-r"
+   "--name-only"
+   rev))
+
+
+
 
 (defun team/magit-is-ancestor ()
   "Use magit to read 2 revs, print message if A is ancestor of B."
@@ -171,14 +220,15 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
    (list
     (magit-diff-read-range-or-commit "First" "HEAD")
     (magit-diff-read-range-or-commit "Second")))
-  (with-current-buffer-window
-      (format "diff-files-%s-%s" (first refs) (second refs))
-      nil
-      nil
-    (erase-buffer)
-      (--map
-       (insert (concat it "\n"))
-       (magit-changed-files (first refs) (second refs)))))
+  (magit-with-toplevel
+    (with-current-buffer-window
+       (format "diff-files-%s-%s" (first refs) (second refs))
+       nil
+       nil
+     (erase-buffer)
+     (--map
+      (insert (concat it "\n"))
+      (magit-changed-files (first refs) (second refs))))))
 
 (defun team-make-merge-request-commit ()
   "Run 'git commit --allow-empty -m '\do merge' in the current project dir."
@@ -315,8 +365,7 @@ For documentation on the status codes see git-status man."
   (interactive)
   (magit-run-git-async
    "fetch" "origin" "develop:develop")
-  ;; FIXME there is a bug where the body of after git runs instant
-  (benj-git/after-magit
+  (benj-git/after-magit-success
    (magit-merge-plain "develop")))
 
 (defun benj-git/update-modules ()
@@ -329,7 +378,7 @@ For documentation on the status codes see git-status man."
   "Reset modules."
   (interactive)
   (magit-run-git-async "submodule" "foreach" "git" "reset" "--hard")
-  (benj-git/after-magit
+  (benj-git/after-magit-success
    (magit-run-git-async "submodule" "foreach" "git" "clean" "-fd")))
 
 (defun benj-git/fire-up-merge-sample ()
@@ -420,18 +469,31 @@ Eval BODY with anaphoric files set to the filtered files."
       (// (files)
           ,@body))))
 
-(defun team/magit-checkout (files)
+(defun team/magit-with-files (args files)
   (magit-run-git-async
-   "checkout"
-   "--"
-   (mapcar
-    'identity
-    files)))
+   `(,@(-flatten args) "--" ,@(mapcar
+                                  'identity
+                                  files))))
+
+(defun team/magit-checkout (args files)
+  "ARGS can be nil. FILES is a list of files."
+  (team/magit-with-files
+   (list
+    "checkout"
+    args)
+   files))
+
+
+
+;; (defun team/)
+
+(defun team/magit-checkout-head (files)
+  (team/magit-checkout-head nil files))
 
 (team/define-filtered-file-op
   team/magit-unstage-files
   #'magit-staged-files
-  #'team/magit-checkout)
+  #'team/magit-checkout-head)
 
 (team/define-filtered-file-op
   team/magit-clean-files
@@ -450,7 +512,7 @@ Eval BODY with anaphoric files set to the filtered files."
 (team/define-filtered-file-op
   team/magit-checkout-changed
   (lambda () (magit-changed-files "HEAD"))
-  #'team/magit-checkout)
+  #'team/magit-checkout-head)
 
 
 
@@ -458,12 +520,40 @@ Eval BODY with anaphoric files set to the filtered files."
   (interactive)
   (team/a-if (buffer-file-name)
              (let ((magit-buffer-refname
-                    (magit-read-branch-prefer-other "%s: log:" (file-name-nondirectory it))))
+                    (magit-read-branch-prefer-other (format "%s: log:" (file-name-nondirectory it)))))
                (magit-log-buffer-file))
              (user-error "Buffer is not visiting a file.")))
 
 
 
+
+(defun team/magit-add-unmerged ()
+  (team/magit-with-files
+   "add"
+   (magit-unmerged-files)))
+
+(defmacro team/magit-define-checkout (name arg)
+  (declare (indent defun))
+  `(defun ,name ()
+     (interactive)
+     (team/magit-checkout ,arg (magit-unmerged-files))
+     (benj-git/after-magit-success
+      (team/magit-add-unmerged))))
+
+
+(team/magit-define-checkout team/magit-all-theirs
+  "--theirs")
+
+(team/magit-define-checkout team/magit-all-ours
+  "--ours")
+
+(team/magit-define-checkout team/magit-all-merge
+  "--merge")
+
+
+
+
+
 
 
 (defun team/magit-fetch-any (&optional arg)
@@ -491,7 +581,17 @@ With ARG, default to 'develop'."
   "Show current unmerged files in a window"
   (interactive)
   (magit-with-toplevel
-   (team/show-in-window (magit-unmerged-files))))
+    (team/show-in-window (magit-unmerged-files) "unmerged")))
+
+(defun team/list-current-unmerged-status ()
+  (interactive)
+  (magit-with-toplevel
+    (team/show-in-window
+     (--map
+      (list (format "%s %s" (cadr it) (car it)))
+      (benj-git/unmerged-status))
+     "unmerged-status")))
+
 
 (defun team/show-in-window (list &optional buff-name)
   "Flatten LIST and insert into a temp window.
@@ -520,18 +620,7 @@ Optionally set BUFF-NAME or default to  'out'"
                       (magit-file-relative-name nil tracked-only))
                   choices)))))
 
-;;; Utils
 
-(defun benj-git/after-magit (&rest body)
-  (set-process-sentinel
-   magit-this-process
-   `(lambda (process event)
-      (when (memq (process-status process) '(exit signal))
-        (if (> (process-exit-status process) 0)
-            (magit-process-sentinel process event)
-          (process-put process 'inhibit-refresh t)
-          (magit-process-sentinel process event)
-          ,@body)))))
 (defun team/magit-log-merge (&optional files)
   "Show log for merge conflicts"
   (interactive
