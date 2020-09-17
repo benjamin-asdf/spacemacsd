@@ -352,11 +352,10 @@ and expand a snippet for a 'With...(this config)' method."
      (insert (flycheck-help-echo-all-error-messages errors))
      (put-text-property
       (point-min) (point-max)
-      'face 'teamel/flycheck-err-face
-      )
+      'face 'teamel/flycheck-err-face)
      (buffer-string))
    (save-excursion
-     (team/search-proximite "^$" -10))))
+     (or (team/search-proximite "^$" -10) (progn (forward-line -1) (point))))))
 
 
 (defun team/search-proximite (reg reach)
