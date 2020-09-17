@@ -8,7 +8,6 @@
 
 (team/spacemacs-declare-keys "og" "git"
  "s" #'vc-revision-other-window
- "c" #'vc-find-conflicted-file
  "n" #'benj-git/goto-next-unmerged-cs-file
  "D" #'benj-git/diff-files-only
  "C" #'benj-quick-commit
@@ -31,8 +30,15 @@
   "c" #'team/magit-checkout-changed
   )
 
-(team/spacemacs-declare-keys "ogl" "log"
+(team/spacemacs-declare-keys
+    "ogl"
+    "log"
   "l" #'team/magit-log-rev
+  )
+(team/spacemacs-declare-keys
+    "ogc"
+    "checkout etc"
+  "f" #'team-magit/checkout-annoying
   )
 
 (team/spacemacs-declare-keys "ogi" "git-idlegame"
@@ -51,4 +57,5 @@
   "T" #'team/magit-all-theirs
   "O" #'team/magit-all-ours
   "s" #'team/list-current-unmerged-status
+  "c" #'vc-find-conflicted-file
   )

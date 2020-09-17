@@ -626,3 +626,63 @@ Optionally set BUFF-NAME or default to  'out'"
   (interactive
    (list (team/magit-read-unmerged "Unmerged file to log merge:")))
   (magit-log-setup-buffer (list "HEAD") '("--graph" "-n256" "--decorate" "--merge" "--no-merges") (team/mklist files)))
+
+
+
+
+;; smoother checkout, annoying metas or asset files
+
+(defun team-magit/insert-last-proc-out ()
+  "Insert the last output section of `magit-process-buffer'"
+  (magit-with-toplevel
+    (insert
+    (with-current-buffer
+        (magit-process-buffer t)
+      (let ((section (car (last (oref magit-root-section children)))))
+        (buffer-substring (oref section start) (oref section end))))))
+  (->gg))
+
+
+(defun team-magit/collect--blocking-files (initial-reg end-reg)
+  "Return a list of files parsed from git output when it tells you that files
+would be overriden or by a checkout.
+INITIAL-REG is the beginning part of the git msg, END-REG is the end part of the message."
+  (when (re-search-forward initial-reg nil t)
+    (let ((res))
+      (while (re-search-forward "^\t\\(.*\\)$"
+                                (save-excursion
+                                  (re-search-forward end-reg nil t))
+                                t)
+        (push (match-string-no-properties 1) res))
+      (->gg)
+      res)))
+
+(defun team-magit/checkout-annoying ()
+  "Check the last magit output section.
+If there is a git message about changes to files that would be overriden, checkout those files. Else if the message talks about untracked files, delete them, if they are metas, else prompt the user for confirmation."
+  (interactive)
+  (with-temp-buffer
+    (team-magit/insert-last-proc-out)
+    (let ((checkout-them
+           (team-magit/collect--blocking-files
+            "error: Your local changes to the following files would be overwritten by checkout:"
+            "Please commit your changes "))
+          (delete-them
+           (team-magit/collect--blocking-files
+            "error: The following untracked working tree files would be overwritten by checkout:"
+            "Please move or remove them before you switch branches.")))
+      (unless (or checkout-them delete-them)
+        (user-error "Did not find any files to operate on."))
+      (magit-with-toplevel
+        (when checkout-them
+          (magit-run-git
+           "checkout" "--"
+           checkout-them))
+        (when delete-them
+          (--map
+           (when
+               (or
+             (string-match-p ".*meta$" it)
+             (yes-or-no-p (format "Do you want to delete %s?" it)))
+             (delete-file it))
+           delete-them))))))
