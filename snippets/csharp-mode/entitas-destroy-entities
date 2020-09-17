@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-destroy-entities
+#key : destr
+#contributor : benj
+# --
+c.state.DestroyEntities<$0>();

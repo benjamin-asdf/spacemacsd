@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-destroy-entities
+#key : destrm
+#contributor : benj
+# --
+c.state.DestroyEntities<`(team-electric/comp-name)`>();
