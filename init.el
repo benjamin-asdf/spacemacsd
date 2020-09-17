@@ -660,6 +660,12 @@ before packages are loaded."
 
 
 
+  ;; no ggtags in shell mode atm
+
+  (add-hook 'shell-mode-hook #'(lambda () (ggtags-mode -1)))
+
+
+
 
 
   )
