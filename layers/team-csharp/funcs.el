@@ -32,9 +32,14 @@
      ;; brackets
      (and
       (looking-back "{" (point-at-bol))
-      (looking-at "\\([[:blank:]]*)[[:blank:]]*\\(;\\)?\\)\\|\\|\\(.+?\".+?\"\\)\\|\\(.*\"\\)\\|\\([[:blank:]]*.+\\)")
+      (looking-at "\\([[:blank:]]*)[[:blank:]]*\\(;\\)?\\)\\|\\(.+?\".+?\"\\)\\|\\(.*\"\\)\\|\\([[:blank:]]+$\\)\\|\\(}$\\)\\|\\([[:blank:]]*.+\\)")
+      ;; (looking-at "\\([[:blank:]]*)[[:blank:]]*\\(;\\)?\\)\\|\\|\\(.*\\)\\|\\(.*\"\\)\\|\\([[:blank:]]*.+\\)")
       (let ((indent (current-indentation)))
-        (unless (match-string 4)
+        ;; (dolist (x '(0 1 2 3 4 5 6))
+        ;;   (print (format "%d:%s" x (match-string-no-properties x))))
+        (unless (or (match-string 4)
+                    ;; (match-string 6) TODO single }
+                    )
           (if (match-string 1)
              (progn
                (kill-line)
