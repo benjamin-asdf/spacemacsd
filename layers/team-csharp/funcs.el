@@ -131,6 +131,6 @@ Nil otherwise."
   (team-electric/a-catched-comp
    (format
     (if (team-electric/flag-comp-p type)
-        "Add<%s>()"
-      "Set<%s>(true)"))
-   name))
+      "Set<%s>(true)"
+      "Add<%s>()")
+    name)))
