@@ -241,6 +241,8 @@ Use `projectile-locate-dominating-file' to get the unity proj root"
 
 (advice-add 'flycheck-pos-tip-error-messages :after #'benj-flycheck/display-error-messages-advice)
 
+
+;; idlegame stuff
 
 (defun teamel/yank-idlegame-sln ()
   (interactive)
@@ -271,6 +273,9 @@ Use `projectile-locate-dominating-file' to get the unity proj root"
   (let ((default-directory (concat idlegame-assets-dir "#/Sources")))
     (helm-find-files-1 " ")))
 
+
+
+;; this function seems to be quite imperative. It would be a good exercise to rewrite in functional style
 (defun teamel/add-config-here ()
   "Take the current field at point. Search in the same file for some config syntax
 and expand a snippet for a 'With...(this config)' method."
@@ -301,6 +306,16 @@ and expand a snippet for a 'With...(this config)' method."
     (forward-line 1)
     (open-line 1))
   (forward-line 1))
+
+
+(defun teamel/add-used-implicitly ()
+  (interactive)
+  (save-excursion
+    (->gg)
+    (team/in-new-line "using JetBrains.Annotations;")
+    (team/while-reg
+     "\\(\\[Button.*\\]\\)\\|\\(MenuItem\\)"
+     (insert " [UsedImplicitly]"))))
 
 
 

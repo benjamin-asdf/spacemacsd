@@ -12,6 +12,12 @@
  )
 
 (team/spacemacs-declare-keys
+ "oi0"
+ "tools"
+ "u" #'teamel/add-used-implicitly
+ )
+
+(team/spacemacs-declare-keys
     "oi1"
     "gitlab"
   "R" #'teamel/digest-resharper-warnings
