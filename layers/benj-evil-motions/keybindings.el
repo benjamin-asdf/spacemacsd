@@ -9,8 +9,8 @@
       "l" #'avy-move-line
       "R" #'benj-avy/move-region
       "n" #'my/insert-evil-mc-nums-simple
-
-
+      "v" #'my/evil-visual-line-around-here
+      "I" #'my/evil-mc-make-cursors-around-here
     )
 
 

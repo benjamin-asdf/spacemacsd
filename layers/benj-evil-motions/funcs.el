@@ -122,6 +122,27 @@ Start either at 0 or prefix ARG, if given."
                                            (my/marker-there (point-at-eol)))) t)
      (replace-match "right"))))
 
+(defun my/evil-visual-line-around-here ()
+  "Search backward and forward stopping at empty lines.
+Then select with `evil-visual-line'. "
+  (interactive)
+  (-some-->
+      (re-search-backward "^$" nil t)
+    (and (forward-line 1)
+         (point))
+    (and
+     (re-search-forward "^$" nil t)
+     (forward-line -1)
+     it)
+    (evil-visual-line it (point))))
+
+(defun my/evil-mc-make-cursors-around-here ()
+  "Use `my/evil-visual-line-around-here' to select a region,
+then make cursors"
+  (interactive)
+  (my/evil-visual-line-around-here)
+  (evil-mc-make-cursor-in-visual-selection-beg)
+  (evil-force-normal-state))
 
 
 ;; meta the meta
