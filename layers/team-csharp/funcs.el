@@ -114,6 +114,10 @@ Nil otherwise."
           (or (match-string-no-properties 2) "Value")))
    (evil-set-register ?m (team-electric/comp-name))))
 
+;; (defun team-electric/catch-comp-at-point ()
+;;   "Catch thing at point as comp"
+;;   )
+
 
 (defun team-electric/flag-comp-p (type)
   (string-match-p "Flag" type))

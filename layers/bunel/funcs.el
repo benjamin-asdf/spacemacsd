@@ -157,7 +157,7 @@ List for menus, overlays, windows to open."
 (defun bunel/rerun-last ()
   (interactive)
   (team/a-if
-   team-unity/last-cmd
+   bunel/last-cmd
    (progn (bunel--cmd
            (car it)
            nil
@@ -169,12 +169,10 @@ List for menus, overlays, windows to open."
 (defun bunel/refresh-and-play ()
   (interactive)
   (save-some-buffers)
-  (bunel/chain
-   "refresh"
+  (bunel--cmd
+   "refresh-and"
+   nil
    "playmode"))
-
-
-
 
 (defun bunel/loading-scene-and-play ()
   (interactive)
@@ -460,12 +458,17 @@ see `omnisharp-unit-test-buffer'."
             (test-method-framework (car (cdr test-method))))
        (bunel/unity-unit-test2 (list test-method-name))))))
 
+
+(defconst bunel/test-buff-name "*unity-tests*")
 (defun bunel/unity-unit-test2 (method-names)
   (setq bunel/unity-tests-last
         (--mapcat
          (last (split-string it "\\."))
          method-names))
-  (let ((out-file (make-temp-file "unity-test")))
+  (let ((out-file (make-temp-file "unity-test-out")))
+    (with-current-buffer
+        (get-buffer-create bunel/test-buff-name)
+      (set (make-local-variable 'test-out-file) out-file))
     (apply #'bunel--cmd
            `("refresh-and"
              nil
@@ -474,21 +477,17 @@ see `omnisharp-unit-test-buffer'."
              ,@bunel/unity-tests-last))
     (message "Running %d unity tests..."
              (length bunel/unity-tests-last))
-    (eval
-     `(team-entr/when-last-line
-       ,out-file
-       "finished"
-       (with-current-buffer-window
-           "unity-tests"
-           nil
-           nil
-         (erase-buffer)
-         (insert-file-contents-literally
-          ,out-file)
-         (bunel/unity-test-mode))
-       (delete-file ,out-file)))))
-
-
+    (team-entr/file-changed-cb
+     out-file
+     (lambda ()
+       (with-current-buffer
+           bunel/test-buff-name
+           (erase-buffer)
+           (insert-file-contents-literally
+            test-out-file)
+           (bunel/unity-test-mode)
+           (delete-file test-out-file)
+           (pop-to-buffer (current-buffer)))))))
 
 (define-derived-mode
   bunel/unity-test-mode
@@ -508,31 +507,26 @@ see `omnisharp-unit-test-buffer'."
 
 
 
-;; (defun team-entr/watcher-window (out-file)
-;;   "Open a window, start entr and cat the file."
-;;   (with-current-buffer-window
-;;       (format
-;;        "*entr-%s*"
-;;        (file-name-base out-file))
-;;       nil
-;;       nil
-;;     (let ((proc
-;;            (start-process-shell-command
-;;             "entr"
-;;             (current-buffer)
-;;             (format
-;;              "echo %1$s | entr -s 'cat %1$s'"
-;;              out-file))))
-;;       (set-process-filter
-;;        proc
-;;        (// (proc string)
-;;            (internal-default-process-filter proc string)
-;;            (when
-;;                (string-match-p "FINISHED" string)
-;;              (kill-process proc)))))))
+(defun team-entr/file-changed-cb (file cb)
+  "Run cb the first time FILE changes."
+  (with-current-buffer
+      (get-buffer-create
+       (format
+        "*entr-%s*"
+        (file-name-base file)))
+    (set (make-local-variable 'entr-cb) cb)
+    (set-process-sentinel
+    (start-process-shell-command
+     "entr"
+     (current-buffer)
+     (format
+      "echo %1$s | entr -sp 'kill $PPID'"
+      file))
+    (lambda (p e)
+      (pcase (process-exit-status p)
+        (1 (error "Entr did no start, no such file"))
+        (_ (with-current-buffer
+               (process-buffer p)
+             (funcall entr-cb))) ; 143
+        )))))
 
-
-;; (team-entr/when-last-line
-;;  "out-file"
-;;  "FINISHED"
-;;  (message "finished bois"))
