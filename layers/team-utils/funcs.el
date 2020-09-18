@@ -405,8 +405,6 @@ With TEXT, insert TEXT at the end of the line."
   (forward-line 1))
 
 
-
-
 (defun team/insert-line (string)
   (insert string)
   (team/->new-line))
