@@ -2,18 +2,14 @@
 (defalias 'team/pop-to-stack-buff
   (// () (interactive) (pop-to-buffer team/stack-buff)))
 
-(team/spacemacs-define-keys
- "o0"
- "utils"
- '()
- ;; '("m" . spacemacs/macrostep-transient-state/macrostep-expand)
- )
+
 
 (team/spacemacs-declare-keys
     "o0"
     "utils"
     "r" #'team/regex-builder-with-region
     "m" #'macrostep-expand
+    "h" #'command-history
     )
 
 (team/spacemacs-declare-keys
