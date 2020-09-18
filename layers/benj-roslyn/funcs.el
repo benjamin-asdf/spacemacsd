@@ -606,8 +606,8 @@ as appropriate.
           "compilation = l.compilation,"
           snippet-env))))
 
-(defun team/chsarp-snippet-insert (snippet-name line-regex snippet-env)
-  (benj-yasnippet/insert-snippet-before
+(defun team/chsarp-snippet-insert (snippet-name line-regex snippet-env &optional place)
+  (benj-yasnippet/insert-snippet-at-place
    (yas-lookup-snippet
     snippet-name
     'csharp-mode)
