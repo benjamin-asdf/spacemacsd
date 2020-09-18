@@ -484,9 +484,6 @@ Eval BODY with anaphoric files set to the filtered files."
    files))
 
 
-
-;; (defun team/)
-
 (defun team/magit-checkout-head (files)
   (team/magit-checkout-head nil files))
 
@@ -502,43 +499,29 @@ Eval BODY with anaphoric files set to the filtered files."
   (message "Deleted %d files" (length files)))
 
 (team/define-filtered-file-op
+  team/magit-add-files
+  #'magit-unstaged-files
+  (magit-stage-1 nil files))
+
+(team/define-filtered-file-op
   team/magit-add-untracked
   #'magit-untracked-files
-  (magit-run-git
-   "add"
-   "--"
-   files))
+  (magit-stage-1 nil files))
 
 (team/define-filtered-file-op
   team/magit-checkout-changed
-  (lambda () (magit-changed-files "HEAD"))
+  #'magit-unstaged-files
   #'team/magit-checkout-head)
 
-
-
-(defun team/magit-log-rev ()
-  (interactive)
-  (team/a-if (buffer-file-name)
-             (let ((magit-buffer-refname
-                    (magit-read-branch-prefer-other (format "%s: log:" (file-name-nondirectory it)))))
-               (magit-log-buffer-file))
-             (user-error "Buffer is not visiting a file.")))
-
 
 
-
-(defun team/magit-add-unmerged ()
-  (team/magit-with-files
-   "add"
-   (magit-unmerged-files)))
-
 (defmacro team/magit-define-checkout (name arg)
   (declare (indent defun))
   `(defun ,name ()
      (interactive)
      (team/magit-checkout ,arg (magit-unmerged-files))
      (benj-git/after-magit-success
-      (team/magit-add-unmerged))))
+      (magit-stage-1 nil (magit-unmerged-files)))))
 
 
 (team/magit-define-checkout team/magit-all-theirs
@@ -552,9 +535,17 @@ Eval BODY with anaphoric files set to the filtered files."
 
 
 
+(defun team/magit-log-rev ()
+  "Use magit to log for current file and read which rev."
+  (interactive)
+  (team/a-if (buffer-file-name)
+             (let ((magit-buffer-refname
+                    (magit-read-branch-prefer-other (format "%s: log:" (file-name-nondirectory it)))))
+               (magit-log-buffer-file))
+             (user-error "Buffer is not visiting a file.")))
 
 
-
+
 
 (defun team/magit-fetch-any (&optional arg)
   "Read branch and fetch upstream into local.
@@ -681,8 +672,7 @@ If there is a git message about changes to files that would be overriden, checko
         (when delete-them
           (--map
            (when
-               (or
-             (string-match-p ".*meta$" it)
-             (yes-or-no-p (format "Do you want to delete %s?" it)))
-             (delete-file it))
+            (or (string-match-p ".*meta$" it)
+                (yes-or-no-p (format "Do you want to delete %s?" it)))
+            (delete-file it))
            delete-them))))))

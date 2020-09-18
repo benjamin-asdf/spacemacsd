@@ -28,6 +28,7 @@
   "d" #'team/magit-clean-files
   "a" #'team/magit-add-untracked
   "c" #'team/magit-checkout-changed
+  "s" #'team/magit-add-files
   )
 
 (team/spacemacs-declare-keys
