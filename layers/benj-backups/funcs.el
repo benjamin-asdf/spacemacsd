@@ -25,7 +25,7 @@
    (benj-backups/make-backup it)
    (buffer-list)))
 
-(defun benj-backup/make-curr-buff-backup ()
+(defun benj-backup/make-curr-buff-backup (&optional inhibit-log)
   "Make backup of current buffer. Respects scratch buffers."
   (interactive)
   (benj-backups/make-backup
@@ -33,9 +33,14 @@
    (when (string-match-p
           "*scratch"
           (buffer-name))
-     (benj-backups--file-name (string-trim (buffer-name) "*" "*")))))
+     (benj-backups--file-name (string-trim (buffer-name) "*" "*")))
+   inhibit-log))
 
-(defun benj-backups/make-backup (buff &optional file-name)
+(defadvice save-buffer (around my/save-buffer-advice (&optional arg) activate)
+  (benj-backup/make-curr-buff-backup t)
+  ad-do-it arg)
+
+(defun benj-backups/make-backup (buff &optional file-name inhibit-log)
   (when (not (or file-name (buffer-file-name buff)))
     (user-error "buffer is not visiting a file. And not handled specially."))
   (let ((file-name (or file-name (benj-backups--file-name (buffer-file-name buff)))))
@@ -44,6 +49,7 @@
     (with-temp-file
         file-name
       (insert-buffer buff)
-      (message "wrote backup in %s" file-name))))
+      (unless inhibit-log
+          (message "wrote backup in %s" file-name)))))
 
 (setq benj-backups-timer (run-at-time (* 5 60) (* 5 60) 'benj-backup-some-buffers))
