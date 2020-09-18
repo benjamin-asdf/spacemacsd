@@ -630,14 +630,14 @@ Optionally set BUFF-NAME or default to  'out'"
     (with-current-buffer
         (magit-process-buffer t)
       (let ((section (car (last (oref magit-root-section children)))))
-        (buffer-substring (oref section start) (oref section end))))))
-  (->gg))
+        (buffer-substring (oref section start) (oref section end)))))))
 
 
 (defun team-magit/collect--blocking-files (initial-reg end-reg)
   "Return a list of files parsed from git output when it tells you that files
 would be overriden or by a checkout.
 INITIAL-REG is the beginning part of the git msg, END-REG is the end part of the message."
+  (->gg)
   (when (re-search-forward initial-reg nil t)
     (let ((res))
       (while (re-search-forward "^\t\\(.*\\)$"
@@ -645,7 +645,6 @@ INITIAL-REG is the beginning part of the git msg, END-REG is the end part of the
                                   (re-search-forward end-reg nil t))
                                 t)
         (push (match-string-no-properties 1) res))
-      (->gg)
       res)))
 
 (defun team-magit/checkout-annoying ()
