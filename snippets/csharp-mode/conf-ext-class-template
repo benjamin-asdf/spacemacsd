@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : conf-ext-class-template
+#key : conf-ext-class-template
+#contributor : benj
+# --
+public static class `class-name`ConfigExt {
+    $0
+}

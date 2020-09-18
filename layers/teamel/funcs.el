@@ -294,17 +294,24 @@ and expand a snippet for a 'With...(this config)' method."
         (re-search-backward
          "public struct \\(\\w+\\) "
          nil)
-        (setq class-name (match-string-no-properties 1)))
-      (team/chsarp-snippet-insert
-       "autobconf"
-       (format "public static %s With" class-name)
-       `((class-name ,class-name)
-         (field-name ,field-name)
-         (type ,type)
-         (field-name-capital ,(team/capitalize-first-letter field-name)))))
-    (re-search-backward "public static class" nil)
-    (forward-line 1)
-    (open-line 1))
+        (setq class-name (match-string-no-properties 1))
+        (unless (re-search-forward "public static class" nil t)
+          (->G)
+          (team/->new-line)
+          (team-yas/expand-csharp-snippet
+           "conf-ext-class-template"
+           `((class-name ,class-name))))
+        (team/chsarp-snippet-insert
+         "autobconf"
+         (format "public static class " class-name)
+         `((class-name ,class-name)
+           (field-name ,field-name)
+           (type ,type)
+           (field-name-capital ,(team/capitalize-first-letter field-name)))
+         1)
+        (re-search-backward "public static class" nil)
+        (->$)
+        (open-line 1))))
   (forward-line 1))
 
 

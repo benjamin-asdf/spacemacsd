@@ -612,17 +612,27 @@ as appropriate.
     snippet-name
     'csharp-mode)
    line-regex
-   snippet-env))
+   snippet-env
+   place))
 
-(defun benj-yasnippet/insert-snippet-before (snippet line-regex snippet-env)
+(defun benj-yasnippet/insert-snippet-at-place (snippet line-regex snippet-env &optional place)
   "Search forward for LINE-REGEX. Insert SNIPPET. SNIPPET-ENV expects a let style list. See `yas-insert-snippet'."
   (re-search-forward line-regex nil t)
-  (forward-line -1)
+  (forward-line (or place -1))
   (yas-expand-snippet
    snippet
    nil
    nil
    snippet-env))
+
+(defun team-yas/expand-csharp-snippet (name expand-env)
+  (yas-expand-snippet
+   (yas-lookup-snippet
+    name
+    'csharp-mode)
+   nil
+   nil
+   expand-env))
 
 
 
