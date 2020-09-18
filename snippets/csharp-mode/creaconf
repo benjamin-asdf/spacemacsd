@@ -2,7 +2,6 @@
 #name : creaconf
 #key : creaconf
 #contributor : benj
+#expand-env : ((class-name (save-excursion (and (re-search-backward "public struct \\(\\w+\\)" nil t) (match-string-no-properties 1)))))
 # --
-
-
-public static MarketRefreshPromptConfig Create() => new MarketRefreshPromptConfig();
+public static `class-name` Create() => new `class-name`();
