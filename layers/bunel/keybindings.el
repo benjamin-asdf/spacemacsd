@@ -30,10 +30,10 @@
 (team/spacemacs-declare-keys
   "out"
     "tests"
-  "outb" #'bunel/unity-unit-test-buffer
-  "outl" #'bunel/unity-unit-test-last
+  "b" #'bunel/unity-unit-test-buffer
+  "l" #'bunel/unity-unit-test-last
   ;; todo at point
-  "outt" #'bunel/unity-test-at-point
+  "t" #'bunel/unity-test-at-point
   )
 
 

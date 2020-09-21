@@ -470,7 +470,9 @@ see `omnisharp-unit-test-buffer'."
        (bunel/unity-unit-test2 (list test-method-name))))))
 
 
+
 (defconst bunel/test-buff-name "*unity-tests*")
+(defvar-local bunel/test-out-file '())
 (defun bunel/unity-unit-test2 (method-names)
   (setq bunel/unity-tests-last
         (--mapcat
@@ -479,7 +481,7 @@ see `omnisharp-unit-test-buffer'."
   (let ((out-file (make-temp-file "unity-test-out")))
     (with-current-buffer
         (get-buffer-create bunel/test-buff-name)
-      (set (make-local-variable 'test-out-file) out-file))
+      (setq bunel/test-out-file out-file))
     (apply #'bunel--cmd
            `("refresh-and"
              nil
@@ -495,9 +497,10 @@ see `omnisharp-unit-test-buffer'."
            bunel/test-buff-name
            (erase-buffer)
            (insert-file-contents-literally
-            test-out-file)
+            bunel/test-out-file)
+           (team/with-default-dir
+            "/tmp" (delete-file bunel/test-out-file))
            (bunel/unity-test-mode)
-           (delete-file test-out-file)
            (pop-to-buffer (current-buffer)))))))
 
 (define-derived-mode
@@ -508,12 +511,21 @@ see `omnisharp-unit-test-buffer'."
 
   (font-lock-add-keywords
    'bunel/unity-test-mode
-   '(("### PASSED" . 'unity-test-passed-face))))
+   '(("### PASSED" . 'bunel/test-passed-face)
+     ("### ALL TESTS PASSED ###" . 'bunel/test-passed-bottom)))
+  (if (fboundp 'font-lock-flush)
+      (font-lock-flush)
+    (when font-lock-mode
+      (with-no-warnings (font-lock-fontify-buffer)))))
 
 (defface
-  unity-test-passed-face
-  '((((class color) (background dark))
-     :foreground "green"))
+  bunel/test-passed-face
+  '((t . (:foreground  "LawnGreen") ))
+  "")
+
+(defface
+  bunel/test-passed-bottom
+  '((t . (:foreground  "SpringGreen" :underline "white")))
   "")
 
 
