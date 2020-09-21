@@ -3,4 +3,4 @@
 #key : sm
 #contributor : benj
 # --
-.Set<`(team-electric/comp-name)`>(true)
+Set<`(team-electric/comp-name)`>(true)

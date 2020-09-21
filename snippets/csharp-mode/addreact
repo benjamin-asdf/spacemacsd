@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : addreact
+#key : arect
+#contributor : benj
+# --
+AddReact(
+    Matcher.AllOf<$1>(),
+    entities => {
+         $0
+});

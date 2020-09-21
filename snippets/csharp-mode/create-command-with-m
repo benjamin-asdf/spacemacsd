@@ -3,4 +3,4 @@
 #key : cmdm
 #contributor : benj
 # --
-c.CreateCommand().`(team-electric/resolve-cached-comp-set-part)`
+c.CreateCommand().`(team-electric/resolve-cached-comp-set-part)`;

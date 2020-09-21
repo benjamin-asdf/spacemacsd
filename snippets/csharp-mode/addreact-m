@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : addreact-m
+#key : arectm
+#contributor : benj
+# --
+AddReact(
+    Matcher.AllOf<`(team-electric/comp-name)`>(),
+    entities => {
+         $0
+});
