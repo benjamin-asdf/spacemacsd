@@ -328,7 +328,7 @@ NAME and BUFFNAME are allowed to be nil."
   (let ((p (point)))
     (find-file (car (split-string (concat (magit-toplevel) (buffer-name)) ".~")))
     (goto-char p)
-    (evil-scroll-line-to-center)))
+    (evil-scroll-line-to-center (line-number-at-pos))))
 
 
 (defun benj/describe-last-function ()
@@ -362,8 +362,12 @@ NAME and BUFFNAME are allowed to be nil."
 
 
 
+
+(defun my/clear-konsoles ()
+  (interactive)
+  (async-shell-command "killall konsole"))
 
-
+
 
 
 

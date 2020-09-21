@@ -3,15 +3,15 @@
 (spacemacs/declare-prefix "o" "own")
 
 
-(spacemacs/set-leader-keys "ojg" 'spacemacs/jump-to-definition)
-
-;;avy
-(spacemacs/declare-prefix "oj" "jump")
-(spacemacs/set-leader-keys "ojl" 'avy-goto-char-in-line)
-(spacemacs/set-leader-keys "ojK" 'evil-avy-goto-word-1-above)
-(spacemacs/set-leader-keys "ojJ" 'evil-avy-goto-word-1-below)
-(spacemacs/set-leader-keys "ojW" 'evil-avy-goto-char-2)
-
+(team/spacemacs-declare-keys
+  "oj"
+  "jump"
+  "l" #'avy-goto-char-in-line
+  "K" #'evil-avy-goto-word-1-above
+  "J" #'evil-avy-goto-word-1-below
+  "W" #'evil-avy-goto-char-2
+  "g" #'spacemacs/jump-to-definition
+)
 
 (spacemacs/declare-prefix "oc" "copy")
 (spacemacs/set-leader-keys "ocl" 'avy-copy-line)
