@@ -179,12 +179,12 @@ then make cursors"
 Store a new book mark named \"last-work\"."
   (team/a-when
    (buffer-file-name)
-   (setq my/last-bookmarked-eyebrowse (eyebrowse--get 'current-slot))
    (unless
        (string-equal it
                      (gethash my/last-bookmarked-eyebrowse my/last-bookmarks-lut))
      (setf (gethash my/last-bookmarked-eyebrowse my/last-bookmarks-lut) it)
      (let ((name (format "last-work-%s" my/last-bookmarked-eyebrowse)))
+       (setq my/last-bookmarked-eyebrowse (eyebrowse--get 'current-slot))
        (bookmark-set name)))))
 
 (defun my/last--bookmark-name (slot)
