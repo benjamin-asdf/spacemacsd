@@ -19,15 +19,14 @@
     "devel & misc"
   ;; t is reserved - temp kbd
   "d" #'my/assign-temp-kbd
-
     )
 
 
 (team/spacemacs-declare-keys
     "oe"
-    "transformations"
-  "r" 'spacemacs/redshiftel-transient-state/body
-
+    "transformation, external"
+  "r" #'spacemacs/redshiftel-transient-state/body
+  "k" #'my/clear-konsoles
     )
 
 (team/spacemacs-declare-keys
@@ -35,3 +34,19 @@
     "substitute"
   "l" #'my/re-left-right
   )
+
+(team/spacemacs-declare-keys
+    "oep"
+    "paramaters"
+  "e" #'team/csharp-eldoc-to-param
+  "y" #'team/insert-yank-as-param
+
+  )
+
+
+(team/spacemacs-declare-keys
+     "of"
+     "files"
+   "C" #'my/jump-last-bookmark
+   "c" #'my/jump-last-bookmark-this-slot
+   )

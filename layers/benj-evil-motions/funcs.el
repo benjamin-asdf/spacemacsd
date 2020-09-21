@@ -153,3 +153,129 @@ then make cursors"
   "Assume `symbol-at-point' is a command and assign `my/temp-devel-kbd' to it."
   (interactive)
   (spacemacs/set-leader-keys my/temp-devel-kbd (symbol-at-point)))
+
+
+
+
+;; bookmarks
+
+;; could try out how it would be to have a bookmark foreach workspace
+;; (defvar my/last-bookmarked-file '())
+;; (defun my/last-change-bookmark-funtion ()
+;;   "If buffer is visiting a file different from `my/last-bookmarked-file',
+;; Store a new book mark named \"last-work\"."
+;;   (team/a-when
+;;    (buffer-file-name)
+;;    (unless (string-equal my/last-bookmarked-file it)
+;;      (bookmark-set "last-work"))))
+
+
+
+
+(defvar my/last-bookmarked-eyebrowse '())
+(defvar my/last-bookmarks-lut (make-hash-table))
+(defun my/last-change-bookmark-funtion ()
+  "If buffer is visiting a file different from `my/last-bookmarked-file',
+Store a new book mark named \"last-work\"."
+  (team/a-when
+   (buffer-file-name)
+   (setq my/last-bookmarked-eyebrowse (eyebrowse--get 'current-slot))
+   (unless
+       (string-equal it
+                     (gethash my/last-bookmarked-eyebrowse my/last-bookmarks-lut))
+     (setf (gethash my/last-bookmarked-eyebrowse my/last-bookmarks-lut) it)
+     (let ((name (format "last-work-%s" my/last-bookmarked-eyebrowse)))
+       (bookmark-set name)))))
+
+(defun my/last--bookmark-name (slot)
+  (format "last-work-%s" slot))
+(defun my/last--jump-bookmark (slot)
+  (bookmark-jump (bookmark-get-bookmark (my/last--bookmark-name slot))))
+
+(defun my/jump-last-bookmark ()
+  "Jump to the last bookmark made by `my/last-change-bookmark-funtion'."
+  (interactive)
+  (eyebrowse-switch-to-window-config my/last-bookmarked-eyebrowse)
+  (my/last--jump-bookmark my/last-bookmarked-eyebrowse))
+
+(defun my/jump-last-bookmark-this-slot ()
+  "Jump to last bookmark made for current eyebrowse slot."
+  (interactive)
+  (my/last--jump-bookmark (eyebrowse--get 'current-slot)))
+
+
+(add-hook 'post-self-insert-hook
+          #'my/last-change-bookmark-funtion)
+
+
+
+(defun team/chsarp-params-transform ()
+  "Dwim transform buffer contents into chsarp parameter syntax."
+  (->gg)
+  (while (> (point-max) (point))
+    (forward-char 1)
+    (cond
+     ((looking-at ";") (replace-match ","))
+     ((looking-back "\n") (replace-match " "))))
+  (insert (string-trim
+           (prog1
+               (buffer-string)
+             (erase-buffer)) nil ", ")))
+
+(defun team/insert-yank-as-param ()
+  (interactive)
+  (with-temp-buffer
+    (yank)
+    (team/chsarp-params-transform)
+    (buffer-string)))
+
+(defun team/csharp-eldoc-to-param ()
+  "Take the last omnisharp eldoc message, try to be dwim about what to
+add to the paramer list of the enclosing function."
+  (interactive)
+  (-some-->
+      team/eldoc-previous-message
+    (with-temp-buffer
+      (insert it)
+      (->gg)
+      (when (re-search-forward "(\\(.*\\))" nil t)
+        (insert (prog1 (match-string-no-properties 1) (erase-buffer))))
+      (buffer-string))
+    (save-excursion
+      (csharp-move-back-to-beginning-of-defun)
+      (team/^$-replace
+       "(\\(.*\\))"
+       (let ((part (match-string 1)))
+         (format
+          "(%s%s%s)"
+          part
+          (or (and (string-empty-p part) part) ", ")
+          it))))))
+
+
+
+;; chsarp syntax analysis example
+;; (defun my/csharp-eldoc-to-param ()
+;;   (interactive)
+;;   (team/a-when
+;;    team/eldoc-previous-message
+;;    (print it)
+;; (omnisharp--cs-element-stack-at-point
+;;  (let ((type-string it))
+;;    (lambda (stack)
+;;      (setq best-elm (car (last stack)))
+;;      (-let* (((&alist 'Kind kind
+;;                       'Ranges ranges) (car (last stack)))
+;;              ((&alist 'name  name) ranges)
+;;              ((&alist 'Start start
+;;                       'End end) name)
+;;              ((&alist 'Line line
+;;                       'Collumn coll) start))
+;;        (->gg)
+;;        (forward-line
+;;         (- line 1))
+;;        (forward-char coll)
+;;        (insert "MOFOFO")
+;;        )
+;;      ;; (--> (car (last stack))
+;;      ;;      ))))))

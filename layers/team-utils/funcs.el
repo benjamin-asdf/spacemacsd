@@ -363,6 +363,11 @@ With TEXT, insert TEXT at the end of the line."
     (->0)
     (re-search-forward reg (point-at-eol) no-error)))
 
+(defmacro team/^$-replace (reg replace &optional no-error)
+  `(progn
+     (team/re-this-line ,reg ,no-error)
+     (replace-match ,replace)))
+
 (defun region-str ()
   (buffer-substring-no-properties (region-beginning) (region-end)))
 
