@@ -138,3 +138,8 @@ Nil otherwise."
       "Set<%s>(true)"
       "Add<%s>()")
     name)))
+
+(defun team-electric/copy-word-to-reg ()
+  "Copy the current evil word into register m."
+  (interactive)
+  (evil-set-register ?m (thing-at-point 'evil-word)))
