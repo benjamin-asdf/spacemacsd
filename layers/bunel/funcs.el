@@ -24,13 +24,16 @@
 
 
 
-(defvar bunel/last-cmd '()
+(defvar bunel/last-cmd '())
+(defvar bunel/last-debug-method-cmd '()
   "Flat list of cmd and args")
 (defun bunel--cmd (cmd proj &rest args)
   "Invoke bunel. PROJ default to `bunel-default-unity-project'.
 CMD should be something."
   (interactive)
   (setq bunel/last-cmd `(,cmd ,@args))
+  (when (string-equal "execute-debug-method" cmd)
+    (setq bunel/last-debug-method-cmd bunel/last-cmd))
   (team/start-proc "bunel" "*bunel*" "bunel" (or proj bunel-default-unity-project) cmd args))
 
 
@@ -154,10 +157,18 @@ List for menus, overlays, windows to open."
 
 
 
+
 (defun bunel/rerun-last ()
   (interactive)
+  (bunel/rerun--last bunel/last-cmd))
+
+(defun bunel/rerun-debug-method ()
+  (interactive)
+  (bunel/rerun--last bunel/last-debug-method-cmd))
+
+(defun bunel/rerun--last (cmd)
   (team/a-if
-   bunel/last-cmd
+   cmd
    (progn (bunel--cmd
            (car it)
            nil

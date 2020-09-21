@@ -15,7 +15,6 @@
   "U" #'team-unity/rg-guid-search-at-point
   "f" #'team-unity/rg-guid-search-ask-file
   "0" #'bunel/set-default-project
-  "l" #'bunel/rerun-last
   "L" #'bunel/loading-scene-and-play
   "0" #'bunel-open-unity-editor-log
   "O" #'team-unity/open-prefab-at-point
@@ -36,3 +35,12 @@
   ;; todo at point
   "outt" #'bunel/unity-test-at-point
   )
+
+
+(team/spacemacs-declare-keys
+    "oul"
+    "last"
+  "l" #'bunel/rerun-last
+  "e" #'bunel/rerun-debug-method
+
+    )
