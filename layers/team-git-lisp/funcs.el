@@ -3,8 +3,15 @@
 ;;; Code:
 
 (defvar-local benj-git/after-magit-op nil)
-(defun benj-git/after--magit (op)
-  "Call OP after magit process finished with a single arg, the exit status."
+(defun benj-git/after--magit (op &optional run-if-non-active)
+  "Call OP after magit process finished with a single arg, the exit status.
+If RUN-IF-NON-ACTIVE is non nil, call OP even if there is no magit process with
+arg 222."
+  (and
+   run-if-non-active
+   (or (not magit-this-process)
+       (memq (process-status magit-this-process) '(exit signal)))
+   (funcall op 222))
   (when
    magit-this-process
    (with-current-buffer (process-buffer magit-this-process)
@@ -511,7 +518,7 @@ Eval BODY with anaphoric files set to the filtered files."
 (team/define-filtered-file-op
   team/magit-checkout-changed
   #'magit-unstaged-files
-  #'team/magit-checkout-head)
+  (magit-run-git "checkout" "HEAD" "--" files))
 
 
 
@@ -647,6 +654,20 @@ INITIAL-REG is the beginning part of the git msg, END-REG is the end part of the
         (push (match-string-no-properties 1) res))
       res)))
 
+(defun team-magit/collect--git-cmd ()
+  "Return a list of string which are a magit git cmd args
+from the first line current buffer.
+Assume syntax as in `magit-process-buffer'."
+  (split-string
+   (buffer-substring-no-properties
+    (progn
+      (->gg)
+      (skip-chars-forward
+       (concatenate 'string "^" (make-string 1 #x2026)))
+      (point))
+    (point-at-eol))))
+
+
 (defun team-magit/checkout-annoying ()
   "Check the last magit output section.
 If there is a git message about changes to files that would be overriden, checkout those files. Else if the message talks about untracked files, delete them, if they are metas, else prompt the user for confirmation."
@@ -671,7 +692,8 @@ If there is a git message about changes to files that would be overriden, checko
         (when delete-them
           (--map
            (when
-            (or (string-match-p ".*meta$" it)
-                (yes-or-no-p (format "Do you want to delete %s?" it)))
-            (delete-file it))
-           delete-them))))))
+               (or (string-match-p ".*meta$" it)
+                   (yes-or-no-p (format "Do you want to delete %s?" it)))
+             (delete-file it))
+           delete-them)))
+      (magit-run-git-async (team-magit/collect--git-cmd)))))

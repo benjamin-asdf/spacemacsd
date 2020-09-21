@@ -15,7 +15,6 @@
  "F" #'benj-git/fetch-and-merge
  "'" #'team/git-update-modules
  "e" #'benj-magit/ediff-resolve
- "y" #'benj-git/yank-first-unmerged-file
  "o" #'team/magit-fetch-any
  "R" #'team/magit-rebase-onto
  "z" #'team/magit-stash-curr)
@@ -59,4 +58,5 @@
   "O" #'team/magit-all-ours
   "s" #'team/list-current-unmerged-status
   "c" #'vc-find-conflicted-file
+  "y" #'benj-git/yank-first-unmerged-file
   )
