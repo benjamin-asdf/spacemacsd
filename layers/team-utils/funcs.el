@@ -273,6 +273,9 @@ Else eval ELSE-FORMS with implicit progn."
 
 ;; elisp
 
+(defun team/skip-until (s)
+  (skip-chars-forward (format "^" s)))
+
 (defun team/to-lines-str (list)
   (mapconcat 'identity list "\n"))
 (defun team/to-spaced-str (list)
