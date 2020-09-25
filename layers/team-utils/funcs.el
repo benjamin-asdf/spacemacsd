@@ -234,7 +234,18 @@ Else eval ELSE-FORMS with implicit progn."
 
 (defmacro team/a-when (test &rest body)
   "Bind the value of TEST to it. When it is non nil, eval BODY with implicit progn, ."
+  (declare (debug body))
   `(let ((it ,test)) (when it ,@body)))
+
+
+(defmacro team/a-when-all (form &rest args)
+  "Make a list out of ARGS, unless any item is nil, eval FORM,
+with it anaphorically bound to a list of ARGS."
+  (declare (debug form))
+  `(let ((it (list ,@args)))
+     (when (-all-p #'identity it)
+       ,form)))
+
 
 
 ;; symbols and strings
