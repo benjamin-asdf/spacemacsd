@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : test
+#key : test
+#contributor : benj
+# --
+(defun test ()
+  (interactive)
+  ($0))

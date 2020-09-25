@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-is-m
+#key : csim
+#contributor : benj
+# --
+c.state.Is<`(team-electric/comp-name)`>()

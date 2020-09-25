@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : small-switch
+#key : retswitch
+#contributor : benj
+# --
+return $1 switch {
+    $2 => $3,
+    _ => throw new ArgumentOutOfRangeException(nameof($0)),
+};

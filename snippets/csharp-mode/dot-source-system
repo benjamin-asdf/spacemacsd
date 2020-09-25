@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+#name : dot-source-system
+#key : dot-source-system
+#contributor : benj
+
+# --
+
+public class `name`GreenDotSystem : SourcedGreenDotsSystem {
+    protected override DotSource source => DotSource.`name`;
+    protected override Building building => MenuType.;
+
+    public `name`GreenDotSystem(Contexts c) : base(c) {
+        AddGreenDotTrigger(Matcher.AllOf<>);
+    }
+
+    protected override bool Condition() {
+        return false;
+    }
+}

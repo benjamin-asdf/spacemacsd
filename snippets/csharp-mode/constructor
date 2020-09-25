@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+#name : constructor-data-class
+#key : constructor
+#contributor : benj
+# --
+    public `name`Data(`params`) {$0
+    }

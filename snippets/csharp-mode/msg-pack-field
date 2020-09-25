@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : msg-pack-field
+#key : msg-pack-field
+#contributor : benj
+# --
+[Key(`num`)] public `type` `name`;

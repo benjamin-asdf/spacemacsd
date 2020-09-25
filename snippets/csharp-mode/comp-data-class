@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : comp-data-class
+#key : comp-data-class
+#contributor : benj
+# --
+[MessagePackObject]
+public class `name`Data {
+       $0
+}

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-is
+#key : csi
+#contributor : benj
+# --
+c.state.Is<$0>()

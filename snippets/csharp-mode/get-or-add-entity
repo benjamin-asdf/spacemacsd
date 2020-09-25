@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : get-or-add-entity
+#key : gow
+#contributor : benj
+# --
+c.state.GetOrAddEntityWith<$1>($0);
