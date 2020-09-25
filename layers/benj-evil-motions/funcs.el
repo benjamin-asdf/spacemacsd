@@ -110,17 +110,51 @@ Start either at 0 or prefix ARG, if given."
 
 
 
-(defun my/re-left-right ()
-  "Replace occurances of left to right in active region."
+
+(defun my/re-replace-dwim (re replace)
+  (let (res)
+    (let ((bounds (or (and (region-active-p) (car (region-bounds))) (cons (point-at-bol) (point-at-eol)))))
+      (save-excursion
+        (goto-char (car bounds))
+        (let ((end (my/marker-there (cdr bounds))))
+          (while
+              (and (> end (point))
+                   (re-search-forward re end t))
+            (replace-match replace)
+            (setq res t)))))
+    res))
+
+(defmacro my/define-re-toggle (left right)
+  "Define an interactive func called my/re-toggle-LEFT-RIGHT that swappes the stirng returned by LEFT and RIGHT."
+  (declare (indent defun))
+  `(defun  ,(symb 'my/re-toggle- left '- right) ()
+     (interactive)
+     (or (my/re-replace-dwim ,left ,right)
+         (my/re-replace-dwim ,right ,left))))
+
+(my/define-re-toggle
+  "pet"
+  "hero")
+
+(my/define-re-toggle
+  "left"
+  "right")
+
+(my/define-re-toggle
+  "green"
+  "red")
+
+(defun my/re-commata-newline ()
+  "Replace occurances of , to a new line in region or line."
   (interactive)
-  (unless (region-active-p) (user-error "Region not active"))
-  (save-excursion
-    (goto-char (region-beginning))
-    (while
-        (re-search-forward "left" (save-excursion
-                                    (progn (goto-char (region-end))
-                                           (my/marker-there (point-at-eol)))) t)
-     (replace-match "right"))))
+  (my/re-replace-dwim
+   ","
+   "\n"))
+
+
+
+
+
 
 (defun my/evil-visual-line-around-here ()
   "Search backward and forward stopping at empty lines.
@@ -207,51 +241,6 @@ Store a new book mark named \"last-work\"."
 (add-hook 'post-self-insert-hook
           #'my/last-change-bookmark-funtion)
 
-
-
-(defun team/chsarp-params-transform ()
-  "Dwim transform buffer contents into chsarp parameter syntax."
-  (->gg)
-  (while (> (point-max) (point))
-    (forward-char 1)
-    (cond
-     ((looking-at ";") (replace-match ","))
-     ((looking-back "\n") (replace-match " "))))
-  (insert (string-trim
-           (prog1
-               (buffer-string)
-             (erase-buffer)) nil ", ")))
-
-(defun team/insert-yank-as-param ()
-  (interactive)
-  (with-temp-buffer
-    (yank)
-    (team/chsarp-params-transform)
-    (buffer-string)))
-
-(defun team/csharp-eldoc-to-param ()
-  "Take the last omnisharp eldoc message, try to be dwim about what to
-add to the paramer list of the enclosing function."
-  (interactive)
-  (-some-->
-      team/eldoc-previous-message
-    (with-temp-buffer
-      (insert it)
-      (->gg)
-      (when (re-search-forward "(\\(.*\\))" nil t)
-        (insert (prog1 (match-string-no-properties 1) (erase-buffer))))
-      (buffer-string))
-    (save-excursion
-      (csharp-move-back-to-beginning-of-defun)
-      (team/^$-replace
-       "(\\(.*\\))"
-       (let ((part (match-string 1)))
-         (format
-          "(%s%s%s)"
-          part
-          (or (and (string-empty-p part) part) ", ")
-          it))))))
-
 
 
 ;; chsarp syntax analysis example
@@ -279,3 +268,23 @@ add to the paramer list of the enclosing function."
 ;;        )
 ;;      ;; (--> (car (last stack))
 ;;      ;;      ))))))
+
+
+
+
+
+(defun my/comment-or-uncomment-sexpr ()
+  "Use evilnc to toggle comment on sexpr."
+  (interactive)
+  (evil-lisp-state-prev-opening-paren)
+  (evilnc--invert-comment
+   (point)
+   (save-excursion
+     (evil-jump-item)
+     (forward-char 1)
+     (when (looking-at-p ")")
+       (insert "\n")
+       (indent-according-to-mode)
+       (forward-line -1))
+     (point)))
+  (evil-normal-state))

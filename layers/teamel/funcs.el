@@ -301,7 +301,7 @@ and expand a snippet for a 'With...(this config)' method."
           (team-yas/expand-csharp-snippet
            "conf-ext-class-template"
            `((class-name ,class-name))))
-        (team/chsarp-snippet-insert
+        (team/csharp-snippet-insert
          "autobconf"
          (format "public static class " class-name)
          `((class-name ,class-name)

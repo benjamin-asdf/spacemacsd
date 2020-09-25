@@ -144,17 +144,23 @@ Prefix arg can be:
 0 - public
 1 - public class {
 2 - public \\\( \\\)
-3 - public static \\\( \\\)"
+3 - public static \\\( \\\)
+4 - public class component"
   (interactive"P")
   (helm-do-ag
    (projectile-project-root)
    nil
-   (pcase arg
-     (0 "public")
-     (1 "public class {")
-     (2 "public \\( \\)")
-     (3 "public static \\( \\)")
-     (_ (user-error "invalid prefix arg %d" arg)))))
+   (format
+    (pcase arg
+      (0 "public %s")
+      (1 "public class %s \\{")
+      (2 "public %s \\( \\)")
+      (3 "public static %s \\( \\)")
+      (4 "public class %s component")
+      (_ (user-error "invalid prefix arg %s" arg)))
+    (thing-at-point 'evil-word))))
+
+
 
 
 ;; something where you (first) fuzzily filter for files

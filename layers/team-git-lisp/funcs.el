@@ -664,6 +664,7 @@ Assume syntax as in `magit-process-buffer'."
       (->gg)
       (skip-chars-forward
        (concatenate 'string "^" (make-string 1 #x2026)))
+      (forward-char 1)
       (point))
     (point-at-eol))))
 
@@ -697,3 +698,13 @@ If there is a git message about changes to files that would be overriden, checko
              (delete-file it))
            delete-them)))
       (magit-run-git-async (team-magit/collect--git-cmd)))))
+
+
+(defun team/magit-changed-files-reg (reg rev-or-range &optional other-rev)
+  "Return the changed files changed between REV-OR-RANGE matching REG.
+OTHER-REV defaults to HEAD."
+  (--filter (string-match-p reg it)
+            (magit-changed-files rev-or-range other-rev)))
+
+(defun team/magit-changed-prefabs (rev-or-range other-rev)
+  (team/magit-changed-files-reg ".*\.prefab$" rev-or-range other-rev))

@@ -86,7 +86,7 @@
 
             (with-temp-buffer
               (csharp-mode)
-              (team/chsarp-snippet-insert
+              (team/csharp-snippet-insert
                "congrats-viewmanager"
                ".*"
                expand-env)

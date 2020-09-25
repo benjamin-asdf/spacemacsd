@@ -236,6 +236,16 @@ Else eval ELSE-FORMS with implicit progn."
   "Bind the value of TEST to it. When it is non nil, eval BODY with implicit progn, ."
   `(let ((it ,test)) (when it ,@body)))
 
+
+;; symbols and strings
+
+(defun mkstr (&rest args)
+  (with-output-to-string
+    (dolist (elm args) (princ elm))))
+
+(defun symb (&rest args)
+  (intern (apply #'mkstr args)))
+
 
 
 ;; procs
@@ -262,6 +272,14 @@ Else eval ELSE-FORMS with implicit progn."
 
 
 ;; elisp
+
+(defun team/to-lines-str (list)
+  (mapconcat 'identity list "\n"))
+(defun team/to-spaced-str (list)
+  (mapconcat 'identity list " "))
+
+(defun team/delete-this-line ()
+  (delete-region (- (point-at-bol) 1) (point-at-eol)))
 
 (defmacro team/each-line (buffer-or-name-form &rest body)
   "Set buffer current to what BUFFER-OR-NAME-FORM evals.
@@ -392,17 +410,17 @@ With TEXT, insert TEXT at the end of the line."
      ,reg
      ,@body)))
 
-(defmacro team/re-replace (reg replace)
+(defmacro team/re-replace (reg replace &optional fixedcase)
   `(team/while-reg
     ,reg
-    (replace-match ,replace)))
+    (replace-match ,replace ,fixedcase)))
 
 
 (defmacro team/re-replace-in-file (file reg replace)
   `(team/with-file
     ,file
     (team/re-replace
-     reg replace)))
+     ,reg ,replace)))
 
 (defun team/->new-line ()
   "Open new line and forward to there."
@@ -424,11 +442,11 @@ With TEXT, insert TEXT at the end of the line."
   (indent-according-to-mode))
 
 ;; the default func for that is really wierd to use
-(defun team/re-replace-in-string (string re replace)
-  (with-temp-buffer
-    (insert string)
+(defmacro team/re-replace-in-string (string re replace &optional fixedcase)
+  `(with-temp-buffer
+    (insert ,string)
     (->gg)
-    (team/re-replace re replace)
+    (team/re-replace ,re ,replace ,fixedcase)
     (buffer-string)))
 
 
@@ -523,6 +541,17 @@ Then indent between current point and the old point."
    "\n"
    "\0"))
 
+
+;; lists
+
+(defun group (source n)
+  (when (zerop n) (error "zero length"))
+  (labels ((rec (source acc)
+                (let ((rest (nthcdr n source)))
+                  (if (consp rest)
+                      (rec rest (cons (subseq source 0 n) acc))
+                    (nreverse (cons source acc))))))
+    (if source (rec source nil) nil)))
 
 
 

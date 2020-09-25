@@ -32,7 +32,10 @@
 (team/spacemacs-declare-keys
     "oes"
     "substitute"
-  "l" #'my/re-left-right
+  "l" #'my/re-toggle-left-right
+  "h" #'my/re-toggle-pet-hero
+  "g" #'my/re-toggle-green-red
+  "," #'my/re-commata-newline
   )
 
 (team/spacemacs-declare-keys
@@ -50,3 +53,5 @@
    "C" #'my/jump-last-bookmark
    "c" #'my/jump-last-bookmark-this-slot
    )
+
+(spacemacs/set-leader-keys "cs" #'my/comment-or-uncomment-sexpr)

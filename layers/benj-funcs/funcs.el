@@ -70,7 +70,7 @@ Use correct indentation. Like 'o' without creating a new line"
 
 (defun benj-rand-line-from-file (file)
   "A random line from FILE"
-  (rand-element (benj-read-lines file)))
+  (rand-element (team/file-lines file)))
 
 (defun rand-element (list)
   "Random element from LIST."

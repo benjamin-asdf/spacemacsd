@@ -593,20 +593,20 @@ as appropriate.
           `((type-name ,name)
             (type-name-base ,type-name-base))))
     (and (goto-char (point-min))
-         (team/chsarp-snippet-insert
+         (team/csharp-snippet-insert
           "common-types-field"
           "public static CommonTypes I;"
           snippet-env)
-         (team/chsarp-snippet-insert
+         (team/csharp-snippet-insert
           "common-types-get-type"
           "FrozenCollections = ImmutableHashSet.Create(MetadataSymbolComparer.I,"
           snippet-env)
-         (team/chsarp-snippet-insert
+         (team/csharp-snippet-insert
           "common-types-merge-template"
           "compilation = l.compilation,"
           snippet-env))))
 
-(defun team/chsarp-snippet-insert (snippet-name line-regex snippet-env &optional place)
+(defun team/csharp-snippet-insert (snippet-name line-regex snippet-env &optional place)
   (benj-yasnippet/insert-snippet-at-place
    (yas-lookup-snippet
     snippet-name

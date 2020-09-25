@@ -99,20 +99,26 @@
   (when team-electric/catched-comp
     (car team-electric/catched-comp)))
 
+(defun team/comp-on-line ()
+  "Return a list consitsting of (COMPNAME COMPTYPE) from current line."
+  (when (team/re-this-line
+         "public class \\(\\w+\\) : \\(\\w+\\)?Component.*{ }" t)
+    (list (match-string-no-properties 1)
+          (or (match-string-no-properties 2) "Value"))))
+
+(defun team/comp-name-on-line ()
+  "Return comp name on line using regex."
+  (team/a-when (team/comp-on-line) (car it)))
 
 (defun team/catch-comp-on-line ()
   "Try search for comp syntax on current line,
 if successfull, set to register m and return non nil.
 Nil otherwise."
   (interactive)
-  (when
-   (team/re-this-line
-    "public class \\(\\w+\\) : \\(\\w+\\)?Component.*{ }" t)
-   (setq
-    team-electric/catched-comp
-    (list (match-string-no-properties 1)
-          (or (match-string-no-properties 2) "Value")))
-   (evil-set-register ?m (team-electric/comp-name))))
+  (team/a-when
+   (team/comp-on-line)
+   (evil-set-register ?m
+                      (car (setq team-electric/catched-comp it)))))
 
 ;; (defun team-electric/catch-comp-at-point ()
 ;;   "Catch thing at point as comp"
@@ -143,3 +149,61 @@ Nil otherwise."
   "Copy the current evil word into register m."
   (interactive)
   (evil-set-register ?m (thing-at-point 'evil-word)))
+
+
+
+
+(defun team-electric/yank-comp-name ()
+  "Yank last comp name."
+  (interactive)
+  (with-temp-buffer
+    (insert (team-electric/comp-name))
+    (kill-region (point-min) (point-max)))
+  (yank))
+
+
+
+(defun team/chsarp-params-transform ()
+  "Dwim transform buffer contents into chsarp parameter syntax."
+  (->gg)
+  (while (> (point-max) (point))
+    (forward-char 1)
+    (cond
+     ((looking-at ";") (replace-match ","))
+     ((looking-back "\n") (replace-match " "))))
+  (insert (string-trim
+           (prog1
+               (buffer-string)
+             (erase-buffer)) nil ", ")))
+
+(defun team/insert-yank-as-param ()
+  (interactive)
+  (with-temp-buffer
+    (yank)
+    (team/chsarp-params-transform)
+    (buffer-string)))
+
+(defun team/csharp-eldoc-to-param ()
+  "Take the last omnisharp eldoc message, try to be dwim about what to
+add to the paramer list of the enclosing function."
+  (interactive)
+  (-some-->
+      team/eldoc-previous-message
+    (with-temp-buffer
+      (insert it)
+      (->gg)
+      (when (re-search-forward "(\\(.*\\))" nil t)
+        (insert (prog1 (match-string-no-properties 1) (erase-buffer))))
+      (buffer-string))
+    (save-excursion
+      (csharp-move-back-to-beginning-of-defun)
+      (team/^$-replace
+       "(\\(.*\\))"
+       (let ((part (match-string 1)))
+         (format
+          "(%s%s%s)"
+          part
+          (or (and (string-empty-p part) part) ", ")
+          it))))))
+
+
