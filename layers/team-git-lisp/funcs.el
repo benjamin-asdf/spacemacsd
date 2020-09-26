@@ -388,7 +388,7 @@ For documentation on the status codes see git-status man."
   (benj-git/after-magit-success
    (magit-run-git-async "submodule" "foreach" "git" "clean" "-fd")))
 
-(defun benj-git/fire-up-merge-sample ()
+(defun benj-git/fire-up-gerge-sample ()
   "Create an empty git repo, should put you in a state where doing \"git merge topic\"
 will create a conflict in a file called file."
   (interactive)
@@ -542,14 +542,35 @@ Eval BODY with anaphoric files set to the filtered files."
 
 
 
+(defmacro team/with-buff-file-protected (&rest body)
+  "Run BODY with anaphoric it bound to the buffer file name.
+If buffer is not visiting a file, log an user error."
+  (declare (debug body))
+  `(team/a-if (buffer-file-name)
+             ,@body
+             (user-error "Buffer is not visiting a file.")))
+
 (defun team/magit-log-rev ()
   "Use magit to log for current file and read which rev."
   (interactive)
-  (team/a-if (buffer-file-name)
-             (let ((magit-buffer-refname
-                    (magit-read-branch-prefer-other (format "%s: log:" (file-name-nondirectory it)))))
-               (magit-log-buffer-file))
-             (user-error "Buffer is not visiting a file.")))
+  (team/with-buff-file-protected
+   (let ((magit-buffer-refname
+          (magit-read-branch-prefer-other (format "%s: log" (file-name-nondirectory it)))))
+     (magit-log-buffer-file))))
+
+
+;; doesn't work
+;; (defun team/magit-log-range ()
+;;   "Use magit to log for current file, ask for revs to log with REV..REV."
+;;   (interactive)
+;;   (team/with-buff-file-protected
+;;    (magit-log-setup-buffer
+;;     (list
+;;      (format "%s..%s"
+;;              (magit-read-branch "Log, left rev" "develop")
+;;              (magit-read-branch "Log, right rev" "HEAD")))
+;;     '("--graph" "-n256" "--decorate" "--merge" "--no-merges")
+;;     (team/mklist it))))
 
 
 
@@ -622,7 +643,7 @@ Optionally set BUFF-NAME or default to  'out'"
 (defun team/magit-log-merge (&optional files)
   "Show log for merge conflicts"
   (interactive
-   (list (team/magit-read-unmerged "Unmerged file to log merge:")))
+   (list (team/magit-read-unmerged "Unmerged file to log merge")))
   (magit-log-setup-buffer (list "HEAD") '("--graph" "-n256" "--decorate" "--merge" "--no-merges") (team/mklist files)))
 
 
