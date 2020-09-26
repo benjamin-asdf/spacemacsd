@@ -5,12 +5,12 @@
 
 (spacemacs/set-leader-keys-for-minor-mode
   'team/chsarp-superior-mode
-  "c" #'team/catch-comp-on-line
+  "C" #'team/catch-comp-on-line
+  "c" #'team-electric/do-comp-helm
   "," #'team-electric/copy-word-to-reg
   "m" #'team-electric/yank-comp-name
   "opp" #'team/csharp-eldoc-to-param
   "opy" #'team/insert-yank-as-param)
-
 
 
 
