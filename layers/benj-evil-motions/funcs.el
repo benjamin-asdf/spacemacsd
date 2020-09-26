@@ -124,13 +124,17 @@ Start either at 0 or prefix ARG, if given."
             (setq res t)))))
     res))
 
+(defmacro my/re--toggle-body (left right)
+  `(or (my/re-replace-dwim ,left ,right)
+      (my/re-replace-dwim ,right ,left)))
+
 (defmacro my/define-re-toggle (left right)
   "Define an interactive func called my/re-toggle-LEFT-RIGHT that swappes the stirng returned by LEFT and RIGHT."
   (declare (indent defun))
   `(defun  ,(symb 'my/re-toggle- left '- right) ()
      (interactive)
-     (or (my/re-replace-dwim ,left ,right)
-         (my/re-replace-dwim ,right ,left))))
+     (my/re--toggle-body ,left ,right)))
+
 
 (my/define-re-toggle
   "pet"
@@ -144,12 +148,14 @@ Start either at 0 or prefix ARG, if given."
   "green"
   "red")
 
+(my/define-re-toggle
+  "menu"
+  "overlay")
+
 (defun my/re-commata-newline ()
   "Replace occurances of , to a new line in region or line."
   (interactive)
-  (my/re-replace-dwim
-   ","
-   "\n"))
+  (my/re--toggle-body "," "\n"))
 
 
 

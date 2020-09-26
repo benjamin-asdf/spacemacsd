@@ -35,6 +35,7 @@
   "l" #'my/re-toggle-left-right
   "h" #'my/re-toggle-pet-hero
   "g" #'my/re-toggle-green-red
+  "m" #'my/re-toggle-menu-overlay
   "," #'my/re-commata-newline
   )
 
