@@ -67,4 +67,51 @@
        "/home/benj/idlegame/IdleGame/Assets/#/Sources/GameGuide/names")))))
 
 
+(with-current-buffer-window
+    "f"
+    nil
+    nil
+  (insert
+   (with-output-to-string
+     (print
+     (--zip-with
+      `(,(format "%s" it) ,(string-equal "Yes" other))
+      (team/file-lines
+       "/home/benj/idlegame/IdleGame/Assets/#/Sources/Mailbox/Seperate/names")
+      (team/file-lines
+       "/home/benj/idlegame/IdleGame/Assets/#/Sources/Mailbox/Seperate/refresh"))))))
+
+
+(load "/home/benj/.spacemacs.d/layers/team-snippets/red-dots")
+
+
+(defun cos/define-red-dots (dots)
+  (team/with-file
+   cos/dot-source-file
+   (csharp-mode)
+   (--map-indexed
+    (progn
+      (->gg)
+      (re-search-forward "//Red dots" nil)
+      (skip-chars-forward "^}")
+      (forward-line -2)
+      (team/in-new-line
+       (format "%s = RedDotOffset + %d," (car it) it-index))
+      (when (cadr it)
+        (re-search-forward "ReaddOnDailyRefresh" nil t)
+        (forward-line 1)
+        (->$)
+        (team/in-new-line (format "case DotSource.%s:" (car it))))
+      )
+    dots)))
+
+(defun cos/put-red-dot-systems (dots)
+  (--map (cos/make-dot-system (car it)) dots))
+
+
+
+(cos/put-red-dot-systems cos/red-dots)
+
+(cos/define-red-dots cos/red-dots)
+
 (provide 'define-dots)

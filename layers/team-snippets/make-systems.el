@@ -6,13 +6,13 @@
     (team-yassnippets/add-snippet-at-place
      "/home/benj/idlegame/IdleGame/Assets/#/Sources/GameGuide/GameGuideSystems.cs"
      "dot-source-system"
-     "BossReplayButtonGreenDotSystem"
+     "public class RemoveGreenDotsSystem"
      `((name ,name)))
     (team-yassnippets/add-snippet-at-place
      "/home/benj/idlegame/IdleGame/Assets/#/Sources/GameGuide/GameGuideSystems.cs"
      "feature-sys"
      "RemoveGreenDotsSystem"
-     `((sys-name ,(format "%sGreenDotSystem" name))
+     `((sys-name ,(format "%sDotSystem" name))
        (contexts "c")))))
 
 
@@ -74,3 +74,4 @@
 (cos/make-dot-system "FusionHero")
 (cos/make-dot-system "FusionArtifact")
 (cos/make-dot-system "CurrencyWidget")
+(cos/make-dot-system "MailTreassureMailRedirect")

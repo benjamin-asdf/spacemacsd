@@ -59,3 +59,4 @@
 (cos/define-dot "FusionHero" :re-add-on-daily nil)
 (cos/define-dot "FusionArtifact" :re-add-on-daily nil)
 (cos/define-dot "CurrencyWidget" :re-add-on-daily nil)
+(cos/define-dot "MailTreassureMailRedirect" :re-add-on-daily nil)
