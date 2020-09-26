@@ -5,11 +5,11 @@
 
 # --
 
-public class `name`GreenDotSystem : SourcedGreenDotsSystem {
+public class `name`DotSystem : SourcedDotsSystem {
     protected override DotSource source => DotSource.`name`;
     protected override Building building => MenuType.;
 
-    public `name`GreenDotSystem(Contexts c) : base(c) {
+    public `name`DotSystem(Contexts c) : base(c) {
         AddGreenDotTrigger(Matcher.AllOf<>);
     }
 

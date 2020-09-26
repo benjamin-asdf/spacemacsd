@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: entitas-get-entity-with
+# key: gew
+# --
+c.state.GetEntityWith<$1>($2)

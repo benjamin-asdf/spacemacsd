@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 #name : state-get-m
-#key : sgm
+#key : csgm
 #contributor : benj
 # --
 c.state.Get<`(team-electric/comp-name)`>().value

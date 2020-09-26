@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-get-replace
+#key : csr
+#contributor : benj
+# --
+c.state.Replace<$1>($0)

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-entity-with-var-m
+#key : egewm
+#contributor : benj
+# --
+var $1 = c.state.GetEntityWith<`(team-electric/comp-name)`>($0);

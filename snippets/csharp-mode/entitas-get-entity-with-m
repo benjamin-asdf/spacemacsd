@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: entitas-get-entity-with
+# key: gewm
+# --
+c.state.GetEntityWith<`(team-electric/comp-name)`>($0)

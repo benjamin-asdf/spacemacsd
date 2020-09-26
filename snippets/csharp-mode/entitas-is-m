@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: entitas-is-m
+# key: im
+# --
+Is<`(team-electric/comp-name)`>()$0

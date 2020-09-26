@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-get-replace-m
+#key : csrm
+#contributor : benj
+# --
+c.state.Replace<`(team-electric/comp-name)`>($0)

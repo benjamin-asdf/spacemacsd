@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-entities-with-m
+#key : geiwm
+#contributor : benj
+# --
+c.state.GetEntitiesWith<`(team-electric/comp-name)`>($0)

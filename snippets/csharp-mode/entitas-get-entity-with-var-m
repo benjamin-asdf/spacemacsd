@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-#name : entitasGetEntityWithLong
-#key : gew
+#name : entitas-get-entity-with-var
+#key : egew
 #contributor : benj
 # --
 var $1 = c.state.GetEntityWith<$2>($0);
