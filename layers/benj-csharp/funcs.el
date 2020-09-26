@@ -159,6 +159,7 @@ Optional BUFF-NAME to put proc output in a custom buffer. "
 (defun benj-dotnet-run()
   "Run dotnet run is current dir, open output in a dedicated buffer."
   (interactive)
+  (save-some-buffers)
   (benj-process-other-window "dotnet-run" "*dotnet-run*" "dotnet" "run"))
 
 
