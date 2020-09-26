@@ -15,6 +15,7 @@
  "oi0"
  "tools"
  "u" #'teamel/add-used-implicitly
+ "p" #'teamel/open-this-unity-proj
  )
 
 (team/spacemacs-declare-keys
