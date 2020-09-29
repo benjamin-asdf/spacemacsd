@@ -562,8 +562,6 @@ If buffer is not visiting a file, log an user error."
           (magit-read-branch-prefer-other (format "%s: log" (file-name-nondirectory it)))))
      (magit-log-buffer-file))))
 
-(magit-log-setup-buffer (list "HEAD..windows") nil nil)
-
 (defun team/magit-log-double-dot ()
   "Setup magit buffer with double dot revision range. Prompt user for left and right."
   (interactive)
