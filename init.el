@@ -630,18 +630,16 @@ before packages are loaded."
 
 
 
-
-  (run-at-time 10 10 #'benj-sys/invoke-watch-vbs)
-
   (defun benj-sys/invoke-watch-vbs ()
     "Invoke python script that kills vbs compiler processes."
     (start-process-shell-command "watch-vbs" "*watch-vbs*" "watch_vbs.py"))
 
-  (run-at-time 20 20 #'benj-sys/invoke-kill-high-mem)
-
   (defun benj-sys/invoke-kill-high-mem ()
     "Invoke perl script that kills high mem procs"
     (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs"))
+
+  (run-at-time 10 10 #'benj-sys/invoke-watch-vbs)
+  (run-at-time 20 20 #'benj-sys/invoke-kill-high-mem)
 
 
   ;; temp hacks
