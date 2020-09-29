@@ -2,7 +2,7 @@
   (unless
       (team/with-file
        "/home/benj/idlegame/IdleGame/Assets/#/Sources/GameGuide/GameGuideSystems.cs"
-       (re-search-forward (format "%sGreenDotSystem" name) nil t))
+       (re-search-forward (format "%sDotSystem" name) nil t))
     (team-yassnippets/add-snippet-at-place
      "/home/benj/idlegame/IdleGame/Assets/#/Sources/GameGuide/GameGuideSystems.cs"
      "dot-source-system"

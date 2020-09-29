@@ -1,0 +1,12 @@
+;;;; -*- coding: no-conversion; mode: lisp-data -*-
+
+
+
+
+(defvar cos/more-green-dots '(
+
+                      ;; 1 for each quest building
+
+                      ))
+
+
