@@ -331,24 +331,28 @@ For documentation on the status codes see git-status man."
                 (nth (% (+ (or (cl-position benj-git/last-visited-unmerged-cs-file files :test 'equal) -1) 1) (length files)) files))))
       (message "No more unmerged cs files!"))))
 
-(defmacro benj-git/with-unmerged-files (&rest body)
-  "Run BODY with the anaphoric 'files'."
+(defmacro benj-git/with-unmerged-files (reg &rest body)
+  "Run BODY with the anaphoric 'files'. Filter file names by REG, if REG is nil, don't filter."
   `(progn
      (require 'magit)
-      (if-let ((files (magit-unmerged-files)))
+     (if-let ((files (--filter (or (not reg) (string-match-p reg it)) (magit-unmerged-files))))
             (progn ,@body)
           (message "No more unmerged files."))))
 
-(defun benj-magit/ediff-resolve ()
-  "Start `magit-ediff-resolve' with first unmerged file."
-  (interactive)
+(defun benj-magit/ediff-resolve (&optional arg)
+  "Start `magit-ediff-resolve' with first unmerged file.
+With ARG only check cs files."
+  (interactive"P")
   (benj-git/with-unmerged-files
+   (and arg "\.cs$")
    (magit-ediff-resolve (first files))))
 
-(defun benj-git/yank-first-unmerged-file ()
-  "Yank first unmerged file into clipboard using `magit-unmerged-files'"
-  (interactive)
+(defun benj-git/yank-first-unmerged-file (&optional arg)
+  "Yank first unmerged file into clipboard using `magit-unmerged-files'.
+With ARG only check cs files."
+  (interactive"P")
   (benj-git/with-unmerged-files
+   (and arg "\.cs$")
    (kill-new (first files))))
 
 
@@ -557,6 +561,15 @@ If buffer is not visiting a file, log an user error."
    (let ((magit-buffer-refname
           (magit-read-branch-prefer-other (format "%s: log" (file-name-nondirectory it)))))
      (magit-log-buffer-file))))
+
+(magit-log-setup-buffer (list "HEAD..windows") nil nil)
+
+(defun team/magit-log-double-dot ()
+  "Setup magit buffer with double dot revision range. Prompt user for left and right."
+  (interactive)
+  (magit-log-setup-buffer
+   (list (format "%s..%s" (magit-read-branch-prefer-other "Left") (magit-read-branch-or-commit "Right" "HEAD")))
+   nil nil))
 
 
 ;; doesn't work

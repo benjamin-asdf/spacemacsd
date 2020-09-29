@@ -34,6 +34,7 @@
     "ogl"
     "log"
   "l" #'team/magit-log-rev
+  "r" #'team/magit-log-double-dot
   )
 (team/spacemacs-declare-keys
     "ogc"
