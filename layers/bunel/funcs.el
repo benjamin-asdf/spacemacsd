@@ -382,6 +382,14 @@ List for menus, overlays, windows to open."
 
 
 
+(defun team-unity/set-prefab-root-active (file active)
+  (team/with-file
+   file
+   (re-search-forward "\\(^  m_IsActive: \\)[10]$")
+   (replace-match (format "\\1%s" (if active "1" "0")))))
+
+
+
 (defun benj-msg-time-string ()
   "Put curr time string in the echo area."
   (interactive)

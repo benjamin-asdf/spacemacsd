@@ -2,6 +2,7 @@
 (defconst idlegame-project-root (concat (file-name-as-directory cos-dir) "IdleGame/"))
 (defconst idlegame-assets-dir (concat (file-name-directory idlegame-project-root) "Assets/"))
 (defconst idlegame-sources-dir (concat (file-name-directory idlegame-assets-dir) "#/Sources/"))
+(defconst idlegame-loadgroups-dir (concat (file-name-directory idlegame-assets-dir) "LoadGroups/"))
 
 ;;grep, helm ag
 (setq-default helm-ag-use-grep-ignore-list 't)
