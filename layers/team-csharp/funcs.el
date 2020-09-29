@@ -227,6 +227,7 @@ add to the paramer list of the enclosing function."
                        "PrimaryIndexComponent"
                        "IndexComponent"
                        "UniqueComponent"
+                       "FlagComponent"
                        "UniqueFlagComponent"))
           (process-file-shell-command
            (format "global --result=grep --other --reference \"%s\" | rg \"public class\"" elm)
