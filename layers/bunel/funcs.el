@@ -114,7 +114,7 @@ List for menus, overlays, windows to open."
 
 ;; TODO abstract, figure out makros
 
-(defun bunel-collect-menu-types ()
+(defun bunel/collect-menu-types ()
   "Search enum syntax in idlegame and collect overlay types."
   (split-string
    (with-output-to-string
@@ -125,8 +125,7 @@ List for menus, overlays, windows to open."
          (when (re-search-forward " +?\\(\\w+\\) = [0-9]+" (point-at-eol) t 1)
            (princ (concat (match-string 1) "\n"))))))))
 
-
-(defun bunel-collect-overlay-types ()
+(defun bunel/collect-overlay-types ()
   "Search enum syntax in idlegame and collect overlay types."
   (split-string
    (with-output-to-string
@@ -145,7 +144,7 @@ List for menus, overlays, windows to open."
   (interactive)
   (shell-command (format "bunel %s open-overlay %s"
                          bunel-default-unity-project
-                         (completing-read "Open overlay: " (bunel-collect-overlay-types)))))
+                         (completing-read "Open overlay: " (bunel/collect-overlay-types)))))
 
 
 (defun bunel-open-menu ()
@@ -153,7 +152,7 @@ List for menus, overlays, windows to open."
   (interactive)
   (shell-command (format "bunel %s open-menu %s"
                          bunel-default-unity-project
-                         (completing-read "Open menu: " (bunel-collect-menu-types)))))
+                         (completing-read "Open menu: " (bunel/collect-menu-types)))))
 
 
 
