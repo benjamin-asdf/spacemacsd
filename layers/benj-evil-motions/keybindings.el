@@ -37,6 +37,7 @@
   "g" #'my/re-toggle-green-red
   "m" #'my/re-toggle-menu-overlay
   "," #'my/re-commata-newline
+  "w" #'my/re-toggle-week-day
   )
 
 (team/spacemacs-declare-keys
