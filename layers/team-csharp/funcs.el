@@ -274,3 +274,48 @@ This relies on up to date gtags."
           :fuzzy-match t
           :action team-electric/helm-comp-actions
           :follow (and helm-follow-mode-persistent))))
+
+(defun team-electric/helm-comp-echo ()
+  "Use `team-electric/helm-comps-source' with the sole action of returning the comp name string.
+This is meant to be used in lisp code."
+  (let ((team-electric/helm-comp-actions nil))
+    (helm :sources team-electric/helm-comps-source)))
+
+
+
+(defun team-electric/helm-insert-comp-name ()
+  (interactive)
+  (insert (team-electric/helm-comp-echo)))
+
+
+;;  gtags
+
+(defvar cos/gtags-updated-hook '())
+(defun cos/regenerate-gtags-background ()
+  "Regenerate  gtags for idlegame sources dir."
+  (interactive)
+  (delete-file team-electric/helm-all-comps-cache)
+  (team/with-default-dir
+   idlegame-project-root
+   (shell-command
+    (format "fd . %s -tf -e cs > gtags.files" idlegame-sources-dir default-directory))
+   (message "[%s] Regenerating idlegame gtags in the background.." (current-time-string))
+   (set-process-sentinel
+    (start-process
+     "*gtags*"
+     "*gtags*"
+     "gtags"
+     "--gtagslabel"
+     "pygments")
+    #'(lambda (p e)
+        (run-hooks 'cos/gtags-updated-hook)
+        (message "[%d] Finished generating idlegame gtags." (process-exit-status p))))))
+
+(add-hook
+ 'cos/gtags-updated-hook
+ #'(lambda ()
+     (team/a-when team-electric/helm-all-comps-cache
+      (setq team-electric/helm-all-comps-cache (delete-file it)))))
+
+;; do this every 3 hours
+(run-at-time "04am" (* 3 60 60) #'cos/regenerate-gtags-background)
