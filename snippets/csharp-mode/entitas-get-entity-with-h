@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: entitas-get-entity-with-h
+# key: gewh
+# --
+c.state.GetEntityWith<`(team-electric/helm-comp-echo)`>($0)

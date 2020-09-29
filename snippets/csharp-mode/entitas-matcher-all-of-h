@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-hatcher-all-of-h
+#key : malh
+#contributor : benj
+# --
+Matcher.AllOf<`(team-electric/helm-comp-echo)`>()$0

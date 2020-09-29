@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: entitas-is-h
+# key: ih
+# --
+Is<`(team-electric/helm-comp-echo)`>()$0

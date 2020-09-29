@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : entitas-foreach-group-h
+#key : foregrh
+#contributor : benj
+# --
+foreach (var ${1:e} in c.state.GetGroup(Matcher.AllOf<`(team-electric/helm-comp-echo)`>())) {
+    $0
+}

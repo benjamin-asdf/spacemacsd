@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-h
+#key : gh
+#contributor : benj
+# --
+Get<`(team-electric/helm-comp-echo)`>().value

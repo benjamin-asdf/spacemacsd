@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-has-m
+#key : cshm
+#contributor : benj
+# --
+c.state.Has<`(team-electric/comp-name)`>()

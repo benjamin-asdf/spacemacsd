@@ -7,10 +7,10 @@
 
 public class `name`DotSystem : SourcedDotsSystem {
     protected override DotSource source => DotSource.`name`;
-    protected override Building building => MenuType.;
+    protected override Building building => MenuType.Main;
 
     public `name`DotSystem(Contexts c) : base(c) {
-        AddGreenDotTrigger(Matcher.AllOf<>);
+        // AddGreenDotTrigger(Matcher.AllOf<>);
     }
 
     protected override bool Condition() {

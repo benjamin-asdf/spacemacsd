@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-has-h
+#key : cshh
+#contributor : benj
+# --
+c.state.Has<`(team-electric/helm-comp-echo)`>()

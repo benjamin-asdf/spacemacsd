@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : get-or-add-entity-h
+#key : gowh
+#contributor : benj
+# --
+c.state.GetOrAddEntityWith<`(team-electric/helm-comp-echo)`>($0);

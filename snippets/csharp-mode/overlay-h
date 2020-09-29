@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : overlay-h
+#key : ovrh
+#contributor : benj
+# --
+OverlayType.`(completing-read "Overlay: " (bunel/collect-overlay-types))`

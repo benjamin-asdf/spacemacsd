@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : addrea-h
+#key : addreah
+#contributor : benj
+# --
+AddReactEach(
+    Matcher.AllOf<`(team-electric/helm-comp-echo)`>(),
+    e => {
+        $0
+});

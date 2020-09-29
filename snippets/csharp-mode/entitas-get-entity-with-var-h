@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-entity-with-var-h
+#key : egewh
+#contributor : benj
+# --
+var $1 = c.state.GetEntityWith<`(team-electric/helm-comp-echo)`>($0);

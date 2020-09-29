@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-single-entity-h
+#key : gseh
+#contributor : benj
+# --
+c.state.GetSingleEntity<`(team-electric/helm-comp-echo)`>()

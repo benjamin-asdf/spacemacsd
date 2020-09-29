@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : overlay-active-h
+#key : ovrah
+#contributor : benj
+# --
+c.IsOverlayActive(OverlayType.`(completing-read "Overlay: " (bunel/collect-overlay-types))`)

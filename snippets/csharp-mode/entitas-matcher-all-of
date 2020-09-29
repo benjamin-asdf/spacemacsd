@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-#name : entitasMatcherAllOf
-#key : Mall
+#name : entitas-matcher-all-of
+#key : mall
 #contributor : benj
 # --
 Matcher.AllOf<$1>()$0

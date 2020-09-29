@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : addreact-h
+#key : arecth
+#contributor : benj
+# --
+AddReact(
+    Matcher.AllOf<`(team-electric/helm-comp-echo)`>(),
+    entities => {
+         $0
+});

@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-#name : entitas-has-entities-with
-#key : hew
-#contributor : benj
-# --
-c.state.HasEntitiesWith<$1>($0)

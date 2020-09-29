@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-get-replace-h
+#key : csrh
+#contributor : benj
+# --
+c.state.Replace<`(team-electric/helm-comp-echo)`>($0)

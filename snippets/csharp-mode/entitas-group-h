@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-group-h
+#key : grph
+#contributor : benj
+# --
+c.state.GetGroup(Matcher.AllOf<`(team-electric/helm-comp-echo)`>())

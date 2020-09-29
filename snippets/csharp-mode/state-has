@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-#name : grr
-#key : grr
+#name : state-has
+#key : csh
 #contributor : benj
 # --
-c.state.GetGroup()
+c.state.Has<$0>()

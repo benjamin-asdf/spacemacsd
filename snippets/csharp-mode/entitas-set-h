@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-set-h
+#key : sh
+#contributor : benj
+# --
+Set<`(team-electric/helm-comp-echo)`>(true)

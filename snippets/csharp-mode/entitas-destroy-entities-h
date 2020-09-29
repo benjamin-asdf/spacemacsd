@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-destroy-entities
+#key : destrh
+#contributor : benj
+# --
+c.state.DestroyEntities<`(team-electric/helm-comp-echo)`>();

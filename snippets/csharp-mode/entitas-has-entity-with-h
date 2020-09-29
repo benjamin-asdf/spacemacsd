@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : has-entity-with-h
+#key : hywh
+#contributor : benj
+# --
+c.state.HasEntityWith<`(team-electric/helm-comp-echo)`>($0)

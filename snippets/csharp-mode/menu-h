@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : menu-h
+#key : meh
+#contributor : benj
+# --
+MenuType.`(completing-read "Menu: " (bunel/collect-menu-types))`

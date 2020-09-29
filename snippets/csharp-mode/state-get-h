@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-get-h
+#key : csgh
+#contributor : benj
+# --
+c.state.Get<`(team-electric/helm-comp-echo)`>().value

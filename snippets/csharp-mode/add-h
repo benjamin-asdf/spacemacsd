@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : add-h
+#key : Ah
+#contributor : benj
+# --
+Add<`(team-electric/helm-comp-echo)`>($0);

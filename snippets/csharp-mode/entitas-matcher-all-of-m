@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-matcher-all-of-m
+#key : malm
+#contributor : benj
+# --
+Matcher.AllOf<`(team-electric/comp-name)`>()$0

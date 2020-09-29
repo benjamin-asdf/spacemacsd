@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-single-entity-m
+#key : gsem
+#contributor : benj
+# --
+c.state.GetSingleEntity<`(team-electric/comp-name)`>()
