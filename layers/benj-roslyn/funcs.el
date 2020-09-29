@@ -504,46 +504,40 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
      (while (re-search-forward regex nil t)
        (replace-match ,replace)))))
 
+(defmacro team/with-match-data (nums &rest body)
+  "Bin match-N to each num in NUMS. Then execute BODY."
+  (declare (debug body))
+  (declare (indent 2))
+  (if (null nums)
+      `(progn ,@body)
+    (let ((symb (symb 'match- (car nums))))
+      `(let ((,symb (match-string-no-properties ,(car nums))))
+         (team/with-match-data ,(cdr nums) ,@body)))))
 
 (defun benj-roslyn-tools/log-goto-warning-location ()
   "Meant to be used in an output buffer of analyzers, jump to location of log."
   (interactive)
   (catch 'done
-    (benj-rolsyn-tools/jump-line
+    (team/when-re-this-line
      "^\\(/.*\\)(\\([0-9]+\\),\\([0-9]+\\)):"
-     ((file (match-string-no-properties 1))
-      (line (match-string-no-properties 2))
-      (coll (match-string-no-properties 2))))
-    (benj-rolsyn-tools/jump-line
+     (benj-roslyn-tools/line--jumper))
+    (team/when-re-this-line
      "^\\(/.*\\) around Line \\([0-9]+\\)"
-     ((file (match-string-no-properties 1))
-      (line (- (string-to-number (match-string-no-properties 2)) 1))
-      (coll nil)))
-    (benj-rolsyn-tools/jump-line
+     (benj-roslyn-tools/line--jumper))
+    (team/when-re-this-line
      "SourceFile(\\(/.*\\)\\[\\([0-9]+\\)"
-     ((file (match-string-no-properties 1))
-      (line (match-string-no-properties 2))
-      (coll nil)))))
+     (benj-roslyn-tools/line--jumper))))
 
-(defmacro benj-rolsyn-tools/jump-line (regex datas)
-  "Apply REGEX to the current line.
-DATAS should be a let style list that optionally sets FILE, LINE and COLL,
-as appropriate.
-"
-  (declare (debug datas))
-  `(save-excursion
-    (goto-char (point-at-bol))
-    (when (re-search-forward ,regex (point-at-eol) t)
-      (let ,datas
-        (when file
-          (find-file file)
-          (goto-char (point-min))
-          ;; since we 0 base in the output we don't have to -1 here
-          ;; leaky abstraction
-          (when line (forward-line (or (and (number-or-marker-p line) line) (string-to-number line))))
-          (when coll (forward-char (string-to-number coll)))
-          (throw 'done t))))))
-
+(defun benj-roslyn-tools/line--jumper ()
+  (team/with-match-data
+   (1 2 3)
+   (team/a-when
+    match-1
+    (team/find-file
+     it
+     (+ 1 (string-to-number match-2))
+     (and match-3 (string-to-number match-3)))
+    (throw 'done t))))
 
 (defun benj-roslyn-tools/make-relative-paths-from-test-dir ()
   "Make all absolute paths in the file relative to the analyzer test default dir."
