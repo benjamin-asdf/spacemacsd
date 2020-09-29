@@ -17,4 +17,30 @@
                                              "-m$"
                                              "-h"))))
 
-(-map #'team-electric/produce--h-snippet (directory-files "/home/benj/.spacemacs.d/snippets/csharp-mode/" t "\\-m$"))
+
+
+(defun team-electric/make-m--snippet (file)
+  (with-temp-buffer
+    (insert-file-contents-literally file)
+    (re-search-forward
+     "#name"
+     nil)
+    (->$)
+    (insert "-m")
+    (re-search-forward "#key")
+    (->$)
+    (insert "m")
+    (team/re-replace
+     "$0"
+     "`(team-electric/comp-name)`")
+    (write-region nil nil
+                  (concat file "-m"))))
+
+
+(defun team-electric/make-m-snippet ()
+  (interactive)
+  (team-electric/make-m--snippet (buffer-file-name)))
+
+(provide 'produce-electric-snippets)
+
+;; (-map #'team-electric/produce--h-snippet (directory-files "/home/benj/.spacemacs.d/snippets/csharp-mode/" t "\\-m$"))

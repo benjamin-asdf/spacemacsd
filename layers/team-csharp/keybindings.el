@@ -11,7 +11,9 @@
   "h" #'team-electric/helm-insert-comp-name
   "m" #'team-electric/yank-comp-name
   "opp" #'team/csharp-eldoc-to-param
-  "opy" #'team/insert-yank-as-param)
+  "opy" #'team/insert-yank-as-param
+  "og" #'cos/regenerate-gtags-background
+  )
 
 
 

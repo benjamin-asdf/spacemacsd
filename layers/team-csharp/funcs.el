@@ -294,7 +294,7 @@ This is meant to be used in lisp code."
 (defun cos/regenerate-gtags-background ()
   "Regenerate  gtags for idlegame sources dir."
   (interactive)
-  (delete-file team-electric/helm-all-comps-cache)
+  (require 'idlegame-definitions)
   (team/with-default-dir
    idlegame-project-root
    (shell-command
