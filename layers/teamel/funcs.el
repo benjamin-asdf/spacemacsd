@@ -362,7 +362,8 @@ and expand a snippet for a 'With...(this config)' method."
       'face 'teamel/flycheck-err-face)
      (buffer-string))
    (save-excursion
-     (or (team/search-proximite "^$" -10) (progn (forward-line -1) (point))))))
+     (or (team/search-proximite "^$" -10) (progn (forward-line -1) (point))))
+   ?f))
 
 
 (defun team/search-proximite (reg reach)
