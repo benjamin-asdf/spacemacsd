@@ -54,13 +54,6 @@ return the file name of the create file"
          (or (apply orig args) team/eldoc-previous-message))))
 (advice-add 'eldoc-message :around #'team/eldoc-save-last-message)
 
-
-;; (defun team/last-eldoc-message-to-reg (&optional register)
-;;   "Copy last eldoc message to REGISTER default to register k"
-;;   (interactive)
-;;   (when team/eldoc-previous-message
-;;     (evil-set-register (or register ?k) team/eldoc-previous-message)))
-
 (defun team/last-eldoc-csharp-no-type ()
   (interactive)
   (when team/eldoc-previous-message
@@ -70,8 +63,6 @@ return the file name of the create file"
 (defun team/evil-pop-register ()
   "Pop register 1, move all registers up. So 2 becomes and so on."
   (interactive))
-
-
 
 
 
@@ -147,10 +138,6 @@ This also goes to point min point."
       (setq team/yank-to-letter ?a))))
 
 
-
-
-
-
 (advice-add #'evil-yank :after #'team/yank--to-register-adv)
 
 (defun team/special-register-p (character)
@@ -223,7 +210,6 @@ Return FORM value like `prog1' and `when' combined."
       (push it res))
     (nreverse res)))
 
-
 (defmacro team/a-if (test then-form &rest else-forms)
   "If TEST form returns non nil, bind anaphoric it to it, then
 eval THEN-FORM and return the return value of THEN-FORM.
@@ -233,7 +219,7 @@ Else eval ELSE-FORMS with implicit progn."
   `(let ((it ,test)) (if it ,then-form ,@else-forms)))
 
 (defmacro team/a-when (test &rest body)
-  "Bind the value of TEST to it. When it is non nil, eval BODY with implicit progn, ."
+  "Bind the value of TEST to it. When it is non nil, eval BODY with implicit progn."
   (declare (debug body))
   `(let ((it ,test)) (when it ,@body)))
 
@@ -284,12 +270,29 @@ with it anaphorically bound to a list of ARGS."
 
 ;; elisp
 
+(defun team/find-file (file line &optional coll)
+  "Find file and goto LINE. When COLL is non nil, goto coll."
+  (find-file file)
+  (->gg)
+  (forward-line line)
+  (team/a-when coll (forward-char coll)))
+
+(defun team/append-line-to-file (string file)
+  "Thin wrapper around `append-to-file'. STRING the string to add, FILE the filename."
+  (with-temp-buffer
+    (insert string)
+    (open-line 1)
+    (append-to-file
+     nil
+     nil
+     file)))
+
 (defun team/skip-until (s)
   (skip-chars-forward (format "^" s)))
 
-(defun team/to-lines-str (list)
+(defun mk-lines (list)
   (mapconcat 'identity list "\n"))
-(defun team/to-spaced-str (list)
+(defun mk-separated (list)
   (mapconcat 'identity list " "))
 
 (defun team/delete-this-line ()
@@ -387,6 +390,13 @@ With TEXT, insert TEXT at the end of the line."
 (defun ->0 ()
   "Goto beginning of line"
   (goto-char (point-at-bol)))
+
+(defmacro team/when-re-this-line (reg &rest body)
+  "Execute BODY when REG is succesful on current line."
+  `(save-excursion
+    (->0)
+    (when (re-search-forward ,reg (point-at-eol) t)
+      ,@body)))
 
 (defun team/re-this-line (reg &optional no-error)
   "Search for REG on current line. If NO-ERROR is non nil,
@@ -529,12 +539,6 @@ MATCH: The match data group to collect."
        (insert-it (match-string-no-properties match))))
     buff))
 
-(defun team/insert-indented (&rest strings)
-  (team/then-indent-like-here
-   (--each
-       strings
-     (insert it))))
-
 (defmacro team/then-indent-like-here (&rest body)
   "Take the current indent and point, execute body.
 Then indent between current point and the old point."
@@ -543,6 +547,12 @@ Then indent between current point and the old point."
          (indent (current-indentation)))
      ,@body
      (indent-region (min p (point)) (max p (point)) indent)))
+
+(defun team/insert-indented (&rest strings)
+  (team/then-indent-like-here
+   (--each
+       strings
+     (insert it))))
 
 
 (defun team/make-null-term (&optional file)
