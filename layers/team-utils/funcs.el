@@ -34,10 +34,15 @@ return the file name of the create file"
         (replace-match replace-with t)))))
 
 
-;; TODO use (directory-files-and-attributes )
-(defun latest-file (path)
-  "Get latest file (excluding directory) in PATH."
-  (car (sort (--remove (member (file-name-nondirectory it) '(".." ".")) (directory-files path 'full nil t)) #'file-newer-than-file-p)))
+(defun latest-file (path &optional reg)
+  "Get latest file (excluding .. and .) in PATH."
+  (let ((its-time (lambda (it) (nth-value 5 it))))
+    (caar
+     (--sort
+      (time-less-p (funcall its-time other) (funcall its-time it))
+      (directory-files-and-attributes path t (or reg "\\w+"))))))
+
+
 
 
 
@@ -269,6 +274,19 @@ with it anaphorically bound to a list of ARGS."
 
 
 ;; elisp
+
+(defun team/copy-file-re-replace (file reg replace)
+  "Create a copy of FILE. Regex replace REG with REPLACE in file path,
+return the name of the new file."
+  (let ((new-file
+         (team/re-replace-in-string file reg replace)))
+    (unless (file-exists-p (file-name-directory new-file))
+      (make-directory
+       (file-name-directory new-file) t))
+    (copy-file
+     template-file
+     new-file t)
+    new-file))
 
 (defun team/find-file (file line &optional coll)
   "Find file and goto LINE. When COLL is non nil, goto coll."
