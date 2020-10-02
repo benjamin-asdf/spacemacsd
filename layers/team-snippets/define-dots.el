@@ -196,6 +196,37 @@
 
 
 
+(cos/define-dot "CampaignDotmanRefresh" nil t)
+(cos/define-dot "ArenaDotmanRefresh" nil t)
+
+
+
+
+
+
+
+
+
+
+
+(defun extract-quest-buildings ()
+  "Return a list of elements like (type name) where type is ther MenuType or OverlayType."
+  (team/with-default-dir
+   idlegame-project-root
+   (team/with-file
+    "Assets/#/Sources/Quests/QuestConstants.cs"
+
+    )
+   )
+
+
+
+  )
+
+
+
+
+
 
 
 (provide 'define-dots)
