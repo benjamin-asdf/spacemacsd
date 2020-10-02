@@ -564,6 +564,12 @@ see `omnisharp-unit-test-buffer'."
 
 
 (add-to-load-path "~/.spacemacs.d/layers/bunel/")
+
+(defun team-unity/lazy-fix-load-group (file)
+  (interactive"f")
+  (require 'unity-addressables)
+  (fix-load-group file))
+
 (defun team-unity/lazy-add-lables (file-or-meta -labels)
   (require 'unity-labels)
   (team-unity/add-labels file-or-meta -labels))
