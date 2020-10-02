@@ -275,6 +275,19 @@ with it anaphorically bound to a list of ARGS."
 
 ;; elisp
 
+(defun team/copy-file-re-replace (file reg replace)
+  "Create a copy of FILE. Regex replace REG with REPLACE in file path,
+return the name of the new file."
+  (let ((new-file
+         (team/re-replace-in-string file reg replace)))
+    (unless (file-exists-p (file-name-directory new-file))
+      (make-directory
+       (file-name-directory new-file) t))
+    (copy-file
+     template-file
+     new-file t)
+    new-file))
+
 (defun team/find-file (file line &optional coll)
   "Find file and goto LINE. When COLL is non nil, goto coll."
   (find-file file)
