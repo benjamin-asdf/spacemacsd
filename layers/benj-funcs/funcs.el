@@ -369,12 +369,17 @@ NAME and BUFFNAME are allowed to be nil."
 
 
 
+(defun benj-latest-screenshot ()
+  "Get latest file located at \"~/Pictures/\" "
+  (latest-file "~/Pictures"))
 
+(defun benj/open-latest-screenshot ()
+  (interactive)
+  (spacemacs//open-in-external-app (benj-latest-screenshot)))
 
-
-
-
-
+(defun benj/open-latest-vid ()
+  (interactive)
+  (spacemacs//open-in-external-app (latest-file "~/Videos/")))
 
 
 

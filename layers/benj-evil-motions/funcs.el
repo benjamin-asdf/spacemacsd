@@ -156,6 +156,10 @@ Start either at 0 or prefix ARG, if given."
   "week"
   "day")
 
+(my/define-re-toggle
+  "true"
+  "false")
+
 (defun my/re-commata-newline ()
   "Replace occurances of , to a new line in region or line."
   (interactive)

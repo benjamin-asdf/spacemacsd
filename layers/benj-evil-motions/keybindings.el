@@ -38,6 +38,7 @@
   "m" #'my/re-toggle-menu-overlay
   "," #'my/re-commata-newline
   "w" #'my/re-toggle-week-day
+  "t" #'my/re-toggle-true-false
   )
 
 (team/spacemacs-declare-keys

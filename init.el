@@ -634,9 +634,17 @@ before packages are loaded."
     "Invoke python script that kills vbs compiler processes."
     (start-process-shell-command "watch-vbs" "*watch-vbs*" "watch_vbs.py"))
 
+  (defvar benj-sys/inhibit-kill-high-mem nil)
   (defun benj-sys/invoke-kill-high-mem ()
     "Invoke perl script that kills high mem procs"
-    (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs"))
+    (unless benj-sys/inhibit-kill-high-mem
+      (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs")))
+
+  (defun benj-sys/toggle-inhibit-kill-high-mem ()
+    (interactive)
+    (message "Set inhibit kill high mem to %s" (setq benj-sys/inhibit-kill-high-mem (not benj-sys/inhibit-kill-high-mem))))
+
+  (spacemacs/set-leader-keys "oeak" 'benj-sys/toggle-inhibit-kill-high-mem)
 
   (run-at-time 10 10 #'benj-sys/invoke-watch-vbs)
   (run-at-time 20 20 #'benj-sys/invoke-kill-high-mem)
