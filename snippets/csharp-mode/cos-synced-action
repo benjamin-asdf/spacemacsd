@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : cos-synced-action
+#key : act
+#contributor : benj
+# --
+c.CreateSyncedAction()
