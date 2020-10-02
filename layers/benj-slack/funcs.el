@@ -36,10 +36,6 @@
                      (or file-type (slack-file-select-filetype (file-name-extension file)))
                      (read-from-minibuffer "Filename: " (file-name-nondirectory file))))
 
-(defun benj-latest-screenshot ()
-  "Get latest file located at \"~/Pictures/\" "
-  (latest-file "~/Pictures"))
-
 
 (defun benj-slack-upload-latest-screenshot ()
   "Upload the latest file in pictures dir."

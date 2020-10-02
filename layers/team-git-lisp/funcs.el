@@ -335,7 +335,7 @@ For documentation on the status codes see git-status man."
   "Run BODY with the anaphoric 'files'. Filter file names by REG, if REG is nil, don't filter."
   `(progn
      (require 'magit)
-     (if-let ((files (--filter (or (not reg) (string-match-p reg it)) (magit-unmerged-files))))
+     (if-let ((files (--filter (or (not ,reg) (string-match-p ,reg it)) (magit-unmerged-files))))
             (progn ,@body)
           (message "No more unmerged files."))))
 
@@ -562,12 +562,23 @@ If buffer is not visiting a file, log an user error."
           (magit-read-branch-prefer-other (format "%s: log" (file-name-nondirectory it)))))
      (magit-log-buffer-file))))
 
+(defun team/magit--read-left-right ()
+  (format "%s..%s" (magit-read-branch-prefer-other "Left") (magit-read-branch-or-commit "Right" "HEAD")))
+
 (defun team/magit-log-double-dot ()
   "Setup magit buffer with double dot revision range. Prompt user for left and right."
   (interactive)
   (magit-log-setup-buffer
-   (list (format "%s..%s" (magit-read-branch-prefer-other "Left") (magit-read-branch-or-commit "Right" "HEAD")))
+   (list (team/magit--read-left-right))
    nil nil))
+
+(defun team/magit-log-double-dot-file ()
+  "Log buffer file with double dot revision range."
+  (interactive)
+  (team/with-buff-file-protected
+   (magit-log-setup-buffer
+    (list (team/magit--read-left-right))
+    nil (team/mklist it))))
 
 
 ;; doesn't work
@@ -598,7 +609,7 @@ With ARG, default to 'develop'."
             "Branch to fetch"))))
     (magit-run-git-async
      "fetch"
-     (magit-get-upstream-remote branch-name)
+     (or (magit-get-upstream-remote branch-name) "origin")
      (format "%1$s:%1$s" branch-name))))
 
 

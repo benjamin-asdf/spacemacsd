@@ -63,6 +63,11 @@
 (spacemacs/set-leader-keys "ohf" 'benj/describe-last-function)
 
 
+(spacemacs/set-leader-keys "ofs" 'benj/open-latest-screenshot)
+(spacemacs/set-leader-keys "ofv" #'(lambda () (interactive) (benj/play-vlc (latest-file "~/Videos"))))
+(spacemacs/set-leader-keys "ofd" #'(lambda () (interactive) (spacemacs//open-in-external-app (latest-file "~/Downloads"))))
+
+
 
 ;; maybe something
 ;; (defvar benj-keybindings-prefixes '()

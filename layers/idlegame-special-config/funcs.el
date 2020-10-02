@@ -17,6 +17,18 @@
   (setq-default helm-ag-ignore-patterns '("*.meta" "*.unity" "*.js" "*.md" "*.exe" "*.prefab" "*.xml" "*.asset" "**/Plugins/*")))
 
 
+(defmacro cos/with-root (&rest body)
+  (declare (debug t))
+  `(team/with-default-dir
+    ,cos-dir
+    ,@body))
+
+(defmacro cos/with-idlegame-proj-root (&rest body)
+  (declare (debug t))
+  `(team/with-default-dir
+    ,idlegame-project-root
+    ,@body))
+
 
 ;; TEMP FIXME
 (with-eval-after-load 'projectile
