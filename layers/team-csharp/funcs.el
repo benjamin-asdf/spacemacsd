@@ -210,6 +210,50 @@ add to the paramer list of the enclosing function."
 
 ;; idlegame comps helm
 
+
+;; comp source faces
+
+(defface
+  team-electric/value-comp-face
+  '((t . (:foreground "LemonChiffon")))
+  "")
+(defface
+  team-electric/flag-comp-face
+  '((t . (:foreground "LightSkyBlue")))
+  "")
+(defface
+  team-electric/unique-comp-face
+  '((t . (:foreground "Darkolivegreen3")))
+  "")
+(defface
+  team-electric/index-comp-face
+  '((t . (:foreground "Yellow4")))
+  "")
+(defface
+  team-electric/primary-index-comp-face
+  '((t . (:foreground "Rosybrown3")))
+  "")
+(defface
+  team-electric/unique-flagcomp-face
+  '((t . (:foreground "YellowGreen")))
+  "")
+(defface
+  team-electric/flag-comp-face
+  '((t . (:foreground "LightSkyBlue")))
+  "")
+
+
+(defvar team-electric/comp-faces-alist
+  '(("Component" . team-electric/value-comp-face)
+    ("UniqueComponent" . team-electric/unique-comp-face)
+    ("FlagComponent"  . team-electric/flag-comp-face)
+    ("IndexComponent"  . team-electric/index-comp-face)
+    ("PrimaryIndexComponent"  . team-electric/primary-index-comp-face)
+    ("UniqueFlagComponent"  . team-electric/unique-flagcomp-face)))
+
+
+
+
 
 (defvar team-electric/helm-all-comps-cache nil)
 (defvar team-electric/helm-comp-actions '())
@@ -250,8 +294,12 @@ This relies on up to date gtags."
     (insert candidate)
     (->gg)
     (when (re-search-forward ".*class[[:blank:]]+\\(\\w+\\).+?:[[:blank:]]+\\(\\(?:\\w+\\)?Component\\).*" nil t)
-      (replace-match "\\1 : \\2"))
-    (buffer-string)))
+      (let ((match-2 (match-string-no-properties 2)))
+        (replace-match "\\1 : \\2")
+        (or (-some--> match-2
+              (assoc-default it team-electric/comp-faces-alist)
+              (propertize (buffer-string) 'face it))
+            (buffer-string))))))
 
 (with-eval-after-load 'helm
   (setq team-electric/helm-comp-actions
@@ -260,7 +308,7 @@ This relies on up to date gtags."
                           (with-temp-buffer
                             (insert candidate)
                             (team/catch-comp-on-line)))
-
+         ;; "Inset comp name" #'(lambda (candidate))
          "Open file"              #'helm-ag--action-find-file
          "Open file other window" #'helm-ag--action-find-file-other-window
          ;; "Save results in buffer" #'helm-ag--action-save-buffer
