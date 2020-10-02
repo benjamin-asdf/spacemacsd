@@ -323,11 +323,13 @@ This relies on up to date gtags."
           :action team-electric/helm-comp-actions
           :follow (and helm-follow-mode-persistent))))
 
+
 (defun team-electric/helm-comp-echo ()
   "Use `team-electric/helm-comps-source' with the sole action of returning the comp name string.
 This is meant to be used in lisp code."
   (let ((team-electric/helm-comp-actions nil))
     (helm :sources team-electric/helm-comps-source)))
+
 
 
 
@@ -367,3 +369,15 @@ This is meant to be used in lisp code."
 
 ;; do this every 3 hours
 (run-at-time "04am" (* 3 60 60) #'cos/regenerate-gtags-background)
+
+
+;; csharp structural editing
+
+(defadvice evil-lisp-state-sp-forward-slurp-sexp (after team-electric/slurp-sexp-adv activate)
+  (interactive)
+  (when
+      (and  team/chsarp-superior-mode
+
+            ;; Do not to slurp the last ";" into a paren
+           (looking-at "\\(.*\\);)$"))
+    (replace-match "\\1);")))
