@@ -32,7 +32,6 @@
    (let ((s (match-string-no-properties 0)))
      (team/delete-this-line)
      (forward-line (or cnt -1))
-     (print s)
      (team/in-new-line s))))
 
 (defun benj/csharp-forward-expression (&optional cnt)
