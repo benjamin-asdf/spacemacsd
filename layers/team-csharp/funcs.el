@@ -163,51 +163,6 @@ Nil otherwise."
 
 
 
-(defun team/chsarp-params-transform ()
-  "Dwim transform buffer contents into chsarp parameter syntax."
-  (->gg)
-  (while (> (point-max) (point))
-    (forward-char 1)
-    (cond
-     ((looking-at ";") (replace-match ","))
-     ((looking-back "\n") (replace-match " "))))
-  (insert (string-trim
-           (prog1
-               (buffer-string)
-             (erase-buffer)) nil ", ")))
-
-(defun team/insert-yank-as-param ()
-  (interactive)
-  (with-temp-buffer
-    (yank)
-    (team/chsarp-params-transform)
-    (buffer-string)))
-
-(defun team/csharp-eldoc-to-param ()
-  "Take the last omnisharp eldoc message, try to be dwim about what to
-add to the paramer list of the enclosing function."
-  (interactive)
-  (-some-->
-      team/eldoc-previous-message
-    (with-temp-buffer
-      (insert it)
-      (->gg)
-      (when (re-search-forward "(\\(.*\\))" nil t)
-        (insert (prog1 (match-string-no-properties 1) (erase-buffer))))
-      (buffer-string))
-    (save-excursion
-      (csharp-move-back-to-beginning-of-defun)
-      (team/^$-replace
-       "(\\(.*\\))"
-       (let ((part (match-string 1)))
-         (format
-          "(%s%s%s)"
-          part
-          (or (and (string-empty-p part) part) ", ")
-          it))))))
-
-
-
 ;; idlegame comps helm
 
 
@@ -381,3 +336,49 @@ This is meant to be used in lisp code."
             ;; Do not to slurp the last ";" into a paren
            (looking-at "\\(.*\\);)$"))
     (replace-match "\\1);")))
+
+
+
+
+
+(add-to-load-path-if-exists "~/.spacemacs.d/layers/team-csharp/")
+
+;; (defun team/get-lazy-wrapper (name file)
+;;   (defalias (symb 'my-lazy/ name)
+;;     `(lambda ()
+;;       (interactive)
+;;       (require ,file)
+;;       (,name))))
+
+;; (defun team/define-lazy-keys-for-minor-mode (mode key def &rest bindings)
+;;   (while key
+;;     (spacemacs/set-leader-keys-for-minor-mode
+;;       mode
+;;       key
+;;       (team/get-lazy-wrapper def 'csharp-transformations))
+;;     (setq key (pop bindings) def (pop bindings))))
+
+
+
+(team/define-lazy-wrapper team/csharp-eldoc-to-param 'csharp-transformations)
+(team/define-lazy-wrapper team/insert-yank-as-param 'csharp-transformations)
+
+;; (team/define-lazy-keys-for-minor-mode
+;;  'team/chsarp-superior-mode
+;;  "oo"
+;;  'best-other)
+
+
+;; (team/get-lazy-wrapper 'ff 'csharp-transformations)
+
+;; (my-lazy/ff)
+
+;; (my-lazy/hello-mofo)
+
+;; (f 'hello 'fff)
+
+;; (defun f (name file)
+;;   `(lambda ()
+;;    (interactive)
+;;    (require ,file)
+;;    (,name)))

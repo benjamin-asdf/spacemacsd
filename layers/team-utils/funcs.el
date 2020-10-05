@@ -275,6 +275,15 @@ with it anaphorically bound to a list of ARGS."
 
 ;; elisp
 
+;; TODO support argument and interactive lists
+(defmacro team/define-lazy-wrapper (name file)
+  "Define a command called my-layz/NAME, that requires FILE and calls NAME."
+  (declare (debug t))
+  `(defun ,(symb 'my-lazy/ name) ()
+     (interactive)
+     (require ,file)
+     (,name)))
+
 (defun team/copy-file-re-replace (file reg replace)
   "Create a copy of FILE. Regex replace REG with REPLACE in file path,
 return the name of the new file."

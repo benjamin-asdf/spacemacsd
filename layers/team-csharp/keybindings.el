@@ -10,7 +10,7 @@
   "," #'team-electric/copy-word-to-reg
   "h" #'team-electric/helm-insert-comp-name
   "m" #'team-electric/yank-comp-name
-  "opp" #'team/csharp-eldoc-to-param
+  "opp" #'my-lazy/team/csharp-eldoc-to-param
   "opy" #'team/insert-yank-as-param
   "ot" #'cos/regenerate-gtags-background
   )
