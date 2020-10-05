@@ -203,12 +203,6 @@
 
 
 
-
-
-
-
-
-
 (defun extract-quest-buildings ()
   "Return a list of elements like (type name) where type is ther MenuType or OverlayType."
   (team/with-default-dir
@@ -219,9 +213,110 @@
     )
    )
 
+  )
+
+
+
+
+
+(defun read-csharp-field-value ()
+  "If csharp syntax at point is something like arr = FrozenArr(stuff1,stuff2), evaluate to a list of strings like (stuff1,stuff2)"
+  (->$)
+  (--map (string-trim it)
+         (split-string
+          (string-trim
+           (buffer-substring
+            (save-excursion (forward-char 1) (point))
+            (save-excursion (skip-chars-forward "^)") (point)))) ",")))
+
+(defun cos/leaderboard-deals ()
+  (team/with-file
+  "/home/benj/idlegame/IdleGame/Assets/#/Sources/Leaderboards/Shared/LeaderboardsConstants.cs"
+  (re-search-forward "ALL_LEADERBOARD_DEALS_PRODUCT_IDS =>")
+  (read-csharp-field-value)))
+
+(defun cos/leaderboard-products-rec ()
+  (team/with-file
+  "/home/benj/idlegame/IdleGame/Assets/#/Sources/Leaderboards/Shared/LeaderboardsConstants.cs"
+   (--map
+    (if-let  ((s
+               (with-temp-buffer
+                 (print it)
+                 (insert it)
+                 (->gg)
+                 (when (re-search-forward ".*\\(PRODUCT_ID.*DEALS\\)")
+                   (match-string-no-properties 1)))))
+        (progn (print s)
+               (->gg)
+               (re-search-forward (format "%s => " s))
+               (read-csharp-field-value))
+      (team/mklist it))
+    (team/mklist (car (cos/leaderboard-deals))))))
+
+(cos/leaderboard-products-rec)
+
+
+(defun cos/product-data (product-id)
+  "Get the chsarp string line defining the product of PRODUCT-ID."
+  (team/with-file
+   "/home/benj/idlegame/IdleGame/Assets/#/Sources/Purchase/PurchaseConstantsGenerated.cs"
+
+
+   ))
+
+(let ((s "foobar"))
+  (print (string-match "oo\\(.*\\)" s))
+  (match-string-no-properties 0))
+
+(defun team/map-first-lines-with-match (file strings)
+  "Return a new list of file lines. Search FILE for each first occurance of string in STRINGS."
+  (team/with-file
+   file
+   (--map
+    (progn
+      (->gg)
+      (re-search-forward it)
+      (buffer-substring (point-at-bol) (point-at-eol)))
+    strings)))
+
+
+
+(team/map-first-lines-with-match
+ "/home/benj/idlegame/IdleGame/Assets/#/Sources/Purchase/PurchaseConstantsGenerated.cs"
+ (team/mklist (car (cos/leaderboard-products)))
+ )
+
+
+
+
+
+;;   put lb dots
+(--map
+ (team/with-file
+  cos/dot-source-file
+  (csharp-mode)
+  (let ((name (concat "LbSubReminder" it)))
+    (unless (re-search-forward name nil t)
+      (->gg)
+      (re-search-forward "//Quests" nil)
+      (forward-line -1)
+      (team/in-new-line (format "%s," name)))
+
+    (re-search-forward "FromLbToLBReminderSource")
+    (forward-line 2)
+
+    (team/in-new-line (format "LB.%s => DotSource.%s," it name))
+
+    )
+
+
+
 
 
   )
+ (team/file-lines "/tmp/lb-names")
+ )
+
 
 
 
