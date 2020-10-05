@@ -43,8 +43,8 @@
   (benj-slack-updload (benj-latest-screenshot) "png"))
 
 
-;; all of this already exists
-;;`slack-message-custom-notifier'
+
+;; message notifier
 
 (defun benj/slack-notifier (message room team)
   "Custom notifier using notifiy send and a sound."
@@ -87,12 +87,26 @@
         (alert body :icon slack-alert-icon :title title :category 'slack)
         (benj/play-idlegame-sound)))
 
-  ;; (alert (format "New slack message: %s" message) :title room)
-  ;; (notifications-notify :title room :body message :icon slack-alert-icon :title )
-  ;; (start-process "benj-slack-notifiy-sound" "*slack-notify-sound*" "aplay" (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root)))))
+
+  ;; TODO
+  ;; store all messages in "~/org/slack-msgs/"
+  ;; keep track which messagees are not seen
+  ;; I could keep track of which rooms I looked at
+  ;; could have a list of 'unseen' rooms on my disk
+
   )
 
+
+
+
 (setq slack-message-custom-notifier 'benj/slack-notifier)
+
+
+
+
+
+
+
 
 (defun benj-slack/upload-snippet-on-region ()
   "Create a temp file on region, call `slack-file-upload' with it."
@@ -146,14 +160,3 @@
    "*slack-notify-sound*"
    "aplay"
    (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))))
-
-
-
-;; Seems to be a bug where it messages nil every second
-;; fucking annoying, but I don't care so much about this typing feature anyway
-;; (defun benj-slack/typing-display-advice (orig-func team-id)
-;;   "Advice meant for `slack-typing-display'."
-;;   )
-
-;; In case setting the variable doesn't work,
-;; advice `slack-typing-display' to nil
