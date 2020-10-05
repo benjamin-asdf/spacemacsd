@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : wfiley
+#key : wfiley
+#contributor : benj
+#expand-env : ((file  (teamel/last-yank)))
+# --
+(team/with-file
+  "`file`"
+  $0
+  )

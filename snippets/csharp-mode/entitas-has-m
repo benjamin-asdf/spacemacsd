@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-has-m
+#key : hm
+#contributor : benj
+# --
+Has<`(team-electric/comp-name)`>()

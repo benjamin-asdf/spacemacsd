@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-has
+#key : h
+#contributor : benj
+# --
+Has<$0>()

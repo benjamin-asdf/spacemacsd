@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-#name : ccnt
-#key : ccnt
+#name : entitas-count
+#key : cnt
 #contributor : benj
 # --
 c.state.Count<$0>()

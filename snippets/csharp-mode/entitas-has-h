@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-has-h
+#key : hh
+#contributor : benj
+# --
+Has<`(team-electric/helm-comp-echo)`>()

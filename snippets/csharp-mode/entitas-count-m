@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-count-m
+#key : cntm
+#contributor : benj
+# --
+c.state.Count<`(team-electric/comp-name)`>()
