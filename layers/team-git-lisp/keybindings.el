@@ -35,7 +35,9 @@
     "log"
   "l" #'team/magit-log-rev
   "r" #'team/magit-log-double-dot
+  "s" #'benj/magit-show-commit-no-limit-files
   )
+
 (team/spacemacs-declare-keys
     "ogc"
     "checkout etc"

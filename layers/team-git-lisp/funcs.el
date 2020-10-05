@@ -751,3 +751,12 @@ OTHER-REV defaults to HEAD."
 
 (defun team/magit-changed-prefabs (rev-or-range other-rev)
   (team/magit-changed-files-reg ".*\.prefab$" rev-or-range other-rev))
+
+
+
+(defun benj/magit-show-commit-no-limit-files ()
+  "Like RET in a log buffer but do not limit to the log files."
+  (require 'magit)
+  (interactive)
+  (let ((magit-buffer-log-files nil))
+    (call-interactively #'magit-show-commit nil nil)))
