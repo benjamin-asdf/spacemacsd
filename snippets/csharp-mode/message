@@ -5,4 +5,4 @@
 #expand-env : ((msg  (teamel/last-yank)))
 # --
 
-public string `(string-trim-right (upcase (team/re-replace-in-string msg " " "_")) "!")` => L._("`msg`");
+public string `(string-trim-right (upcase (team/re-replace-in-string (team/re-replace-in-string msg "&" "") " " "_")) "!")` => L._("`msg`");
