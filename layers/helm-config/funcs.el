@@ -191,6 +191,17 @@ Prefix arg can be:
 
 
 
+(defun my/clean-some-helm-buffers ()
+  "Kill buffs that are offending `helm-browse-project-get-buffers' functionality."
+  (interactive)
+  (cl-loop for b in (helm-buffer-list)
+           when (not (with-current-buffer b default-directory))
+           do (kill-buffer (get-buffer b))))
+
+
+
+
+
 
 
 

@@ -15,12 +15,20 @@
   '("i" . helm-info)
   '("d" . benj/helm-find-file-recursively)
   '("/" . (lambda () (interactive) (spacemacs/helm-project-smart-do-search t)))
-  '("M" . helm-multi-swoop-current-mode))
+  '("M" . helm-multi-swoop-current-mode)
+  '("x" . my/clean-some-helm-buffers)
 
-(spacemacs/declare-prefix "ohs" "swwop")
+  )
+
+(defun my/helm-rg-this-file ()
+  (interactive)
+  (team/a-when (buffer-file-name) (helm-do-ag default-directory (list it))))
+
+(spacemacs/declare-prefix "ohs" "swoop")
 (spacemacs/set-leader-keys
   "ohsb" 'team-helm/swoop-block-swoop
-  "ohsf" 'team-helm/swoop-narrow-fun)
+  "ohsF" 'team-helm/swoop-narrow-fun
+  "ohsf"  'my/helm-rg-this-file)
 
 
 (team/spacemacs-define-keys
