@@ -32,15 +32,3 @@ also add a number, which is either the +1 the last of such numbers, or +1 the co
                                  (or (cadar (last it))
                                      (length it)))))) "")))))
 
-
-(let ((name "Hi"))
-  (team/with-file
-   "/home/benj/.spacemacs.d/layers/team-csharp/test.cs"
-
-   (csharp-mode)
-   (re-search-forward (format "enum %s" name))
-   (->$)
-   ;; (print (list (team-helm/hs-block) (point) (mark)))
-   (team-csharp/append-to-enum "foo" t)
-
-   ))
