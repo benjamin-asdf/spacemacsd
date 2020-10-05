@@ -237,7 +237,12 @@ with it anaphorically bound to a list of ARGS."
      (when (-all-p #'identity it)
        ,form)))
 
-
+(defmacro left-if-negative (form left &rest right)
+  "If FORM evals to a negative number, eval LEFT form, else eval RIGHT forms."
+  `(let ((num ,form))
+     (if (and (numberp num) (< num 0))
+         ,left
+       ,@right)))
 
 ;; symbols and strings
 

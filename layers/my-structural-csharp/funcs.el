@@ -1,19 +1,58 @@
 
+(defmacro benj/charp-excurse-and-indent (&rest body)
+  "Execute BODY with `save-excursion', afterwards indent all region between point and start point."
+  (declare (debug t))
+  (declare (indent 2))
+  `(save-excursion
+    (let ((p (point-marker)))
+      ,@body
+      (indent-region-line-by-line (min  p (point)) (max p (point))))))
 
 (defun benj/chsarp-slurp-bracket-backward (&optional cnt)
   (interactive"P")
   (benj/csharp-slurp-bracket (or cnt -1)))
 
-
 (defun benj/csharp-slurp-bracket (&optional cnt)
   "Move the next } CNT lines. Negative CNT moves up.;"
   (interactive"P")
   (save-excursion
-    (re-search-forward "^.*}.*$")
-    (let ((s (match-string-no-properties 0)))
-      (team/delete-this-line)
-      (forward-line (or cnt 1))
-      (team/in-new-line s))))
+    (let ((p (point-marker)))
+      (re-search-forward "^.*}.*$")
+      (let ((s (match-string-no-properties 0)))
+        (team/delete-this-line)
+        (forward-line (or cnt 1))
+        (team/in-new-line s))
+      (indent-region-line-by-line p (point)))))
+
+(defun benj/charp-backwards-slurp-statement (&optional cnt)
+  "Move the enclosing bracketed statement CNT lines up."
+  (interactive"P")
+  (re-search-backward (concat "^.*" (team/regexp-opt "if" "foreach") ".*(.*).*{.*$"))
+  (benj/charp-excurse-and-indent
+   (let ((s (match-string-no-properties 0)))
+     (team/delete-this-line)
+     (forward-line (or cnt -1))
+     (print s)
+     (team/in-new-line s))))
+
+(defun benj/csharp-forward-expression (&optional cnt)
+  "Jump CNT semicolons. If CNT is negative, jump backwards."
+  (interactive"P")
+  (let ((cnt (or cnt 1)))
+    (dotimes (x (abs cnt))
+      (forward-char (signum cnt))
+      (funcall
+       (left-if-negative
+        cnt
+        #'skip-chars-backward
+        #'skip-chars-forward)
+       "^;")
+      (when (> 0 cnt) (forward-char -1)))))
+
+(defalias 'benj/csharp-backward-expression
+  #'(lambda ()
+      (interactive)
+      (benj/csharp-forward-expression -1)))
 
 
 ;; copy pasta `evil-lisp-state'
@@ -118,6 +157,8 @@ If `evil-csharp-structural-state-global' is non nil then this variable has no ef
 (defconst evil-csharp-structural-state-commands
   `(
     ("s" . benj/csharp-slurp-bracket)
+    ("b" . benj/charp-backwards-slurp-statement)
+    ("j" . benj/csharp-forward-expression)
     ("1"   . digit-argument)
     ("2"   . digit-argument)
     ("3"   . digit-argument)
@@ -133,6 +174,13 @@ If `evil-csharp-structural-state-global' is non nil then this variable has no ef
 
 (defvar evil-csharp-structural-state-major-mode-map (make-sparse-keymap))
 
+(dolist (x evil-csharp-structural-state-commands)
+  (cl-destructuring-bind (key . cmd) x
+    (if evil-csharp-structural-state-global
+        (define-key evil-csharp-structural-state-map (kbd key)
+          (evil-csharp-structural-state-enter-command cmd))
+      (define-key evil-csharp-structural-state-major-mode-map (kbd key)
+        (evil-csharp-structural-state-enter-command cmd)))))
 
 (dolist (x evil-csharp-structural-state-commands)
   (let ((key (car x))
@@ -157,30 +205,6 @@ If `evil-csharp-structural-state-global' is non nil then this variable has no ef
     (evil-csharp-structural-state)))
 
 
-
-
-
-;; (define-minor-mode
-;;   csharp-structural-editing-mode
-;;   "Mode for editing csharp buffers."
-;;   nil
-;;   nil
-;;   (let ((map (make-sparse-keymap)))
-;;     (define-key map "s" 'benj/csharp-slurp-bracket)
-;;     (define-key map "S" 'benj/chsarp-slurp-bracket-backward)
-;;     map)
-
-;;   (evil-set-initial-state 'csharp-structural-editing-mode 'motion))
-
-;; 
-
-;; (defun benj/toggle-csharp-structural-editing (&optional arg)
-;;   (interactive"P")
-;;   (csharp-structural-editing-mode (or arg (if csharp-structural-editing-mode -1 1))))
-
-;; 
-
 (evil-csharp-structural-state-leader ", k")
-
 
 (spacemacs/add-evil-cursor "csharp-structural" "BlueViolet" 'box)
