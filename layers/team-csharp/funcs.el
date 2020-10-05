@@ -362,6 +362,7 @@ This is meant to be used in lisp code."
 
 (team/define-lazy-wrapper team/csharp-eldoc-to-param 'csharp-transformations)
 (team/define-lazy-wrapper team/insert-yank-as-param 'csharp-transformations)
+(team/define-lazy-wrapper team/csharp-eldoc-expand-args 'csharp-transformations)
 
 ;; (team/define-lazy-keys-for-minor-mode
 ;;  'team/chsarp-superior-mode

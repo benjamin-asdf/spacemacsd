@@ -43,11 +43,17 @@ add to the paramer list of the enclosing function."
           (or (and (string-empty-p part) part) ", ")
           it))))))
 
-
-(defun ff () (print "fooo"))
-
+(defun team/csharp-eldoc-expand-args ()
+  "Use `team/eldoc-previous-message' to expand args inside the method call on line."
+  (interactive)
+  (-some-->
+      team/eldoc-previous-message
+    (with-temp-buffer
+      (insert it)
+      (team/^$-replace ".*\\((.*)\\).*" "\\1")
+      (buffer-string))
+    (team/^$-replace "(.*)" it)))
 
 
-
 
 (provide 'csharp-transformations)

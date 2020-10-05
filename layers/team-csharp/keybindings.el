@@ -13,6 +13,7 @@
   "opp" #'my-lazy/team/csharp-eldoc-to-param
   "opy" #'team/insert-yank-as-param
   "ot" #'cos/regenerate-gtags-background
+  "opl" #'team/csharp-eldoc-expand-args
   )
 
 
