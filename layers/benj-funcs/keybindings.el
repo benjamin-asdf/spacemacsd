@@ -70,6 +70,9 @@
 
 (spacemacs/set-leader-keys "o0i" #'helm-man-woman)
 
+(spacemacs/set-leader-keys "oef" #'with-editor-finish)
+
+
 
 ;; maybe something
 ;; (defvar benj-keybindings-prefixes '()
