@@ -392,13 +392,20 @@ With ARG only check cs files."
   (benj-git/after-magit-success
    (magit-run-git-async "submodule" "foreach" "git" "clean" "-fd")))
 
-(defun benj-git/fire-up-gerge-sample ()
-  "Create an empty git repo, should put you in a state where doing \"git merge topic\"
-will create a conflict in a file called file."
-  (interactive)
-  (let ((dir (concat (temporary-file-directory) (make-temp-name "merge-sample"))))
-    (mkdir dir)
-    (let ((default-directory dir))
+(defun benj-git/fire-up-gerge-sample (arg)
+  "Create an empty git repo, \"git merge topic\"
+will create a conflict in a file.
+If ARG is nil, try to open an existing merge sample repo, else always create a fresh one."
+  (interactive"P")
+  (team/with-default-dir
+   (or (and (not arg) (car (process-lines
+                                  "fd"
+                                  "-td"
+                                  "-a"
+                                  "merge-sample"
+                                  "/tmp/")))
+    (let ((default-directory (concat (temporary-file-directory) (make-temp-name "merge-sample"))))
+      (mkdir default-directory)
       (write-region "" nil "file")
       (shell-command "git init")
       (benj-git//commit-with-msg "Initial commit")
@@ -409,8 +416,9 @@ will create a conflict in a file called file."
       (shell-command "git checkout master")
       (write-region "another line\n" nil "file")
       (benj-git//commit-with-msg "Making a change on master")
-      (find-file "file")
-      (magit-status))))
+      (find-file-other-window "file")
+      dir))
+   (magit-status)))
 
 
 (defun benj-git//commit-with-msg (msg)

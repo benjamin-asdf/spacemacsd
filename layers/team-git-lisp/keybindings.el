@@ -31,6 +31,12 @@
   )
 
 (team/spacemacs-declare-keys
+    "og0"
+    "dev-utils"
+  "m" #'benj-git/fire-up-gerge-sample
+  )
+
+(team/spacemacs-declare-keys
     "ogl"
     "log"
   "l" #'team/magit-log-rev
