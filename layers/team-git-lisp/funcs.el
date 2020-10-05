@@ -417,7 +417,7 @@ If ARG is nil, try to open an existing merge sample repo, else always create a f
       (write-region "another line\n" nil "file")
       (benj-git//commit-with-msg "Making a change on master")
       (find-file-other-window "file")
-      dir))
+      default-directory))
    (magit-status)))
 
 
