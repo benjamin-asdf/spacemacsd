@@ -18,7 +18,7 @@
     "ot"
     "devel & misc"
   ;; t is reserved - temp kbd
-  "d" #'my/assign-temp-kbd
+  "d" #'my/eval-and-bind-func
     )
 
 

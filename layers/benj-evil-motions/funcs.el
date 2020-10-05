@@ -194,31 +194,50 @@ then make cursors"
 
 
 ;; meta the meta
-
-;; TODO eval , e f and this at once
 (defvar my/temp-devel-kbd "ott")
-(defun my/assign-temp-kbd ()
-  "Assume `symbol-at-point' is a command and assign `my/temp-devel-kbd' to it."
-  (interactive)
-  (spacemacs/set-leader-keys my/temp-devel-kbd (symbol-at-point)))
+
+(defun my/eval-and-bind-func (&optional arg)
+  "Eval func at point. Set keybinding to `my/temp-devel-kbd'.
+When ARG is non nil prompt the user for the key binding following the <spcot> leader keys,"
+  (interactive"P")
+  ;; TODO find a way to check how many bindings we have and do a-z0-9, maybe regexing `describe-bindings' is good enough
+  (spacemacs/set-leader-keys
+    (if arg (concat "ot" (read-from-minibuffer "Key: ")) my/temp-devel-kbd)
+    (eval-defun nil)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
-;; bookmarks
+  ;; bookmarks
 
-;; could try out how it would be to have a bookmark foreach workspace
-;; (defvar my/last-bookmarked-file '())
-;; (defun my/last-change-bookmark-funtion ()
-;;   "If buffer is visiting a file different from `my/last-bookmarked-file',
-;; Store a new book mark named \"last-work\"."
-;;   (team/a-when
-;;    (buffer-file-name)
-;;    (unless (string-equal my/last-bookmarked-file it)
-;;      (bookmark-set "last-work"))))
+  ;; could try out how it would be to have a bookmark foreach workspace
+  ;; (defvar my/last-bookmarked-file '())
+  ;; (defun my/last-change-bookmark-funtion ()
+  ;;   "If buffer is visiting a file different from `my/last-bookmarked-file',
+  ;; Store a new book mark named \"last-work\"."
+  ;;   (team/a-when
+  ;;    (buffer-file-name)
+  ;;    (unless (string-equal my/last-bookmarked-file it)
+  ;;      (bookmark-set "last-work"))))
 
 
-
+  
 
 (defvar my/last-bookmarked-eyebrowse '())
 (defvar my/last-bookmarks-lut (make-hash-table))
