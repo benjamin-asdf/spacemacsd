@@ -13,7 +13,7 @@
 
 (defun team-unity/add-labels (file-or-meta -labels)
   (team/with-file
-   file-or-meta
+   (team-unity/file-or-meta file-or-meta)
    (let* ((curr (team-unity/get--labels))
           (new (-union curr -labels)))
      (unless (= (length new) (length curr))
@@ -47,5 +47,28 @@
   (team/with-file
    (team-unity/file-or-meta file-or-meta)
    (team-unity/get--labels)))
+
+(defun cos/add-labels (files-or-metas -labels)
+  (--each
+      files-or-metas
+      (cos/with-root
+       (team-unity/add-labels
+        it
+        -labels))))
+
+(defvar cos/prefab-labels-alist
+  '((above-topbar . "AboveTopbar")
+    (uncategorized . "Uncategorized")
+    (normal-overlay . "NormalOverlay"))
+  )
+(setq cos/prefab-labels-alist
+  '((above-topbar . "AboveTopbar")
+    (uncategorized . "Uncategorized")
+    (normal-overlay . "NormalOverlay"))
+  )
+
+(defun cos/prefab-label (item)
+  (assoc-default item cos/prefab-labels-alist))
+
 
 (provide 'unity-labels)
