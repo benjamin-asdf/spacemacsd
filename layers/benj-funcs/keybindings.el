@@ -68,6 +68,8 @@
 (spacemacs/set-leader-keys "ofd" #'(lambda () (interactive) (spacemacs//open-in-external-app (latest-file "~/Downloads"))))
 
 
+(spacemacs/set-leader-keys "o0i" #'helm-man-woman)
+
 
 ;; maybe something
 ;; (defvar benj-keybindings-prefixes '()
