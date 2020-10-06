@@ -229,7 +229,7 @@ Nil otherwise."
                        "FlagComponent"
                        "UniqueFlagComponent"))
           (process-file-shell-command
-           (format "global --result=grep --other --reference \"%s\" | rg \"public class\"" elm)
+           (format "global --result=grep --other --reference \"%s\" | rg \"public (sealed)? class\"" elm)
            nil t nil))
         (write-region (buffer-string) nil team-electric/helm-all-comps-cache)))))
 
