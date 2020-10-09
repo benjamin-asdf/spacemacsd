@@ -10,34 +10,17 @@
     (find-file file)
     (goto-char point)))
 
-;; some of these are literally the first lisp I ever put,
-;; take these as examples of bad/ beginner style
-;; benj--word-in-column should not exist. In elisp, the paradign is to move around in the buffer
-;; use funcs like `forward-line', `skip-chars-backward', `exchange-point-and-mark'
 
 (defun benj-copy-word-from-above ()
   "Copy the word or space from next non-empty line above."
   (interactive)
-  (let ((word)
-        (col (current-column))
-        (line (1- (line-number-at-pos))))
-    (while (and (not (= line 0))
-            (not (setq word (benj--word-in-column line col))))
-      (setq line (1- line)))
-    (when word
-      (kill-new word)
-      (yank))))
+  (insert (let ((coll (current-column)))
+            (save-excursion
+              (while (looking-at "$") (and (< 1 (line-number-at-pos)))
+                     (forward-line -1))
+              (goto-char (min (save-excursion (forward-char coll) (point)) (point-at-eol)))
+              (buffer-substring (point) (save-excursion (forward-word 1) (point)))))))
 
-(defun benj--word-in-column (line col)
-  "Evil word in LINE and COL.
-single space if char at point is a space. Nil for empty lines."
-  (save-excursion
-    (goto-char (point-min))
-    (forward-line (1- line))
-    (evil-goto-column col)
-    (cond ((looking-at "^$") nil)
-          ((string-equal (thing-at-point 'char) " ") " ")
-          (t (thing-at-point 'evil-word)))))
 
 (defun team/file-lines (file)
   "Return a list of lines of FILE."
