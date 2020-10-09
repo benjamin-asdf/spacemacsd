@@ -479,7 +479,7 @@ to use instead
   "Define a function of NAME, use `team/filtered-file-op', wich see.
 Eval BODY with anaphoric files set to the filtered files."
   (declare (indent defun))
-  (declare (debug body))
+  (declare (debug t))
   `(defun ,name (arg)
      (interactive"P")
      (team/filtered-file-op
@@ -488,28 +488,10 @@ Eval BODY with anaphoric files set to the filtered files."
       (// (files)
           ,@body))))
 
-(defun team/magit-with-files (args files)
-  (magit-run-git-async
-   `(,@(-flatten args) "--" ,@(mapcar
-                                  'identity
-                                  files))))
-
-(defun team/magit-checkout (args files)
-  "ARGS can be nil. FILES is a list of files."
-  (team/magit-with-files
-   (list
-    "checkout"
-    args)
-   files))
-
-
-(defun team/magit-checkout-head (files)
-  (team/magit-checkout-head nil files))
-
 (team/define-filtered-file-op
   team/magit-unstage-files
   #'magit-staged-files
-  #'team/magit-checkout-head)
+  (magit-run-git "checkout" "HEAD" "--" files))
 
 (team/define-filtered-file-op
   team/magit-clean-files
@@ -534,6 +516,20 @@ Eval BODY with anaphoric files set to the filtered files."
 
 
 
+(defun team/magit-with-files (args files)
+  (magit-run-git-async
+   `(,@(-flatten args) "--" ,@(mapcar
+                               'identity
+                               files))))
+
+(defun team/magit-checkout (args files)
+  "ARGS can be nil. FILES is a list of files."
+  (team/magit-with-files
+   (list
+    "checkout"
+    args)
+   files))
+
 (defmacro team/magit-define-checkout (name arg)
   (declare (indent defun))
   `(defun ,name ()
@@ -571,7 +567,7 @@ If buffer is not visiting a file, log an user error."
      (magit-log-buffer-file))))
 
 (defun team/magit--read-left-right ()
-  (format "%s..%s" (magit-read-branch-prefer-other "Left") (magit-read-branch-or-commit "Right" "HEAD")))
+  (format "%s..%s" (magit-read-branch-or-commit "Left") (magit-read-branch-or-commit "Right" "HEAD")))
 
 (defun team/magit-log-double-dot ()
   "Setup magit buffer with double dot revision range. Prompt user for left and right."
@@ -613,8 +609,11 @@ With ARG, default to 'develop'."
   (let ((branch-name
          (if arg
              "develop"
-           (magit-read-branch-prefer-other
-            "Branch to fetch"))))
+           (team/re-replace-in-string
+            (magit-read-branch-prefer-other
+             "Branch to fetch")
+            "origin"
+            ""))))
     (magit-run-git-async
      "fetch"
      (or (magit-get-upstream-remote branch-name) "origin")
@@ -630,7 +629,10 @@ With ARG, default to 'develop'."
   "Show current unmerged files in a window"
   (interactive)
   (magit-with-toplevel
-    (team/show-in-window (magit-unmerged-files) "unmerged")))
+    (team/show-in-window (magit-unmerged-files) "unmerged")
+    (when (file-in-directory-p default-directory cos-dir)
+      (require 'benj-funcs)
+      (cos/write-conflicted-prefabs-to-file))))
 
 (defun team/list-current-unmerged-status ()
   (interactive)
@@ -768,3 +770,6 @@ OTHER-REV defaults to HEAD."
   (interactive)
   (let ((magit-buffer-log-files nil))
     (call-interactively #'magit-show-commit nil nil)))
+
+
+(provide 'benj-magit)

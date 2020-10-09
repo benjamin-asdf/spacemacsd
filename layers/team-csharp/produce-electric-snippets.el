@@ -41,6 +41,9 @@
   (interactive)
   (team-electric/make-m--snippet (buffer-file-name)))
 
-(provide 'produce-electric-snippets)
+(defun team-electric/produce-some-h-snipps ()
+  (interactive)
+  (-map #'team-electric/produce--h-snippet (directory-files "/home/benj/.spacemacs.d/snippets/csharp-mode/" t "\\-m$"))
+  (yas-reload-all))
 
-;; (-map #'team-electric/produce--h-snippet (directory-files "/home/benj/.spacemacs.d/snippets/csharp-mode/" t "\\-m$"))
+(provide 'produce-electric-snippets)

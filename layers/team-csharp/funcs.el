@@ -209,10 +209,10 @@ Nil otherwise."
 
 
 
-
 (defvar team-electric/helm-all-comps-cache nil)
 (defvar team-electric/helm-comp-actions '())
 (defvar team-electric/helm-comps-source nil)
+(defvar team-electric/helm-echo-source nil)
 
 (defun team-electric/helm-all-comps-init ()
   (with-current-buffer
@@ -229,25 +229,18 @@ Nil otherwise."
                        "FlagComponent"
                        "UniqueFlagComponent"))
           (process-file-shell-command
-           (format "global --result=grep --other --reference \"%s\" | rg \"public (sealed)? class\"" elm)
+           (format "global --result=grep --other --reference \"%s\" | rg \"public.*class\"" elm)
            nil t nil))
         (write-region (buffer-string) nil team-electric/helm-all-comps-cache)))))
 
-(defun team-electric/do-comp-helm (&optional arg)
-  "Start helm with all idlegame comps.
-With optional prefix arg, invalidate comp cache.
-This relies on up to date gtags."
-  (interactive)
-  (when (and arg team-electric/helm-all-comps-cache)
-    (delete-file team-electric/helm-all-comps-cache))
-  (let ((helm-ag--default-directory idlegame-project-root))
-    (helm :sources team-electric/helm-comps-source)))
+
 
 (defun team-electric/helm-comps-real-to-display (candidate)
   "Used for `team-electric/helm-comps-source'."
   (with-temp-buffer
     (insert candidate)
     (->gg)
+    (buffer-string)
     (when (re-search-forward ".*class[[:blank:]]+\\(\\w+\\).+?:[[:blank:]]+\\(\\(?:\\w+\\)?Component\\).*" nil t)
       (let ((match-2 (match-string-no-properties 2)))
         (replace-match "\\1 : \\2")
@@ -256,34 +249,54 @@ This relies on up to date gtags."
               (propertize (buffer-string) 'face it))
             (buffer-string))))))
 
-(with-eval-after-load 'helm
-  (setq team-electric/helm-comp-actions
-        (helm-make-actions
-         "Catch comp" #'(lambda (candidate)
-                          (with-temp-buffer
-                            (insert candidate)
-                            (team/catch-comp-on-line)))
-         ;; "Inset comp name" #'(lambda (candidate))
-         "Open file"              #'helm-ag--action-find-file
-         "Open file other window" #'helm-ag--action-find-file-other-window
-         ;; "Save results in buffer" #'helm-ag--action-save-buffer
-         ))
+(with-eval-after-load
+    'helm
+    (defun team-electric/make-helm-comps-source (actions)
+   (helm-build-in-buffer-source
+       "idlegame comps"
+     :init 'team-electric/helm-all-comps-init
+     :real-to-display #'team-electric/helm-comps-real-to-display
+     :fuzzy-match t
+     :action actions
+     :follow (and helm-follow-mode-persistent)))
 
-  (setq team-electric/helm-comps-source
-        (helm-build-in-buffer-source
-            "idlegame comps"
-          :init 'team-electric/helm-all-comps-init
-          :real-to-display #'team-electric/helm-comps-real-to-display
-          :fuzzy-match t
-          :action team-electric/helm-comp-actions
-          :follow (and helm-follow-mode-persistent))))
+    (setq team-electric/helm-comp-actions
+          (helm-make-actions
+           "Catch comp" #'(lambda (candidate)
+                            (when candidate
+                              (with-temp-buffer
+                               (insert candidate)
+                               (team/catch-comp-on-line))))
+           ;; "Inset comp name" #'(lambda (candidate))
+           "Open file"              #'helm-ag--action-find-file
+           "Open file other window" #'helm-ag--action-find-file-other-window
+           ;; "Save results in buffer" #'helm-ag--action-save-buffer
+           ))
 
+    (setq team-electric/helm-comps-source
+          (team-electric/make-helm-comps-source
+           team-electric/helm-comp-actions))
+    (setq team-electric/helm-echo-source
+          (team-electric/make-helm-comps-source
+           #'(lambda (c)
+               (car
+                (split-string
+                 (team-electric/helm-comps-real-to-display c)))))))
+
+(defun team-electric/do-comp-helm (&optional arg)
+  "Start helm with all idlegame comps.
+With optional prefix arg, invalidate comp cache.
+This relies on up to date gtags."
+  (interactive"P")
+  (when (and arg team-electric/helm-all-comps-cache)
+    (delete-file team-electric/helm-all-comps-cache))
+  (let ((helm-ag--default-directory idlegame-project-root))
+    (helm :sources team-electric/helm-comps-source)))
 
 (defun team-electric/helm-comp-echo ()
   "Use `team-electric/helm-comps-source' with the sole action of returning the comp name string.
 This is meant to be used in lisp code."
-  (let ((team-electric/helm-comp-actions nil))
-    (helm :sources team-electric/helm-comps-source)))
+  (helm :sources team-electric/helm-echo-source))
 
 
 

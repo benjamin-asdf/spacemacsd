@@ -126,9 +126,7 @@
       (re-search-forward "return building.Menu switch" nil)
       (team/in-new-line (format "MenuType.%s => DotSource.%s," it (concat it "Presents")))
       )
-    (team/file-lines cos/purchase-menus)
-    ))
-  )
+    (team/file-lines cos/purchase-menus))))
 
 (team/with-file
  cos/dot-source-file

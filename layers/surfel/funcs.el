@@ -80,3 +80,7 @@
 ;;   (setq browse-url-handlers (list (list reg 'surfel/browse-url-handler))))
 
 (setq browse-url-handlers '(("^https?://" . surfel/browse-url-handler)))
+
+
+
+(add-to-list 'auto-mode-alist '("qutebrowser-editor-" . markdown-mode))

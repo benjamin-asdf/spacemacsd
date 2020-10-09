@@ -1,5 +1,5 @@
 
-(defmacro benj/charp-excurse-and-indent (&rest body)
+(defmacro benj/csharp-excurse-and-indent (&rest body)
   "Execute BODY with `save-excursion', afterwards indent all region between point and start point."
   (declare (debug t))
   (declare (indent 2))
@@ -7,6 +7,10 @@
     (let ((p (point-marker)))
       ,@body
       (indent-region-line-by-line (min  p (point)) (max p (point))))))
+
+(defun benj/csharp-jump-curly ()
+  (interactive)
+  (skip-chars-forward "^}"))
 
 (defun benj/chsarp-slurp-bracket-backward (&optional cnt)
   (interactive"P")
@@ -24,11 +28,11 @@
         (team/in-new-line s))
       (indent-region-line-by-line p (point)))))
 
-(defun benj/charp-backwards-slurp-statement (&optional cnt)
+(defun benj/csharp-backwards-slurp-statement (&optional cnt)
   "Move the enclosing bracketed statement CNT lines up."
   (interactive"P")
   (re-search-backward (concat "^.*" (team/regexp-opt "if" "foreach") ".*(.*).*{.*$"))
-  (benj/charp-excurse-and-indent
+  (benj/csharp-excurse-and-indent
    (let ((s (match-string-no-properties 0)))
      (team/delete-this-line)
      (forward-line (or cnt -1))
@@ -56,14 +60,16 @@
 
 ;; copy pasta `evil-lisp-state'
 
-(evil-define-state csharp-structural
-  "Csharp-Structural state.
+(with-eval-after-load
+    'evil-core
+    (evil-define-state csharp-structural
+   "Csharp-Structural state.
  Used to navigate csharp-structural code and manipulate the sexp tree."
-  :tag " <L> "
-  :suppress-keymap t
-  :cursor (bar . 2)
-  ;; force smartparens mode
-  (if (evil-csharp-structural-state-p) (smartparens-mode)))
+   :tag " <L> "
+   :suppress-keymap t
+   :cursor (bar . 2)
+   ;; force smartparens mode
+   (if (evil-csharp-structural-state-p) (smartparens-mode))))
 
 
 (defgroup evil-csharp-structural-state nil
@@ -77,11 +83,13 @@
     :type 'boolean
     :group 'evil-csharp-structural-state)
 
-  (defcustom evil-csharp-structural-state-major-modes '(csharp-mode)
-    "Major modes where evil leader key bindings are defined.
+  (defcustom evil-csharp-structural-state-minor-modes '(team/chsarp-superior-mode)
+    "Minor modes where evil leader key bindings are defined.
 If `evil-csharp-structural-state-global' is non nil then this variable has no effect."
     :type 'sexp
     :group 'evil-csharp-structural-state)
+
+
 
   (defcustom evil-csharp-structural-state-enter-csharp-structural-state-on-command t
     "If non nil, enter evil-csharp-structural-state before executing command."
@@ -124,15 +132,11 @@ If `evil-csharp-structural-state-global' is non nil then this variable has no ef
 ;; leader maps
 (defun evil-csharp-structural-state-leader (leader)
   "Set LEADER."
-  (bind-map evil-csharp-structural-state-map
-    :evil-use-local t
+  (require 'bind-map)
+  (bind-map evil-csharp-structural-state-major-mode-map
     :evil-keys (leader)
-    :evil-states (normal))
-  (eval
-   `(bind-map evil-csharp-structural-state-major-mode-map
-      :evil-keys (,leader)
-      :evil-states (normal)
-      :major-modes ,evil-csharp-structural-state-major-modes)))
+    :evil-states (normal)
+    :minor-modes 'evil-csharp-structural-state-minor-modes))
 
 (defun evil-csharp-structural-state/quit ()
   "Quit csharp-structural state and set state `evil-csharp-structural-state-default-state'."
@@ -156,8 +160,9 @@ If `evil-csharp-structural-state-global' is non nil then this variable has no ef
 (defconst evil-csharp-structural-state-commands
   `(
     ("s" . benj/csharp-slurp-bracket)
-    ("b" . benj/charp-backwards-slurp-statement)
+    ("b" . benj/csharp-backwards-slurp-statement)
     ("j" . benj/csharp-forward-expression)
+    ("l" . benj/csharp-jump-curly)
     ("1"   . digit-argument)
     ("2"   . digit-argument)
     ("3"   . digit-argument)
@@ -204,6 +209,8 @@ If `evil-csharp-structural-state-global' is non nil then this variable has no ef
     (evil-csharp-structural-state)))
 
 
-(evil-csharp-structural-state-leader ", k")
-
-(spacemacs/add-evil-cursor "csharp-structural" "BlueViolet" 'box)
+(add-hook
+ 'spacemacs-post-user-config-hook
+ #'(lambda ()
+     (evil-csharp-structural-state-leader ", k")
+     (spacemacs/add-evil-cursor "csharp-structural" "BlueViolet" 'box)))

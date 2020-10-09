@@ -357,15 +357,19 @@ Froeach line anaphorically set it to the line content, then run body."
   (when (region-active-p)
     (my/marker-there (region-beginning))))
 
-(defun team/proc-cb-sentinel (procc op)
-  "Set PROCCs sentinel to a lambda that executes OP with no arguments,
+;; NOTE we should cechk if the proc buffer is alive
+(defmacro team/proc-with-cb (procc &rest body)
+  "PROCC should evaluate to a process. Set sentinel and execute BODY with the current buffer set to the proccess buffer,
 if the exit status is 0. Else throw an error."
-  (set-process-sentinel
-   procc
+  (declare (debug t))
+  `(set-process-sentinel
+   ,procc
    (lambda (p e)
      (when (string-equal "finished\n" e)
        (if (= 0 (process-exit-status p))
-           (funcall op)
+           (with-current-buffer
+               (process-buffer p)
+             ,@body)
          (error  "Process %s exited abnormally with code %d"
                  (process-name p)
                  (process-exit-status p)))))))
@@ -602,12 +606,24 @@ Then indent between current point and the old point."
 
 (defun group (source n)
   (when (zerop n) (error "zero length"))
-  (labels ((rec (source acc)
+  (cl-labels ((rec (source acc)
                 (let ((rest (nthcdr n source)))
                   (if (consp rest)
                       (rec rest (cons (subseq source 0 n) acc))
                     (nreverse (cons source acc))))))
     (if source (rec source nil) nil)))
+
+
+(defun al-keys (list)
+  (mapcar #'car list))
+(defun al-values (list)
+  (mapcar #'cdr list))
+
+(defun orassoc (key alist)
+  (team/a-when
+   (or (rassoc key alist)
+       (assoc key alist))
+   (cdr it)))
 
 
 
@@ -639,6 +655,28 @@ Then indent between current point and the old point."
   (insert (team/stack-buff-contents))
   (team/erase-that-buff team/stack-buff))
 
+
+;; devel
 
+(defmacro profile-seconds (&rest body)
+  "Run BODY and log the seconds it took afterwards."
+  (declare (debug t))
+`(let ((now (current-time)))
+   ,@body
+   (print (list "took" (time-to-seconds (time-since now))))))
+
+(defun test-face (face-spec)
+  (with-current-buffer-window
+      (get-buffer-create "face-test")
+      nil
+      nil
+    (lorem-ipsum-insert-sentences)
+    (put-text-property
+     (point-min)
+     (point-max)
+     'face
+     (eval `(defface ,(cl-gensym)
+              ',face-spec
+              "")))))
 
 (provide 'team-utils)
