@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-if-try-get-h
+#key : itrygeth
+#contributor : benj
+# --
+if (!c.state.TryGet<`(team-electric/helm-comp-echo)`>(out var $0)) return;

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+#name: entitas-replace-m
+#key: Rm
+# --
+Replace<`(team-electric/comp-name)`>($0)

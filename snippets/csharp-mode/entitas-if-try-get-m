@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-if-try-get-m
+#key : itrygetm
+#contributor : benj
+# --
+if (!c.state.TryGet<`(team-electric/comp-name)`>(out var $0)) return;

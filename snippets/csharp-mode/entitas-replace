@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: EntitasReplace
-# key: rep
+#name: entitas-replace
+#key: R
 # --
 Replace<$1>($2)$0

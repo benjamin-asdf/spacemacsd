@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-if-try-get
+#key : itryget
+#contributor : benj
+# --
+if (!c.state.TryGet<$0>(out var $1)) return;
