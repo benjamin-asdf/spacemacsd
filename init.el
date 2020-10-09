@@ -33,8 +33,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(lua
-     typescript
+   '(
      version-control
     gtags
     (auto-completion  :variables
@@ -70,12 +69,13 @@ This function should only modify configuration layer settings."
     markdown
     yaml
     ;; typescript
-    nim
+    ;; nim
     c-c++
     vimscript
     go
     perl5
-    clojure
+    ;; clojure
+    ;; lua
 
     ;; features
     slack
@@ -119,6 +119,8 @@ This function should only modify configuration layer settings."
     team-csharp
     team-snippets
     sxhkd-mode
+    my-structural-csharp
+    redshank
 
      )
 
@@ -609,6 +611,11 @@ before packages are loaded."
       (magit-pull "spacemacs_public" "refs/heads/develop")))
 
 
+  
+
+  (add-hook 'minibuffer-setup-hook
+            #'(lambda () (smartparens-strict-mode)))
+
 
 
   (defadvice spacemacs/open-file-or-directory-in-external-app (around my/open-file-external-advice (&optional arg) activate)
@@ -653,15 +660,21 @@ before packages are loaded."
 
   ;; temp hacks
 
+  (require 'temp-hacks "~/.spacemacs.d/temp-hacks.el")
+
+
   ;; TEMP
   ;; until they make the clone workspace nice again
   (defadvice eyebrowse-create-window-config
       (after benj-eyebrowse/create-config-adv last activate)
     (--dotimes 2 (funcall #'winner-undo)))
 
-  ;; TEMP TODO
-  (load "/home/benj/.spacemacs.d/layers/benj-slack/funcs.el")
-  (load "/home/benj/.spacemacs.d/layers/benj-slack/keybindings.el")
+  ;; better way..?
+  (add-hook
+   'spacemacs-post-user-config-hook
+   #'(lambda ()
+       (load "/home/benj/.spacemacs.d/layers/benj-slack/funcs.el")
+       (load "/home/benj/.spacemacs.d/layers/benj-slack/keybindings.el")))
 
 
 
