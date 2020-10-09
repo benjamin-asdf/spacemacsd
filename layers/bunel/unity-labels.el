@@ -49,6 +49,8 @@
    (team-unity/get--labels)))
 
 (defun cos/add-labels (files-or-metas -labels)
+  "FILES-OR-METAS is a list of files to act upon. -LABELS is a list of labels to add.
+If all labels are already defined, do nothing."
   (--each
       files-or-metas
       (cos/with-root
@@ -68,7 +70,21 @@
   )
 
 (defun cos/prefab-label (item)
-  (assoc-default item cos/prefab-labels-alist))
+  (orassoc item cos/prefab-labels-alist))
+
+(defun cos/add-prefab-label-and-add-for-rewrite (file &optional -label)
+  (interactive
+   `(,(read-file-name "File or meta to add  label")
+     ,(completing-read "Label: " (al-values cos/prefab-labels-alist))))
+  (cos/add-labels
+   (list file)
+   (list -label))
+  (team/append-line-to-file
+   (string-trim-right
+    (unity/trim-to-asset-path
+     file)
+    ".meta")
+   (concat idlegame-project-root "prefabs-for-rewrite.txt")))
 
 
 (provide 'unity-labels)
