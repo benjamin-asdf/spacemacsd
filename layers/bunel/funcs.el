@@ -322,9 +322,13 @@ List for menus, overlays, windows to open."
          (princ (concat (match-string 1) "\n")))))))
 
 
-
 
-;; guid searches
+;; generic unity utils
+
+(defun unity/trim-to-asset-path (path)
+  (team/re-replace-in-string path
+                             "^.*\\(Assets/.*$\\)"
+                             "\\1"))
 
 (defun team-unity/file-or-meta (file)
   (if (string-equal (file-name-extension file) "meta")
@@ -336,12 +340,18 @@ List for menus, overlays, windows to open."
   (mapcar 'benj-get-guid
           (benj-directory-files dir ".*meta")))
 
+
 (defun team-unity/file-guid (file)
   "Get guid for FILE. If FILE is not a meta file, try to use the corresponding meta file."
   (car
    (team/collect-reg
     (team-unity/file-or-meta file)
     "guid: \\(\\w+\\)" 1)))
+
+
+
+
+;; guid searches
 
 (defun team-unity/rg-guid-search (&optional file)
   "Use rg to search the project for the guid of the visiting file."
@@ -507,8 +517,9 @@ see `omnisharp-unit-test-buffer'."
             bunel/test-out-file)
            (team/with-default-dir
             "/tmp" (delete-file bunel/test-out-file))
+           (pop-to-buffer (current-buffer))
            (bunel/unity-test-mode)
-           (pop-to-buffer (current-buffer)))))))
+           (font-lock-fontify-buffer))))))
 
 (define-derived-mode
   bunel/unity-test-mode
@@ -519,7 +530,9 @@ see `omnisharp-unit-test-buffer'."
   (font-lock-add-keywords
    'bunel/unity-test-mode
    '(("### PASSED" . 'bunel/test-passed-face)
-     ("### ALL TESTS PASSED ###" . 'bunel/test-passed-bottom)))
+     ("### ALL TESTS PASSED ###" . 'bunel/test-passed-bottom)
+     ;; ("\[Test\]" . '(:foreground "Yellow"))
+   ))
   (if (fboundp 'font-lock-flush)
       (font-lock-flush)
     (when font-lock-mode
@@ -563,6 +576,54 @@ see `omnisharp-unit-test-buffer'."
 
 
 
+(defconst my/conflicted-prefabs-file "/tmp/conflicted-prefabs")
+(defun cos/write-conflicted-prefabs-to-file ()
+  "Collect conflicted prefabs as lines in `my/conflicted-prefabs-file'."
+  (require 'benj-magit)
+  (interactive)
+  (write-region
+   (mk-lines (benj-unmerged-prefabs))
+   nil
+   my/conflicted-prefabs-file))
+
+(defun cos/check-conflicted ()
+  "Run prefab checker on prefabs in `my/conflicted-prefabs-file'."
+  (interactive)
+  (unless (file-exists-p my/conflicted-prefabs-file)
+    (user-error "Do not have cached conflicted prefabs"))
+  (cos/prefab-integrity-check
+   (team/file-lines "/tmp/conflicted-prefabs")))
+
+(defun cos/prefab-integrity-check (&rest files)
+  "Run checker with FILES."
+  (interactive)
+    (team/with-default-dir
+  cos-dir
+  (with-current-buffer
+      (get-buffer-create "*prefab-check*")
+    (let ((inhibit-read-only t))
+      (erase-buffer))
+    (team/proc-with-cb
+    (apply
+     #'start-process
+     `("prefab-check-dotnet"
+       ,(current-buffer)
+       "dotnet"
+       "/home/benj/repos/csharp/prefab-checker/bin/Debug/netcoreapp3.1/publish/prefab-checker.dll"
+       ,@(-flatten files)))
+    (pop-to-buffer (current-buffer))
+    (->gg)))))
+
+(defun cos/do-prefab-integrity-check (&optional file)
+  "Run merge checker on a single FILE."
+  (interactive
+   (list (concat "IdleGame/" (completing-read "Prefab: " (bunel--prefabs)))))
+  (unless (string-match-p ".*prefab$" file) )
+  (cos/prefab-integrity-check file))
+
+
+
+
 (add-to-load-path "~/.spacemacs.d/layers/bunel/")
 
 (defun team-unity/lazy-fix-load-group (file)
@@ -570,6 +631,11 @@ see `omnisharp-unit-test-buffer'."
   (require 'unity-addressables)
   (fix-load-group file))
 
-(defun team-unity/lazy-add-lables (file-or-meta -labels)
+(defun team-unity/lazy-add-labels (file-or-meta -labels)
   (require 'unity-labels)
   (team-unity/add-labels file-or-meta -labels))
+
+(defun team-unity/lazy-do-add-label ()
+  (require 'unity-labels)
+  (interactive)
+  (command-execute #'cos/add-prefab-label-and-add-for-rewrite nil nil))

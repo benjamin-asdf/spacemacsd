@@ -25,7 +25,14 @@
   "prefabs"
   "o" #'bunel-open-prefab
   "s" #'bunel/scene-view
+  "c" #'cos/do-prefab-integrity-check
+  "C" #'cos/check-conflicted
+  "m" #'cos/prefab-integrity-check
+  "l" #'team-unity/lazy-do-add-label
+
   )
+
+
 
 (team/spacemacs-declare-keys
   "out"

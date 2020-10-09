@@ -39,6 +39,7 @@
   "," #'my/re-commata-newline
   "w" #'my/re-toggle-week-day
   "t" #'my/re-toggle-true-false
+  "u" #'my/re-toggle-up-down
   )
 
 (team/spacemacs-declare-keys

@@ -195,6 +195,7 @@ Add debug button with region as init method body."
   (interactive)
   (let ((default-directory "/home/benj/repos/codegen/"))
     (magit-run-git "clean" "-fd")
+    (magit-run-git "reset" "--hard" "HEAD")
     (magit-run-git "pull" "origin" "refs/heads/master")
     (with-current-buffer-window
         "*cogg-idlegame*"
