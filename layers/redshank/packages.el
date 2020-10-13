@@ -14,7 +14,7 @@
 ;;; Code:
 
 (defconst redshank-packages
-  '((redshank-loader :location local)))
+  '((redshank :location local)))
 
 (defconst redshank-major-modes
   '(lisp-mode
@@ -22,8 +22,8 @@
     emacs-lisp-mode
     common-lisp-mode))
 
-(defun redshank/init-redshank-loader ()
-
+(defun redshank/init-redshank ()
+  (require 'redshank-loader)
   (redshank-setup
    (--map
     (symb (mkstr it '-hook))
@@ -44,5 +44,3 @@
           def)))))
 
 ;;; packages.el ends here
-
-;; (require 'redshank-loader "~/.spacemacs.d/lisp/redshank/redshank-loader.el")
