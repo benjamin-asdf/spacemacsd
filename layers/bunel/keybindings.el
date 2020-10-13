@@ -9,7 +9,6 @@
   "e" #'bunel-execute-debug-method
   "o" #'bunel-open-overlay
   "m" #'bunel-open-menu
-  "d" #'bunel-open-debug-panel
   "g" #'bunel-set-globals
   "u" #'team-unity/rg-guid-search
   "U" #'team-unity/rg-guid-search-at-point
@@ -19,6 +18,14 @@
   "0" #'bunel-open-unity-editor-log
   "O" #'team-unity/open-prefab-at-point
     )
+
+(team/spacemacs-declare-keys
+    "oud"
+    "debug"
+  "p" #'bunel-open-debug-panel
+  "l" #'bunel/set-debug-lore
+
+  )
 
 (team/spacemacs-declare-keys
   "oup"

@@ -322,6 +322,11 @@ List for menus, overlays, windows to open."
          (princ (concat (match-string 1) "\n")))))))
 
 
+(defun bunel/set-debug-lore ()
+  (interactive)
+  (bunel-set-globals "disableLore" "0")
+  (bunel-set-globals "loreAfterTutorial" "1"))
+
 
 ;; generic unity utils
 

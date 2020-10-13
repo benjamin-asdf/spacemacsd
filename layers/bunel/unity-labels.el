@@ -61,13 +61,10 @@ If all labels are already defined, do nothing."
 (defvar cos/prefab-labels-alist
   '((above-topbar . "AboveTopbar")
     (uncategorized . "Uncategorized")
-    (normal-overlay . "NormalOverlay"))
-  )
-(setq cos/prefab-labels-alist
-  '((above-topbar . "AboveTopbar")
-    (uncategorized . "Uncategorized")
-    (normal-overlay . "NormalOverlay"))
-  )
+    (normal-overlay . "NormalOverlay")
+    (fade-image . "FadeImage")
+    (congrats-screen . "CongratsScreen")))
+
 
 (defun cos/prefab-label (item)
   (orassoc item cos/prefab-labels-alist))
