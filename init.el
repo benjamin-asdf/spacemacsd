@@ -121,6 +121,7 @@ This function should only modify configuration layer settings."
     sxhkd-mode
     my-structural-csharp
     redshank
+    system-utils
 
      )
 
