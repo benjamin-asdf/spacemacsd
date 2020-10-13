@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : pipg
+#key : pipg
+#contributor : benj
+# --
+@singularity-ci-bot pipeline is good
