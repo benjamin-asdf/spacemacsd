@@ -16,10 +16,13 @@
   (interactive)
   (insert (let ((coll (current-column)))
             (save-excursion
-              (while (looking-at "$") (and (< 1 (line-number-at-pos)))
-                     (forward-line -1))
+              (forward-line -1)
+              (while (and (< 1 (line-number-at-pos)) (looking-at "$"))
+                      (forward-line -1))
               (goto-char (min (save-excursion (forward-char coll) (point)) (point-at-eol)))
-              (buffer-substring (point) (save-excursion (forward-word 1) (point)))))))
+              (or (and (looking-at-p " ") " ")
+                  (thing-at-point 'evil-word))))))
+
 
 
 (defun team/file-lines (file)
