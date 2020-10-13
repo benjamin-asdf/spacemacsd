@@ -538,15 +538,20 @@ Eval BODY with anaphoric files set to the filtered files."
      (benj-git/after-magit-success
       (magit-stage-1 nil (magit-unmerged-files)))))
 
-
 (team/magit-define-checkout team/magit-all-theirs
   "--theirs")
 
 (team/magit-define-checkout team/magit-all-ours
   "--ours")
 
-(team/magit-define-checkout team/magit-all-merge
-  "--merge")
+(defun team/magit-all-merge ()
+  (interactive)
+  (team/magit-checkout "--merge" (magit-unmerged-files)))
+
+
+(defun team/magit-restore-merge (&optional file)
+  (interactive"f")
+  (team/magit-checkout "--merge" (list file)))
 
 
 
