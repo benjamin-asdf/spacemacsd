@@ -66,7 +66,7 @@
 
 (defun team-helm/swoop-block-swoop ()
   "Narrow the buffer to the current block and run `helm-swoop'.
-For many use cases, see `narrow-to-defun', "
+For many use cases, see `narrow-to-defun'"
   (interactive)
   (team-helm/hs-block)
   (narrow-to-region (point) (mark))
