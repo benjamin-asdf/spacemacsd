@@ -78,7 +78,7 @@
   :prefix 'evil-csharp-structural-state-)
 
 (eval-and-compile
-  (defcustom evil-csharp-structural-state-global nil
+  (defcustom evil-csharp-structural-state-global t
     "If non nil evil-csharp-structural-state is available everywhere."
     :type 'boolean
     :group 'evil-csharp-structural-state)
@@ -126,34 +126,37 @@ If `evil-csharp-structural-state-global' is non nil then this variable has no ef
   :group 'emulations
   :prefix 'evil-csharp-structural-state-)
 
-(defvar evil-csharp-structural-state-map (make-sparse-keymap))
-
-
 ;; leader maps
+
 (defun evil-csharp-structural-state-leader (leader)
   "Set LEADER."
-  (require 'bind-map)
-  (bind-map evil-csharp-structural-state-major-mode-map
+  (bind-map evil-csharp-structural-state-map
+    :evil-use-local t
     :evil-keys (leader)
-    :evil-states (normal)
-    :minor-modes 'evil-csharp-structural-state-minor-modes))
+    :evil-states (normal))
+  (eval
+   `(bind-map evil-csharp-structural-state-major-mode-map
+      :evil-keys (,leader)
+      :evil-states (normal)
+      :minor-modes ,evil-csharp-structural-state-minor-modes)))
 
 (defun evil-csharp-structural-state/quit ()
   "Quit csharp-structural state and set state `evil-csharp-structural-state-default-state'."
   (interactive)
   (funcall (intern (format "evil-%S-state" evil-csharp-structural-state-default-state))))
 
+(defvar evil-csharp-structural-state-map (make-sparse-keymap))
+
 ;; escape
 (define-key evil-csharp-structural-state-map [escape] 'evil-csharp-structural-state/quit)
 ;; toggle csharp-structural state
 (define-key evil-csharp-structural-state-map "." 'csharp-structural-state-toggle-csharp-structural-state)
+
 ;; hjkl
 (define-key evil-csharp-structural-state-map "h" 'evil-backward-char)
 (define-key evil-csharp-structural-state-map "j" 'evil-next-visual-line)
 (define-key evil-csharp-structural-state-map "k" 'evil-previous-visual-line)
 (define-key evil-csharp-structural-state-map "l" 'evil-forward-char)
-
-
 
 
 ;; auto-switch to csharp-structural state commands
@@ -162,6 +165,7 @@ If `evil-csharp-structural-state-global' is non nil then this variable has no ef
     ("s" . benj/csharp-slurp-bracket)
     ("b" . benj/csharp-backwards-slurp-statement)
     ("j" . benj/csharp-forward-expression)
+    ("k" . benj/csharp-backward-expression)
     ("l" . benj/csharp-jump-curly)
     ("1"   . digit-argument)
     ("2"   . digit-argument)
@@ -175,16 +179,7 @@ If `evil-csharp-structural-state-global' is non nil then this variable has no ef
     )
   "alist of keys and commands in csharp-structural state.")
 
-
 (defvar evil-csharp-structural-state-major-mode-map (make-sparse-keymap))
-
-(dolist (x evil-csharp-structural-state-commands)
-  (cl-destructuring-bind (key . cmd) x
-    (if evil-csharp-structural-state-global
-        (define-key evil-csharp-structural-state-map (kbd key)
-          (evil-csharp-structural-state-enter-command cmd))
-      (define-key evil-csharp-structural-state-major-mode-map (kbd key)
-        (evil-csharp-structural-state-enter-command cmd)))))
 
 (dolist (x evil-csharp-structural-state-commands)
   (let ((key (car x))
