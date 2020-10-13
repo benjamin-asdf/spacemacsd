@@ -40,6 +40,7 @@
   "w" #'my/re-toggle-week-day
   "t" #'my/re-toggle-true-false
   "u" #'my/re-toggle-up-down
+  "b" #'my/re-toggle-target-actionButton
   )
 
 (team/spacemacs-declare-keys

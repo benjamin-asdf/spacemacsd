@@ -139,30 +139,27 @@ Start either at 0 or prefix ARG, if given."
 (my/define-re-toggle
   "pet"
   "hero")
-
 (my/define-re-toggle
   "left"
   "right")
-
 (my/define-re-toggle
   "green"
   "red")
-
 (my/define-re-toggle
   "menu"
   "overlay")
-
 (my/define-re-toggle
   "week"
   "day")
-
 (my/define-re-toggle
   "true"
   "false")
-
 (my/define-re-toggle
   "up"
   "down")
+(my/define-re-toggle
+  "target"
+  "actionButton")
 
 (defun my/re-commata-newline ()
   "Replace occurances of , to a new line in region or line."
