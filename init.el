@@ -605,6 +605,8 @@ before packages are loaded."
   ;; `evil-goggles'
   (evil-goggles-mode)
 
+  (global-undo-tree-mode)
+  (evil-set-undo-system 'undo-tree)
 
   (defun my/update-spacemacs ()
     (let ((default-directory "~/.emacs.d"))
