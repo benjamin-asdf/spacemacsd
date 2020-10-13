@@ -253,6 +253,9 @@ with it anaphorically bound to a list of ARGS."
 (defun symb (&rest args)
   (intern (apply #'mkstr args)))
 
+(defun string-times (cnt s)
+  (with-output-to-string
+    (--dotimes cnt (princ s))))
 
 
 ;; procs
@@ -547,7 +550,7 @@ MATCH: The match data group to collect."
   (goto-char (point-max)))
 
 (defun team/capitalize-first-letter (s)
-  (concat (capitalize (substring s 0 1)) (substring s 1)))
+  (concat (upcase (substring s 0 1)) (substring s 1)))
 
 (defun team/un-capitalize (s)
   (concat (downcase (subseq s 0 1)) (subseq s 1)))
@@ -625,6 +628,20 @@ Then indent between current point and the old point."
        (assoc key alist))
    (cdr it)))
 
+(defmacro --first-result (form list)
+  "Eval FORM foreach element in list, if FORM evals to non nil,
+return the result of that evalution and stop."
+  (declare (debug t))
+  `(loop for it in ,list
+         for res = ,form
+         when res return res))
+
+(defun my-range (from to)
+  "Return a list of numbers from FORM to TO."
+  (loop for i from from to to
+        collect i into res
+        finally return res))
+
 
 
 ;; should move stuff that is not really utils
@@ -678,5 +695,15 @@ Then indent between current point and the old point."
      (eval `(defface ,(cl-gensym)
               ',face-spec
               "")))))
+
+(defmacro team/with-devel-buff (&rest body)
+  `(progn
+     (team/a-when (get-buffer "test")
+                  (kill-buffer "test"))
+     (with-current-buffer-window
+         "test"
+         nil
+         nil
+       ,@body)))
 
 (provide 'team-utils)
