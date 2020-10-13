@@ -284,6 +284,7 @@ and expand a snippet for a 'With...(this config)' method."
   (save-excursion
     (let ((class-name)
           (field-name)
+          (interface-name)
           (type))
       (save-excursion
         (line->0)
@@ -293,8 +294,14 @@ and expand a snippet for a 'With...(this config)' method."
         (setq field-name (match-string-no-properties 2))
         (setq type (match-string-no-properties 1))
         (re-search-backward
-         "public struct \\(\\w+\\) "
+         "public struct \\(\\w+\\) \\(?:: \\(\\w+\\)\\)"
          nil)
+        (team/a-when (match-string-no-properties 2)
+                     (setq interface-name it)
+                     (save-excursion
+                       (when (re-search-backward (concat "interface " it) nil t))
+                       (team/in-new-line
+                        (format "%s %s {get;set;}" type field-name))))
         (setq class-name (match-string-no-properties 1))
         (unless (re-search-forward "public static class" nil t)
           (->G)
@@ -304,17 +311,20 @@ and expand a snippet for a 'With...(this config)' method."
            `((class-name ,class-name))))
         (team/csharp-snippet-insert
          "autobconf"
-         (format "public static class " class-name)
-         `((class-name ,class-name)
+         "public static class "
+         `((class-name ,(if interface-name "TConfig" class-name))
            (field-name ,field-name)
            (type ,type)
+           (generic-type-part ,(if interface-name "<TConfig>" ""))
+           (type-constraint-part
+            ,(team/a-if interface-name (format " where TConfig : %s" it)
+               ""))
            (field-name-capital ,(team/capitalize-first-letter field-name)))
          1)
         (re-search-backward "public static class" nil)
         (->$)
         (open-line 1))))
   (forward-line 1))
-
 
 (defun teamel/add-used-implicitly ()
   (interactive)

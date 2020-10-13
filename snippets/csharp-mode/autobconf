@@ -6,7 +6,7 @@
 # --
 
 
-    public static `class-name` With`field-name-capital`(this `class-name` config, `type` `(concat field-name (if (string-equal type "bool") " = true" ""))`) {
+    public static `class-name` With`field-name-capital``generic-type-part`(this `class-name` config, `type` `(concat field-name (if (string-equal type "bool") " = true" ""))`)`type-constraint-part` {
         config.`field-name` = `field-name`;
         return config;
     }
