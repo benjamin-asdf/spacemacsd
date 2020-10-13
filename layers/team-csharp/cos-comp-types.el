@@ -1,7 +1,9 @@
 ;; -*- lexical-binding: t; -*-
 
+(require 'team-utils "~/.spacemacs.d/layers/team-utils/funcs.el")
+
 (defface cos/comp-face-base
-  '((t :bold t :height 1.2))
+  '((t :bold nil :height 1.1))
   "Face inherited by cos comp faces."
   :group 'cos-faces)
 
@@ -13,7 +15,6 @@ if the class name is known to inherit from this comp type. E.g. (it-gtags-ref-p 
   comp-face)
 
 (defvar cos/comp-types '())
-;; (setq cos/comp-types nil)
 (defvar cos/comp-class-string-alist '()
   "Alist mapping all `cos/comp-types' with their class name in code.")
 
@@ -22,7 +23,6 @@ if the class name is known to inherit from this comp type. E.g. (it-gtags-ref-p 
   "Define a component type with NAME.
 Define a variable called cos/NAME-comp and set an instance of
 `cos/comp-type'."
-  ;; defface
   (let ((sym (symb 'cos/ name '-comp)))
     `(let* ((gtags-lut (make-hash-table :size 1024 :test #'equal))
             (in-gtags-lut-p
@@ -49,7 +49,7 @@ Define a variable called cos/NAME-comp and set an instance of
                  :comp-checker-function
                  (defun ,(symb sym '-font-function) (lim)
                    (and
-                    (re-search-forward "\\(Matcher\\)\.\\(\\w+\\)<\\(\\w+\\)>" nil t)
+                    (re-search-forward "<\\(\\w+\\)>" nil t)
                     (let ((value (list (match-beginning 3) (match-end 3))))
                       (when (funcall in-gtags-lut-p
                              (match-string-no-properties 3))
@@ -61,6 +61,18 @@ Define a variable called cos/NAME-comp and set an instance of
                    "")))
               cos/comp-types)))))
 
+
+
+(defun cos/comp-face (s)
+  "If S is a known Component reference,
+return the appropriate comp-type-face, defined by `cos/comp-types'"
+  (--first-result
+   (let ((elm (symbol-value it)))
+     (when (funcall
+            (cos/comp-type-in-gtags-ref-p elm)
+            s)
+       (cos/comp-type-comp-face elm)))
+   cos/comp-types))
 
 (defun cos/comp-assoc-class-string (string)
   "Initialize `cos/comp-class-string-alist', if it doesn't exsit.
@@ -68,56 +80,47 @@ Assoc STRING witht the corresponding `cos/comp-type'."
   (unless  cos/comp-class-string-alist
     (setq cos/comp-class-string-alist
           (--map
-           `(,(cos/comp-type-class-string (symbol-value it)) ,(symbol-value it))
+           `(,(cos/comp-type-class-string (symbol-value it)) ,it)
            cos/comp-types)))
-  (assoc-default string cos/comp-class-string-alist))
+  (symbol-value (car (assoc-default string cos/comp-class-string-alist))))
 
+
 
-(defun cos/comp-font-lock-keywords ()
-  (--map
-   `(,(cos/comp-type-comp-checker-function
-       (symbol-value it)) .
-       ,(cos/comp-type-comp-face (symbol-value it)))
-   cos/comp-types))
+(defconst cos/comp-ref-reg "\\([[:blank:]]*\\(\\w+\\)[[:blank:]]*,?\\)?")
+
+(defface cos/composit-mem-face
+  '((t . (:foreground "Gold" :height 1.2)))
+  "Face used for cos composit game system member functions")
+
+(defconst
+  cos/composit-mem-reg
+  (team/with-file
+   (concat idlegame-assets-dir "#/Sources/Helper/Entitas/BaseCompositeSystem.cs")
+   (re-search-forward "AddInitialize" nil)
+   (csharp-mode)
+   (team-helm/hs-block)
+   (let ((list))
+     (while (re-search-forward "public \\w+ \\(Add\\w+\\)(" (mark) t)
+       (push (match-string-no-properties 1) list))
+     (regexp-opt list))))
 
 (defun cos/add-font-lock-keywords ()
-  (require 'treemacs-faces)
   (font-lock-add-keywords
    nil
-   `(("AddReactEach" . 'treemacs-root-face))
-   'end)
-  (dolist (elm cos/comp-types)
-    (font-lock-add-keywords
-     nil
-     `((,(cos/comp-type-comp-checker-function
-          (symbol-value elm)) .
-          ,(symbol-value (cos/comp-type-comp-face (symbol-value elm))))))))
+   `((,cos/composit-mem-reg . 'cos/composit-mem-face)
+     (,(concat "<" (string-times 3 cos/comp-ref-reg) ">")
+      (2 (cos/comp-face (match-string-no-properties 2)) t t)
+      (4 (cos/comp-face (match-string-no-properties 4)) t t)
+      (6 (cos/comp-face (match-string-no-properties 6)) t t))
+     )
+   'end))
 
-(add-hook
- 'csharp-mode-hook
- #'cos/add-font-lock-keywords)
-
-
-
-;; (add-hook
-;;  'csharp-mode-hook
-;;  #'(lambda ()
-;;      (font-lock-add-keywords
-;;       nil
-;;       '(("Contexts" . 'helm-ls-git-added-copied-face))
-;;       'end)))
-
-;; (setq csharp-mode-hook (cdr csharp-mode-hook))
-;; (setq csharp-mode-hook nil)
-
-
-;; now we only need to define our comps
-;; adjust the helm source to use the alist func
+
 
 (cos/define-comp-type
  value-comp
  "Component"
- "#FFD866")
+ "Magenta")
 (cos/define-comp-type
  primary-index-comp
  "PrimaryIndexComponent"
@@ -133,8 +136,15 @@ Assoc STRING witht the corresponding `cos/comp-type'."
 (cos/define-comp-type
  unique-flag-comp
  "UniqueFlagComponent"
- "#83da7e")
+ "LimeGreen")
 (cos/define-comp-type
  flag-comp
  "FlagComponent"
  "#84ebf3")
+
+
+
+(add-hook 'csharp-mode-hook #'cos/add-font-lock-keywords)
+
+
+(provide 'cos-comp-types)

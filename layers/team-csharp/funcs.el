@@ -1,29 +1,23 @@
 
 
+(add-to-load-path-if-exists "~/.spacemacs.d/layers/team-csharp/")
+
+(require 'cos-comp-types)
+
+
+
+
+
 (define-minor-mode team/chsarp-superior-mode
-  "This mode adds chsarp syntax to strings when you put them on multiple lines."
+  "Makes csharp coding more zappy."
   :group 'electricity
   (if team/chsarp-superior-mode
       (progn
 	      (add-hook 'post-self-insert-hook
-                  #'team/csharp-superior-post-self-insert-function
-        )
-
-
-        ;; (font-lock-add-keywords
-        ;;  nil
-        ;;  '(("\\bMatcher\\b" . speedbar-file-face))
-
-        ;;  )
-
-        )
+                  #'team/csharp-superior-post-self-insert-function))
     (remove-hook 'post-self-insert-hook #'team/csharp-superior-post-self-insert-function)))
 
 (add-hook 'csharp-mode-hook #'team/chsarp-superior-mode)
-
-(defun my-matcher-func (arg)
-  (re-search-forward "\\(Matcher\\)\\." arg t)
-  )
 
 (defun team/csharp-superior-post-self-insert-function ()
   (when team/chsarp-superior-mode
@@ -120,11 +114,6 @@ Nil otherwise."
    (evil-set-register ?m
                       (car (setq team-electric/catched-comp it)))))
 
-;; (defun team-electric/catch-comp-at-point ()
-;;   "Catch thing at point as comp"
-;;   )
-
-
 (defun team-electric/flag-comp-p (type)
   (string-match-p "Flag" type))
 
@@ -135,7 +124,6 @@ Nil otherwise."
    team-electric/catched-comp
    (cl-destructuring-bind (name type) team-electric/catched-comp
      ,@body)))
-
 
 (defun team-electric/resolve-cached-comp-set-part ()
   (team-electric/a-catched-comp
@@ -149,7 +137,6 @@ Nil otherwise."
   "Copy the current evil word into register m."
   (interactive)
   (evil-set-register ?m (thing-at-point 'evil-word)))
-
 
 
 
@@ -165,49 +152,6 @@ Nil otherwise."
 
 ;; idlegame comps helm
 
-
-;; comp source faces
-
-(defface
-  team-electric/value-comp-face
-  '((t . (:foreground "LemonChiffon")))
-  "")
-(defface
-  team-electric/flag-comp-face
-  '((t . (:foreground "LightSkyBlue")))
-  "")
-(defface
-  team-electric/unique-comp-face
-  '((t . (:foreground "Darkolivegreen3")))
-  "")
-(defface
-  team-electric/index-comp-face
-  '((t . (:foreground "Yellow4")))
-  "")
-(defface
-  team-electric/primary-index-comp-face
-  '((t . (:foreground "Rosybrown3")))
-  "")
-(defface
-  team-electric/unique-flagcomp-face
-  '((t . (:foreground "YellowGreen")))
-  "")
-(defface
-  team-electric/flag-comp-face
-  '((t . (:foreground "LightSkyBlue")))
-  "")
-
-
-(defvar team-electric/comp-faces-alist
-  '(("Component" . team-electric/value-comp-face)
-    ("UniqueComponent" . team-electric/unique-comp-face)
-    ("FlagComponent"  . team-electric/flag-comp-face)
-    ("IndexComponent"  . team-electric/index-comp-face)
-    ("PrimaryIndexComponent"  . team-electric/primary-index-comp-face)
-    ("UniqueFlagComponent"  . team-electric/unique-flagcomp-face)))
-
-
-
 
 (defvar team-electric/helm-all-comps-cache nil)
 (defvar team-electric/helm-comp-actions '())
@@ -240,12 +184,12 @@ Nil otherwise."
   (with-temp-buffer
     (insert candidate)
     (->gg)
-    (buffer-string)
     (when (re-search-forward ".*class[[:blank:]]+\\(\\w+\\).+?:[[:blank:]]+\\(\\(?:\\w+\\)?Component\\).*" nil t)
       (let ((match-2 (match-string-no-properties 2)))
         (replace-match "\\1 : \\2")
         (or (-some--> match-2
-              (assoc-default it team-electric/comp-faces-alist)
+              (cos/comp-type-comp-face
+               (cos/comp-assoc-class-string it))
               (propertize (buffer-string) 'face it))
             (buffer-string))))))
 
@@ -296,6 +240,7 @@ This relies on up to date gtags."
 (defun team-electric/helm-comp-echo ()
   "Use `team-electric/helm-comps-source' with the sole action of returning the comp name string.
 This is meant to be used in lisp code."
+  (interactive)
   (helm :sources team-electric/helm-echo-source))
 
 
@@ -354,45 +299,7 @@ This is meant to be used in lisp code."
 
 
 
-(add-to-load-path-if-exists "~/.spacemacs.d/layers/team-csharp/")
-
-;; (defun team/get-lazy-wrapper (name file)
-;;   (defalias (symb 'my-lazy/ name)
-;;     `(lambda ()
-;;       (interactive)
-;;       (require ,file)
-;;       (,name))))
-
-;; (defun team/define-lazy-keys-for-minor-mode (mode key def &rest bindings)
-;;   (while key
-;;     (spacemacs/set-leader-keys-for-minor-mode
-;;       mode
-;;       key
-;;       (team/get-lazy-wrapper def 'csharp-transformations))
-;;     (setq key (pop bindings) def (pop bindings))))
-
-
 
 (team/define-lazy-wrapper team/csharp-eldoc-to-param 'csharp-transformations)
 (team/define-lazy-wrapper team/insert-yank-as-param 'csharp-transformations)
 (team/define-lazy-wrapper team/csharp-eldoc-expand-args 'csharp-transformations)
-
-;; (team/define-lazy-keys-for-minor-mode
-;;  'team/chsarp-superior-mode
-;;  "oo"
-;;  'best-other)
-
-
-;; (team/get-lazy-wrapper 'ff 'csharp-transformations)
-
-;; (my-lazy/ff)
-
-;; (my-lazy/hello-mofo)
-
-;; (f 'hello 'fff)
-
-;; (defun f (name file)
-;;   `(lambda ()
-;;    (interactive)
-;;    (require ,file)
-;;    (,name)))
