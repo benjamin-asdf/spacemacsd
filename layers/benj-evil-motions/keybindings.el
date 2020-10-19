@@ -41,6 +41,7 @@
   "t" #'my/re-toggle-true-false
   "u" #'my/re-toggle-up-down
   "b" #'my/re-toggle-target-actionButton
+  "o" #'my/re-toggle-online-offline
   )
 
 (team/spacemacs-declare-keys

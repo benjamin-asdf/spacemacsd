@@ -160,6 +160,9 @@ Start either at 0 or prefix ARG, if given."
 (my/define-re-toggle
   "target"
   "actionButton")
+(my/define-re-toggle
+  "online"
+  "offline")
 
 (defun my/re-commata-newline ()
   "Replace occurances of , to a new line in region or line."
@@ -272,8 +275,8 @@ Store a new book mark named \"last-work\"."
   (my/last--jump-bookmark (eyebrowse--get 'current-slot)))
 
 
-(add-hook 'post-self-insert-hook
-          #'my/last-change-bookmark-funtion)
+;; (add-hook 'post-self-insert-hook
+          ;; #'my/last-change-bookmark-funtion)
 
 
 
@@ -309,6 +312,7 @@ Store a new book mark named \"last-work\"."
 
 (defun my/comment-or-uncomment-sexpr ()
   "Use evilnc to toggle comment on sexpr."
+  (require 'evil-nerd-commenter)
   (interactive)
   (evil-lisp-state-prev-opening-paren)
   (evilnc--invert-comment
