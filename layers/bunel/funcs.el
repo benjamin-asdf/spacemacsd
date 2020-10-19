@@ -176,13 +176,14 @@ List for menus, overlays, windows to open."
    (user-error "No last unity cmd.")))
 
 
-(defun bunel/refresh-and-play ()
-  (interactive)
+(defun bunel/refresh-and-play (arg)
+  "Refresh and play, with prefix ARG do not enter play mode."
+  (interactive"P")
   (save-some-buffers)
   (bunel--cmd
    "refresh-and"
    nil
-   "playmode"))
+   (unless arg "playmode")))
 
 (defun bunel/loading-scene-and-play ()
   (interactive)

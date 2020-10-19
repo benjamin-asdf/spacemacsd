@@ -452,3 +452,9 @@ Return the new class name, which is a symbol named DIR."
     (dir-locals-set-class-variables class-name variables)
     (dir-locals-set-directory-class dir class-name success)
     class-name))
+
+
+
+
+
+(provide 'benj-funcs)

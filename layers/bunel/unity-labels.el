@@ -63,7 +63,9 @@ If all labels are already defined, do nothing."
     (uncategorized . "Uncategorized")
     (normal-overlay . "NormalOverlay")
     (fade-image . "FadeImage")
-    (congrats-screen . "CongratsScreen")))
+    (congrats-screen . "CongratsScreen")
+    (offline-content . "OfflineContent")
+    (online-content . "OnlineContent")))
 
 
 (defun cos/prefab-label (item)

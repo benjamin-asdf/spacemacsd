@@ -56,5 +56,19 @@
       (replace-match (format "%s%s" (match-string 1) (match-string 3))))))
 
 
+(defun my/cos-jump-asset-file ()
+  "If there is an Assets/ filename at point, jump to it in the cos project."
+  (interactive)
+  (unless
+      (-some-->
+          (thing-at-point 'filename)
+        (and (s-prefix-p "Assets/" it) it)
+        (team/with-default-dir
+         idlegame-project-root
+         (find-file-at-point it)
+         t))
+    (user-error "Thing at point is not an Assets/ file name.")))
+
+
 
 (provide 'idlegame-definitions)

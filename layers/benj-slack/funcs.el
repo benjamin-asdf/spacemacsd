@@ -42,6 +42,11 @@
   (interactive)
   (benj-slack-updload (benj-latest-screenshot) "png"))
 
+(defun benj-slack-upload-latest-vid ()
+  "Upload the latest file in vid dir."
+  (interactive)
+  (benj-slack-updload (latest-file "~/Videos/") "mp4"))
+
 
 
 ;; message notifier
