@@ -89,25 +89,25 @@ Assoc STRING witht the corresponding `cos/comp-type'."
 (defconst cos/comp-ref-reg "\\([[:blank:]]*\\(\\w+\\)[[:blank:]]*,?\\)?")
 
 (defface cos/composit-mem-face
-  '((t . (:foreground "Gold" :height 1.2)))
+  '((t . (:inherit font-lock-string-face :height 1.2)))
   "Face used for cos composit game system member functions")
 
-(defconst
-  cos/composit-mem-reg
-  (team/with-file
-   (concat idlegame-assets-dir "#/Sources/Helper/Entitas/BaseCompositeSystem.cs")
-   (re-search-forward "AddInitialize" nil)
-   (csharp-mode)
-   (team-helm/hs-block)
-   (let ((list))
-     (while (re-search-forward "public \\w+ \\(Add\\w+\\)(" (mark) t)
-       (push (match-string-no-properties 1) list))
-     (regexp-opt list))))
+(defvar cos/composit-mem-reg nil)
+(defun cos/composit-mem-reg ()
+  (unless cos/composit-mem-reg
+    (setq cos/composit-mem-reg
+          (team/with-file
+           (concat idlegame-assets-dir "#/Sources/Helper/Entitas/BaseCompositeSystem.cs")
+           (let ((list))
+             (while (re-search-forward "public \\w+ \\(Add\\w+\\)(" (mark) t)
+               (push (match-string-no-properties 1) list))
+             (regexp-opt list)))))
+  cos/composit-mem-reg)
 
 (defun cos/add-font-lock-keywords ()
   (font-lock-add-keywords
    nil
-   `((,cos/composit-mem-reg . 'cos/composit-mem-face)
+   `((,(cos/composit-mem-reg) . 'cos/composit-mem-face)
      (,(concat "<" (string-times 3 cos/comp-ref-reg) ">")
       (2 (cos/comp-face (match-string-no-properties 2)) t t)
       (4 (cos/comp-face (match-string-no-properties 4)) t t)
@@ -120,7 +120,7 @@ Assoc STRING witht the corresponding `cos/comp-type'."
 (cos/define-comp-type
  value-comp
  "Component"
- "Magenta")
+ "Magenta3")
 (cos/define-comp-type
  primary-index-comp
  "PrimaryIndexComponent"
@@ -136,7 +136,7 @@ Assoc STRING witht the corresponding `cos/comp-type'."
 (cos/define-comp-type
  unique-flag-comp
  "UniqueFlagComponent"
- "LimeGreen")
+ "Chartreuse")
 (cos/define-comp-type
  flag-comp
  "FlagComponent"
