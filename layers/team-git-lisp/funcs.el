@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;;(require 'magit)
 
 ;;; Code:
@@ -257,17 +258,20 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
 
 
 
+(defun benj-magit/read-checkout-arg (prompt)
+  (magit-read-char-case
+      prompt
+      t
+    (?o "[o]ur stage"   "--ours")
+    (?t "[t]heir stage" "--theirs")
+    (?s "[s]kip")))
+
 (defun benj-git/resolve-conflicts-interactive (&optional nocs)
   "Interactively resolve all merge conflicts, ask individually.
 With non nil prefix arg NOCS, skip cs files."
   (interactive)
   (--map
-   (let* ((arg (magit-read-char-case
-                   (format "%s is %s \ncheckout:\n" (car it) (cadr it))
-                   t
-                 (?o "[o]ur stage"   "--ours")
-                 (?t "[t]heir stage" "--theirs")
-                 (?s "[s]kip")))
+   (let* ((arg (benj-magit/read-checkout-arg (format "%s is %s \ncheckout:\n" (car it) (cadr it))))
           (ours (string-equal arg "--ours")))
      (when arg
        (pcase (cadr it)
@@ -374,9 +378,10 @@ With ARG only check cs files."
   ;; TODO something with direnv where we check the primary fetch branch
   (require 'magit)
   (interactive)
-  (magit-run-git-async
-   "fetch" "origin" "develop:develop")
-  (benj-git/after-magit-success
+  (team/magit-pipe
+   (magit-run-git-async "fetch")
+   (magit-run-git-async
+    "fetch" "origin" "develop:develop")
    (magit-merge-plain "develop")))
 
 (defun benj-git/update-modules ()
@@ -392,7 +397,7 @@ With ARG only check cs files."
   (benj-git/after-magit-success
    (magit-run-git-async "submodule" "foreach" "git" "clean" "-fd")))
 
-(defun benj-git/fire-up-gerge-sample (arg)
+(defun benj-git/fire-up-merge-sample (arg)
   "Create an empty git repo, \"git merge topic\"
 will create a conflict in a file.
 If ARG is nil, try to open an existing merge sample repo, else always create a fresh one."
@@ -522,13 +527,17 @@ Eval BODY with anaphoric files set to the filtered files."
                                'identity
                                files))))
 
-(defun team/magit-checkout (args files)
-  "ARGS can be nil. FILES is a list of files."
+(defun team/magit-checkout (args files &optional add)
+  "ARGS can be nil. FILES is a list of files.
+If ADD is non nil, add FILES afterwards."
   (team/magit-with-files
    (list
     "checkout"
     args)
-   files))
+   files)
+  (when add
+    (benj-git/after-magit-success
+     (magit-run-git-async "add" "--" files))))
 
 (defmacro team/magit-define-checkout (name arg)
   (declare (indent defun))
@@ -648,6 +657,16 @@ With ARG, default to 'develop'."
       (benj-git/unmerged-status))
      "unmerged-status")))
 
+
+(defun team/checkout-checkout-files-on-region ()
+  "Checkout some selected files."
+  (interactive)
+  (let ((files
+         (-remove #'string-empty-p (s-split "\n" (team/line-or-region-str)))))
+    (team/magit-checkout
+     (benj-magit/read-checkout-arg (format "checkout %d files: " (length files)))
+     files
+     'add)))
 
 (defun team/show-in-window (list &optional buff-name)
   "Flatten LIST and insert into a temp window.

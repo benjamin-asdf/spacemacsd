@@ -33,7 +33,7 @@
 (team/spacemacs-declare-keys
     "og0"
     "dev-utils"
-  "m" #'benj-git/fire-up-gerge-sample
+  "m" #'benj-git/fire-up-merge-sample
   )
 
 (team/spacemacs-declare-keys
@@ -68,4 +68,5 @@
   "s" #'team/list-current-unmerged-status
   "c" #'vc-find-conflicted-file
   "y" #'benj-git/yank-first-unmerged-file
+  "x" #'team/checkout-checkout-files-on-region
   )
