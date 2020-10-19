@@ -522,3 +522,15 @@ Abort current if ARG is non nil"
             (team/while-reg
              ".*\.meta$"
              (delete-file (match-string-no-properties 0))))))))))
+
+
+(defun teamel/const-rewriter-file (file)
+  (interactive"f")
+  (team/with-default-dir
+   "/home/benj/idlegame/RoslynTools/AdjConstRewriter/cli-bin/"
+   (team/proc-window
+    "const-rewriter"
+    "*const-rewriter*"
+    "dotnet"
+    "RewriterCli.dll"
+    file)))

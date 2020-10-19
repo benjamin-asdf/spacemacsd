@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;;; Code:
 (defun team-create-temp-file-on-region ()
   "Create a file in temp data folder from active region,
@@ -260,6 +262,42 @@ with it anaphorically bound to a list of ARGS."
 
 ;; procs
 
+(defun team/proc-window (name
+                         buffer
+                         program
+                         &rest args)
+  "Start "
+  (let ((buff (get-buffer-create
+               (or buffer "*proc*"))))
+    (set-process-sentinel
+     (with-current-buffer
+         buff
+       (erase-buffer)
+       (apply
+        (function start-process)
+        `(,name ,(current-buffer)
+                ,program ,@(-flatten args)))
+       )
+     (lambda
+       (p e)
+       (when
+           (string-equal "finished
+" e)
+         (if
+             (= 0
+                (process-exit-status p))
+             (with-current-buffer
+                 (process-buffer p)
+                (with-current-buffer buff
+                  (pop-to-buffer (current-buffer))
+                        (->gg)))
+           (error "Process %s exited abnormally with code %d"
+                  (process-name p)
+                  (process-exit-status p))))))))
+
+
+
+
 (defun team/start-proc (name buffer program &rest args)
   "See `start-process', flatten args. If BUFFER is nil, user current buffer."
   (apply
@@ -282,6 +320,11 @@ with it anaphorically bound to a list of ARGS."
 
 
 ;; elisp
+
+(defun team/line-or-region-str ()
+  (if (region-active-p)
+      (region-str)
+    (buffer-substring (point-at-bol) (point-at-eol))))
 
 ;; TODO support argument and interactive lists
 (defmacro team/define-lazy-wrapper (name file)

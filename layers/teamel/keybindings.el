@@ -16,7 +16,13 @@
  "tools"
  "u" #'teamel/add-used-implicitly
  "p" #'teamel/open-this-unity-proj
+ "c" #'cog-target-ask
+ "C" #'teamel/cog-target
  )
+
+(defun cog-target-ask ()
+  (interactive)
+  (teamel/cog-target 1))
 
 (team/spacemacs-declare-keys
     "oi1"
