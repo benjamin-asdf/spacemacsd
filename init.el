@@ -123,6 +123,8 @@ This function should only modify configuration layer settings."
     redshank
     system-utils
 
+    lispy
+
      )
 
    ;; List of additional packages that will be installed without being
@@ -596,6 +598,7 @@ before packages are loaded."
   (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
   (set-face-foreground 'line-number "slateBlue")
   (setq org-agenda-files '("/home/benj/org/notes.org"))
+  (setq-default page-break-lines-max-width 30)
 
 
 
@@ -616,8 +619,13 @@ before packages are loaded."
 
   
 
-  (add-hook 'minibuffer-setup-hook
-            #'(lambda () (smartparens-strict-mode)))
+  (dolist (elm '(minibuffer-setup-hook eshell-mode-hook slack-message-buffer-mode-hook))
+    (add-hook elm
+              #'(lambda () (smartparens-strict-mode))))
+
+  (dolist (elm '(wdired-mode-hook))
+    (add-hook elm
+              #'(lambda () (evil-mc-mode))))
 
 
 
