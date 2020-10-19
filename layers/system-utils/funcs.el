@@ -70,3 +70,18 @@ IF UP is non nil go up, else go down."
   ("K" my/amixer-vol-up-large)
   ("u" my/amixer-toggle)
   ("q" nil :exit t))
+
+
+
+
+
+
+
+
+(defun my/ffmpeg-left-monitor-start (&optional file)
+  "Start grabbing left monitor into file."
+  (interactive)
+  ;; (with-current-buffer
+      ;; )
+  (async-shell-command
+   (format "ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0 %s.mp4" (or file "/tmp/benj-screen"))))
