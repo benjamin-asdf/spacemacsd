@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-remove-all-entities-m
+#key : csram
+#contributor : benj
+# --
+c.state.RemoveFromAllEntities<`(team-electric/comp-name)`>();

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-remove-all-entities-h
+#key : csrah
+#contributor : benj
+# --
+c.state.RemoveFromAllEntities<`(team-electric/helm-comp-echo)`>();

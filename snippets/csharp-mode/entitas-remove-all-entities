@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-remove-all-entities
+#key : csra
+#contributor : benj
+# --
+c.state.RemoveFromAllEntities<$0>();
