@@ -1,0 +1,11 @@
+        (QuestType.AccountPower, OverlayType.Avatar),
+        (QuestType.CheckMail, OverlayType.Mail),
+        (QuestType.CollectTimedReward, OverlayType.TimedRewards),
+        (QuestType.LiveStream, OverlayType.LiveStreamMenu),
+        (QuestType.VoiceChat, OverlayType.VoiceChat),
+        (QuestType.CustomizePet, OverlayType.CustomizePets),
+        (QuestType.BuildQuests, OverlayType.Quest),
+        (QuestType.QuestsLv2, OverlayType.Quest),
+        (QuestType.QuestsLv3, OverlayType.Quest),
+        (QuestType.LB, OverlayType.Leaderboards),
+        (QuestType.VideoGuide, GeneralConst.OVERLAY_TODO)

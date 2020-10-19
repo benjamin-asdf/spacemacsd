@@ -1,0 +1,40 @@
+
+
+
+
+
+
+
+
+
+
+
+(QuestType.PvPBattle, QuestType.RefreshArena)),
+(QuestType.PvEBattle, QuestType.CampaignBoss)),
+(QuestType.Fusion, QuestType.UpgradePet)),
+(QuestType.CasinoRefresh, QuestType.Spinwheel)),
+(QuestType.TriHardSummon, QuestType.KappaSummon)),
+(VisitCommunity, CommunitySlotSpin, WatchCommunityReplay, QuestType.ClaimStreamer, WatchStreams, Praise, Duel)),
+(QuestType.UpgradeLevelStone, QuestType.LevelUpPet)),
+(QuestType.SwapAbilities, QuestType.SwapAbilitiesPet, QuestType.BuyPetAbiliy, QuestType.BuyStreamerAbility)),
+(QuestType.SwapFace)),
+(QuestType.ChurchSpin, QuestType.Prayer)),
+(QuestType.BadLuckSpin)),
+(QuestType.WatchBossTowerReplay)),
+(QuestType.AttackCommunity, QuestType.AttackStreamerReplay)),
+(QuestType.MarketPurchase, QuestType.MarketRefresh)),
+(QuestType.MerchantPurchase)),
+(QuestType.AcquireLoyaltyFace)),
+(QuestType.HallOfFameReplay, QuestType.WatchYourReplays)),
+(QuestType.Trade, QuestType.TradePetSkin)),
+(QuestType.BrowseBC, QuestType.RentStreamer, QuestType.RentPet)),
+(QuestType.CheckTodaysVideos, Build, LevelUpBuilding, LevelUpGarrison, Charity)),
+(QuestType.AttractPet, QuestType.Hatcheries, QuestType.CollectPets, QuestType.CollectEggs)),
+(Match3Game, Hatch)),
+(QuestType.HotStoriesAction, QuestType.SwipeStreamer)),
+(QuestType.CollectMinedGems, QuestType.Expedition)),
+(QuestType.BlackjackHand)),
+(QuestType.PokerHand)),
+(QuestType.RouletteBet)),
+(QuestType.SpinBingo)),
+(QuestType.CompleteAll, QuestType.None))
