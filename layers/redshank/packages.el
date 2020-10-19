@@ -41,6 +41,8 @@
         (spacemacs/set-leader-keys-for-major-mode
           mode
           (concat "rr" key)
-          def)))))
+          def))))
+  (spacemacs|diminish redshank-mode " Ⓡ" " R"))
+
 
 ;;; packages.el ends here
