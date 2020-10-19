@@ -284,7 +284,51 @@
  (team/mklist (car (cos/leaderboard-products)))
  )
 
+(defun team/read-chsarp-map (str)
+  (let ((res))
+    (with-temp-buffer
+      (insert str)
+      (->gg)
+      (while
+          (re-search-forward "(\\(.+?\\),.+?\\(.+?\\))" nil t)
+        (push `((,(match-string 1) ,(match-string 2))) res)))
+    res))
 
+(defvar
+  overlay-quest-dots
+  (team/with-file
+  "/home/benj/.spacemacs.d/layers/team-snippets/quest-overlay-map"
+  (team/read-chsarp-map (buffer-string))
+  ))
+
+
+(team/with-file
+ "/home/benj/idlegame/IdleGame/Assets/#/Sources/GameGuide/DotSource.cs"
+ (forward-line 1191)
+ (let ((m (point-marker)))
+   ;; (--map-indexed
+   ;; (-->
+   ;; (cadr (s-split "\\." (caar it) t))
+   ;; (team/in-new-line
+   ;; (format "Quest%s = GreenQuestDotOffset + %d," it it-index)))
+   ;; overlay-quest-dots)
+
+   (--map-indexed
+    (team/in-new-line
+     (format "%s => %s,"
+             (cadar it)
+             (concat "DotSource.Quest" (cadr (s-split "\\." (caar it) t)))))
+    overlay-quest-dots
+    )
+   (csharp-mode)
+   (indent-region-line-by-line m (point))
+   )
+ )
+
+
+(cadr (s-split "\\." (caar (car overlay-quest-dots)) t))
+(cadr (s-split "\\." (caar (car overlay-quest-dots)) t))
+(cadar (car overlay-quest-dots))
 
 
 
@@ -307,14 +351,62 @@
 
     )
 
-
-
-
-
   )
  (team/file-lines "/tmp/lb-names")
  )
 
+
+(team/with-file
+ cos/dot-source-file
+ (csharp-mode)
+ (--map
+  (let ((name (concat "Quest" it)))
+    (->gg)
+    (unless (re-search-forward name nil t)
+      (re-search-forward "//Quests in menus" nil)
+      (forward-line 1)
+      (team/in-new-line (format "%s," name))
+      (re-search-forward "FromQuestTypeToDotSource")
+      (forward-line 2)
+      (team/in-new-line (format "QuestType.%s => DotSource.%s," it name))))
+  menu-quest-types))
+
+(team/with-file
+ cos/dot-source-file
+ (csharp-mode)
+ (--map-indexed
+  (let* ((type-name (cadr (s-split "\\." (caar it) t)))
+        (name (concat "Quest" type-name)))
+    (->gg)
+    (unless (re-search-forward name nil t)
+      (re-search-forward "// overlay quests" nil)
+      (re-search-forward "^$")
+      (team/in-new-line (format "%s = RedQuestDotOffset + %d," name it-index))
+      (re-search-forward "// overlay quest dots")
+      (team/in-new-line (format "QuestType.%s => DotSource.%s," type-name name))))
+  overlay-quest-dots
+  ))
+
+(caar (car overlay-quest-dots))
+
+
+;; get all menu quest types
+;; define dot sources for quest type
+
+;; switch (questType)
+;; => DotSource.
+
+(defvar
+  menu-quest-types
+  (team/with-file
+  "/home/benj/.spacemacs.d/layers/team-snippets/menu-quest-lookup"
+
+  (team/collect--reg
+   "\\(QuestType\.\\)?\\(\\w+\\)"
+   2
+   )
+
+  ))
 
 
 
