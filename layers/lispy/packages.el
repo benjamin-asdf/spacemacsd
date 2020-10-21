@@ -13,7 +13,12 @@
 (defun lispy/init-lispy ()
   (use-package lispy
     :defer t
-    :config (spacemacs|diminish lispy-mode "" "")))
+    ;; :init (setq lispy-key-theme nil)
+    :config (progn
+              (pushnew
+               'lispy-mode
+               evil-mc-incompatible-minor-modes)
+              (spacemacs|diminish lispy-mode "" ""))))
 
 (defun lispy/init-evil-lispy ()
   (use-package evil-lispy
@@ -73,24 +78,34 @@
             (atom-movement t)
             slurp/barf-lispy
             additional
+            additional-motions
+            commentary
+            additional-wrap
             additional-insert
-            text-objects))
+            ;; arrows
+            escape
+            mark
+            slurp/barf-lispy))
     :config
     (progn
+
+      (spacemacs/set-leader-keys
+        "C-l"
+        #'evil-visual-line)
+
       (lispyville-set-key-theme)
       (require 'targets)
-      (require 'evil)
       (setq targets-text-objects nil)
-      (targets-setup) ;;; foo
+      (targets-setup)
       (targets-define-to lispyville-comment 'lispyville-comment nil object
                          :last-key nil
-                         :bind t :keys "c")
+                         :bind t :keys ";")
       (targets-define-to lispyville-atom 'lispyville-atom nil object
                          :last-key nil
-                         :bind t :keys "a")
+                         :bind t :keys "m")
       (targets-define-to lispyville-list 'lispyville-list nil object
                          :last-key nil
-                         :bind t :keys "L")
+                         :bind t :keys "c")
       (targets-define-to lispyville-sexp 'lispyville-sexp nil object
                          :last-key nil
                          :bind t :keys "x")

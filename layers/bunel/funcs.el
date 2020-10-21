@@ -381,15 +381,18 @@ List for menus, overlays, windows to open."
      (erase-buffer)
      (team/insert-line (format "file usages for guid: %s ...\n" guid))
      (start-process
-            )
-     )))
+      "*unity-guid-search*"
+      (current-buffer)
+      "rg"
+      "-IlN"
+      (format "guid: %s" guid)))))
 
 (defun team-unity/rg-guid--search-args (guid)
-  `("*unity-guid-search*"
-        (current-buffer)
-        "rg"
-        "-IlN"
-        ,(format "guid: %s" guid)))
+  `(
+    "rg"
+    "rg"
+    "-IlN"
+    ,(format "guid: %s" guid)))
 
 
 (defun team-unity/rg-guid-search-at-point ()
@@ -622,7 +625,9 @@ see `omnisharp-unit-test-buffer'."
        "dotnet"
        "/home/benj/repos/csharp/prefab-checker/bin/Debug/netcoreapp3.1/publish/prefab-checker.dll"
        ,@(-flatten files)))
-    (pop-to-buffer (current-buffer))
+    t
+    (pop-to-buffer
+     (current-buffer))
     (->gg)))))
 
 (defun cos/do-prefab-integrity-check (&optional file)

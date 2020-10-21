@@ -15,7 +15,8 @@
     (jit-lock-mode nil)))
 
 
-;; fancy shvancy diable ggtags eldoc func
+(setq omnisharp-auto-complete-want-documentation nil)
+
 (defgroup ggtags nil
 	"Options for ggtags"
 	:group 'init)

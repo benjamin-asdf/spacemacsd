@@ -95,7 +95,7 @@ FILE should be the thing inside a directory that has unity labels."
         it)
        (team-unity/get-labels
         (directory-file-name
-         (file-name-directory file-or-meta))))
+         (file-name-directory file))))
       'online
     'offline))
 

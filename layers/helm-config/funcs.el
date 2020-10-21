@@ -4,7 +4,7 @@
 (setq-default helm-ag-use-grep-ignore-list 't)
 (setq-default helm-candidate-number-limit 100)
 (setq-default helm-ag-base-command "rg --color=never --no-heading" )
-
+(setq helm-swoop-speed-or-color nil)
 
 (defun benj/helm-find-file-recursively ()
   "Recursively find files in glob manner, in the specified directory."
