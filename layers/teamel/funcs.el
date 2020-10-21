@@ -294,7 +294,7 @@ and expand a snippet for a 'With...(this config)' method."
         (setq field-name (match-string-no-properties 2))
         (setq type (match-string-no-properties 1))
         (re-search-backward
-         "public struct \\(\\w+\\) \\(?:: \\(\\w+\\)\\)"
+         "public struct \\(\\w+\\) \\(?:: \\(\\w+\\)\\)?"
          nil)
         (team/a-when (match-string-no-properties 2)
                      (setq interface-name it)
