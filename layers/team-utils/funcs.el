@@ -225,6 +225,13 @@ Else eval ELSE-FORMS with implicit progn."
   `(let ((it ,test))
      (if it ,then-form ,@else-forms)))
 
+(defmacro id-when (e test)
+  "Eval E, when TEST returns non nil with E as arg,
+Return E, nil otherwise."
+  (declare (debug t))
+  `(let ((it ,e))
+     (when (funcall ,test it) it)))
+
 (defmacro team/a-when (test &rest body)
   "Bind the value of TEST to it. When it is non nil, eval BODY with implicit progn."
   (declare (debug body))
@@ -748,5 +755,45 @@ return the result of that evalution and stop."
          nil
          nil
        ,@body)))
+
+
+;; funcs
+
+(defun team/memoize-simple (fn)
+  (let ((cache (make-hash-table :test #'equal)))
+    #'(lambda (&rest args)
+        (let ((val (gethash args cache 'default)))
+          (if (not (eq val 'default))
+              val
+            (setf (gethash args cache)
+                  (apply fn args)))))))
+
+(defmacro team/def-memoized (name args docstring &rest body)
+  "Define a simple memoized function NAME."
+  (declare (indent defun) (debug t))
+  (let ((f (symb name '-internal))
+        (memoized (cl-gentemp (mkstr name))))
+    `(progn
+       (defun
+           ,f
+           ,args
+         ,@body)
+       (defun
+           ,name
+           ,args
+         ,docstring
+         (unless
+             (bound-and-true-p
+              ,memoized)
+           (defvar
+             ,memoized
+             (team/memoize-simple
+              #',f)))
+         (apply
+          ,memoized
+          (team/mklist ,@args))))))
+
+
+
 
 (provide 'team-utils)

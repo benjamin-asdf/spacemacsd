@@ -32,3 +32,18 @@ also add a number, which is either the +1 the last of such numbers, or +1 the co
                                  (or (cadar (last it))
                                      (length it)))))) "")))))
 
+
+
+(defun benj/simple-csharp-enum-values ()
+  "Return a list of strings of the enum at point."
+  (-remove
+   #'string-empty-p
+   (-map
+    #'s-trim
+    (s-split ","
+             (buffer-substring
+              (progn (forward-line) (point-at-bol))
+              (save-excursion (skip-chars-forward "^}") (point)))
+             t))))
+
+(provide 'enums)

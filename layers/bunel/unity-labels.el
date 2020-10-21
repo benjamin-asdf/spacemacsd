@@ -86,4 +86,17 @@ If all labels are already defined, do nothing."
    (concat idlegame-project-root "prefabs-for-rewrite.txt")))
 
 
+(team/def-memoized cos/asset-type (file)
+  "Return one of online or offline.
+FILE should be the thing inside a directory that has unity labels."
+  (if (--any?
+       (string-equal
+        (assoc-default 'online-content cos/prefab-labels-alist)
+        it)
+       (team-unity/get-labels
+        (directory-file-name
+         (file-name-directory file-or-meta))))
+      'online
+    'offline))
+
 (provide 'unity-labels)

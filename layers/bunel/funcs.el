@@ -381,11 +381,16 @@ List for menus, overlays, windows to open."
      (erase-buffer)
      (team/insert-line (format "file usages for guid: %s ...\n" guid))
      (start-process
-      "*unity-guid-search*"
-      (current-buffer)
-      "rg"
-      "-IlN"
-      (format "guid: %s" guid)))))
+            )
+     )))
+
+(defun team-unity/rg-guid--search-args (guid)
+  `("*unity-guid-search*"
+        (current-buffer)
+        "rg"
+        "-IlN"
+        ,(format "guid: %s" guid)))
+
 
 (defun team-unity/rg-guid-search-at-point ()
   (interactive)
