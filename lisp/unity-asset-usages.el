@@ -93,9 +93,9 @@
                (re-search-backward "^GameObject:$")
                (unless
                    (re-search-forward
-                    "^  m_Name: \\(\\w+\\)$" (save-excursion
-                                               (re-search-forward yml-terminator nil t)))
-                 (error "Did not find game object name, last pos %s:%s" it (point)))
+                    "^  m_Name: \\(.*\\)$" (save-excursion
+                                               (re-search-forward yml-terminator nil t)) t)
+                 (error "Did not find game object name, last pos %s:%s\nguid:%s\nfile-or-meta:%s" it (point) (team-unity/file-guid file-or-meta) file-or-meta))
                (push
                 (make-unity-asset-usage
                  :prefab-path it
