@@ -372,6 +372,17 @@ return the name of the new file."
      nil
      file)))
 
+(defun team/append-new-line (file s)
+  "Append S to FILE, unless FILE already has a line with S"
+  (if (file-exists-p file)
+      (team/with-file
+       file
+       (unless
+           (re-search-forward
+            (format "^%s$" s) nil t)
+         (team/in-new-line s)))
+    (write-region (concat s "\n") nil file)))
+
 (defun team/skip-until (s)
   (skip-chars-forward (format "^" s)))
 
