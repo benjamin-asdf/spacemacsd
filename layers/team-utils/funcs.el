@@ -411,21 +411,20 @@ Froeach line anaphorically set it to the line content, then run body."
     (my/marker-there (region-beginning))))
 
 ;; NOTE we should cechk if the proc buffer is alive
-(defmacro team/proc-with-cb (procc &rest body)
+(defmacro team/proc-with-cb (procc cb-always &rest body)
   "PROCC should evaluate to a process. Set sentinel and execute BODY with the current buffer set to the proccess buffer,
 if the exit status is 0. Else throw an error."
   (declare (debug t))
   `(set-process-sentinel
    ,procc
    (lambda (p e)
-     (when (string-equal "finished\n" e)
-       (if (= 0 (process-exit-status p))
-           (with-current-buffer
-               (process-buffer p)
-             ,@body)
-         (error  "Process %s exited abnormally with code %d"
+     (unless (or ,cb-always (= 0 (process-exit-status p)))
+       (((error  "Process %s exited abnormally with code %d"
                  (process-name p)
-                 (process-exit-status p)))))))
+                 (process-exit-status p)))))
+     (with-current-buffer
+         (process-buffer p)
+       ,@body))))
 
 (defmacro team/a-when-reg-this-line (reg match &rest body)
   "Search for REG on this line.
@@ -757,6 +756,18 @@ return the result of that evalution and stop."
        ,@body)))
 
 
+
+;;; Macros helper.
+;;
+(defmacro team/with-gensyms (symbols &rest body)
+  "Bind the SYMBOLS to fresh uninterned symbols and eval BODY."
+  (declare (indent 1))
+  `(let ,(mapcar (lambda (s)
+                   `(,s (cl-gensym (symbol-name ',s))))
+                 symbols)
+     ,@body))
+
+
 ;; funcs
 
 (defun team/memoize-simple (fn)
@@ -773,10 +784,11 @@ return the result of that evalution and stop."
   (declare (indent defun) (debug t))
   (let ((f (symb name '-internal))
         (memoized (cl-gentemp (mkstr name))))
-    `(progn
+    `(team/with-gensyms
+         ,args
        (defun
            ,f
-           ,args
+           (,@args)
          ,@body)
        (defun
            ,name
@@ -797,3 +809,4 @@ return the result of that evalution and stop."
 
 
 (provide 'team-utils)
+
