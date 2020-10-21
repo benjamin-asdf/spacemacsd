@@ -175,14 +175,19 @@ but are missing in the loader enums.
 
 
 
-
-
-
-
-(defun resolve-loader-name (s)
-  )
-
-
+(defun resolve-sprite-loader-name (container)
+  (-first
+   #'loader-name-type-lookup
+   (--mapcat
+    (list (apply #'concat it))
+    (let ((list (-permutations
+                 (append
+                  (s-split-words
+                   container)
+                  '("s" "Loader"))))
+          (if (> (length list) 5)
+              (car list)
+            list))))))
 
 
 
