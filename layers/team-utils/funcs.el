@@ -331,6 +331,8 @@ with it anaphorically bound to a list of ARGS."
 
 ;; elisp
 
+
+
 (defun team/line-or-region-str ()
   (if (region-active-p)
       (region-str)
@@ -666,6 +668,24 @@ Then indent between current point and the old point."
        (user-error "No file provided and buffer is not visiting a file either."))
    "\n"
    "\0"))
+
+(defun team/prepend-line (s &optional indent)
+  (forward-line -1)
+  (team/in-new-line s)
+  (when indent (indent-line-to indent)))
+
+(defun team-prepend-at-curly (s &optional indent)
+  "Skip forward to next \\\"}\\\", prepend a line with content S.
+If INDENT is non nil, indent to coll."
+  (skip-chars-forward "^}")
+  (team/prepend-line s indent))
+
+(defun team/prepend-at-re (re s &optional indent)
+  "Search forward to RE then prepend a line with contents S.
+When INDENT is non nil, also indent line."
+  (re-search-forward re nil)
+  (team/prepend-line s indent))
+
 
 
 ;; lists

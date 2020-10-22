@@ -186,8 +186,9 @@ but are missing in the loader enums.
 ;;  (team-unity/file-guid (sprite-container-asset-file "CommunityBossCardsSprites")))
 ;; (asset-usages (sprite-container-asset-file "CommunityBossCardsSprites"))
 
+(defun resolve-sprite-loader-name (container))
 
-(defun resolve-sprite-loader-name (container)
+(defun resolve-sprite-loader-name-with-container-name (container)
   (-first
    #'loader-name-type-lookup
    (--mapcat
@@ -200,7 +201,48 @@ but are missing in the loader enums.
       t)
      container))))
 
+
 (defun set-missing-sprite-containers ()
+  (-map
+   #'team/delete-file-when-exitst
+   (list online-loader-names offline-loader-names))
+  (--map
+   (unless
+       (resolve-sprite-loader-name-with-container-name it)
+     (team/append-new-line
+      (if (online-loader-p
+           it)
+          online-loader-names
+        offline-loader-names)
+      it))
+   (sprite-container-names)))
+
+
+
+(defun from-sprite-container-file-to-loader-name (s)
+  (-some--> s
+    (or (and (file-exists-p it) it)
+        (error "No such sprite container file %s" it))
+    (file-name-base (file-name-base it))
+    (or
+     (resolve-sprite-loader-name-with-container-name it)
+     (error "There was no loader name for %s" it))))
+
+
+
+
+
+;;;  issue you have a field as sprites container
+
+;;;  you want to put a loader now
+
+
+
+
+(defun set-missing-sprite-containers ()
+  "Put files with at `offline-loader-names' and `online-loader-names'.
+These are all sprite containers that did not have a corresponding loader in the loader name.
+Takes 60s if not initialized."
   (-map
    #'team/delete-file-when-exitst
    (list online-loader-names offline-loader-names))
@@ -216,68 +258,71 @@ but are missing in the loader enums.
    (sprite-container-names)))
 
 
+(defun add-loader-names-from-files ()
+  "Check `offline-loader-names' and `online-loader-names'.
+Put enum syntax into `loader-name-file'."
+  (flet ((add-loader (type name)
+                     (setq name (concat name "Loader"))
+                     (->gg)
+                     (re-search-forward type)
+                     (team-csharp-prepend-at-curly
+                      (concat name ",") 4)
+                     (re-search-forward (format "this %s" type))
+                     (team/prepend-at-re
+                      "case"
+                      (format
+                       "case %1$s.%2$s: return nameof(%1$s.%2$s);" type name)
+                      12)))
+    (team/with-file
+     loader-name-file
+     (let ((online-name "OnlineLoaderName")
+           (offline-name "LoaderName"))
+       (--map
+        (add-loader online-name it)
+        (team/file-lines
+         online-loader-names))
+       (--map
+        (add-loader offline-name it)
+        (team/file-lines
+         offline-loader-names))))))
 
+
+
+(defun cos/fix-loader-names-perf-critical ()
+  "Add offline or online loader names for all sprite containers add `loader-name-file'."
+  (set-missing-sprite-containers)
+  (add-loader-names-from-files))
+
+
+
+;;;  the missing thing is to write all sprite container dirs to some file
+;;;  (online, offline) file that already exists
+;;;  then generate the loaders with unity
 
 
 
 
-;;;  assume that each script
 
+(defun dump-replace-sprite-loader-syntax (s)
+  (with-temp-buffer
+    (insert s)
+    (->gg)
+    (re-search-forward "\\(\\w+\\)\.setsprite(.+?,\\(.+?\\),\\(.+?\\))")
+    (replace-match
+     (format "\\1.LoadSpriteAsync(%s,\\3)"
+             (resolve-loader-name
+              (match-string 2))))
+    (buffer-string)))
 
-;;;  issue you have a field as sprites container
-
-;;;  you want to put a loader now
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(defun dump--replace-sprite-loader-syntax (s)
+  (re-search-forward "\\(\\w+\\)\.setsprite(.+?,\\(.+?\\),\\(.+?\\))")
+  (replace-match
+   (format "\\1.LoadSpriteAsync(%s,\\3)"
+           (resolve-loader-name
+            (match-string 2))))
+  (buffer-string))
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(defun fill-loaders ()
-
-  (--map
-
-
-
-
-   (sprite-container-names)
-   )
-  )

@@ -98,7 +98,7 @@ Forward the return value of `re-search-forward'."
             nil t)
          (when (match-string 4)
            ;;  go upwarts to the transform modification the guid is the prefab guid
-           (error "Encountered an override reference, this is not supported yet"))
+           (error "Encountered an override reference, this is not supported yet. Prefab: %s\n guid: %s\nwas checking %s" it (team-unity/file-guid file-or-meta) file-or-meta))
          (let ((field-name (match-string 3)))
            (save-excursion
              (unless
@@ -111,9 +111,8 @@ Forward the return value of `re-search-forward'."
                     (script-file-path (team-unity/asset-path-from-guid script-guid)))
                (re-search-backward "^GameObject:$")
                (unless
-                   (re-search-forward
-                    "^  m_Name: \\(.*\\)$" (save-excursion
-                                             (re-search-forward yml-terminator nil t)) t)
+                   (team-unity/search-this-yml-entry
+                    "^  m_Name: \\(.*\\)$")
                  (error "Did not find game object name, last pos %s:%s\nguid:%s\nfile-or-meta:%s" it (point) (team-unity/file-guid file-or-meta) file-or-meta))
                (push
                 (make-unity-asset-usage
