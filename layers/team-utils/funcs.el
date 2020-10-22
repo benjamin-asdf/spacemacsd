@@ -74,6 +74,10 @@ return the file name of the create file"
 
 
 
+(defun team/delete-file-when-exitst (file)
+  (when (file-exists-p file)
+    (delete-file file)))
+
 (defmacro team/with-default-dir (dir &rest body)
   "Set `default-directory' to DIR and eval BODY."
   (declare (debug body))
@@ -81,8 +85,7 @@ return the file name of the create file"
      ,@body))
 
 
-(defun team/mklist (obj)
-  (if (listp obj) obj (list obj)))
+
 
 (defmacro team/with-file (file &rest body)
   "Goto temp file FILE, insert file contents and evaluate BODY in there.
@@ -666,6 +669,9 @@ Then indent between current point and the old point."
 
 
 ;; lists
+
+(defun team/mklist (obj)
+  (if (listp obj) obj (list obj)))
 
 (defun group (source n)
   (when (zerop n) (error "zero length"))

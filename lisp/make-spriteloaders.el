@@ -63,6 +63,20 @@
 
 
 
+(defun online-loader-p (container)
+  (--every?
+   (eq 'online
+       (unity-asset-usage-asset-type it))
+   (-flatten
+    (team-unity/detailed-asset-usage
+     (or
+      (sprite-container-asset-file container)
+      (error "%s does not have an asset file" container))))))
+
+
+
+
+
 ;; (--map
 
 ;;  ;; list of (script-name prefab game-object) where used
@@ -173,23 +187,33 @@ but are missing in the loader enums.
 ;; (asset-usages (sprite-container-asset-file "CommunityBossCardsSprites"))
 
 
-
-
 (defun resolve-sprite-loader-name (container)
   (-first
    #'loader-name-type-lookup
    (--mapcat
-    (list (apply #'concat it))
-    (let ((list (-permutations
-                 (append
-                  (s-split-words
-                   container)
-                  '("s" "Loader"))))
-          (if (> (length list) 5)
-              (car list)
-            list))))))
+    (list (concat it "Loader"))
+    (list
+     (team/re-replace-in-string
+      container
+      "Sprites"
+      "sSprites"
+      t)
+     container))))
 
-
+(defun set-missing-sprite-containers ()
+  (-map
+   #'team/delete-file-when-exitst
+   (list online-loader-names offline-loader-names))
+  (--map
+   (unless
+       (resolve-sprite-loader-name it)
+     (team/append-new-line
+      (if (online-loader-p
+           it)
+          online-loader-names
+        offline-loader-names)
+      it))
+   (sprite-container-names)))
 
 
 
