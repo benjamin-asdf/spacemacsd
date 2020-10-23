@@ -42,7 +42,11 @@
                 (require 'cider)
                 ;; show eval results in a cider overlay, next to point
                 (add-to-list 'lispy-compat 'cider)
-                (setq lispy-eval-display-style 'overlay)))))
+                (setq lispy-eval-display-style 'overlay))
+
+              (defadvice lispy-backtick (after my/lispy-lispy-backtick-advice activate)
+                (interactive)
+                (run-hooks 'post-self-insert-hook)))))
 
 ;; todo yanking marked stuff is broken
 
