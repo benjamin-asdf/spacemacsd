@@ -272,6 +272,18 @@ with it anaphorically bound to a list of ARGS."
 
 ;; procs
 
+
+(defun my-process-lines (program &optional infile destination display &rest args)
+  "Wrapper for `call-process' like `process-lines', but do not sort lines and do not care about exit code."
+  (with-temp-buffer
+    (call-process
+     program
+     infile
+     destination
+     display
+     args)
+    (s-split "\n" (buffer-string) t)))
+
 (defun team/proc-window (name
                          buffer
                          program
@@ -298,9 +310,9 @@ with it anaphorically bound to a list of ARGS."
                 (process-exit-status p))
              (with-current-buffer
                  (process-buffer p)
-                (with-current-buffer buff
-                  (pop-to-buffer (current-buffer))
-                        (->gg)))
+               (with-current-buffer buff
+                 (pop-to-buffer (current-buffer))
+                 (->gg)))
            (error "Process %s exited abnormally with code %d"
                   (process-name p)
                   (process-exit-status p))))))))
