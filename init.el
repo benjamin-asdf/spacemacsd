@@ -621,7 +621,9 @@ before packages are loaded."
 
   (dolist (elm '(minibuffer-setup-hook eshell-mode-hook slack-message-buffer-mode-hook))
     (add-hook elm
-              #'(lambda () (smartparens-strict-mode))))
+              #'(lambda ()
+                  (unless (bound-and-true-p helm--minor-mode)
+                    (smartparens-strict-mode)))))
 
   (dolist (elm '(wdired-mode-hook))
     (add-hook elm
