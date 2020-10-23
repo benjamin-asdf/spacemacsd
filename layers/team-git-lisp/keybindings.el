@@ -41,6 +41,7 @@
     "log"
   "l" #'team/magit-log-rev
   "r" #'team/magit-log-double-dot
+  "R" #'team/magit-log-double-dot-file
   "s" #'benj/magit-show-commit-no-limit-files
   )
 
