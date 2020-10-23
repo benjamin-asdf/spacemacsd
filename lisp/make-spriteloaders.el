@@ -2,6 +2,9 @@
 
 (require 'enums)
 (require 'unity-labels)
+(require 'unity-asset-usages)
+
+
 
 (cl-defun mk-hash-from-list (list &rest args)
   (let ((res
@@ -40,6 +43,10 @@
                 ((gethash that offline-lut) 'offline)))))))
   (funcall lookup-loaders s))
 
+
+(defun loader-name--online-loader-p (loader)
+  (eq (loader-name-type-lookup loader) 'online))
+
 
 
 (defconst online-loader-names (concat cos-dir "/LoadingIdlegame/Packages/LoadingIdlegame/Runtime/online-loader-names"))
@@ -63,7 +70,7 @@
 
 
 
-(defun online-loader-p (container)
+(defun container-online--p (container)
   (--every?
    (eq 'online
        (unity-asset-usage-asset-type it))
@@ -73,68 +80,12 @@
       (sprite-container-asset-file container)
       (error "%s does not have an asset file" container))))))
 
-
-
-
-
-;; (--map
-
-;;  ;; list of (script-name prefab game-object) where used
-
-;; ;;; map the usages
-
-
-;;  (if online
-;;      (team/append-line-to-file
-;;       online-loader-names
-;;       loader-name)
-;;    (team/append-line-to-file
-;;     offline-loader-names
-;;     loader-name)
-
-;;    )
-;;  ;; determine online offline
-;;  ;; check each load group entry in the usages ; check labels
-;;  ;; if all are online, this sprites container is online
-;;  ;; add to a file
-
-;;  (sprite-container-names)
-
-;;  )
-
 (defun sprite-container-asset-file (name)
   (id-when
    (concat idlegame-assets-dir "#/Scripts/View/ScriptableObjects/" name ".asset.meta")
    #'file-exists-p))
 
-
-(team/with-file
- "/home/benj/idlegame/LoadingIdlegame/Packages/LoadingIdlegame/Runtime/LoaderName.cs"
- (csharp-mode)
- (re-search-forward "OnlineLoaderName")
- (forward-line)
- (team-csharp/append-to-enum "foo")
-
- )
-
-
-(defun find-missing-loaders ()
-  "Return 1) the loader names that are implied by the presence of a SpritesContainer,
-but are missing in the loader enums.
-2) A list of loaders that we did no map to a sprite container."
-
-
-
-  )
-
-
-
 
-
-
-(defvar
-  example-set-sprite
-  "injectedC.SetSprite(MenuType.Church, SpriteContainer.HolyBookSprites, \"AthenePack_\" + type, m.athenePackView.athenePackBackground);")
 
 (defun parse-set-sprite-args (s)
   "Evaluate to a plist with keys
@@ -161,32 +112,12 @@ but are missing in the loader enums.
   (->gg)
   (while (re-search-forward
           "\\(\\w+\\)\.setsprite")
+    ))
 
 
-    )
-
-  )
 
 
-(ert-deftest replace-syntax-set-sprite-4-args ()
-  (with-temp-buffer
-    (insert example-set-sprite)
-    (->gg)
-
-
-    )
-
-
-  )
-
-;; (team-unity/asset-name-from-guid
-;;  (team-unity/file-guid (sprite-container-asset-file "CommunityBossCardsSprites")))
-
-;; (asset--usages
-;;  (team-unity/file-guid (sprite-container-asset-file "CommunityBossCardsSprites")))
-;; (asset-usages (sprite-container-asset-file "CommunityBossCardsSprites"))
-
-(defun resolve-sprite-loader-name (container))
+
 
 (defun resolve-sprite-loader-name-with-container-name (container)
   (-first
@@ -210,7 +141,7 @@ but are missing in the loader enums.
    (unless
        (resolve-sprite-loader-name-with-container-name it)
      (team/append-new-line
-      (if (online-loader-p
+      (if (container-online--p
            it)
           online-loader-names
         offline-loader-names)
@@ -218,6 +149,61 @@ but are missing in the loader enums.
    (sprite-container-names)))
 
 
+
+(defvar-local cos-investigated-file nil)
+
+(defmacro cos-investigate-file (file &rest body)
+  `(team/with-file
+    file
+    (setq cos-investigated-file file)
+    ,@body))
+
+(defun resolve-sprite-loader-field (field-name &optional file-name)
+  "If FILE-NAME or buffer file is a script that has some SpriteContainer field called FIELD-NAME.
+Search the first prefab with the scritp for a sprite container ref,
+return the sprite container name."
+  (-some-->
+      (setq
+       file-name
+       (or
+        file-name
+        cos-investigated-file
+        buffer-file-name))
+    (and
+     (file-in-directory-p
+      it
+      idlegame-assets-dir)
+     it)
+    (save-excursion
+      (->gg)
+      (re-search-forward
+       (format
+        "\\(\\(public\\)\\|\\(\\[SerializeField\\]\\)\\)[[:blank:]]+SpritesContainer[[:blank:]]+?%s[[:blank:]]*;"
+        field-name)
+       nil t))
+    (team-unity/field-ref-search
+     field-name
+     file-name)
+    (s-chop-suffix ".asset.meta" it)))
+
+
+(defun resolve-sprite-loader-name (container)
+  (-some-->
+      (resolve-sprite-loader-name-with-container-name
+       (or
+        (and
+         (string-match "SpriteContainer\\.\\(\\w+\\)" container)
+         (match-string 1 container))
+        (and
+         cos-investigated-file
+         (resolve-sprite-loader-field
+          container))
+        container))
+    (concat
+     (if (loader-name--online-loader-p it)
+         "OnlineLoaderName."
+       "LoaderName.")
+     it)))
 
 (defun from-sprite-container-file-to-loader-name (s)
   (-some--> s
@@ -227,6 +213,10 @@ but are missing in the loader enums.
     (or
      (resolve-sprite-loader-name-with-container-name it)
      (error "There was no loader name for %s" it))))
+
+
+
+
 
 
 
@@ -250,7 +240,7 @@ Takes 60s if not initialized."
    (unless
        (resolve-sprite-loader-name it)
      (team/append-new-line
-      (if (online-loader-p
+      (if (container-online--p
            it)
           online-loader-names
         offline-loader-names)
@@ -260,8 +250,9 @@ Takes 60s if not initialized."
 
 (defun add-loader-names-from-files ()
   "Check `offline-loader-names' and `online-loader-names'.
-Put enum syntax into `loader-name-file'."
-  (flet ((add-loader (type name)
+Put enum syntax into `loader-name-file'.
+As side effect reset `lookup-loaders' so it has the updated data next time it is called."
+  (cl-flet ((add-loader (type name)
                      (setq name (concat name "Loader"))
                      (->gg)
                      (re-search-forward type)
@@ -284,7 +275,8 @@ Put enum syntax into `loader-name-file'."
        (--map
         (add-loader offline-name it)
         (team/file-lines
-         offline-loader-names))))))
+         offline-loader-names)))))
+  (setq lookup-loaders nil))
 
 
 
@@ -299,30 +291,73 @@ Put enum syntax into `loader-name-file'."
 ;;;  (online, offline) file that already exists
 ;;;  then generate the loaders with unity
 
-
-
-
-
 (defun dump-replace-sprite-loader-syntax (s)
   (with-temp-buffer
     (insert s)
     (->gg)
-    (re-search-forward "\\(\\w+\\)\.setsprite(.+?,\\(.+?\\),\\(.+?\\))")
+    (dump--replace-sprite-loader-syntax)
+    (buffer-substring)))
+
+(defun dump--replace-sprite-loader-syntax ()
+  (while
+      (re-search-forward
+       "\\(\\w+\\)\.setsprite(.+?,\\(.+?\\),\\(.+?\\))")
     (replace-match
      (format "\\1.LoadSpriteAsync(%s,\\3)"
-             (resolve-loader-name
-              (match-string 2))))
-    (buffer-string)))
-
-(defun dump--replace-sprite-loader-syntax (s)
-  (re-search-forward "\\(\\w+\\)\.setsprite(.+?,\\(.+?\\),\\(.+?\\))")
-  (replace-match
-   (format "\\1.LoadSpriteAsync(%s,\\3)"
-           (resolve-loader-name
-            (match-string 2))))
-  (buffer-string))
+             (save-match-data
+               (resolve-sprite-loader-name
+                (match-string 2)))))))
 
 
+(defun dump--replace-sprite-container-invocation ()
+  (while
+      (re-search-forward
+       "\\(\\w+\\)\.SetSprite(\\(.+?\\),\\(.+?\\))")
+    (replace-match
+     (format
+      "\\1.LoadSpriteAsync(%s,\\3)"
+      (save-match-data
+        (resolve-sprite-loader-name
+         (match-string 2)))))))
 
 
 
+
+
+(defun cos/cs-fiels-with-matches (re)
+  "See `files-with-matches'."
+  (team/with-default-dir
+   idlegame-assets-dir
+   (--filter
+    (string-match-p "\.cs$" it)
+    (files-with-matches))))
+
+(defun files-with-matches (re)
+  "Return a list of files containing RE, use rg."
+  (my-process-lines
+   "rg"
+   nil
+   (current-buffer)
+   nil
+   "-l"
+   re))
+
+
+
+
+;;; centaur code
+
+(defun dwim-sprite-container-to-loader ()
+  (interactive)
+  (my/with-dwim-region
+   (while (re-search-forward "SpriteContainer\.\\(\\w+\\)" end t)
+     (replace-match
+      (save-match-data
+        (resolve-sprite-loader-name
+         (match-string 1))))))
+  (my/with-dwim-region
+   (while (re-search-forward "\\bstring\\b" end t)
+     (replace-match "LoaderName")))
+  (my/with-dwim-region
+   (while (re-search-forward "Container" end t)
+     (replace-match "Loader"))))
