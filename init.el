@@ -80,6 +80,7 @@ This function should only modify configuration layer settings."
     ;; features
     slack
     pass
+    ;; media
     ;; github
 
     ;; benj
@@ -143,7 +144,9 @@ This function should only modify configuration layer settings."
                                       dired-x
                                       nav-flash
                                       minsk-theme
+                                      minimap
                                       ;; evil-quick-diff
+                                      shx
                                       )
 
    ;; A list of packages that cannot be updated.
@@ -576,7 +579,7 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
- 
+  
   ;;projectile-fd
   (defconst my-fd-command "fd -H -E=.git -tf . -0")
   (setq-default projectile-indexing-method 'alien)
@@ -584,7 +587,7 @@ before packages are loaded."
   (setq-default projectile-generic-command my-fd-command)
   (setq projectile-enable-caching t)
 
-
+  
 
   (setq-default evil-escape-key-sequence "fq")
   (setq-default spacemacs-show-trailing-whitespace nil)
@@ -600,7 +603,11 @@ before packages are loaded."
   (setq org-agenda-files '("/home/benj/org/notes.org"))
   (setq-default page-break-lines-max-width 30)
 
-
+  
+
+  (shx-global-mode 1)
+
+  
 
   (spacemacs/set-leader-keys "km" #'spacemacs/macrostep-transient-state/body)
 
@@ -629,7 +636,7 @@ before packages are loaded."
     (add-hook elm
               #'(lambda () (evil-mc-mode))))
 
-
+  
 
   (defadvice spacemacs/open-file-or-directory-in-external-app (around my/open-file-external-advice (&optional arg) activate)
     (interactive"P")
@@ -643,13 +650,13 @@ before packages are loaded."
       ad-do-it))
 
 
-
+  
 
   (let ((default-directory "~/.spacemacs.d/"))
     (load (expand-file-name "named-macros.el")))
 
 
-
+  
 
   (defun benj-sys/invoke-watch-vbs ()
     "Invoke python script that kills vbs compiler processes."
@@ -670,7 +677,7 @@ before packages are loaded."
   (run-at-time 10 10 #'benj-sys/invoke-watch-vbs)
   (run-at-time 20 20 #'benj-sys/invoke-kill-high-mem)
 
-
+  
   ;; temp hacks
 
   (require 'temp-hacks "~/.spacemacs.d/temp-hacks.el")
@@ -690,14 +697,15 @@ before packages are loaded."
        (load "/home/benj/.spacemacs.d/layers/benj-slack/keybindings.el")))
 
 
-
+  
 
   ;; no ggtags in shell mode atm
 
   (add-hook 'shell-mode-hook #'(lambda () (ggtags-mode -1)))
 
-
+  
 
+  (add-to-load-path "HOME/.spacemacs.d/lisp/")
 
 
   )
