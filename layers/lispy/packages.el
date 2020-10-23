@@ -88,7 +88,7 @@
             additional-insert
             ;; arrows
             escape
-            mark
+            ;; mark
             slurp/barf-lispy))
     :config
     (progn
