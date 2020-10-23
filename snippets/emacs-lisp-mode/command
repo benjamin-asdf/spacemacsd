@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : command
+#key : command
+#contributor : benj
+# --
+(defun `name` ()
+  (interactive)
+  (`callee`))

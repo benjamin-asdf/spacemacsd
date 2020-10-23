@@ -19,6 +19,7 @@
     "devel & misc"
   ;; t is reserved - temp kbd
   "d" #'my/eval-and-bind-func
+  "m" #'my/make-cmd-wrapper
     )
 
 

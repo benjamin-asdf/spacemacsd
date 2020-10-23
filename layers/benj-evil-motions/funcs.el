@@ -110,18 +110,32 @@ Start either at 0 or prefix ARG, if given."
 
 
 
+(defun my/region-or-line-bounds ()
+  "Return the bounds of the active region, if region is not active return the bounds of the current line instead."
+  (or
+   (and (region-active-p)
+        (car (region-bounds)))
+   (cons (point-at-bol) (point-at-eol))))
+
+
+(defmacro my/with-dwim-region (&rest body)
+  "Use bounds as returned by `my/region-or-line-bounds',
+Got to the start point, execute body with \"end\" bound to a marker of the end of the dwim region. "
+  `(let ((bounds (my/region-or-line-bounds)))
+    (save-excursion
+      (goto-char (car bounds))
+      (let ((end (my/marker-there (cdr bounds))))
+        ,@body))))
+
 
 (defun my/re-replace-dwim (re replace)
   (let (res)
-    (let ((bounds (or (and (region-active-p) (car (region-bounds))) (cons (point-at-bol) (point-at-eol)))))
-      (save-excursion
-        (goto-char (car bounds))
-        (let ((end (my/marker-there (cdr bounds))))
-          (while
-              (and (> end (point))
-                   (re-search-forward re end t))
-            (replace-match replace)
-            (setq res t)))))
+    (my/with-dwim-region
+     (while
+         (and (> end (point))
+              (re-search-forward re end t))
+       (replace-match replace)
+       (setq res t)))
     res))
 
 (defmacro my/re--toggle-body (left right)
@@ -210,13 +224,26 @@ When ARG is non nil prompt the user for the key binding following the <spcot> le
     (eval-defun nil)))
 
 
-
-
-
-
-
-
-
+(defun my/make-cmd-wrapper ()
+  "Put a an interactive function defintion
+with (symbol at point)."
+  (interactive)
+  (require 'lispyville)
+  (require 'yasnippet)
+  (let ((env
+         `((name ,(mkstr (symbol-at-point) '-cmd))
+           (callee ,(mkstr (symbol-at-point))))))
+    (lispyville-forward-function-end)
+    (open-line 2)
+    (forward-line 1)
+    (yas-expand-snippet
+     (yas-lookup-snippet
+      "command"
+      'emacs-lisp-mode)
+     nil
+     nil
+     env))
+  (lispyville-backward-function-begin))
 
 
 
