@@ -162,29 +162,31 @@
   "If FILE-NAME or buffer file is a script that has some SpriteContainer field called FIELD-NAME.
 Search the first prefab with the scritp for a sprite container ref,
 return the sprite container name."
-  (-some-->
-      (setq
-       file-name
-       (or
+  (or
+   cos-override-resolve-sprite-loader-field-return-value
+   (-some-->
+       (setq
         file-name
-        cos-investigated-file
-        buffer-file-name))
-    (and
-     (file-in-directory-p
-      it
-      idlegame-assets-dir)
-     it)
-    (save-excursion
-      (->gg)
-      (re-search-forward
-       (format
-        "\\(\\(public\\)\\|\\(\\[SerializeField\\]\\)\\)[[:blank:]]+SpritesContainer[[:blank:]]+?%s[[:blank:]]*;"
-        field-name)
-       nil t))
-    (team-unity/field-ref-search
-     field-name
-     file-name)
-    (s-chop-suffix ".asset.meta" it)))
+        (or
+         file-name
+         cos-investigated-file
+         buffer-file-name))
+     (and
+      (file-in-directory-p
+       it
+       idlegame-assets-dir)
+      it)
+     (save-excursion
+       (->gg)
+       (re-search-forward
+        (format
+         "\\(\\(public\\)\\|\\(\\[SerializeField\\]\\)\\)[[:blank:]]+SpritesContainer[[:blank:]]+?%s[[:blank:]]*;"
+         field-name)
+        nil t))
+     (team-unity/field-ref-search
+      field-name
+      file-name)
+     (s-chop-suffix ".asset.meta" it))))
 
 
 (defun resolve-sprite-loader-name (container)
@@ -213,13 +215,6 @@ return the sprite container name."
     (or
      (resolve-sprite-loader-name-with-container-name it)
      (error "There was no loader name for %s" it))))
-
-
-
-
-
-
-
 
 
 ;;;  issue you have a field as sprites container
@@ -312,10 +307,10 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
 (defun dump--replace-sprite-container-invocation ()
   (while
       (re-search-forward
-       "\\(\\w+\\)\.SetSprite(\\(.+?\\),\\(.+?\\))")
+       "\\(\\w+\\)\.SetSprite(\\(.+?\\),\\(.+?\\))" nil t)
     (replace-match
      (format
-      "\\1.LoadSpriteAsync(%s,\\3)"
+      "c.LoadSpriteAsync(%s,\\3)"
       (save-match-data
         (resolve-sprite-loader-name
          (match-string 2)))))))

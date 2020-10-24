@@ -1,16 +1,4 @@
-(ert-deftest id-when ()
-  (assert
-   (and
-    (id-when 10 #'evenp)
-    (id-when 11 #'oddp)
-    (not (id-when 11 #'evenp)))))
-
-
-
-
-(defvar
-  example-set-sprite
-  "injectedC.SetSprite(MenuType.Church, SpriteContainer.HolyBookSprites, \"AthenePack_\" + type, m.athenePackView.athenePackBackground);")
+("\"AthenePack_\" + type, m.athenePackView.athenePackBackground);")
 
 (defvar example-set-sprite-output
   "injectedC.LoadSpriteAsync(LoaderName.HolyBookSpritesLoader, \"AthenePack_\" + type, m.athenePackView.athenePackBackground);")
@@ -67,41 +55,25 @@
 
 
 
-(defun here-test ()
-  (interactive)
-  (dump--replace-sprite-loader-syntax)
-  )
-
-
 (team-unity/field-ref-search
  "pvpSprites"
- "/home/benj/idlegame/IdleGame/Assets/#/Sources/Leaderboards/Separate/Monobehaviours/LBArenaScoreView.cs"
- )
-
-
+ "/home/benj/idlegame/IdleGame/Assets/#/Sources/Leaderboards/Separate/Monobehaviours/LBArenaScoreView.cs")
 
 (cos/cs-fiels-with-matches
  "SetSprite("
  )
 
-
-(setq expected-out
-      "c.LoadSpriteAsync(LoaderName.AbilityIconsSpritesLoader,spriteName,trophy);")
+(defvar cos-override-resolve-sprite-loader-field-return-value nil)
 
 (ert-deftest sprite-syntax-with-field ()
-
-    (flet ((resolve-sprite-loader-field
-            (arg &optional arg1)
-            "PvPSprites"))
-      (with-temp-buffer
-        (insert "sprites.SetSprite(spriteName, trophy);")
-        (->gg)
-        (dump--replace-sprite-container-invocation)
-
-        (assert
-         (string-equal
-          "c.LoadSpriteAsync(LoaderName.PvPSpritesLoader,spriteName,trophy);"
-          (buffer-string))))
-
-
-      ))
+  (should
+   (string-equal
+    (with-temp-buffer
+      (insert "sprites.SetSprite(spriteName, trophy);")
+      (->gg)
+      (let ((inhibit-read-only t)
+            (cos-investigated-file "")
+            (cos-override-resolve-sprite-loader-field-return-value "PvPSprites"))
+        (dump--replace-sprite-container-invocation))
+      (buffer-string))
+    "c.LoadSpriteAsync(LoaderName.PvPSpritesLoader, trophy);")))
