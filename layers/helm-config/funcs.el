@@ -15,15 +15,12 @@
 
 ;; swoop advice against big buffers
 
-(advice-add 'helm-swoop :before-while #'benj/helm-swoop-advice)
-(defun benj/helm-swoop-advice (&rest args)
-  "Meant to advice before-until `helm-swoop'."
+(defadvice helm-swoop (around my/helm-swoop-advice (&rest args) activate)
   (if (> (line-number-at-pos (point-max)) 10000)
       (progn
-        (message "Buffer is a bit big for swoop. Use `spc s f' instead.")
-        nil)
-    t))
-
+        (message "Using rg instead of swoop in big buffer.")
+        (my/helm-rg-this-file))
+    ad-do-it))
 
 
 ;; blockwise swoop
