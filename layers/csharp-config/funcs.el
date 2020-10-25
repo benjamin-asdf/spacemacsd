@@ -10,6 +10,9 @@
                                            (flycheck-cancel-error-display-error-at-point-timer)
                                            (flycheck-display-error-at-point)))
   (smartparens-strict-mode -1)
+
+  (setq-local helm-swoop-speed-or-color (< (line-beginning-position (point-max)) 800))
+
   ;; TODO
   (when (> (line-number-at-pos (point-max)) 500)
     (jit-lock-mode nil)))
