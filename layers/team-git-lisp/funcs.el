@@ -745,6 +745,9 @@ Assume syntax as in `magit-process-buffer'."
       (point))
     (point-at-eol))))
 
+(defconst
+  team-magit/checkout-or-merge-word
+  "\\(\\(checkout\\)\\|\\(merge\\)\\):")
 
 (defun team-magit/checkout-annoying ()
   "Check the last magit output section.
@@ -754,11 +757,11 @@ If there is a git message about changes to files that would be overriden, checko
     (team-magit/insert-last-proc-out)
     (let ((checkout-them
            (team-magit/collect--blocking-files
-            "error: Your local changes to the following files would be overwritten by checkout:"
+            (concat "error: Your local changes to the following files would be overwritten by " team-magit/checkout-or-merge-word)
             "Please commit your changes "))
           (delete-them
            (team-magit/collect--blocking-files
-            "error: The following untracked working tree files would be overwritten by checkout:"
+            (concat "error: The following untracked working tree files would be overwritten by " team-magit/checkout-or-merge-word)
             "Please move or remove them before you switch branches.")))
       (unless (or checkout-them delete-them)
         (user-error "Did not find any files to operate on."))
@@ -775,7 +778,6 @@ If there is a git message about changes to files that would be overriden, checko
              (delete-file it))
            delete-them)))
       (magit-run-git-async (team-magit/collect--git-cmd)))))
-
 
 (defun team/magit-changed-files-reg (reg rev-or-range &optional other-rev)
   "Return the changed files changed between REV-OR-RANGE matching REG.
