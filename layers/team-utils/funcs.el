@@ -100,11 +100,49 @@ This also goes to point min point."
           (goto-char (point-min))
           ,@body))))
 
+(defvar-local team/check-file-dirty nil)
+
+(defmacro team/check-file (file &rest body)
+  "Create a temp buffer and insert FILEs content, when it exists.
+Execute body. When either BODY returns non nil, or `team/check-file-dirty' is non nil,
+save the buffer contents at FILE.
+You should use this over `team/with-file',
+if the initial intent is not to change it's contents."
+  (declare (debug body))
+  (let ((file-g (gensym)))
+     `(let ((,file-g ,file))
+        (with-temp-buffer
+           (let ((buff (current-buffer)))
+             (when (file-exists-p ,file-g)
+               (insert-file-contents-literally
+                ,file-g)
+               (->gg))
+             (when (or (progn ,@body)
+                       team/check-file-dirty)
+               (unless (eq (current-buffer) buff)
+                 (error
+                  "Buffer changed to %s during `team/check-file'"
+                  (current-buffer)))
+               (unless (buffer-live-p
+                        (current-buffer))
+                 (error
+                  "Buffer was no longer alive during `team/check-file'"))
+               (write-region nil nil ,file-g)))))))
+
+
 (defmacro team/--with-cs-files (dir &rest forms)
   "Eval FORMS with all cs files. Anaphoric it as the file name."
   `(--map
     (team/with-file it ,@forms)
     (directory-files-recursively ,dir "\\.cs$")))
+
+(defmacro team/each-file (files &rest body)
+  "Foreach file in FILES expand `team/check-file', which see."
+  `(--each
+       ,files
+     (team/check-file
+      it
+      ,@body)))
 
 (defmacro team/regexp-opt (&rest strings)
   `(regexp-opt '(,@strings)))
@@ -269,6 +307,13 @@ with it anaphorically bound to a list of ARGS."
   (with-output-to-string
     (--dotimes cnt (princ s))))
 
+(defun team/capitalize-first-letter (s)
+  (concat (upcase (substring s 0 1)) (substring s 1)))
+
+(defun team/un-capitalize (s)
+  (concat (downcase (subseq s 0 1)) (subseq s 1)))
+
+
 
 ;; procs
 
@@ -276,12 +321,15 @@ with it anaphorically bound to a list of ARGS."
 (defun my-process-lines (program &optional infile destination display &rest args)
   "Wrapper for `call-process' like `process-lines', but do not sort lines and do not care about exit code."
   (with-temp-buffer
-    (call-process
-     program
-     infile
-     destination
-     display
-     args)
+    (apply
+     #'call-process
+     (append
+      (list
+       program
+       infile
+       (or destination (current-buffer))
+       display)
+      args))
     (s-split "\n" (buffer-string) t)))
 
 (defun team/proc-window (name
@@ -438,7 +486,7 @@ Froeach line anaphorically set it to the line content, then run body."
   (when (region-active-p)
     (my/marker-there (region-beginning))))
 
-;; NOTE we should cechk if the proc buffer is alive
+;; NOTE we should check if the proc buffer is alive
 (defmacro team/proc-with-cb (procc cb-always &rest body)
   "PROCC should evaluate to a process. Set sentinel and execute BODY with the current buffer set to the proccess buffer,
 if the exit status is 0. Else throw an error."
@@ -626,12 +674,6 @@ MATCH: The match data group to collect."
   "Go to char max"
   (goto-char (point-max)))
 
-(defun team/capitalize-first-letter (s)
-  (concat (upcase (substring s 0 1)) (substring s 1)))
-
-(defun team/un-capitalize (s)
-  (concat (downcase (subseq s 0 1)) (subseq s 1)))
-
 
 (defmacro teamel/a-indent (&rest body)
   "Bind current indent to indent and execute body"
@@ -697,6 +739,19 @@ If INDENT is non nil, indent to coll."
 When INDENT is non nil, also indent line."
   (re-search-forward re nil)
   (team/prepend-line s indent))
+
+
+;;;  files
+
+(defun files-with-matches (re)
+  "Return a list of files containing RE, use rg."
+  (my-process-lines
+   "rg"
+   nil
+   nil
+   nil
+   "-l"
+   re))
 
 
 

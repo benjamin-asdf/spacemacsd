@@ -59,9 +59,20 @@
  "pvpSprites"
  "/home/benj/idlegame/IdleGame/Assets/#/Sources/Leaderboards/Separate/Monobehaviours/LBArenaScoreView.cs")
 
-(cos/cs-fiels-with-matches
- "SetSprite("
- )
+(team/with-default-dir
+ idlegame-assets-dir
+ (team/each-file
+  (-take
+   10
+   (cos/cs-fiels-with-matches
+    "SetSprite\\(.*,"))
+  (or
+   (dump--replace-sprite-loader-syntax)
+   (progn
+     (->gg)
+     (dump--replace-sprite-container-invocation)))))
+
+
 
 (defvar cos-override-resolve-sprite-loader-field-return-value nil)
 

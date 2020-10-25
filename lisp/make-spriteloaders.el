@@ -2,9 +2,7 @@
 
 (require 'enums)
 (require 'unity-labels)
-(require 'unity-asset-usages)
-
-
+(require 'unity-asset-usages "/home/benj/.spacemacs.d/lisp/unity-asset-usages.el")
 
 (cl-defun mk-hash-from-list (list &rest args)
   (let ((res
@@ -294,28 +292,36 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
     (buffer-substring)))
 
 (defun dump--replace-sprite-loader-syntax ()
-  (while
-      (re-search-forward
-       "\\(\\w+\\)\.setsprite(.+?,\\(.+?\\),\\(.+?\\))")
-    (replace-match
-     (format "\\1.LoadSpriteAsync(%s,\\3)"
-             (save-match-data
-               (resolve-sprite-loader-name
-                (match-string 2)))))))
+  (let ((res))
+    (while
+        (re-search-forward
+         ;; call set sprite with contexts,
+         ;; c.  can be omitted, if we are inside an extension class
+         (concat "\\(\\w+\\.\\)?"
+                 "setsprite(.+?,\\(.+?\\),\\(.+?\\))") nil t)
+      (replace-match
+       (format "\\1LoadSpriteAsync(%s,\\3)"
+               (or (save-match-data)
+                   (resolve-sprite-loader-name
+                    (match-string 2))
+                   "LoaderName.TODO"))
+       (setq res t)))
+    t))
 
 
 (defun dump--replace-sprite-container-invocation ()
-  (while
-      (re-search-forward
-       "\\(\\w+\\)\.SetSprite(\\(.+?\\),\\(.+?\\))" nil t)
-    (replace-match
-     (format
-      "c.LoadSpriteAsync(%s,\\3)"
-      (save-match-data
-        (resolve-sprite-loader-name
-         (match-string 2)))))))
-
-
+  (let ((res))
+    (while
+        (re-search-forward
+         "\\(\\w+\\)\\.SetSprite(\\(.+?\\),\\(.+?\\))" nil t)
+      (replace-match
+       (format
+        "c.LoadSpriteAsync(%s,\\3)"
+        (save-match-data
+          (resolve-sprite-loader-name
+           (match-string 2))))
+       (setq res t)))
+    res))
 
 
 
@@ -325,17 +331,7 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
    idlegame-assets-dir
    (--filter
     (string-match-p "\.cs$" it)
-    (files-with-matches))))
-
-(defun files-with-matches (re)
-  "Return a list of files containing RE, use rg."
-  (my-process-lines
-   "rg"
-   nil
-   (current-buffer)
-   nil
-   "-l"
-   re))
+    (files-with-matches re))))
 
 
 
