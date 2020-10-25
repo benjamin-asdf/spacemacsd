@@ -168,3 +168,21 @@ probably need to enable X if it is graphical app. I haven't done it, but it will
 
 
 * goto to projectile project, start smart project search
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+* sprite-loaders
+** after all is done, delete the loaders that are not used

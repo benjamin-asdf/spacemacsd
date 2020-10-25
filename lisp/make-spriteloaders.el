@@ -3,6 +3,7 @@
 (require 'enums)
 (require 'unity-labels)
 (require 'unity-asset-usages "/home/benj/.spacemacs.d/lisp/unity-asset-usages.el")
+(require 'idlegame-definitions)
 
 (cl-defun mk-hash-from-list (list &rest args)
   (let ((res
@@ -10,6 +11,14 @@
     (dolist (elm list)
       (puthash elm t res))
     res))
+
+(defvar-local cos-investigated-file nil)
+
+(defmacro cos-investigate-file (file &rest body)
+  `(team/with-file
+    file
+    (setq cos-investigated-file file)
+    ,@body))
 
 
 
@@ -50,9 +59,6 @@
 (defconst online-loader-names (concat cos-dir "/LoadingIdlegame/Packages/LoadingIdlegame/Runtime/online-loader-names"))
 (defconst offline-loader-names (concat cos-dir "/LoadingIdlegame/Packages/LoadingIdlegame/Runtime/offline-loader-names"))
 
-
-;;  add to the enum
-
 (defconst
   sprite-container-names-enum-file
   (concat
@@ -64,7 +70,6 @@
    sprite-container-names-enum-file
    (team/collect--reg
     "public const string \\(\\w+\\)" 1)))
-
 
 
 
@@ -81,44 +86,14 @@
       (error "%s does not have an asset file" container))))))
 
 (defun sprite-container-asset-file (name)
-  (id-when
-   (concat sprite-container-dir name ".asset.meta")
-   #'file-exists-p))
+  (if
+      (and (file-exists-p name)
+           (file-in-directory-p name sprite-container-dir))
+      name
+    (id-when
+     (concat sprite-container-dir name ".asset.meta")
+     #'file-exists-p)))
 
-
-
-
-(defun parse-set-sprite-args (s)
-  "Evaluate to a plist with keys
-:building
-:sprite-container
-:sprite-name
-:image "
-  (with-temp-buffer
-    (insert s)
-    (->gg)
-    (unless (re-search-forward "setsprite(\\(.*\\))" nil t)
-      (error "Did not find set sprite in %s" s))
-    (-interleave
-     '(:building :sprite-container :sprite-name :image)
-     (-map #'s-trim (split-string
-                     (match-string-no-properties 1) ",")))))
-
-(defun replace-syntax-i ()
-  (interactive)
-  (replace-syntax))
-
-(defun replace-syntax ()
-  "Replace set sprite with load sprite async syntax in buff."
-  (->gg)
-  (while (re-search-forward
-          "\\(\\w+\\)\.setsprite")
-    ))
-
-
-
-
-
 
 (defun resolve-sprite-loader-name-with-container-name (container)
   (setq container
@@ -135,23 +110,7 @@
       t)
      container))))
 
-
-
-
-
-(profile-seconds
- (cos/fix-loader-names-perf-critical)
- )
-
 
-
-(defvar-local cos-investigated-file nil)
-
-(defmacro cos-investigate-file (file &rest body)
-  `(team/with-file
-    file
-    (setq cos-investigated-file file)
-    ,@body))
 
 (defun resolve-sprite-loader-field (field-name &optional file-name)
   "If FILE-NAME or buffer file is a script that has some SpriteContainer field called FIELD-NAME.
@@ -187,51 +146,27 @@ return the sprite container name."
 
 (defun resolve-sprite-loader-name (container)
   (-some-->
-      (resolve-sprite-loader-name-with-container-name
-       (or
-        (and
-         (string-match "SpriteContainer\\.\\(\\w+\\)" container)
-         (match-string 1 container))
-        (and
-         cos-investigated-file
-         (resolve-sprite-loader-field
-          container))
-        container))
+      (or
+       (resolve-sprite-loader-name-with-container-name
+        (or
+         (and
+          (string-match "SpriteContainer\\.\\(\\w+\\)" container)
+          (match-string 1 container))
+         (and
+          cos-investigated-file
+          (resolve-sprite-loader-field
+           container))
+         container))
+       "TODO")
     (concat
      (if (loader-name--online-loader-p it)
          "OnlineLoaderName."
        "LoaderName.")
      it)))
 
+
 (resolve-sprite-loader-name-with-container-name
  "InsideGarrisonSprites.asset.meta")
-
-(loader-name-type-lookup
- (concat
-  (s-chop-suffixes '(".meta" ".asset")
-                   "InsideGarrisonSprites.asset.meta")
-  "Loader")
- )
-
-(s-chop-suffixes
- '(".foo" ".ba")
- "bana.ba.foo"
- )
-
-(defun from-sprite-container-file-to-loader-name (s)
-  (-some--> s
-    (or (and (file-exists-p it) it)
-        (error "No such sprite container file %s" it))
-    (file-name-base (file-name-base it))
-    (or
-     (resolve-sprite-loader-name-with-container-name it)
-     (error "There was no loader name for %s" it))))
-
-
-;;;  issue you have a field as sprites container
-
-;;;  you want to put a loader now
-
 
 
 
@@ -245,20 +180,17 @@ return the sprite container name."
    t
    ".asset$"))
 
-(defun sprite-containers-delete-unused ()
-  (sprite-container-assets)
-  )
+(defun sprite-container-used? (container-or-file)
+  "Return non nil if there is either a loader name in the loader enum
+for CONTAINER-OF-FILE, or if there are any o"
+  (or
+   (resolve-sprite-loader-name-with-container-name
+    (file-name-base container-or-file))
+   (team-unity/any-asset-ref? container-or-file)))
 
-(defun sprite-containers-used-ones ()
-  "Filter sprite containers for being used"
-  )
-
-(--any?
- (s-suffix? "\.prefab" it)
- (asset-usages
-  (car (sprite-container-assets))))
 
 (defun sprite-container-loader-exists? (container)
+  "Check if there is an associated loader for CONTAINER."
   (team/with-default-dir
    idlegame-project-root
    (-some-->
@@ -282,25 +214,18 @@ Only add sprite containers if they are actually used."
    (list online-loader-names offline-loader-names))
   (--map
    (unless
-       (resolve-sprite-loader-name-with-container-name it))
-   (team/append-new-line
-    (if (container-online--p
-         it)
-        online-loader-names
-      offline-loader-names)
-    it)
+       (resolve-sprite-loader-name-with-container-name it)
+     (team/append-new-line
+      (if (container-online--p
+           it)
+          online-loader-names
+        offline-loader-names)
+      (file-name-base it)))
    (append
     (sprite-container-names)
-
-    )))
-
-;; delete loader file completely
-;; map the sprites container assets
-;;  create loaders
-;;  only if they are used anywhere
-
-
-
+    (-filter
+     #'sprite-container-used?
+     (sprite-container-assets)))))
 
 
 (defun add-loader-names-from-files ()
@@ -316,8 +241,7 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
                           (re-search-forward type)
                           (team-prepend-at-curly
                            (concat name ",") 4)
-                          (re-search-forward
-                           (format "// %s$" type))
+                          (re-search-forward (format "this %s" type))
                           (team/prepend-at-re
                            "case"
                            (format
@@ -341,8 +265,17 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
 
 (defun cos/fix-loader-names-perf-critical ()
   "Add offline or online loader names for all sprite containers add `loader-name-file'."
-  (set-missing-sprite-containers)
+  (sprite-loaders-refresh-names)
   (add-loader-names-from-files))
+
+(team/with-file
+ "/home/benj/idlegame/LoadingIdlegame/Packages/LoadingIdlegame/Runtime/online-loader-names"
+ (-map
+  #'file-name-base
+
+
+  )
+ )
 
 
 
@@ -375,18 +308,11 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
             (re-search-forward "{" (point-at-eol) t))
         (replace-match
          (format "\\1LoadSpriteAsync(%s,\\3)"
-                 (or
-                  (save-match-data
-                    (resolve-sprite-loader-name
-                     (match-string 2)))
-                  "LoaderName.TODO"))
+                 (save-match-data
+                   (resolve-sprite-loader-name
+                    (match-string 2))))
          (setq res t))))
     t))
-
-(defun dump--replace-sprite-loader-syntax-cmd ()
-  (interactive)
-  (dump--replace-sprite-loader-syntax))
-
 
 (defun dump--replace-sprite-container-invocation ()
   (let ((res))
@@ -394,25 +320,13 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
         (re-search-forward
          "\\(\\w+\\)\\.SetSprite(\\(.+?\\),\\(.+?\\))" nil t)
       (replace-match
-
        (format
         "c.LoadSpriteAsync(%s,\\3)"
         (save-match-data
           (resolve-sprite-loader-name
-           (match-string 2))))
+           (match-string 1))))
        (setq res t)))
     res))
-
-
-
-(defun cos/cs-fiels-with-matches (re)
-  "See `files-with-matches'."
-  (team/with-default-dir
-   idlegame-assets-dir
-   (--filter
-    (string-match-p "\.cs$" it)
-    (files-with-matches re))))
-
 
 
 

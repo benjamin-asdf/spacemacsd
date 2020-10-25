@@ -70,5 +70,14 @@
     (user-error "Thing at point is not an Assets/ file name.")))
 
 
+(defun cos/cs-fiels-with-matches (re)
+  "See `files-with-matches'."
+  (team/with-default-dir
+   idlegame-assets-dir
+   (--filter
+    (string-match-p "\.cs$" it)
+    (files-with-matches re))))
+
+
 
 (provide 'idlegame-definitions)

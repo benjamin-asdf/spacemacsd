@@ -141,8 +141,8 @@ Forward the return value of `re-search-forward'."
       script-file
       (buffer-file-name))))
    (let ((file
-          (--first
-           (s-ends-with-p ".prefab" it)
+          (-first
+           #'prefab-p
            (asset-usages script-file))))
      (team/with-file
       (or
@@ -175,6 +175,17 @@ Forward the return value of `re-search-forward'."
   (team/a-when
    (team-unity/field-ref-search
     (symbol-at-point))))
+
+
+(defun team-unity/any-asset-ref? (file-or-meta &optional regex)
+  "Search cos project for ussages of FILE-OR-META.
+Return non nil, if there is a ref other than the meta itself.
+Optionally provide REGEX to filter usages.
+By default, REGEX will exclude \".unity\" matches."
+  (let ((list (asset-usages file-or-meta)))
+    (--remove
+     (string-match-p (or regex "\.unity$") it)
+     list)))
 
 
 (provide 'unity-asset-usages)
