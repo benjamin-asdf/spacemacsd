@@ -36,17 +36,17 @@
               (setq lispy-close-quotes-at-end-p t)
               (add-hook 'lispy-mode-hook #'turn-off-smartparens-mode)
 
+              (defadvice lispy-backtick (after my/lispy-lispy-backtick-advice activate)
+                (interactive)
+                (run-hooks 'post-self-insert-hook))
+
               (when (configuration-layer/package-usedp 'cider)
 
                 ;; todo better mechanism of loading cider
                 (require 'cider)
                 ;; show eval results in a cider overlay, next to point
                 (add-to-list 'lispy-compat 'cider)
-                (setq lispy-eval-display-style 'overlay))
-
-              (defadvice lispy-backtick (after my/lispy-lispy-backtick-advice activate)
-                (interactive)
-                (run-hooks 'post-self-insert-hook)))))
+                (setq lispy-eval-display-style 'overlay)))))
 
 ;; todo yanking marked stuff is broken
 
