@@ -140,28 +140,43 @@ Forward the return value of `re-search-forward'."
      (or
       script-file
       (buffer-file-name))))
-   (team/with-file
-    (or
-     (--first
-      (s-ends-with-p ".prefab" it)
-      (asset-usages script-file))
-     (error
-      "%s is not used on any prefab"
-      script-file))
-    (unless
-        (re-search-forward
-         (format
-          "^  m_Script: {fileID: [[:alnum:]]+, guid: %s, type: 3}$"
-          (team-unity/file-guid script-file)) nil t)
-      ;;  might be a prefab override
-      (error "Did not find script monobehaviour syntax for %s in %s"
-             script-file (buffer-file-name)))
-    (team-unity/search-this-yml-entry
-     (format
-      "^  %s: {fileId: [[:alnum:]]+, guid: \\(\\w+\\), type: [[:alnum:]]+}$"
-      field-name))
-    (file-name-nondirectory
-     (-first #'meta-p
-              (asset--usages (match-string 1)))))))
+   (let ((file
+          (--first
+           (s-ends-with-p ".prefab" it)
+           (asset-usages script-file))))
+     (team/with-file
+      (or
+       file
+       (error
+        "%s is not used on any prefab"
+        script-file))
+      (unless
+          (re-search-forward
+           (format
+            "^  m_Script: {fileID: [[:alnum:]]+, guid: %s, type: 3}$"
+            (team-unity/file-guid script-file)) nil t)
+        ;;  might be a prefab override
+        (error "Did not find script monobehaviour syntax for %s in %s"
+               script-file (buffer-file-name)))
+      (unless
+          (team-unity/search-this-yml-entry
+           (format
+            "^  %s: {fileId: [[:alnum:]]+, guid: \\(\\w+\\),"
+            field-name))
+        (error "Did not find field ref syntax %s %s" file (point)))
+      (file-name-nondirectory
+       (-first #'meta-p
+               (asset--usages (match-string 1))))))))
+
+
+;;;###autoload
+(defun team-unity/do-field-ref-search ()
+  (interactive)
+  (team/a-when
+   (team-unity/field-ref-search
+    (symbol-at-point))))
+
 
 (provide 'unity-asset-usages)
+
+

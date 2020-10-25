@@ -68,6 +68,8 @@
 
 
 
+(defconst sprite-container-dir (concat idlegame-assets-dir "#/Scripts/View/ScriptableObjects/"))
+
 (defun container-online--p (container)
   (--every?
    (eq 'online
@@ -80,8 +82,9 @@
 
 (defun sprite-container-asset-file (name)
   (id-when
-   (concat idlegame-assets-dir "#/Scripts/View/ScriptableObjects/" name ".asset.meta")
+   (concat sprite-container-dir name ".asset.meta")
    #'file-exists-p))
+
 
 
 
@@ -99,7 +102,7 @@
     (-interleave
      '(:building :sprite-container :sprite-name :image)
      (-map #'s-trim (split-string
-       (match-string-no-properties 1) ",")))))
+                     (match-string-no-properties 1) ",")))))
 
 (defun replace-syntax-i ()
   (interactive)
@@ -118,6 +121,8 @@
 
 
 (defun resolve-sprite-loader-name-with-container-name (container)
+  (setq container
+        (s-chop-suffixes '(".meta" ".asset") container))
   (-first
    #'loader-name-type-lookup
    (--mapcat
@@ -131,20 +136,12 @@
      container))))
 
 
-(defun set-missing-sprite-containers ()
-  (-map
-   #'team/delete-file-when-exitst
-   (list online-loader-names offline-loader-names))
-  (--map
-   (unless
-       (resolve-sprite-loader-name-with-container-name it)
-     (team/append-new-line
-      (if (container-online--p
-           it)
-          online-loader-names
-        offline-loader-names)
-      it))
-   (sprite-container-names)))
+
+
+
+(profile-seconds
+ (cos/fix-loader-names-perf-critical)
+ )
 
 
 
@@ -160,8 +157,9 @@
   "If FILE-NAME or buffer file is a script that has some SpriteContainer field called FIELD-NAME.
 Search the first prefab with the scritp for a sprite container ref,
 return the sprite container name."
-  (or
-   cos-override-resolve-sprite-loader-field-return-value
+  (if (bound-and-true-p
+       cos-override-resolve-sprite-loader-field-return-value)
+      cos-override-resolve-sprite-loader-field-return-value
    (-some-->
        (setq
         file-name
@@ -205,6 +203,21 @@ return the sprite container name."
        "LoaderName.")
      it)))
 
+(resolve-sprite-loader-name-with-container-name
+ "InsideGarrisonSprites.asset.meta")
+
+(loader-name-type-lookup
+ (concat
+  (s-chop-suffixes '(".meta" ".asset")
+                   "InsideGarrisonSprites.asset.meta")
+  "Loader")
+ )
+
+(s-chop-suffixes
+ '(".foo" ".ba")
+ "bana.ba.foo"
+ )
+
 (defun from-sprite-container-file-to-loader-name (s)
   (-some--> s
     (or (and (file-exists-p it) it)
@@ -222,23 +235,72 @@ return the sprite container name."
 
 
 
-(defun set-missing-sprite-containers ()
-  "Put files with at `offline-loader-names' and `online-loader-names'.
-These are all sprite containers that did not have a corresponding loader in the loader name.
-Takes 60s if not initialized."
+(defconst online-loaders-dir "Assets/LoadGroups/AssetLoadersOnline/")
+(defconst offline-loaders-dir "Assets/LoadGroups/AssetLoaders/")
+
+(defun sprite-container-assets ()
+  "Return sprite container asset files inside `sprite-container-dir'."
+  (directory-files
+   sprite-container-dir
+   t
+   ".asset$"))
+
+(defun sprite-containers-delete-unused ()
+  (sprite-container-assets)
+  )
+
+(defun sprite-containers-used-ones ()
+  "Filter sprite containers for being used"
+  )
+
+(--any?
+ (s-suffix? "\.prefab" it)
+ (asset-usages
+  (car (sprite-container-assets))))
+
+(defun sprite-container-loader-exists? (container)
+  (team/with-default-dir
+   idlegame-project-root
+   (-some-->
+       (resolve-sprite-loader-name-with-container-name
+        (file-name-base container))
+     (concat it ".asset")
+     (let ((name it))
+       (--any?
+        (file-exists-p
+         (concat it name))
+        (list online-loaders-dir
+              offline-loaders-dir))))))
+
+
+(defun sprite-loaders-refresh-names ()
+  "Find SpriteContainers and add new loader names.
+Check sprite container assets in the usual directory.
+Only add sprite containers if they are actually used."
   (-map
-   #'team/delete-file-when-exitst
+   #'delete-file
    (list online-loader-names offline-loader-names))
   (--map
    (unless
-       (resolve-sprite-loader-name it)
-     (team/append-new-line
-      (if (container-online--p
-           it)
-          online-loader-names
-        offline-loader-names)
-      it))
-   (sprite-container-names)))
+       (resolve-sprite-loader-name-with-container-name it))
+   (team/append-new-line
+    (if (container-online--p
+         it)
+        online-loader-names
+      offline-loader-names)
+    it)
+   (append
+    (sprite-container-names)
+
+    )))
+
+;; delete loader file completely
+;; map the sprites container assets
+;;  create loaders
+;;  only if they are used anywhere
+
+
+
 
 
 (defun add-loader-names-from-files ()
@@ -246,17 +308,21 @@ Takes 60s if not initialized."
 Put enum syntax into `loader-name-file'.
 As side effect reset `lookup-loaders' so it has the updated data next time it is called."
   (cl-flet ((add-loader (type name)
-                     (setq name (concat name "Loader"))
-                     (->gg)
-                     (re-search-forward type)
-                     (team-csharp-prepend-at-curly
-                      (concat name ",") 4)
-                     (re-search-forward (format "this %s" type))
-                     (team/prepend-at-re
-                      "case"
-                      (format
-                       "case %1$s.%2$s: return nameof(%1$s.%2$s);" type name)
-                      12)))
+                        (setq name (concat name "Loader"))
+                        (unless
+                            (save-excursion
+                              (re-search-forward name nil t))
+                          (->gg)
+                          (re-search-forward type)
+                          (team-prepend-at-curly
+                           (concat name ",") 4)
+                          (re-search-forward
+                           (format "// %s$" type))
+                          (team/prepend-at-re
+                           "case"
+                           (format
+                            "case %1$s.%2$s: return nameof(%1$s.%2$s);" type name)
+                           12))))
     (team/with-file
      loader-name-file
      (let ((online-name "OnlineLoaderName")
@@ -280,6 +346,9 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
 
 
 
+(defconst
+  spriteloaders-skip-files '("ResourceManagementExtentions"))
+
 ;;;  the missing thing is to write all sprite container dirs to some file
 ;;;  (online, offline) file that already exists
 ;;;  then generate the loaders with unity
@@ -297,16 +366,26 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
         (re-search-forward
          ;; call set sprite with contexts,
          ;; c.  can be omitted, if we are inside an extension class
-         (concat "\\(\\w+\\.\\)?"
-                 "setsprite(.+?,\\(.+?\\),\\(.+?\\))") nil t)
-      (replace-match
-       (format "\\1LoadSpriteAsync(%s,\\3)"
-               (or (save-match-data)
-                   (resolve-sprite-loader-name
-                    (match-string 2))
-                   "LoaderName.TODO"))
-       (setq res t)))
+         (concat
+          "\\(\\w+\\.\\)?"
+          "setsprite(.+?,\\(.+?\\),\\(.+?\\))")
+         nil t)
+      (unless
+          (save-match-data
+            (re-search-forward "{" (point-at-eol) t))
+        (replace-match
+         (format "\\1LoadSpriteAsync(%s,\\3)"
+                 (or
+                  (save-match-data
+                    (resolve-sprite-loader-name
+                     (match-string 2)))
+                  "LoaderName.TODO"))
+         (setq res t))))
     t))
+
+(defun dump--replace-sprite-loader-syntax-cmd ()
+  (interactive)
+  (dump--replace-sprite-loader-syntax))
 
 
 (defun dump--replace-sprite-container-invocation ()
@@ -315,6 +394,7 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
         (re-search-forward
          "\\(\\w+\\)\\.SetSprite(\\(.+?\\),\\(.+?\\))" nil t)
       (replace-match
+
        (format
         "c.LoadSpriteAsync(%s,\\3)"
         (save-match-data
@@ -352,3 +432,16 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
   (my/with-dwim-region
    (while (re-search-forward "Container" end t)
      (replace-match "Loader"))))
+
+
+(defun try-kill-sprite-loader-name ()
+  (interactive)
+  (let ((cos-investigated-file (buffer-file-name)))
+    (print (resolve-sprite-loader-name
+            (thing-at-point 'word)))
+    ;; (kill-new
+    ;;  (or (resolve-sprite-loader-name
+    ;;       (thing-at-point 'word))
+    ;;      (error "Did not find any sprite loader name for %s"
+    ;;             (thing-at-point 'word))))
+    ))

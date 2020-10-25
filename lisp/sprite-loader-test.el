@@ -59,13 +59,18 @@
  "pvpSprites"
  "/home/benj/idlegame/IdleGame/Assets/#/Sources/Leaderboards/Separate/Monobehaviours/LBArenaScoreView.cs")
 
+(defvar
+  "v.divisionBarSprites.SetSprite(LBSpriteNames.GetSliderTipName(barColor, true), unslicedTip);")
+
 (team/with-default-dir
  idlegame-assets-dir
  (team/each-file
-  (-take
-   10
-   (cos/cs-fiels-with-matches
-    "SetSprite\\(.*,"))
+  (-difference
+   (-take
+    100
+    (cos/cs-fiels-with-matches
+     "SetSprite\\(.*,"))
+   spriteloaders-skip-files)
   (or
    (dump--replace-sprite-loader-syntax)
    (progn
