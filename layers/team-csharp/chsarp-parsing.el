@@ -14,32 +14,33 @@
 (defun team-csharp-parse-arg-list (s)
   "Return s as csharp arglist.
 Splitting by \",\" on its own does not do it, since you can have nested arglists."
-  (let ((arglist)
-        (arg-start))
+  (let ((arglist))
     (with-temp-buffer
       (insert s)
       (->gg)
       (while (not (eobp))
-        (setq arg-start (point))
-        (forward-char 1)
-        (goto-char
-         (min
-          (save-excursion
-            (skip-chars-forward "^,")
-            (point))
-          (save-excursion
-            (skip-chars-forward "^(")
-            (point))))
-        (when (eq (char-after) ?\()
-          (skip-chars-forward "^)")
-          (unless (eobp)
-            (forward-char 1)))
         (push
          (string-trim
           (string-trim-left
-           (buffer-substring
-            arg-start
-            (point))
+           (apply
+            #'buffer-substring
+            (list
+             (point)
+             (progn
+               (forward-char 1)
+               (goto-char
+                (min
+                 (save-excursion
+                   (skip-chars-forward "^,")
+                   (point))
+                 (save-excursion
+                   (skip-chars-forward "^(")
+                   (point))))
+               (when (eq (char-after) ?\()
+                 (skip-chars-forward "^)")
+                 (unless (eobp)
+                   (forward-char 1)))
+               (point))))
            ","))
          arglist)))
     (nreverse arglist)))
