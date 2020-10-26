@@ -4,6 +4,8 @@
 (require 'unity-labels)
 (require 'unity-asset-usages "/home/benj/.spacemacs.d/lisp/unity-asset-usages.el")
 (require 'idlegame-definitions)
+(require 'csharp-parsing)
+
 
 (cl-defun mk-hash-from-list (list &rest args)
   (let ((res
@@ -100,15 +102,21 @@
         (s-chop-suffixes '(".meta" ".asset") container))
   (-first
    #'loader-name-type-lookup
-   (--mapcat
-    (list (concat it "Loader"))
-    (list
-     (team/re-replace-in-string
-      container
-      "Sprites"
-      "sSprites"
-      t)
-     container))))
+   (or
+    (and
+     (s-suffix-p
+      "Loader"
+      container)
+     (list container))
+    (--mapcat
+     (list (concat it "Loader"))
+     (list
+      (team/re-replace-in-string
+       container
+       "Sprites"
+       "sSprites"
+       t)
+      container)))))
 
 
 
@@ -156,17 +164,23 @@ return the sprite container name."
           cos-investigated-file
           (resolve-sprite-loader-field
            container))
+         ;; if somebody named some variable exactly like
+         ;; the name of a loader, the chance is high this is the correct loader
+         (team/with-file
+          loader-name-file
+          (when (re-search-forward
+                 container nil t)
+            (team/re-this-line
+             "\\(\\w+\\),")
+            (match-string 1)))
          container))
+       ;; bail out and mark as manual fix
        "TODO")
     (concat
      (if (loader-name--online-loader-p it)
          "OnlineLoaderName."
        "LoaderName.")
      it)))
-
-
-(resolve-sprite-loader-name-with-container-name
- "InsideGarrisonSprites.asset.meta")
 
 
 
@@ -265,68 +279,92 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
 
 (defun cos/fix-loader-names-perf-critical ()
   "Add offline or online loader names for all sprite containers add `loader-name-file'."
-  (sprite-loaders-refresh-names)
+  (sprite-loders-refresh-names)
   (add-loader-names-from-files))
-
-(team/with-file
- "/home/benj/idlegame/LoadingIdlegame/Packages/LoadingIdlegame/Runtime/online-loader-names"
- (-map
-  #'file-name-base
-
-
-  )
- )
 
 
 
 (defconst
-  spriteloaders-skip-files '("ResourceManagementExtentions"))
+  spriteloaders-skip-files
+  '("#/Sources/Loading/LoadingExt.cs"
+    "#/Sources/ResourceManagement/ResourceManagementExtentions.cs"))
+
 
 ;;;  the missing thing is to write all sprite container dirs to some file
 ;;;  (online, offline) file that already exists
 ;;;  then generate the loaders with unity
 
-(defun dump-replace-sprite-loader-syntax (s)
-  (with-temp-buffer
-    (insert s)
-    (->gg)
-    (dump--replace-sprite-loader-syntax)
-    (buffer-substring)))
-
-(defun dump--replace-sprite-loader-syntax ()
-  (let ((res))
-    (while
-        (re-search-forward
-         ;; call set sprite with contexts,
-         ;; c.  can be omitted, if we are inside an extension class
-         (concat
-          "\\(\\w+\\.\\)?"
-          "setsprite(.+?,\\(.+?\\),\\(.+?\\))")
-         nil t)
-      (unless
-          (save-match-data
-            (re-search-forward "{" (point-at-eol) t))
-        (replace-match
-         (format "\\1LoadSpriteAsync(%s,\\3)"
-                 (save-match-data
-                   (resolve-sprite-loader-name
-                    (match-string 2))))
-         (setq res t))))
-    t))
-
-(defun dump--replace-sprite-container-invocation ()
-  (let ((res))
-    (while
-        (re-search-forward
-         "\\(\\w+\\)\\.SetSprite(\\(.+?\\),\\(.+?\\))" nil t)
+(defun replace-sprite-loader-syntax ()
+  (catch 'skip
+    (re-search-forward
+     ;; 1 { on the line, skip for now
+     (concat
+      "\\(.*{.*\\)"
+      "\\|"
+      "\\("
+      ;;  4
+      ;;  the invocation part of set sprite
+      ;;  this is either an ommitted c, the name of some c,
+      ;;  or the name of a sprite container
+      "\\b\\(\\(.+?\\)\\.\\)?"
+      "setsprite"
+      "("
+      ;; 5
+      ;; the method invocation argument list
+      "\\(.*\\)"
+      ")"
+      "\\)"))
+    (unless
+        (match-string 1)
       (replace-match
-       (format
-        "c.LoadSpriteAsync(%s,\\3)"
+       (-->
         (save-match-data
-          (resolve-sprite-loader-name
-           (match-string 1))))
-       (setq res t)))
-    res))
+          (team-csharp-parse-arg-list
+           (match-string 5)))
+        (concat
+         ;; contexts part
+         (if
+             (and
+              (match-string 3)
+              (not (= (length it) 2)))
+             (match-string 3)
+           "c.")
+         "LoadSpriteAsync"
+         "("
+         ;;
+         (pcase it
+            ;; single arg, this is the method that directly sets the sprite
+            ;; we are not looking for that
+            (`(,name) (throw 'skip nil))
+            ;; this is the default method we are looking for
+            (`(,building ,container ,sprite-name ,image-name)
+             (apply
+              #'concat
+              ;; sprite loader arg
+              (-infterpose
+               ","
+               `(,(save-match-data
+                    (resolve-sprite-loader-name
+                     container))
+                 ,sprite-name
+                 ,image-name))))
+            ;; invocation on a sprite container
+            (`(,sprite-name ,image-name . nil)
+             (team/comma-interposed
+              (save-match-data
+                (resolve-sprite-loader-name
+                 (match-string 4)))
+              sprite-name
+              image-name))
+           (_ (error "Dont know how to handle %d args of sprite container" (length it))))
+         ")"))))))
+
+
+(defun replace-sprite-loader-syntax-cmd ()
+  (interactive)
+  (let ((cos-investigated-file
+         "/home/benj/idlegame/IdleGame/Assets/#/Sources/Garrison/Monobehaviours/GarrisonLBEntryView.cs"))
+    (replace-sprite-loader-syntax)))
 
 
 

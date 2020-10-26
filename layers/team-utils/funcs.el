@@ -313,6 +313,13 @@ with it anaphorically bound to a list of ARGS."
 (defun team/un-capitalize (s)
   (concat (downcase (subseq s 0 1)) (subseq s 1)))
 
+(defun team/comma-interposed (&rest args)
+  (setq my-args args)
+  (apply
+   #'concat
+   (-interpose
+    ","
+    args)))
 
 
 ;; procs
