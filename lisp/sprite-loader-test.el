@@ -1,3 +1,4 @@
+(require 'ert)
 
 (defvar example-set-sprite-output)
 
@@ -24,26 +25,10 @@
         (buffer-string)))
     "c.LoadSpriteAsync(LoaderName.PvPSpritesLoader,spriteName,trophy);")))
 
-(team/with-default-dir
- idlegame-assets-dir
- (team/each-file
-  (-difference
-   (-take
-    100
-    (cos/cs-fiels-with-matches
-     "SetSprite\\(.*,"))
-   spriteloaders-skip-files)
-  (or
-   (dump--replace-sprite-container-invocation)
-   (progn
-     (->gg)
-     (dump--replace-sprite-loader-syntax)))))
+(defun replace-sprite-loader-syntax-cmd ()
+  (interactive)
+  (let ((cos-investigated-file
+         "/home/benj/idlegame/IdleGame/Assets/#/Sources/Garrison/Monobehaviours/GarrisonLBEntryView.cs"))
+    (replace-sprite-loader-syntax)))
 
 (defvar cos-override-resolve-sprite-loader-field-return-value nil)
-
-((-difference
-   (-take
-    100
-    (cos/cs-fiels-with-matches
-     "SetSprite\\(.*,"))
-   ))

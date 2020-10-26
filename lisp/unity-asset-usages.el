@@ -7,7 +7,7 @@
   (s-ends-with-p ".meta" s))
 
 (team/def-memoized asset--usages (guid)
-  "Return a list of file names where GUID is used."
+  "Return a list of it names where GUID is used."
   (team/with-default-dir
    idlegame-assets-dir
    (condition-case nil
@@ -20,8 +20,8 @@
        (message "%s appears to be unused" guid)
        nil))))
 
-(team/def-memoized asset-usages (file)
-  "Return a list of file names where FILE is used."
+(team/def-memoized asset-usages (it)
+  "Return a list of it names where FILE is used."
   (team/with-default-dir
    idlegame-assets-dir
    (--remove (s-ends-with-p ".meta" it)
@@ -29,7 +29,7 @@
               (team-unity/file-guid
                (s-chop-prefix
                 "Assets/"
-                file))))))
+                it))))))
 
 (defun team-unity/asset-path-from-guid (guid)
   (--first
@@ -128,9 +128,12 @@ Forward the return value of `re-search-forward'."
      (s-ends-with-p ".prefab" it)
      (asset-usages file-or-meta)))))
 
+;; (asset-usages "/home/benj/idlegame/IdleGame/Assets/#/Sources/Leaderboards/Shared/Roads/MonoBehaviours/RoadTierBase.cs"
+;;  )
+
 
 ;;; can have a func that lets you select which prefab
-(defun team-unity/field-ref-search (field-name &optional script-file)
+(defun team-unity/field-ref-search (field-name &optional script-file ask-prefab)
   (team/with-default-dir
    idlegame-assets-dir
    (setq
@@ -140,33 +143,49 @@ Forward the return value of `re-search-forward'."
      (or
       script-file
       (buffer-file-name))))
-   (let ((file
-          (-first
-           #'prefab-p
-           (asset-usages script-file))))
-     (team/with-file
-      (or
-       file
-       (error
-        "%s is not used on any prefab"
-        script-file))
-      (unless
-          (re-search-forward
-           (format
-            "^  m_Script: {fileID: [[:alnum:]]+, guid: %s, type: 3}$"
-            (team-unity/file-guid script-file)) nil t)
-        ;;  might be a prefab override
-        (error "Did not find script monobehaviour syntax for %s in %s"
-               script-file (buffer-file-name)))
-      (unless
-          (team-unity/search-this-yml-entry
-           (format
-            "^  %s: {fileId: [[:alnum:]]+, guid: \\(\\w+\\),"
-            field-name))
-        (error "Did not find field ref syntax %s %s" file (point)))
-      (file-name-nondirectory
-       (-first #'meta-p
-               (asset--usages (match-string 1))))))))
+   (or
+    (catch 'done
+      (--map
+       (team/with-file
+        it
+        (while
+            (re-search-forward
+             (format
+              "^  m_Script: {fileID: [[:alnum:]]+, guid: %s, type: 3}$"
+              (team-unity/file-guid script-file))
+             nil t)
+          (when
+              (save-excursion
+                (team-unity/search-this-yml-entry
+                 (format
+                  "^  %s: {fileId: [[:alnum:]]+, guid: \\(\\w+\\),"
+                  field-name)))
+            (throw 'done
+                   (file-name-nondirectory
+                    (-first #'meta-p
+                            (asset--usages (match-string 1))))))))
+       (let ((prefabs
+              (-filter
+               #'prefab-p
+               (asset-usages script-file))))
+         (unless prefabs
+           (error
+            "%s is not used on any prefab"
+            script-file))
+         (if ask-prefab
+             (completing-read
+              "Check %s's ref on script %s, prefab: "
+              field-name
+              script-file
+              prefabs)
+           prefabs)))
+      nil)
+    (error "Did not find any field ref for %s on %s. Possible prefabs: %s"
+           field-name
+           script-file
+           (-filter
+            #'prefab-p
+            (asset-usages script-file))))))
 
 
 ;;;###autoload
