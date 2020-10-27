@@ -13,6 +13,9 @@
       "I" #'my/evil-mc-make-cursors-around-here
     )
 
+(defun test ()
+  (interactive)
+  (message "Override the function definition of test first"))
 
 (team/spacemacs-declare-keys
     "ot"
@@ -20,7 +23,8 @@
   ;; t is reserved - temp kbd
   "d" #'my/eval-and-bind-func
   "m" #'my/make-cmd-wrapper
-    )
+  ;;
+  "o" #'test)
 
 
 (team/spacemacs-declare-keys
