@@ -764,6 +764,11 @@ When INDENT is non nil, also indent line."
 
 ;; lists
 
+(defun single (e)
+  (if (atom e)
+      e
+    (car e)))
+
 (defun team/mklist (obj)
   (if (listp obj) obj (list obj)))
 

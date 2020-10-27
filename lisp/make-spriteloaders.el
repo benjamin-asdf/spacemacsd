@@ -11,11 +11,24 @@
 (defconst
   spriteloaders-skip-files
   '("#/Sources/Loading/LoadingExt.cs"
+    "#/Sources/Loading/LoadingExt.cs"
+    "#/Sources/Expansion/Shared/PetLoading/PetLoadingExtensions.cs"
     "#/Sources/ResourceManagement/Monobehaviours/ResolveSprites.cs"
     "#/Sources/ResourceManagement/ResourceManagementExtentions.cs"
     "#/Design/RewardItemAnimationsNew/RewardAnimationSetter.cs"
     "#/Sources/HotStories/Forum/MonoBehaviours/Badges/BadgeGroup.cs"
     "#/Sources/HotStories/Forum/MonoBehaviours/PolymorphicTapToCycle.cs"
+    "#/Sources/WebVideos/IPopOutButton.cs"))
+(setq
+  spriteloaders-skip-files
+  '("#/Sources/Loading/LoadingExt.cs"
+    "#/Sources/Expansion/Shared/PetLoading/PetLoadingExtensions.cs"
+    "#/Sources/ResourceManagement/Monobehaviours/ResolveSprites.cs"
+    "#/Sources/ResourceManagement/ResourceManagementExtentions.cs"
+    "#/Design/RewardItemAnimationsNew/RewardAnimationSetter.cs"
+    "#/Sources/HotStories/Forum/MonoBehaviours/Badges/BadgeGroup.cs"
+    "#/Sources/HotStories/Forum/MonoBehaviours/PolymorphicTapToCycle.cs"
+    "#/Sources/HotStories/Forum/MonoBehaviours/Posts/Twitter/TweetTopInfo.cs"
     "#/Sources/WebVideos/IPopOutButton.cs"))
 
 (defconst online-loader-names (concat cos-dir "/LoadingIdlegame/Packages/LoadingIdlegame/Runtime/online-loader-names"))
@@ -45,6 +58,15 @@
      (cos-investigate-file
       it
       ,@body)))
+
+(defun chsarp-put-statement-one-line ()
+  (interactive)
+  (join-line
+   nil
+   (point)
+   (save-excursion
+     (skip-chars-forward "^;")
+     (point-marker))))
 
 
 
@@ -314,30 +336,28 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
     (while
         (re-search-forward
          (concat
-          ;; 1 { on the line, skip for now
-          "\\(.*{.*\\)"
           ;; we are probably looking at some interface declaration, skip
-          "\\|"
-          "\\(.*\\bvoid\\b.*\\)"
+          "\\("
+          "^.*void.*setsprite(.*;$"
+          "\\)"
           "\\|"
           "\\("
           ;;  5
           ;;  the invocation part of set sprite
           ;;  this is either an ommitted c, the name of some c,
           ;;  or the name of a sprite container
-          "\\b\\(\\(.+?\\)\\.\\)?"
+          "\\b\\(\\(?5:.+?\\)\\.\\)?"
           "setsprite"
           "("
           ;; 6
           ;; the method invocation argument list
-          "\\(.*\\)"
+          "\\(?6:.*\\)"
           ")"
           "\\)")
          nil
          t)
       (unless
-          (or (match-string 1)
-              (match-string 2))
+          (or (match-string 1))
         (catch 'skip
           (replace-match
            (-->
@@ -401,20 +421,87 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
 
 
 
+
+(defun cos/re-replace (file-re re replace &optional exclude-files)
+  "Search .cs files with FILE-RE in cos project using rg,
+then replace RE with REPLACE in each file."
+  (team/with-default-dir
+   idlegame-assets-dir
+   (--each
+       (let ((files
+              (cos/cs-files-with-matches
+               file-re)))
+         (if exclude-files
+             (-difference
+              files
+              exclude-files)
+           files))
+     (team/check-file
+      it
+      (while
+          (re-search-forward re nil t)
+        (replace-match replace)
+        (setq team/check-file-dirty t))))))
+
+
+(defun make-sprite-invocations-one-line ()
+  (interactive)
+  (while
+      (re-search-forward
+       "\\(void SetSprite\\)\\|\\(SetSprite(.*=>\\)\\|\\(\\bSetSprite(\\)" nil t)
+    (when
+        (match-string 3)
+      (chsarp-put-statement-one-line))))
+
 ;;;###autoload
-(defun sprite-loader-refactor-do-it ()
+(defun sprite-loader-replace-syntax-do-it ()
   "Search cos for set sprite syntax,
 attempt to replace with set sprite async syntax."
   (interactive)
-  (profile-seconds
-   (team/with-default-dir
-    idlegame-assets-dir
-    (cos-investigate-files
-     (-difference
-      (cos/cs-fiels-with-matches
-       "SetSprite\\(.*,")
-      spriteloaders-skip-files)
-     (replace-sprite-loader-syntax)))))
+  (team/with-default-dir
+   idlegame-assets-dir
+   (cos-investigate-files
+    (-difference
+     (cos/cs-files-with-matches
+      "SetSprite\\(.*,")
+     spriteloaders-skip-files)
+    (make-sprite-invocations-one-line)
+    (->gg)
+    (replace-sprite-loader-syntax))))
+
+(defun team/magit-commit-unstaged ((msg))
+  "Run git sync. Make a commit with all changed tracked files and message MSG."
+  (magit-run-git "add" "-u")
+  (magit-run-git "commit" "-m" msg))
+
+
+;; misc
+
+(defun sprite-container-add-obs-attr ()
+  (interactive)
+  (->gg)
+  (while
+      (re-search-forward "public void SetSprit" nil t)
+    (save-excursion
+      (forward-line -1)
+      (team/in-new-line
+       "[Obsolete(\"SpriteContainers are obsolete, use LoadSpriteAsync instead\")]"))))
+
+
+
+
+
+(defun sprite-loader-refactor-do-it ()
+  (team/with-default-dir
+   idlegame-assets-dir
+   (sprite-loader-replace-syntax-do-it)
+   ;; (team/magit-commit-unstaged "Replace sprite loader syntax")
+   (cos/re-replace
+    "LoadSpriteBlocked\("
+    "LoadSpriteBlocked("
+    "LoadSpriteAsync("
+    spriteloaders-skip-files)))
+
 
 
 
@@ -423,6 +510,21 @@ attempt to replace with set sprite async syntax."
 
 (defun dwim-sprite-container-to-loader ()
   (interactive)
+  (when
+      (team/re-this-line "SetSprite(" t)
+    (insert
+     (-->
+      (my/region-or-line-bounds)
+      (prog1
+          (buffer-substring-no-properties
+           (car it)
+           (cdr it))
+        (delete-region (car it) (cdr it)))
+      (with-temp-buffer
+        (insert it)
+        (->gg)
+        (replace-sprite-loader-syntax)
+        (buffer-string)))))
   (my/with-dwim-region
    (while (re-search-forward "SpriteContainer\.\\(\\w+\\)" end t)
      (replace-match

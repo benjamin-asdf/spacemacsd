@@ -70,7 +70,7 @@
     (user-error "Thing at point is not an Assets/ file name.")))
 
 
-(defun cos/cs-fiels-with-matches (re)
+(defun cos/cs-files-with-matches (re)
   "See `files-with-matches'."
   (team/with-default-dir
    idlegame-assets-dir
@@ -79,5 +79,11 @@
     (files-with-matches re))))
 
 
+(defun cos/reset-hard ()
+  (interactive)
+  (cos/with-root
+   (magit-run-git
+    "reset"
+    "--hard")))
 
 (provide 'idlegame-definitions)

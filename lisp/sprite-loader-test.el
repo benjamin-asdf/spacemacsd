@@ -28,7 +28,7 @@
 (defun replace-sprite-loader-syntax-cmd ()
   (interactive)
   (let ((cos-investigated-file
-         "/home/benj/idlegame/IdleGame/Assets/#/Sources/Garrison/Monobehaviours/GarrisonLBEntryView.cs"))
+         (buffer-file-name)))
     (replace-sprite-loader-syntax)))
 
 (defvar cos-override-resolve-sprite-loader-field-return-value nil)

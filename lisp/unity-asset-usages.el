@@ -128,9 +128,6 @@ Forward the return value of `re-search-forward'."
      (s-ends-with-p ".prefab" it)
      (asset-usages file-or-meta)))))
 
-;; (asset-usages "/home/benj/idlegame/IdleGame/Assets/#/Sources/Leaderboards/Shared/Roads/MonoBehaviours/RoadTierBase.cs"
-;;  )
-
 
 ;;; can have a func that lets you select which prefab
 (defun team-unity/field-ref-search (field-name &optional script-file ask-prefab)
@@ -188,12 +185,51 @@ Forward the return value of `re-search-forward'."
             (asset-usages script-file))))))
 
 
+(defun team-unity/dump-field-ref-search (field-name)
+  (team/with-default-dir
+   idlegame-assets-dir
+   (with-current-buffer-window
+       (get-buffer-create (format "*%s-field-ussage*" field-name))
+       nil
+       nil
+     (erase-buffer)
+     (insert (format "Searching for field refs %s ...\n" field-name))
+     (call-process
+      "rg"
+      nil
+      (current-buffer)
+      "--no-heading"
+      "--color=never"
+      "--line-number"
+      (format
+       "^  %s: \\{fileID: \\d+, guid: \\w+,"
+       field-name))
+     (->gg)
+     (while (re-search-forward
+             ".*/\\(\\w+\\.prefab\\):[[:alnum:]]+:  \\w+: {fileId: [[:alnum:]]+, guid: \\(\\w+\\),.*" nil t)
+
+       (replace-match
+        (format
+         "\\1: guid: \\2 \n  uses: %s"
+         (mapconcat
+          'identity
+          (-filter
+           #'meta-p
+           (asset--usages
+            (match-string 2)))
+          ",")))))))
+
+;;;###autoload
+(defun team-unity/do-dump-field-ref-search ()
+  (interactive)
+  (team-unity/dump-field-ref-search (thing-at-point 'word)))
+
 ;;;###autoload
 (defun team-unity/do-field-ref-search ()
   (interactive)
   (team/a-when
    (team-unity/field-ref-search
-    (symbol-at-point))))
+    (thing-at-point 'word))))
 
 
 (defun team-unity/any-asset-ref? (file-or-meta &optional regex)
