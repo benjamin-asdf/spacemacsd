@@ -16,4 +16,13 @@
   minor-mode-map-alist))
 
 
+;;  org capture is trying to save a buffer not ass. with a file and not handled specially
+
+(add-hook
+ 'org-capture-before-finalize-hook
+ #'(lambda ()
+     (org-capture-put :no-save t)))
+
+
+
 (provide 'temp-hacks)
