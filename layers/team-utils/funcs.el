@@ -466,6 +466,24 @@ return the name of the new file."
 (defun team/delete-this-line ()
   (delete-region (- (point-at-bol) 1) (point-at-eol)))
 
+(defun delete-matching-lines (re)
+  (->gg)
+  (while (re-search-forward re nil t)
+    (team/delete-this-line)))
+
+;; (defun test ()
+;;   (interactive)
+;;   (->gg)
+;;   (while (not (eobp))
+;;     (unless (eq
+;;              (point-at-bol)
+;;              (point-at-eol))
+;;       (print (buffer-substring (point-at-bol) (point-at-eol))))
+;;     (forward-line 1)))
+
+;;  this is shitty elisp and error prone, the above looks more promising
+;; also for the pattern: define a function that takes an argument, then define a makro that is a thin wrapper around that
+
 (defmacro team/each-line (buffer-or-name-form &rest body)
   "Set buffer current to what BUFFER-OR-NAME-FORM evals.
 Froeach line anaphorically set it to the line content, then run body."
