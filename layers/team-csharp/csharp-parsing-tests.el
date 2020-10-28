@@ -22,3 +22,17 @@
     '("MenuType.Garrison" "SpriteContainer.WeeklyEventProgressSliderSprites" "SpriteName.BAR_FILLS[(int)rarity]" "slicedFill"))))
 
 ;; ;; (team-csharp-parse-arg-list "MenuType.Garrison, SpriteContainer.WeeklyEventProgressSliderSprites, SpriteName.BAR_FILLS[(int)rarity]")
+
+
+(team-csharp-parse-arg-list
+ "foo,bar().durr,lul")
+
+(team-csharp-parse-arg-list
+ "foo,bar(bam,boo),lul"
+ )
+
+(team-csharp-parse-arg-list
+ "foo,bar,bam(bananas(hurr,durr),boo),lul")
+
+(team-csharp-parse-arg-list
+ "foo,bar,bam(bananas(hurr,durr),boo),lul")

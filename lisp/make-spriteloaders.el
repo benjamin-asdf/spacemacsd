@@ -142,7 +142,8 @@
 
 (defun resolve-sprite-loader-name-with-container-name (container)
   (setq container
-        (s-chop-suffixes '(".meta" ".asset") container))
+        (file-name-base
+         (s-chop-suffixes '(".meta" ".asset") container)))
   (-first
    #'loader-name-type-lookup
    (or
@@ -200,28 +201,38 @@ return the sprite container name."
 Attempt multiple strategies."
   (-some-->
       (or
-       (resolve-sprite-loader-name-with-container-name
-        (or
-         (and
-          (string-match "SpriteContainer\\.\\(\\w+\\)" container)
-          (match-string 1 container))
-         ;; if somebody named some variable exactly like
-         ;; the name of a loader, the chance is high this is the correct loader
-         (let ((res))
-           (team/check-file
-            loader-name-file
-            (when (re-search-forward
-                   container nil t)
+       (and
+        (not (or
+              (string-equal
+               "sprites"
+               container)
+              (string-equal
+               "container"
+               container)))
+        (resolve-sprite-loader-name-with-container-name
+         (or
+          (and
+           (string-match "SpriteContainer\\.\\(\\w+\\)" container)
+           (match-string 1 container))
+          ;; if somebody named some variable exactly like
+          ;; the name of a loader, the chance is high this is the correct loader
+          (let ((res))
+            (team/check-file
+             loader-name-file
+             (and
+              (re-search-forward
+               container nil t)
               (team/re-this-line
-               "\\(\\w+\\),")
+               "\\(\\w+\\)," t)
               (setq res (match-string 1)))
-            nil)
-           res)
-         (and
-          cos-investigated-file
-          (resolve-sprite-loader-field
-           container))
-         container))
+             nil)
+            res)
+          (and
+           cos-investigated-file
+           (resolve-sprite-loader-field
+            container
+            cos-investigated-file))
+          container)))
        ;; bail out and mark as manual fix
        "TODO")
     (concat
@@ -265,6 +276,19 @@ for CONTAINER-OF-FILE, or if there are any o"
          (concat it name))
         (list online-loaders-dir
               offline-loaders-dir))))))
+
+
+
+(defun sprite-loader-loader-asset (loader-name)
+  "Evaluate to the LOADER-NAMEs loader asset, if exists."
+
+
+  )
+
+
+
+
+
 
 
 (defun sprite-loaders-refresh-names ()
@@ -490,10 +514,17 @@ attempt to replace with set sprite async syntax."
   (team/with-default-dir
    idlegame-assets-dir
    (cos-investigate-files
-    (-difference
-     (cos/cs-files-with-matches
-      "SetSprite\\(.*,")
-     spriteloaders-skip-files)
+    (append
+     (-difference
+      (cos/cs-files-with-matches
+       "SetSprite\\(.*,")
+      spriteloaders-skip-files)
+     '("#/Sources/Community/Client/Browse/MonoBehaviours/CommunityTabButton.cs"
+       "#/Sources/TableGames/Shared/Challenge/MonoBehaviours/TableStakesView.cs"
+       "#/Sources/TableGames/Shared/Challenge/MonoBehaviours/ChallengeChairView.cs"
+       "#/Sources/TableGames/Shared/Challenge/MonoBehaviours/TableStakesView.cs"
+       "#/Sources/CongratsScreen/MonoBehaviours/CongratsBannerView.cs"
+       ))
     ;; (replace-set-sprite-with-lambdas)
     ;; (->gg)
     (make-sprite-invocations-one-line)
@@ -502,8 +533,9 @@ attempt to replace with set sprite async syntax."
 
 (defun team/magit-commit-unstaged (msg)
   "Run git sync. Make a commit with all changed tracked files and message MSG."
-  (magit-run-git "add" "-u")
-  (magit-run-git "commit" "-m" msg))
+  (when (magit-unstaged-files)
+    (magit-call-git "add" "-u")
+    (magit-call-git "commit" "-m" msg)))
 
 
 ;; misc
@@ -534,11 +566,33 @@ attempt to replace with set sprite async syntax."
 (defun sprite-container-delete-fields ()
   (interactive)
   (->gg)
+  (message cos-investigated-file)
   (>
    (flush-lines
     (team-unity/serialized-field-regex
      "SpritesContainer"))
    0))
+
+
+(defun cos-loaders-collect-used ()
+  "Search for the usages of LoaderName and OnlineLoaderName
+in the idlegame assets dir with rg.
+Return a hashtable of used loader names."
+  (let ((res (make-hash-table :test 'equal)))
+    (team/with-default-dir
+     idlegame-assets-dir
+     (with-temp-buffer
+       (call-process
+        "rg"
+        nil
+        (current-buffer)
+        nil
+        "LoaderName\.\\w+")
+       (->gg)
+       (while
+           (re-search-forward "LoaderName\\.\\(\\w+\\)" nil t)
+         (puthash (match-string 1) t res))))
+    res))
 
 
 
@@ -547,19 +601,20 @@ attempt to replace with set sprite async syntax."
   (team/with-default-dir
    idlegame-assets-dir
    (sprite-loader-replace-syntax-do-it)
-   ;; (team/magit-commit-unstaged "Replace sprite loader syntax")
+   (team/magit-commit-unstaged "Replace sprite loader syntax")
    (cos/re-replace
-    "LoadSpriteBlocked\("
+    "LoadSpriteBlocked\\("
     "LoadSpriteBlocked("
     "LoadSpriteAsync("
     spriteloaders-skip-files)
-   ;; (team/magit-commit-unstaged "Replace LoadSpriteBlocked with LoadSpriteAsync")
+   (team/magit-commit-unstaged "Replace LoadSpriteBlocked with LoadSpriteAsync")
+   (message "the default dir is now: %s" default-directory)
    (cos-investigate-files
     (cos/cs-files-with-matches
      "SpritesContainer")
     (sprite-container-delete-fields))
-   ;; (team/magit-commit-unstaged "Delete sprite container fields")
-   (sprite-containers-make-resource-ext-obsolete)
+   (team/magit-commit-unstaged "Delete sprite container fields")
+   ;; (sprite-containers-make-resource-ext-obsolete)
    ;; (team/magit-commit-unstaged "Make sprite container funcs obsolete")
    )
   )

@@ -194,8 +194,22 @@ Forward the return value of `re-search-forward'."
             #'prefab-p
             (asset-usages script-file))))))
 
+;; this is slow
+(defun team-unity/dump--field-ref-search (field-name)
+  "Return a list of the first asset usages found by a simple rg search.
+This is meant to be used in lisp code."
+  "Return the first usages found with `team-unity/dump-field-ref-search1'."
+  (team/with-default-dir
+   idlegame-assets-dir
+   (with-temp-buffer
+     (team-unity/dump-field-ref-search1)
+     (->gg)
+     (when
+         (re-search-forward "^  uses: \\(.*\\)$" nil t)
+       (split-string (match-string 1) ",")))))
 
 (defun team-unity/dump-field-ref-search (field-name)
+  "Meant to be used interactive, show results in a window."
   (team/with-default-dir
    idlegame-assets-dir
    (with-current-buffer-window
@@ -204,30 +218,33 @@ Forward the return value of `re-search-forward'."
        nil
      (erase-buffer)
      (insert (format "Searching for field refs %s ...\n" field-name))
-     (call-process
-      "rg"
-      nil
-      (current-buffer)
-      "--no-heading"
-      "--color=never"
-      "--line-number"
-      (format
-       "^  %s: \\{fileID: \\d+, guid: \\w+,"
-       field-name))
-     (->gg)
-     (while (re-search-forward
-             ".*/\\(\\w+\\.prefab\\):[[:alnum:]]+:  \\w+: {fileId: [[:alnum:]]+, guid: \\(\\w+\\),.*" nil t)
+     (team-unity/dump-field-ref-search1))))
 
-       (replace-match
-        (format
-         "\\1: guid: \\2 \n  uses: %s"
-         (mapconcat
-          'identity
-          (-filter
-           #'meta-p
-           (asset--usages
-            (match-string 2)))
-          ",")))))))
+(defun team-unity/dump-field-ref-search1 ()
+  (call-process
+   "rg"
+   nil
+   (current-buffer)
+   "--no-heading"
+   "--color=never"
+   "--line-number"
+   (format
+    "^  %s: \\{fileID: \\d+, guid: \\w+,"
+    field-name))
+  (->gg)
+  (while (re-search-forward
+          ".*/\\(\\w+\\.prefab\\):[[:alnum:]]+:  \\w+: {fileId: [[:alnum:]]+, guid: \\(\\w+\\),.*" nil t)
+
+    (replace-match
+     (format
+      "\\1: guid: \\2 \n  uses: %s"
+      (mapconcat
+       'identity
+       (-filter
+        #'meta-p
+        (asset--usages
+         (match-string 2)))
+       ",")))))
 
 ;;;###autoload
 (defun team-unity/do-dump-field-ref-search ()
