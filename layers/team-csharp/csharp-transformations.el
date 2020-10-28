@@ -54,6 +54,18 @@ add to the paramer list of the enclosing function."
       (buffer-string))
     (team/^$-replace "(.*)" it)))
 
+(defun csharp-delete-curly-body ()
+  (interactive)
+  (skip-chars-forward "^{")
+  (delete-region
+   (save-excursion
+     (forward-char 1)
+     (point))
+   (progn
+     (forward-list)
+     (forward-char -1)
+     (point))))
+
 
 
 (provide 'csharp-transformations)

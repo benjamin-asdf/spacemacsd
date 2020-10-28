@@ -398,8 +398,6 @@ with it anaphorically bound to a list of ARGS."
 
 ;; elisp
 
-
-
 (defun team/line-or-region-str ()
   (if (region-active-p)
       (region-str)
@@ -465,11 +463,6 @@ return the name of the new file."
 
 (defun team/delete-this-line ()
   (delete-region (- (point-at-bol) 1) (point-at-eol)))
-
-(defun delete-matching-lines (re)
-  (->gg)
-  (while (re-search-forward re nil t)
-    (team/delete-this-line)))
 
 ;; (defun test ()
 ;;   (interactive)
@@ -614,7 +607,7 @@ With TEXT, insert TEXT at the end of the line."
   `(while (re-search-forward
            ,reg
            nil t)
-     ,@body))
+     (save-excursion ,@body)))
 
 (defmacro team/while-file-reg (file reg &rest body)
   `(team/with-file
@@ -645,14 +638,16 @@ With TEXT, insert TEXT at the end of the line."
   (insert string)
   (team/->new-line))
 
-(defun team/in-new-line (string)
+(defun team/in-new-line (string &optional indent)
   "Insert STRING in new line and indent."
   (line->$)
   (team/->new-line)
   (insert string)
   (when (looking-back "\n")
     (forward-line -1))
-  (indent-according-to-mode))
+  (if indent
+      (indent-line-to indent)
+      (indent-according-to-mode)))
 
 ;; the default func for that is really wierd to use
 (defmacro team/re-replace-in-string (string re replace &optional fixedcase)

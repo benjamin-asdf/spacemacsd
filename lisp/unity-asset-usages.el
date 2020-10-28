@@ -36,6 +36,16 @@
    (s-ends-with-p ".meta" it)
    (asset--usages guid)))
 
+
+
+(defun team-unity/serialized-field-regex (type-name &optional field-name)
+  (concat
+   (format
+    "\\(\\(public\\)\\|\\(\\[SerializeField\\]\\)\\)[[:blank:]]+%s\\(\\[\\]\\)?"
+    type-name)
+   (when field-name
+     (format "[[:blank:]]+?%s" field-name))
+   ".*;"))
 
 
 

@@ -6,6 +6,7 @@
 (require 'idlegame-definitions)
 (require 'csharp-parsing "/home/benj/.spacemacs.d/layers/team-csharp/chsarp-parsing.el")
 (require 'team-utils)
+(require 'csharp-transformations)
 
 
 (defconst
@@ -169,29 +170,29 @@ return the sprite container name."
   (if (bound-and-true-p
        cos-override-resolve-sprite-loader-field-return-value)
       cos-override-resolve-sprite-loader-field-return-value
-   (-some-->
-       (setq
-        file-name
-        (or
+    (-some-->
+        (setq
          file-name
-         cos-investigated-file
-         buffer-file-name))
-     (and
-      (file-in-directory-p
-       it
-       idlegame-assets-dir)
-      it)
-     (save-excursion
-       (->gg)
-       (re-search-forward
-        (format
-         "\\(\\(public\\)\\|\\(\\[SerializeField\\]\\)\\)[[:blank:]]+SpritesContainer[[:blank:]]+?%s[[:blank:]]*;"
-         field-name)
-        nil t))
-     (team-unity/field-ref-search
-      field-name
-      file-name)
-     (s-chop-suffix ".asset.meta" it))))
+         (or
+          file-name
+          cos-investigated-file
+          buffer-file-name))
+      (and
+       (file-in-directory-p
+        it
+        idlegame-assets-dir)
+       it)
+      (save-excursion
+        (->gg)
+        (re-search-forward
+         (team-unity/serialized-field-regex
+          "SpritesContainer"
+          field-name)
+         nil t))
+      (team-unity/field-ref-search
+       field-name
+       file-name)
+      (s-chop-suffix ".asset.meta" it))))
 
 
 (defun resolve-sprite-loader-name (container)
@@ -331,14 +332,37 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
 
 
 
+(defun replace-set-sprite-with-lambdas ()
+  (interactive)
+  (while (re-search-forward
+          (concat
+           "\\([^\s]+\\).SetSprite(\\(.+?=>.+?{\\)") nil t)
+    (replace-match
+     (-->
+      (save-match-data
+        (team-csharp-parse-arg-list (match-string 2)))
+      (concat
+       "c."
+       "LoadSpriteBlockedUnsafe"
+       "("
+       (pcase it
+         (`(,name ,lambda-start)
+          (team/comma-interposed
+           (save-match-data
+             (resolve-sprite-loader-name
+              (match-string 1)))
+           name
+           lambda-start))))))
+    (setq team/check-file-dirty t)))
+
 (defun replace-sprite-loader-syntax ()
   (let ((dirty))
     (while
         (re-search-forward
          (concat
-          ;; we are probably looking at some interface declaration, skip
+          ;; void on the same line, some method declaration, or interface declaration
           "\\("
-          "^.*void.*setsprite(.*;$"
+          "^.*void.*$"
           "\\)"
           "\\|"
           "\\("
@@ -357,7 +381,9 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
          nil
          t)
       (unless
-          (or (match-string 1))
+          (or (match-string 1)
+              ;; some method declaration
+              (match-string 4))
         (catch 'skip
           (replace-match
            (-->
@@ -396,6 +422,9 @@ As side effect reset `lookup-loaders' so it has the updated data next time it is
                       "\\."
                       (-->
                        (match-string 5)
+                       (if it
+                           it
+                         (throw 'skip t))
                        ;;  this is the version that sets some address directly,
                        ;;  we do not care about that
                        (if (string-equal "c" it)
@@ -465,11 +494,13 @@ attempt to replace with set sprite async syntax."
      (cos/cs-files-with-matches
       "SetSprite\\(.*,")
      spriteloaders-skip-files)
+    ;; (replace-set-sprite-with-lambdas)
+    ;; (->gg)
     (make-sprite-invocations-one-line)
     (->gg)
     (replace-sprite-loader-syntax))))
 
-(defun team/magit-commit-unstaged ((msg))
+(defun team/magit-commit-unstaged (msg)
   "Run git sync. Make a commit with all changed tracked files and message MSG."
   (magit-run-git "add" "-u")
   (magit-run-git "commit" "-m" msg))
@@ -487,6 +518,27 @@ attempt to replace with set sprite async syntax."
       (team/in-new-line
        "[Obsolete(\"SpriteContainers are obsolete, use LoadSpriteAsync instead\")]"))))
 
+(defun sprite-containers-make-resource-ext-obsolete ()
+  (team/with-default-dir
+   idlegame-project-root
+   (team/with-file
+    "Assets/#/Sources/ResourceManagement/ResourceManagementExtentions.cs"
+    (team/while-reg
+     "public void SetSprites?\\(Unsafe\\)?(Building building"
+     (csharp-delete-curly-body)
+     (forward-line -1)
+     (team/in-new-line
+      "[Obsolete(\"SpriteContainers are obsolete, use LoadSpriteAsync\")]"
+      (csharp-indentation-next-line))))))
+
+(defun sprite-container-delete-fields ()
+  (interactive)
+  (->gg)
+  (>
+   (flush-lines
+    (team-unity/serialized-field-regex
+     "SpritesContainer"))
+   0))
 
 
 
@@ -500,7 +552,17 @@ attempt to replace with set sprite async syntax."
     "LoadSpriteBlocked\("
     "LoadSpriteBlocked("
     "LoadSpriteAsync("
-    spriteloaders-skip-files)))
+    spriteloaders-skip-files)
+   ;; (team/magit-commit-unstaged "Replace LoadSpriteBlocked with LoadSpriteAsync")
+   (cos-investigate-files
+    (cos/cs-files-with-matches
+     "SpritesContainer")
+    (sprite-container-delete-fields))
+   ;; (team/magit-commit-unstaged "Delete sprite container fields")
+   (sprite-containers-make-resource-ext-obsolete)
+   ;; (team/magit-commit-unstaged "Make sprite container funcs obsolete")
+   )
+  )
 
 
 
@@ -526,6 +588,18 @@ attempt to replace with set sprite async syntax."
         (replace-sprite-loader-syntax)
         (buffer-string)))))
   (my/with-dwim-region
+   (when (re-search-forward "SetSpriteUnsafe" end t)
+     (replace-match
+      (save-match-data
+        (if (yes-or-no-p "Blocked?")
+            "LoadSpriteBlockedUnsafe"
+          "LoadSpriteAsync")))))
+  (my/with-dwim-region
+   (when
+       (re-search-forward "MenuType\.\\w+," end t)
+     (replace-match "")
+     (fixup-whitespace)))
+  (my/with-dwim-region
    (while (re-search-forward "SpriteContainer\.\\(\\w+\\)" end t)
      (replace-match
       (save-match-data
@@ -538,6 +612,11 @@ attempt to replace with set sprite async syntax."
    (while (re-search-forward "Container" end t)
      (replace-match "Loader"))))
 
+(defun make-manual-commit ()
+  (interactive)
+  (magit-run-git-async
+   "commit" "-m"
+   "Make manual sprite load refactor"))
 
 (defun try-kill-sprite-loader-name ()
   (interactive)
