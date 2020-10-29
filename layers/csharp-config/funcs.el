@@ -70,24 +70,3 @@
 ;; use `benj/omnisharp-start-near-proj'
 ;; (setq omnisharp-expected-server-version "1.35.2")
 
-;; note, maybe reverting and  setting `jit-lock-antiblink-grace' to nil works
-
-;; Font Lock is smarter about fontifying unterminated strings and comments.
-;; When you type a quote that starts a string, or a comment delimiter
-;; that starts a comment, font-lock will not immediately refontify the
-;; following characters in 'font-lock-string-face' or
-;; 'font-lock-comment-face'. Instead, it will delay the fontification
-;; beyond the current line to give you a chance to close the string or
-;; comment. This is controlled by the new user option
-;; 'jit-lock-antiblink-grace', which specifies the delay in seconds. The
-;; default is 2 seconds; set to nil to get back the old behavior.
-
-;; TEMP HACK
-;; https://github.com/josteink/csharp-mode/issues/151
-(defun csharp-disable-clear-string-fences (orig-fun &rest args)
-  "This turns off `c-clear-string-fences' for `csharp-mode'. When
-on for `csharp-mode' font lock breaks after an interpolated string
-or terminating simple string."
-  (unless (equal major-mode 'csharp-mode)
-    (apply orig-fun args)))
-(advice-add 'c-clear-string-fences :around 'csharp-disable-clear-string-fences)
