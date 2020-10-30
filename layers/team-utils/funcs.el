@@ -932,9 +932,7 @@ return the result of that evalution and stop."
               #',f)))
          (apply
           ,memoized
-          (team/mklist ,@args))))))
-
-
+          ,(when args `(team/mklist ,@args)))))))
 
 
 (provide 'team-utils)
