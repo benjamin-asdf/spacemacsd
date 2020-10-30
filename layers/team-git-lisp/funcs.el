@@ -459,26 +459,33 @@ to use instead
 1: .meta$
 2: .cs$
 3: .asset$"
-  (unless arg (user-error "Arg a string or one of
-0: .prefab$
-1: .meta$
-2: .cs$
-3: .asset$"))
-  (magit-with-toplevel
-    (funcall
-     op
-     (or
-      (--filter
-       (string-match
-        (pcase arg
-          (0 ".prefab$")
-          (1 ".meta$")
-          (2 ".cs$")
-          (3 ".asset$")
-          (_ arg))
-        it)
-       (funcall get-files))
-      (user-error "No files like that anymore")))))
+  (let* ((files (funcall get-files))
+         (file-match (if arg
+                         (pcase arg
+                           (0 ".prefab$")
+                           (1 ".meta$")
+                           (2 ".cs$")
+                           (3 ".asset$")
+                           (_ arg))
+                       (format
+                        ".%s$"
+                        (completing-read
+                         "Extension to act with"
+                         (-uniq
+                          (-map
+                           #'file-name-extension
+                           files)))))))
+    (magit-with-toplevel
+      (funcall
+       op
+       (or
+        (--filter
+         (string-match
+          file-match
+          it)
+         files)
+        (user-error "No files like that anymore"))))))
+
 
 (defmacro team/define-filtered-file-op (name get-files &rest body)
   "Define a function of NAME, use `team/filtered-file-op', wich see.
