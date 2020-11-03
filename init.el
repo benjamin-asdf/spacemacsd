@@ -603,6 +603,8 @@ before packages are loaded."
   (setq org-agenda-files '("/home/benj/org/notes.org"))
   (setq-default page-break-lines-max-width 30)
 
+  (global-visual-line-mode 1)
+
   
 
   (shx-global-mode 1)
