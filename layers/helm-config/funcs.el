@@ -187,20 +187,33 @@ Prefix arg can be:
 
 
 
+(with-eval-after-load
+  'helm-ag
+  (define-key helm-ag-map (kbd "C-c C-o") #'benj-dwim-helm-kill-selection-and-quit)
 
-(defun my/clean-some-helm-buffers ()
-  "Kill buffs that are offending `helm-browse-project-get-buffers' functionality."
-  (interactive)
-  (cl-loop for b in (helm-buffer-list)
-           when (not (with-current-buffer b default-directory))
-           do (kill-buffer (get-buffer b))))
+  (defun benj-dwim-helm-kill-selection-and-quit (arg)
+    "Store display value of current selection to kill ring.
+With a prefix arg use real value of current selection.
+Display value is shown in `helm-buffer' and real value is used to
+perform actions."
+    (interactive "P")
+    (with-helm-alive-p
+     (helm-run-after-exit
+      (lambda (el)
+        (let ((sel
+               (-last-item
+                (split-string el ":"))))
+          (kill-new sel)
+          ;; Return nil to force `helm-mode--keyboard-quit'
+          ;; in `helm-comp-read' otherwise the value "Saved to kill-ring: foo"
+          ;; is used as exit value for `helm-comp-read'.
+          (prog1 nil (message "Saved to kill-ring: %s" sel) (sit-for 1))))
+      (format "%s" (helm-get-selection nil (not arg)))))))
+
 
 
 
 
-
-
-
 
 
 
