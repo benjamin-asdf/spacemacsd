@@ -271,34 +271,43 @@ If AUTO-INSERT is non nil, instantly insert at current buffer position."
 With non nil prefix arg NOCS, skip cs files."
   (interactive)
   (--map
-   (let* ((arg (benj-magit/read-checkout-arg (format "%s is %s \ncheckout:\n" (car it) (cadr it))))
-          (ours (string-equal arg "--ours")))
+   (let ((arg (benj-magit/read-checkout-arg
+                (format "%s is %s \ncheckout:\n" (car it) (cadr it)))))
      (when arg
-       (pcase (cadr it)
-        ("AU"
-         (if ours
-             (benj-checkout-stage arg (car it))
-           ;; added by us, they don't have a version, so rm
-           (benj-run-git-sync "rm" "--" (car it))))
-        ("UA"
-         ;; added by them,
-         ;; actually not sure how you have that, not by deleting on our side, that would be DU.
-         ;; I think it only happens with renames maybe
-         (if ours
-             (benj-run-git-sync "rm" "--" (car it))
-           (benj-checkout-stage arg (car it))))
-        ("DD" (benj-run-git-sync "rm" "--" (car it)))
-        ("DU"
-         (if ours
-             (benj-run-git-sync "rm" "--" (car it))
-           (benj-checkout-stage arg (car it))))
-        ("UD"
-         (if ours
-             (benj-checkout-stage arg (car it))
-           (benj-run-git-sync "rm" "--" (car it))))
-        ("UU"  (benj-checkout-stage arg (car it)))
-        ("AA"  (benj-checkout-stage arg (car it))))))
+       (benj/git-smart-merge-item it arg)))
    (benj-git/unmerged-status (when nocs "*.cs$"))))
+
+(defun benj/git-smart-merge-item (it arg)
+  "IT should be an item as returned by `benj-git/unmerged-status', arg is one of \"--ours\" or \"--theirs\".
+Attempt to do the right thing for checking out the unmerged file."
+  (let ((inhibit-magit-refresh t)
+        (ours (string-equal arg "--ours")))
+    (pcase (cadr it)
+      ("AU"
+       (if ours
+           (magit-checkout-stage (car it) arg)
+         ;; added by us, they don't have a version, so rm
+         (magit-call-git "rm" "--" (car it))))
+      ("UA"
+       ;; added by them,
+       ;; actually not sure how you have that, not by deleting on our side, that would be DU.
+       ;; I think it only happens with renames maybe
+       (if ours
+           (magit-call-git "rm" "--" (car it))
+         (benj-checkout-stage arg (car it))))
+      ("DD" (magit-call-git "rm" "--" (car it)))
+      ("DU"
+       (if ours
+           (magit-call-git "rm" "--" (car it))
+         (benj-checkout-stage arg (car it))))
+      ("UD"
+       (if ours
+           (benj-checkout-stage arg (car it))
+         (magit-call-git "rm" "--" (car it))))
+      ("UU"  (magit-checkout-stage (car it) arg))
+      ("AA"  (magit-checkout-stage (car it) arg)))))
+
+
 
 (defun benj-git/unmerged-status (&optional exclusion-regex)
   "Get unmerged files in the format defined by `benj-git/git-status-files'.
@@ -306,7 +315,9 @@ Ignore file matching EXLUSION-REGEX, it non-nil."
   (let ((unmerged (magit-unmerged-files)))
     (--filter (and  (member (car it) unmerged)
                     (or (null exclusion-regex)
-                        (not (string-match-p exclusion-regex it))))
+                        (not (string-match-p
+                              exclusion-regex
+                              (car it)))))
               (benj-git/git-status-files))))
 
 (defun benj-git/git-status-files ()
@@ -403,13 +414,18 @@ will create a conflict in a file.
 If ARG is nil, try to open an existing merge sample repo, else always create a fresh one."
   (interactive"P")
   (team/with-default-dir
-   (or (and (not arg) (car (process-lines
-                                  "fd"
-                                  "-td"
-                                  "-a"
-                                  "merge-sample"
-                                  "/tmp/")))
-    (let ((default-directory (concat (temporary-file-directory) (make-temp-name "merge-sample"))))
+   (or (and (not arg)
+            (car
+             (process-lines
+              "fd"
+              "-td"
+              "-a"
+              "merge-sample"
+              "/tmp/")))
+       (let ((default-directory
+               (concat
+                (temporary-file-directory)
+                (make-temp-name "merge-sample"))))
       (mkdir default-directory)
       (write-region "" nil "file")
       (shell-command "git init")
@@ -458,7 +474,9 @@ to use instead
 0: .prefab$
 1: .meta$
 2: .cs$
-3: .asset$"
+3: .asset$
+
+If ARG is nil, prompt the user for available extensions intead."
   (let* ((files (funcall get-files))
          (file-match (if arg
                          (pcase arg
@@ -655,14 +673,41 @@ With ARG, default to 'develop'."
       (require 'benj-funcs)
       (cos/write-conflicted-prefabs-to-file))))
 
-(defun team/list-current-unmerged-status ()
+(defun team/git-status-s ()
+  "Put the output of git status -s into the current buffer."
+  (let ((inhibit-read-only t))
+    (erase-buffer)
+    (call-process
+     "git"
+     nil
+     (current-buffer)
+     nil
+     "status"
+     "-s")
+    (re-search-backward "^$")
+    (delete-region
+     (point)
+     (point-max))
+    (->gg)
+    (while (re-search-forward "^\\w  " nil t)
+      (team/delete-this-line))
+    (->gg)
+    ;; (switch-to-buffer (current-buffer))
+        ;; (switch-to-buffer (current-buffer))
+       ;; (while (re-search-forward "\\(^\\w\\w \\)" nil t)
+       ;;   (let ((o (make-overlay
+       ;;             (match-beginning 0)
+       ;;             (match-end 0))))
+       ;;     (overlay-put o 'invisible t)))
+    ))
+
+(defun team/git-status-s-window ()
   (interactive)
-  (magit-with-toplevel
-    (team/show-in-window
-     (--map
-      (list (format "%s %s" (cadr it) (car it)))
-      (benj-git/unmerged-status))
-     "unmerged-status")))
+  (with-current-buffer-window
+      (get-buffer-create "unmerged-status")
+      nil
+      nil
+    (team/git-status-s)))
 
 
 (defun team/checkout-checkout-files-on-region ()

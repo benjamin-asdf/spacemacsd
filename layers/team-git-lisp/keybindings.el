@@ -66,7 +66,7 @@
   "l" #'team/magit-log-merge
   "T" #'team/magit-all-theirs
   "O" #'team/magit-all-ours
-  "s" #'team/list-current-unmerged-status
+  "s" #'team/git-status-s-window
   "c" #'vc-find-conflicted-file
   "y" #'benj-git/yank-first-unmerged-file
   "x" #'team/checkout-checkout-files-on-region
