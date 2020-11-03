@@ -643,7 +643,7 @@ before packages are loaded."
   (defadvice spacemacs/open-file-or-directory-in-external-app (around my/open-file-external-advice (&optional arg) activate)
     (interactive"P")
     (when (yes-or-no-p "Open file or dir externally? ")
-      ad-do-it))
+     ad-do-it))
 
 
   (defadvice spacemacs/prompt-kill-emacs (around my/kill-emacs-adv activate)
