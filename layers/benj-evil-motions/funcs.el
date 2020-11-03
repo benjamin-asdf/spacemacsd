@@ -353,3 +353,28 @@ Store a new book mark named \"last-work\"."
        (forward-line -1))
      (point)))
   (evil-normal-state))
+
+
+
+(defvar my/template-string '())
+(defvar my/make-template-finish-function '())
+(defun my/make-template-string-from-region ()
+  (interactive)
+  (when my/make-template-finish-function
+    (funcall my/make-template-finish-function))
+  (let ((file (team-create-temp-file-on-region)))
+    (setq
+     my/make-template-finish-function
+     #'(lambda ()
+         (unless (equal file (buffer-file-name))
+           (when (yes-or-no-p
+                  (format "You are not viisitng %s anymore, quite template session?"
+                          file))
+             (setq my/make-template-finish-function nil)))
+         (setq
+          my/template-string (buffer-string)
+          my/make-template-finish-function nil)
+         (message
+          "%s is now %s..."
+          (mkstr 'my/template-string)
+          (substring-no-properties my/template-string 15))))))
