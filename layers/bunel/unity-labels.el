@@ -12,10 +12,22 @@
          (forward-line 1))))))
 
 (defun team-unity/add-labels (file-or-meta -labels)
+  (team-unity/modify-labels
+   file-or-meta
+   -labels
+   #'-uniq))
+
+(defun team-unity/remove-labels (file-or-meta -labels)
+  (team-unity/modify-labels
+   file-or-meta
+   -labels
+   #'-difference))
+
+(defun team-unity/modify-labels (file-or-metal -labels op)
   (team/with-file
    (team-unity/file-or-meta file-or-meta)
    (let* ((curr (team-unity/get--labels))
-          (new (-union curr -labels)))
+          (new (funcall op curr -labels)))
      (unless (= (length new) (length curr))
        (team-unity/set--lables new)))))
 
