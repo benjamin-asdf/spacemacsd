@@ -93,7 +93,7 @@
                    (mk-hash-from-list
                     (benj/simple-csharp-enum-values) :test '#'equal))))
              (lambda (that)
-               (cond
+                (cond
                 ((gethash that online-lut) 'online)
                 ((gethash that offline-lut) 'offline)))))))
   (funcall lookup-loaders s))
@@ -119,6 +119,19 @@
 
 
 (defconst sprite-container-dir (concat idlegame-assets-dir "#/Scripts/View/ScriptableObjects/"))
+(defconst sprite-container-object-dir "Assets/Sprites/_SpritesToObject/")
+
+(defun sprite-container-dir-with-loader (loader-name)
+  (team/with-default-dir
+   idlegame-project-root
+   (let ((it
+          (concat
+           sprite-container-object-dir
+           (s-chop-suffix "SpritesLoader" loader-name))))
+     (unless
+         (file-exists-p it)
+       (error "%s does not exist" it))
+     it)))
 
 (defun container-online--p (container)
   (--every?
@@ -154,13 +167,15 @@
      (list container))
     (--mapcat
      (list (concat it "Loader"))
-     (list
-      (team/re-replace-in-string
-       container
-       "Sprites"
-       "sSprites"
-       t)
-      container)))))
+     (list container)
+     ;; (list
+     ;;  (team/re-replace-in-string
+     ;;   container
+     ;;   "Sprites"
+     ;;   "sSprites"
+     ;;   t)
+     ;;  container)
+     ))))
 
 
 
@@ -201,38 +216,39 @@ return the sprite container name."
 Attempt multiple strategies."
   (-some-->
       (or
-       (and
-        (not (or
+       (resolve-sprite-loader-name-with-container-name
+        (or
+         (unless
+             (or
               (string-equal
                "sprites"
                container)
               (string-equal
                "container"
-               container)))
-        (resolve-sprite-loader-name-with-container-name
-         (or
-          (and
-           (string-match "SpriteContainer\\.\\(\\w+\\)" container)
-           (match-string 1 container))
-          ;; if somebody named some variable exactly like
-          ;; the name of a loader, the chance is high this is the correct loader
-          (let ((res))
-            (team/check-file
-             loader-name-file
-             (and
-              (re-search-forward
-               container nil t)
-              (team/re-this-line
-               "\\(\\w+\\)," t)
-              (setq res (match-string 1)))
-             nil)
-            res)
-          (and
-           cos-investigated-file
-           (resolve-sprite-loader-field
-            container
-            cos-investigated-file))
-          container)))
+               container))
+           (or
+            (and
+             (string-match "SpriteContainer\\.\\(\\w+\\)" container)
+             (match-string 1 container))
+            ;; if somebody named some variable exactly like
+            ;; the name of a loader, the chance is high this is the correct loader
+            (let ((res))
+              (team/check-file
+               loader-name-file
+               (and
+                (re-search-forward
+                 container nil t)
+                (team/re-this-line
+                 "\\(\\w+\\)," t)
+                (setq res (match-string 1)))
+               nil)
+              res)))
+         (and
+          cos-investigated-file
+          (resolve-sprite-loader-field
+           container
+           cos-investigated-file))
+         container))
        ;; bail out and mark as manual fix
        "TODO")
     (concat
@@ -281,11 +297,21 @@ for CONTAINER-OF-FILE, or if there are any o"
 
 (defun sprite-loader-loader-asset (loader-name)
   "Evaluate to the LOADER-NAMEs loader asset, if exists."
+  (team/with-default-dir
+   idlegame-project-root
+   (--first-result
+    (-->
+     it
+     (concat
+      it
+      loader-name
+      ".asset")
+     (and
+      (file-exists-p it)
+      it))
+    (list online-loaders-dir offline-loaders-dir))))
 
-
-  )
-
-
+;; (sprite-loader-loader-asset (car ()))
 
 
 
@@ -521,6 +547,7 @@ attempt to replace with set sprite async syntax."
       spriteloaders-skip-files)
      '("#/Sources/Community/Client/Browse/MonoBehaviours/CommunityTabButton.cs"
        "#/Sources/TableGames/Shared/Challenge/MonoBehaviours/TableStakesView.cs"
+       "#/Sources/Facebook/FacebookExtensions.cs"
        "#/Sources/TableGames/Shared/Challenge/MonoBehaviours/ChallengeChairView.cs"
        "#/Sources/TableGames/Shared/Challenge/MonoBehaviours/TableStakesView.cs"
        "#/Sources/CongratsScreen/MonoBehaviours/CongratsBannerView.cs"
@@ -574,7 +601,7 @@ attempt to replace with set sprite async syntax."
    0))
 
 
-(defun cos-loaders-collect-used ()
+(team/def-memoized cos-loaders-used-in-code-base ()
   "Search for the usages of LoaderName and OnlineLoaderName
 in the idlegame assets dir with rg.
 Return a hashtable of used loader names."
@@ -592,7 +619,26 @@ Return a hashtable of used loader names."
        (while
            (re-search-forward "LoaderName\\.\\(\\w+\\)" nil t)
          (puthash (match-string 1) t res))))
+    (remhash "cs" res)
+    (remhash "TODO" res)
     res))
+
+(defun loader-write-needed-loaders-to-file ()
+  "Create files called \"make-loaders-them-online\" and offline in the idlegame asset dir.
+New line terminated dir names of sprite containers that are used but do not have a loader."
+  (team/with-default-dir
+   idlegame-project-root
+   (loop for it being the hash-keys of (cos-loaders-used-in-code-base)
+         do (unless
+             (sprite-loader-loader-asset it)
+           (team/append-line-to-file
+            (sprite-container-dir-with-loader it)
+            (concat
+             "make-loaders-them-"
+             (if
+                 (loader-name--online-loader-p it)
+                 "online"
+               "offline")))))))
 
 
 
@@ -602,13 +648,12 @@ Return a hashtable of used loader names."
    idlegame-assets-dir
    (sprite-loader-replace-syntax-do-it)
    (team/magit-commit-unstaged "Replace sprite loader syntax")
-   (cos/re-replace
-    "LoadSpriteBlocked\\("
-    "LoadSpriteBlocked("
-    "LoadSpriteAsync("
-    spriteloaders-skip-files)
-   (team/magit-commit-unstaged "Replace LoadSpriteBlocked with LoadSpriteAsync")
-   (message "the default dir is now: %s" default-directory)
+   ;; (cos/re-replace
+   ;;  "LoadSpriteBlocked\\("
+   ;;  "LoadSpriteBlocked("
+   ;;  "LoadSpriteAsync("
+   ;;  spriteloaders-skip-files)
+   ;; (team/magit-commit-unstaged "Replace LoadSpriteBlocked with LoadSpriteAsync")
    (cos-investigate-files
     (cos/cs-files-with-matches
      "SpritesContainer")
