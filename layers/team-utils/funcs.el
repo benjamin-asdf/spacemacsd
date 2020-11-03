@@ -117,17 +117,19 @@ if the initial intent is not to change it's contents."
                (insert-file-contents-literally
                 ,file-g)
                (->gg))
-             (when (or (progn ,@body)
-                       team/check-file-dirty)
-               (unless (eq (current-buffer) buff)
-                 (error
-                  "Buffer changed to %s during `team/check-file'"
-                  (current-buffer)))
-               (unless (buffer-live-p
-                        (current-buffer))
-                 (error
-                  "Buffer was no longer alive during `team/check-file'"))
-               (write-region nil nil ,file-g)))))))
+             (let ((res (progn ,@body)))
+               (when (or res
+                         team/check-file-dirty)
+                 (unless (eq (current-buffer) buff)
+                   (error
+                    "Buffer changed to %s during `team/check-file'"
+                    (current-buffer)))
+                 (unless (buffer-live-p
+                          (current-buffer))
+                   (error
+                    "Buffer was no longer alive during `team/check-file'"))
+                 (write-region nil nil ,file-g))
+               res))))))
 
 
 (defmacro team/--with-cs-files (dir &rest forms)
@@ -462,7 +464,13 @@ return the name of the new file."
   (mapconcat 'identity list " "))
 
 (defun team/delete-this-line ()
-  (delete-region (- (point-at-bol) 1) (point-at-eol)))
+  (delete-region
+   (save-excursion
+     (forward-visible-line 0)
+     (point))
+   (save-excursion
+     (forward-visible-line 1)
+     (point))))
 
 ;; (defun test ()
 ;;   (interactive)
@@ -762,6 +770,14 @@ When INDENT is non nil, also indent line."
 
 
 ;;;  files
+
+
+(defun directory-directories (dir)
+  (--mapcat
+   (list (car it))
+   (--filter
+    (eq t (cadr it))
+    (directory-files-and-attributes dir))))
 
 (defun files-with-matches (re)
   "Return a list of files containing RE, use rg."
