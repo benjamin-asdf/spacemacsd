@@ -333,7 +333,7 @@ and expand a snippet for a 'With...(this config)' method."
     (team/in-new-line "using JetBrains.Annotations;")
     (team/while-reg
      "\\(\\[Button.*\\]\\)\\|\\(MenuItem\\)"
-     (insert " [UsedImplicitly]"))))
+     (team/in-new-line " [UsedImplicitly]"))))
 
 
 
