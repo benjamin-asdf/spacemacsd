@@ -603,12 +603,11 @@ before packages are loaded."
   (setq org-agenda-files '("/home/benj/org/notes.org"))
   (setq-default page-break-lines-max-width 30)
 
-  (global-visual-line-mode 1)
-
   
 
-  (shx-global-mode 1)
-
+  (global-visual-line-mode 1)
+  ;; (shx-global-mode 1)
+  (global-evil-mc-mode 1)
   
 
   (spacemacs/set-leader-keys "km" #'spacemacs/macrostep-transient-state/body)
@@ -618,8 +617,8 @@ before packages are loaded."
   ;; `evil-goggles'
   (evil-goggles-mode)
 
-  (global-undo-tree-mode)
-  (evil-set-undo-system 'undo-tree)
+  ;; (global-undo-tree-mode)
+  ;; (evil-set-undo-system 'undo-tree)
 
   (defun my/update-spacemacs ()
     (let ((default-directory "~/.emacs.d"))

@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 
 (defun benj-avy/jump (arg action &optional beg end)
   (setq avy-all-windows t)

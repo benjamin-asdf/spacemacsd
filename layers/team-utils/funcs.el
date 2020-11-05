@@ -836,6 +836,16 @@ return the result of that evalution and stop."
         collect i into res
         finally return res))
 
+(defun team/-expand (list fn)
+  "Append the result of mapping FN over list to LIST."
+  (append
+   (-map fn list)
+   list))
+
+(defmacro team/--expand (form list)
+  "Anaphoric form of `team/-expand'."
+  `(team/-expand-list ,list (lambda (it) ,form)))
+
 
 
 ;; should move stuff that is not really utils
