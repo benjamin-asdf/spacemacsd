@@ -849,5 +849,19 @@ OTHER-REV defaults to HEAD."
   (let ((magit-buffer-log-files nil))
     (call-interactively #'magit-show-commit nil nil)))
 
+
+
+(defun my/git-gutter+-revert-hunks-no-ask ()
+  "See `git-gutter+-revert-hunks'."
+  (interactive)
+  (let* ((diffinfos (git-gutter+-selected-diffinfos))
+         (one-diffinfo-p (= 1 (length diffinfos))))
+    (dolist (diffinfo (nreverse diffinfos))
+      (git-gutter+-do-revert-hunk diffinfo))
+    (save-buffer)
+    (if one-diffinfo-p
+        (--when-let (get-buffer git-gutter+-popup-buffer)
+          (kill-buffer it)))))
+
 
 (provide 'benj-magit)
