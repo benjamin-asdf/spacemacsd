@@ -1,4 +1,9 @@
+;;; funcs.el --- util funcs
 ;; -*- lexical-binding: t; -*-
+
+
+;;; Commentary:
+;;
 
 ;;; Code:
 (defun team-create-temp-file-on-region ()
@@ -963,3 +968,7 @@ return the result of that evalution and stop."
 
 (provide 'team-utils)
 
+
+(provide 'funcs)
+
+;;; funcs.el ends here
