@@ -595,6 +595,7 @@ before packages are loaded."
   (setq-default evil-escape-key-sequence "fq")
   (setq-default spacemacs-show-trailing-whitespace nil)
   (setq-default avy-timeout-seconds 0.25)
+  (setq avy-all-windows t)
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
   (set-face-foreground 'spaceline-python-venv "SeaGreen")
   (setq-default split-width-threshold 80)
@@ -603,14 +604,20 @@ before packages are loaded."
   (setq history-delete-duplicates t)
   (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
   (set-face-foreground 'line-number "slateBlue")
-  (setq org-agenda-files '("/home/benj/org/notes.org"))
+  (setq org-agenda-files
+        '("/home/benj/org/notes.org"
+          "/home/benj/org/jan.org"
+          "/home/benj/org/rico.org"))
   (setq-default page-break-lines-max-width 30)
-
   
 
   (global-visual-line-mode 1)
   ;; (shx-global-mode 1)
   (global-evil-mc-mode 1)
+
+  (add-hook 'dired-mode-hook
+            #'(lambda () (evil-mc-mode -1)))
+
   
 
   (spacemacs/set-leader-keys "km" #'spacemacs/macrostep-transient-state/body)
@@ -645,7 +652,7 @@ before packages are loaded."
   (defadvice spacemacs/open-file-or-directory-in-external-app (around my/open-file-external-advice (&optional arg) activate)
     (interactive"P")
     (when (yes-or-no-p "Open file or dir externally? ")
-     ad-do-it))
+      ad-do-it))
 
 
   (defadvice spacemacs/prompt-kill-emacs (around my/kill-emacs-adv activate)
@@ -709,7 +716,10 @@ before packages are loaded."
 
   
 
-  (add-to-load-path "HOME/.spacemacs.d/lisp/")
+  (add-to-load-path "~/.spacemacs.d/lisp/")
+
+  (with-eval-after-load
+      'org-capture (require 'config-org-capture))
 
 
   )
