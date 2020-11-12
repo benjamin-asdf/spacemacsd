@@ -360,8 +360,8 @@ with it anaphorically bound to a list of ARGS."
        (apply
         (function start-process)
         `(,name ,(current-buffer)
-                ,program ,@(-flatten args)))
-       )
+                ,program
+                ,@(-flatten args))))
      (lambda
        (p e)
        (when

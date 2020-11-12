@@ -30,11 +30,17 @@
     (setq sharpel-process (benj-start-proccess-flatten-args "sharpel" sharpel-buff-name "dotnet" "run" args))
     (switch-to-buffer-other-window sharpel-buff-name)))
 
-(defun sharpel-build (config)
-  "Compile the sharpel project. CONFIG is either 'Release' or 'Debug' "
+(defun sharpel-build (&optional config)
+  "Compile the sharpel project. CONFIG is deprecated."
   (interactive)
+  (ignore config)
   (sharpel-clean-proc)
-  (benj-msbuild-sln sharpel-sln-path config))
+  (team/with-default-dir
+   sharpel-repo-root
+   (start-process-shell-command
+    "build-sharpel"
+    (get-buffer-create "*build-sharpel*")
+    "./publish")))
 
 
 (defun sharpel-clean-proc ()

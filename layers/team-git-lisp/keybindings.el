@@ -57,7 +57,9 @@
 (team/spacemacs-declare-keys "ogh" "hunk"
   "r" #'git-gutter+-revert-hunks
   "s" #'git-gutter+-show-hunk
-  "S" #'git-gutter+-show-hunk-inline-at-point)
+  "S" #'git-gutter+-show-hunk-inline-at-point
+  "x" #'my/git-gutter+-revert-hunks-no-ask
+  )
 
 (team/spacemacs-declare-keys "ogu" "merging"
   "f" #'team/list-current-unmerged-files

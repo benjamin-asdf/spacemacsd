@@ -528,9 +528,9 @@ Abort current if ARG is non nil"
   (interactive"f")
   (team/with-default-dir
    "/home/benj/idlegame/RoslynTools/AdjConstRewriter/cli-bin/"
-   (team/proc-window
+   (team/start-proc
     "const-rewriter"
-    "*const-rewriter*"
+    (get-buffer-create "*const-rewriter*")
     "dotnet"
     "RewriterCli.dll"
     file)))

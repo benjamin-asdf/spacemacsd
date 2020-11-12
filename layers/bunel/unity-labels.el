@@ -15,19 +15,19 @@
   (team-unity/modify-labels
    file-or-meta
    -labels
-   #'-uniq))
+   (lambda (curr) (-uniq (append curr -labels)))))
 
 (defun team-unity/remove-labels (file-or-meta -labels)
   (team-unity/modify-labels
    file-or-meta
    -labels
-   #'-difference))
+   (lambda (curr) (-difference curr -labels))))
 
-(defun team-unity/modify-labels (file-or-metal -labels op)
+(defun team-unity/modify-labels (file-or-meta -labels op)
   (team/with-file
    (team-unity/file-or-meta file-or-meta)
    (let* ((curr (team-unity/get--labels))
-          (new (funcall op curr -labels)))
+          (new (funcall op curr)))
      (unless (= (length new) (length curr))
        (team-unity/set--lables new)))))
 
