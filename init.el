@@ -35,96 +35,99 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layers
    '(
      version-control
-    gtags
-    (auto-completion  :variables
-                      auto-completion-enable-help-tooltip 'manual)
-    better-defaults
-    git
-    multiple-cursors
-    treemacs
-    (shell :variables
-          shell-default-height 30
-          shell-default-position 'bottom)
-    (spell-checking :variables spell-checking-enable-by-default nil)
-    syntax-checking
-    (org :variables
-        ;; org-enable-trello-support t
-        )
-    (helm :variables
-          spacemacs-helm-rg-max-column-number 1024
+     gtags
+     (auto-completion  :variables
+                       auto-completion-enable-help-tooltip 'manual)
+     better-defaults
+     git
+     multiple-cursors
+     treemacs
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom)
+     (spell-checking :variables spell-checking-enable-by-default nil)
+     syntax-checking
+     (org :variables
+          ;; org-enable-trello-support t
           )
+     (helm :variables
+           spacemacs-helm-rg-max-column-number 1024
+           )
 
-    ;; Langs
-    emacs-lisp
-    common-lisp
-    ;; semantic
-    csharp
-    (python :variables python-backend 'anaconda)
-    windows-scripts
-    javascript
-    ;; ruby
-    shell-scripts
-    systemd
-    html
-    markdown
-    yaml
-    ;; typescript
-    ;; nim
-    c-c++
-    vimscript
-    go
-    perl5
-    ;; clojure
-    ;; lua
+     ;; Langs
+     emacs-lisp
+     common-lisp
+     ;; semantic
+     csharp
+     (python :variables python-backend 'anaconda)
+     windows-scripts
+     javascript
+     ;; ruby
+     shell-scripts
+     systemd
+     html
+     markdown
+     yaml
+     ;; typescript
+     ;; nim
+     c-c++
+     vimscript
+     go
+     perl5
+     ;; clojure
+     ;; lua
 
-    ;; features
-    slack
-    pass
-    ;; media
-    ;; github
+     ;; features
+     slack
+     pass
+     ;; media
+     ;; github
 
-    ;; benj
-    team-utils
-    idlegame-special-config
-    benj-funcs
-    benj-themes-config
-    benj-tags
-    substitute-utils
-    csharp-config
-    benj-csharp
-    csharp-scratches
-    my-config-spellcheck
-    redshiftel
-    ;; sailor
-    best-banners
-    bunel
-    minder
-    parens-config
-    benj-pomodoro
-    benj-roslyn
-    team-projectile
-    team-git-lisp
-    teamel
-    surfel
-    benj-trello
-    helm-config
-    sharpel
-    ;benj-slack
-    benj-backups
-    benj-phone
-    benj-term
-    benj-csharp-perf-hacks
-    benj-ediff
-    benj-evil-motions
+     ;; benj
+     team-utils
+     idlegame-special-config
+     benj-funcs
+     benj-themes-config
+     benj-tags
+     substitute-utils
+     csharp-config
+     benj-csharp
+     csharp-scratches
+     my-config-spellcheck
+     redshiftel
+     ;; sailor
+     best-banners
+     bunel
+     minder
+     parens-config
+     benj-pomodoro
+     benj-roslyn
+     team-projectile
+     team-git-lisp
+     teamel
+     surfel
+     benj-trello
+     helm-config
+     sharpel
+                                        ;benj-slack
+     benj-backups
+     benj-phone
+     benj-term
+     benj-csharp-perf-hacks
+     benj-ediff
+     benj-evil-motions
 
-    team-csharp
-    team-snippets
-    sxhkd-mode
-    my-structural-csharp
-    redshank
-    system-utils
+     team-csharp
+     team-snippets
+     sxhkd-mode
+     my-structural-csharp
+     redshank
+     system-utils
 
-    lispy
+     lispy
+
+     lispyville-csharp
+     benj-helpful
 
      )
 
