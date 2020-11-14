@@ -33,7 +33,7 @@ add to the paramer list of the enclosing function."
         (insert (prog1 (match-string-no-properties 1) (erase-buffer))))
       (buffer-string))
     (save-excursion
-      (csharp-move-back-to-beginning-of-defun)
+      (c-beginning-of-defun)
       (team/^$-replace
        "(\\(.*\\))"
        (let ((part (match-string 1)))
