@@ -505,10 +505,7 @@ see `omnisharp-unit-test-buffer'."
 (defconst bunel/test-buff-name "*unity-tests*")
 (defvar-local bunel/test-out-file '())
 (defun bunel/unity-unit-test2 (method-names)
-  (setq bunel/unity-tests-last
-        (--mapcat
-         (last (split-string it "\\."))
-         method-names))
+  (setq bunel/unity-tests-last method-names)
   (let ((out-file (make-temp-file "unity-test-out")))
     (with-current-buffer
         (get-buffer-create bunel/test-buff-name)
