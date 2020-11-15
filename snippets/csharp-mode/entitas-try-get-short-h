@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-try-get-short-h
+#key : tgh
+#contributor : benj
+# --
+TryGet<`(team-electric/helm-comp-echo)`>(out var $0)

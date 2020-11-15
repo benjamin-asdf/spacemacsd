@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-try-get-short
+#key : tg
+#contributor : benj
+# --
+TryGet<$1>(out var $0)

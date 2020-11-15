@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-try-get-short-m
+#key : tgm
+#contributor : benj
+# --
+TryGet<`(team-electric/comp-name)`>(out var $1)
