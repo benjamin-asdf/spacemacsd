@@ -622,6 +622,17 @@ before packages are loaded."
 
   (spacemacs/set-leader-keys "km" #'spacemacs/macrostep-transient-state/body)
 
+  (dolist (mode '(emacs-lisp-mode lisp-interaction-mode))
+    (spacemacs/declare-prefix-for-mode
+      mode
+      "ep"
+      "pritty")
+    (spacemacs/set-leader-keys-for-major-mode
+      mode
+      "epe" #'pp-eval-last-sexp
+      "eps" #'pp-eval-expression))
+
+
   
 
   ;; `evil-goggles'
