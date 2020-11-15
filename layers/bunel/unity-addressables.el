@@ -1,12 +1,15 @@
+(defconst team-unity/load-group-file "Assets/AddressableAssetsData/AssetGroups/Default Local Group.asset")
+
 (defun team-unity/true-file-base (file)
   (string-trim-right (file-name-base file) ".prefab"))
+
 
 (defun fix-load-group (file)
   "Add FILE's guid to the load groups, or fix existing entry."
   (interactive"f")
   (cos/with-idlegame-proj-root
    (team/with-file
-    "Assets/AddressableAssetsData/AssetGroups/Default Local Group.asset"
+    team-unity/load-group-=file
     (if (re-search-forward (team-unity/true-file-base file) nil t)
         (progn
           (forward-line -1)
@@ -26,6 +29,23 @@
 "
                       (team-unity/file-guid file)
                       (team-unity/true-file-base file)))))))
+
+
+
+
+
+(defun team-unity/address-from-guid (guid)
+  "Check load group file and return the sting address of GUID,
+if successfull, nil otherwise."
+  (team/check-file
+   team-unity/load-group-file
+   (re-search-forward
+    (format "  - m_GUID: %s$" guid))
+   (forward-line 1)
+   (skip-chars-forward "^:")
+   (forward-char 2)
+   (buffer-substring (point) (point-at-eol))))
+
 
 
 

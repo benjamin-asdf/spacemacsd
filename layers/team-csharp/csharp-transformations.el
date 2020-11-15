@@ -66,6 +66,28 @@ add to the paramer list of the enclosing function."
      (forward-char -1)
      (point))))
 
+
+(defun team-csharp/wrap-if (&optional cond-part)
+  (interactive)
+  (forward-line 0)
+  (kill-line 1)
+  (insert
+   (format
+    "if (%s) {
+%s}
+"
+    (or cond-part "")
+    (teamel/last-yank)))
+  (indent-region-line-by-line
+   (save-excursion (forward-line -3) (point))
+   (point))
+  (unless
+      cond-part
+    (re-search-backward
+     "if ()")
+    (forward-char 4)
+    (evil-insert-state)))
+
 
 
 (provide 'csharp-transformations)

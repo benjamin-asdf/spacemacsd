@@ -687,7 +687,7 @@ MATCH: The match data group to collect."
 (defun team/collect-reg (file reg match)
   "Collect all REG matcher in FILE.
 MATCH: The match data group to collect."
-  (team/with-file
+  (team/check-file
    file
    (team/collect--reg reg match)))
 
@@ -932,7 +932,7 @@ return the result of that evalution and stop."
 
 (defun team/memoize-simple (fn)
   (let ((cache (make-hash-table :test #'equal)))
-    #'(lambda (&rest args)
+    (lambda (&rest args)
         (let ((val (gethash args cache 'default)))
           (if (not (eq val 'default))
               val
