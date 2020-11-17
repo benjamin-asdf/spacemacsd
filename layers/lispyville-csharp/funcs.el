@@ -27,7 +27,12 @@
       (when
           (looking-at ")$")
         (forward-char 1)
-        (insert ";")))))
+        (insert ";"))
+      (goto-char (point-at-eol))
+      (when
+          (eq (char-before) ?{)
+        (forward-char -1)
+        (insert " ")))))
 
 (defadvice lispyville-forward-sexp
     (around my/lispyville-forward-sexp-adv last (&optional count) acti)
