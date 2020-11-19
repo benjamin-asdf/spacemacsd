@@ -1,16 +1,55 @@
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (defun team-csharp/enum-values ()
   "Catch enum values around point.
 This evaluates to a list of lists. Each element is of the form
 (NAME NUM). NUM is optional if there is a \" = digit\" part in the definition of the enum."
-  (team-helm/hs-block)
-  (let ((res '()))
-    (team/while-reg
-     "\\(?:^.*//.*$\\)\\|\\([[:blank:]]\\(\\w+\\)\\(?: = \\([[:digit:]]+\\)\\)?\\)"
-     (when (match-string-no-properties 2)
-       (push (list (match-string-no-properties 2)
-                   (match-string-no-properties 3))
-             res)))
+  (unless
+      (progn
+        (goto-char (point-at-bol))
+        (looking-at ".*enum.*{"))
+    (error "Not on an enum"))
+  (forward-line 1)
+  (let ((res '())
+        (last-elm-pos))
+    (while
+        (re-search-forward
+         "\\(?:^.*//.*$\\)\\|\\([[:blank:]]\\(\\w+\\)\\(?: = \\([[:digit:]]+\\)\\)?\\)"
+         (save-excursion
+           (skip-chars-forward
+            "^}")
+           (point))
+         t)
+      (when (match-string-no-properties 2)
+        (setq last-elm-pos (point))
+        (push (list (match-string-no-properties 2)
+                    (match-string-no-properties 3))
+              res)))
+    (goto-char last-elm-pos)
     (nreverse res)))
 
 
@@ -21,16 +60,15 @@ This evaluates to a list of lists. Each element is of the form
 also add a number, which is either the +1 the last of such numbers, or +1 the count of enum elements."
   (team/a-when
    (team-csharp/enum-values)
-   (team/skip-until "}")
-   (forward-line -2)
    (team/in-new-line
     (format "%s%s," name
-            (or (and num-syntax
-                     (format " = %d"
-                             (+ 1
-                                (string-to-number
-                                 (or (cadar (last it))
-                                     (length it)))))) "")))))
+            (if num-syntax
+                (format " = %d"
+                        (+ 1
+                           (or (string-to-number
+                                (cadar (last it)))
+                               (length it))))
+              "")))))
 
 
 

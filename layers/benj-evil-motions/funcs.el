@@ -108,6 +108,23 @@ Start either at 0 or prefix ARG, if given."
               (if (= it 0) (length evil-mc-cursor-list) (- it 1))))))))))
 
 
+(defun my/evil-mc-on-arglist ()
+  "Go into insert state and make a cursor on the end of the arglist of func at point."
+  (interactive)
+  (evil-mc-run-cursors-before)
+  (evil-mc-make-cursor-at-pos
+   (save-excursion
+     (beginning-of-defun)
+     (skip-chars-forward "^)")
+     (point)))
+  (evil-insert-state))
+
+
+(defadvice evil-force-normal-state (before my/evil-normal-state-maybe-delete-mc-cursors activ)
+  (when (and
+         evil-mc-cursor-state
+         (eq evil-state 'normal))
+    (evil-mc-undo-all-cursors)))
 
 
 

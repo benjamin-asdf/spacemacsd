@@ -337,9 +337,14 @@ List for menus, overlays, windows to open."
                              "\\1"))
 
 (defun team-unity/file-or-meta (file)
-  (if (string-equal (file-name-extension file) "meta")
-      file
-    (concat file ".meta")))
+  (-->
+      (if (string-equal (file-name-extension file) "meta")
+          file
+        (concat file ".meta"))
+    (if
+        (file-exists-p it)
+        it
+      (error (concat "Cannot get meta, file doesn't exist " it)))))
 
 (defun benj-all-guids-at-path (dir)
   "All unity guids of metas in DIR"

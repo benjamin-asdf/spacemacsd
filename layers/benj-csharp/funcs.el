@@ -56,7 +56,7 @@ bin/
   "Do completing red for near projects, see `benj-dotnet--read-near-proj'.
 Use `dired-file-name-at-point' as default value.
 If PROJECTS is nil initialize new projects using `benj-near-proj-and-slns'"
-  (let ((def (file-name-nondirectory (dired-file-name-at-point))))
+  (let ((def (file-name-nondirectory (or (dired-file-name-at-point) (buffer-file-name)))))
     (benj-dotnet--read-near-proj "Project or sln: "
                                  (or (and projects (-union projects benj-chsarp-working-projects)) benj-chsarp-working-projects) (and (benj-dotnet-proj-or-sln-p def) def))))
 

@@ -9,7 +9,7 @@
   (interactive"f")
   (cos/with-idlegame-proj-root
    (team/with-file
-    team-unity/load-group-=file
+    team-unity/load-group-file
     (if (re-search-forward (team-unity/true-file-base file) nil t)
         (progn
           (forward-line -1)

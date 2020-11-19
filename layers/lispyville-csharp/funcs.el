@@ -24,10 +24,18 @@
   (when
       (eq major-mode 'csharp-mode)
     (save-excursion
-      (when
-          (looking-at ")$")
-        (forward-char 1)
-        (insert ";"))
+      (if
+          (and
+           (looking-at ")$")
+           (not
+            (save-excursion
+              (c-forward-token-1)
+              (-->
+               (char-after)
+               (or (eq it ?.) (eq it ?{))))))
+          (progn
+            (forward-char 1)
+            (insert ";")))
       (goto-char (point-at-eol))
       (when
           (eq (char-before) ?{)
