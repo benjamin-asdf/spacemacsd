@@ -610,27 +610,33 @@ see `omnisharp-unit-test-buffer'."
   (cos/prefab-integrity-check
    (team/file-lines "/tmp/conflicted-prefabs")))
 
-(defun cos/prefab-integrity-check (&rest files)
-  "Run checker with FILES."
-  (interactive)
-    (team/with-default-dir
-  cos-dir
-  (with-current-buffer
-      (get-buffer-create "*prefab-check*")
-    (let ((inhibit-read-only t))
-      (erase-buffer))
-    (team/proc-with-cb
-    (apply
-     #'start-process
-     `("prefab-check-dotnet"
-       ,(current-buffer)
-       "dotnet"
-       "/home/benj/repos/csharp/prefab-checker/bin/Debug/netcoreapp3.1/publish/prefab-checker.dll"
-       ,@(-flatten files)))
-    t
-    (pop-to-buffer
-     (current-buffer))
-    (->gg)))))
+
+
+(defvar cos/prefab-checker-path "/home/benj/repos/csharp/prefab-checker/bin/Debug/netcoreapp3.1/publish/prefab-checker.dll")
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (defun cos/prefab-integrity-check (&rest files)
+      "Run checker with FILES."
+      (interactive)
+      (team/with-default-dir
+       cos-dir
+       (with-current-buffer
+           (get-buffer-create "*prefab-check*")
+         (let ((inhibit-read-only t))
+           (erase-buffer))
+         (team/proc-with-cb
+          (apply
+           #'start-process
+           `("prefab-check-dotnet"
+             ,(current-buffer)
+             "dotnet"
+             cos/prefab-checker-path
+             ,@(-flatten files)))
+          t
+          (pop-to-buffer
+           (current-buffer))
+          (->gg)))))))
 
 (defun cos/do-prefab-integrity-check (&optional file)
   "Run merge checker on a single FILE."
