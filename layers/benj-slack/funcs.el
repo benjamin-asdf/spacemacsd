@@ -40,7 +40,8 @@
 (defun benj-slack-upload-latest-screenshot ()
   "Upload the latest file in pictures dir."
   (interactive)
-  (benj-slack-updload (benj-latest-screenshot) "png"))
+  (benj-slack-updload (or (benj-latest-screenshot)
+                          (user-error "Nothing inside pictures directory.")) "png"))
 
 (defun benj-slack-upload-latest-vid ()
   "Upload the latest file in vid dir."
