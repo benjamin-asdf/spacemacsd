@@ -629,7 +629,7 @@ see `omnisharp-unit-test-buffer'."
        `("prefab-check-dotnet"
          ,(current-buffer)
          "dotnet"
-         cos/prefab-checker-path
+         ,cos/prefab-checker-path
          ,@(-flatten files)))
       t
       (pop-to-buffer
