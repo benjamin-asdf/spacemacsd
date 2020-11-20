@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : backticked
+#key : yy
+#contributor : benj
+# --
+\``(teamel/last-yank)`\`
