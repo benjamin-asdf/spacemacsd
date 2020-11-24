@@ -111,4 +111,21 @@ FILE should be the thing inside a directory that has unity labels."
       'online
     'offline))
 
+(defun team-unity/all-online-content (dir)
+  "Return non nil if all assets in DIR are online content."
+  (-all-p
+   #'team-unity/online-content-p
+   (directory-files
+    dir
+    t
+    ".meta$")))
+
+(defun team-unity/online-content-p (file-or-meta)
+  "Return non nil if FILE-OR-META is online content"
+  (team/check-file
+   (team-unity/file-or-meta file-or-meta)
+   (re-search-forward
+    "OnlineContent" nil t)))
+
+
 (provide 'unity-labels)
