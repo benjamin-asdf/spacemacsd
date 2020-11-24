@@ -1,21 +1,4 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+;(require 'c-moves.el)
 
 
 (spacemacs/declare-prefix-for-mode 'csharp-mode "o" "own")
@@ -31,8 +14,9 @@
 
 
 
-(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "og" #'csharp-move-back-to-beginning-of-class)
-(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oG" #'csharp-move-fwd-to-end-of-class)
+(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "og" #'my/c-beginning-of-class)
+
+(spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oG" #'my/c-end-of-class)
 
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "of" #'csharp-move-back-to-beginning-of-defun)
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oF" #'csharp-move-fwd-to-end-of-defun)
