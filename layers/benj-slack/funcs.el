@@ -91,7 +91,9 @@
                               )
 
         (alert body :icon slack-alert-icon :title title :category 'slack)
-        (benj/play-idlegame-sound)))
+        ;; sounds are annoying when I play
+        (benj/play-idlegame-sound)
+        ))
 
 
   ;; TODO
@@ -165,4 +167,4 @@
    "benj-slack-notifiy-sound"
    "*slack-notify-sound*"
    "aplay"
-   (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))))
+   (rand-element (split-string (shell-command-to-string (format "fd -I -e wav rock %s" idlegame-project-root))))))
