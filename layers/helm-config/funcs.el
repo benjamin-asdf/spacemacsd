@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 
 ;; rg
 (setq-default helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
@@ -188,32 +189,62 @@ Prefix arg can be:
 
 
 (with-eval-after-load
-  'helm-ag
-  (define-key helm-ag-map (kbd "C-c C-o") #'benj-dwim-helm-kill-selection-and-quit)
+    'helm-ag
+  (define-key helm-ag-map (kbd "C-c C-o") #'benj/helm-ag-dwim-kill-selection)
 
-  (defun benj-dwim-helm-kill-selection-and-quit (arg)
-    "Store display value of current selection to kill ring.
+  (defun benj/helm-ag-dwim-kill-selection (arg)
+    (interactive "P")
+    (benj/helm-make-kill-selection-and-quit
+     (lambda (el) (-last-item
+                     (split-string el ":")))
+     arg)))
+
+(with-eval-after-load
+    'helm-swoop
+  (define-key helm-swoop-map (kbd "C-c C-o") #'benj/helm-swoop-kill-line-and-quit)
+
+  (defun benj/helm-swoop-kill-line-and-quit (arg)
+    (interactive "P")
+    (benj/helm-make-kill-selection-and-quit
+     (lambda (el)
+       (with-temp-buffer
+         (insert el)
+         (->gg)
+         (forward-word 1)
+         (buffer-substring (point) (point-max))))
+     arg)))
+
+(defun benj/helm-make-kill-selection-and-quit (op &optional arg)
+  "Store display value of current selection to kill ring.
 With a prefix arg use real value of current selection.
 Display value is shown in `helm-buffer' and real value is used to
-perform actions."
-    (interactive "P")
-    (with-helm-alive-p
-     (helm-run-after-exit
-      (lambda (el)
-        (let ((sel
-               (-last-item
-                (split-string el ":"))))
-          (kill-new sel)
-          ;; Return nil to force `helm-mode--keyboard-quit'
-          ;; in `helm-comp-read' otherwise the value "Saved to kill-ring: foo"
-          ;; is used as exit value for `helm-comp-read'.
-          (prog1 nil (message "Saved to kill-ring: %s" sel) (sit-for 1))))
-      (format "%s" (helm-get-selection nil (not arg)))))))
-
-
-
+perform actions.
+Transform selection with OP, which should be a function with a 1 arg, a string and
+returning a string."
+  (require 'helm)
+  (with-helm-alive-p
+    (helm-run-after-exit
+     (lambda (el)
+       (let ((sel
+              (funcall op el)))
+         (kill-new sel)
+         ;; Return nil to force `helm-mode--keyboard-quit'
+         ;; in `helm-comp-read' otherwise the value "Saved to kill-ring: foo"
+         ;; is used as exit value for `helm-comp-read'.
+         (prog1 nil (message "Saved to kill-ring: %s" sel) (sit-for 1))))
+     (format "%s" (helm-get-selection nil (not arg))))))
 
 
+
+
+(with-eval-after-load
+    'helm-projectile
+    (defun helm-projectile-switch-to-eshell (dir)
+      (interactive)
+      (let* ((projectile-require-project-root nil)
+             (helm-ff-default-directory (file-name-directory (projectile-expand-root dir))))
+        ;;  they fucked up, helm-ff-switch-to-eshell doesn't exist
+        (helm-ff-switch-to-shell dir))))
 
 
 
