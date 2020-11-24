@@ -3,4 +3,4 @@
 #key : cssh
 #contributor : benj
 # --
-c.state.`(team-electric/resolve-cached-comp-set-part)`
+c.state.Set<`(team-electric/helm-comp-echo)`>(true);
