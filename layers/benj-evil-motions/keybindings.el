@@ -57,12 +57,15 @@
 
   )
 
+(spacemacs/set-leader-keys
+  "nj"
+  #'my/narrow-to-evil-pair)
 
 (team/spacemacs-declare-keys
-     "of"
-     "files"
-   "C" #'my/jump-last-bookmark
-   "c" #'my/jump-last-bookmark-this-slot
-   )
+    "of"
+    "files"
+  "C" #'my/jump-last-bookmark
+  "c" #'my/jump-last-bookmark-this-slot
+  )
 
 (spacemacs/set-leader-keys "cs" #'my/comment-or-uncomment-sexpr)
