@@ -6,8 +6,6 @@ KEY, NAME: see `org-capture-templates'."
          "* TODO %? :newitem:\n %i\n %a"))
 
 
-
-
 (defun benj/org-remove-tag-in-buff (&optional tag)
   (interactive)
   (let*  ((current-tags
@@ -28,6 +26,19 @@ KEY, NAME: see `org-capture-templates'."
            (concat ":?" tag ":?") nil t)
         (replace-match "")))))
 
+(defun benj/finish-org-file-day ()
+  "Remove all new items and add a ^L at the bottom of current buffer."
+  (interactive)
+  (benj/org-remove-tag-in-buff "newitem")
+  (save-excursion
+    (goto-char (point-max))
+    (open-line 1)
+    (forward-line 1)
+    (insert-char 12)
+    (open-line 1)))
+
+
+
 (setq
  org-capture-templates
  (list
@@ -46,6 +57,11 @@ KEY, NAME: see `org-capture-templates'."
   'org-mode
   "otr"
   #'benj/org-remove-tag-in-buff)
+
+(spacemacs/set-leader-keys-for-major-mode
+  'org-mode
+  "ol"
+  #'benj/finish-org-file-day)
 
 
 
