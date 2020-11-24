@@ -1,5 +1,4 @@
-;;; funcs.el --- util funcs
-;; -*- lexical-binding: t; -*-
+;;; funcs.el --- util funcs  -*- lexical-binding: t; -*-
 
 
 ;;; Commentary:
