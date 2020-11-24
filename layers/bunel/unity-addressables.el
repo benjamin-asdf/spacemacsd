@@ -31,9 +31,6 @@
                       (team-unity/true-file-base file)))))))
 
 
-
-
-
 (defun team-unity/address-from-guid (guid)
   "Check load group file and return the sting address of GUID,
 if successfull, nil otherwise."
@@ -45,7 +42,6 @@ if successfull, nil otherwise."
    (skip-chars-forward "^:")
    (forward-char 2)
    (buffer-substring (point) (point-at-eol))))
-
 
 
 
