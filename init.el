@@ -128,6 +128,7 @@ This function should only modify configuration layer settings."
 
      lispyville-csharp
      benj-helpful
+     benj-discover
 
      )
 

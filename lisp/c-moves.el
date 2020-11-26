@@ -21,5 +21,4 @@ If unsucessful, move to point min and return nil."
 
 
 
-
 (provide 'c-moves)

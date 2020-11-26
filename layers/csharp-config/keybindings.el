@@ -15,10 +15,10 @@
 
 
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "og"
-  #'(lambda () (require 'c-moves) #'my/c-beginning-of-class))
+  #'(lambda () (interactive) (require 'c-moves) #'my/c-beginning-of-class))
 
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oG"
-  #'(lambda () (require 'c-moves) #'my/c-end-of-class))
+  #'(lambda () (interactive) (require 'c-moves) #'my/c-end-of-class))
 
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "of" #'csharp-move-back-to-beginning-of-defun)
 (spacemacs/set-leader-keys-for-major-mode 'csharp-mode "oF" #'csharp-move-fwd-to-end-of-defun)
