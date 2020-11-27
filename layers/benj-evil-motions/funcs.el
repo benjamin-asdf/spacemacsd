@@ -403,8 +403,8 @@ Store a new book mark named \"last-work\"."
 (defun my/narrow-to-evil-pair ()
   "Narrow the current buffer to what is within the evil pair."
   (interactive)
-  (narrow-to-rgion
-   (- (point) 1)
+  (narrow-to-region
+   (point)
    (save-excursion
      (evil-jump-item)
      (point))))
