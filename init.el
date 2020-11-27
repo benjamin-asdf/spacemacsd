@@ -619,6 +619,9 @@ before packages are loaded."
   (add-hook 'dired-mode-hook
             #'(lambda () (evil-mc-mode -1)))
 
+  (add-hook 'git-commit-mode-hook
+            #'(lambda () (visual-line-mode -1)))
+
   
 
   (spacemacs/set-leader-keys "km" #'spacemacs/macrostep-transient-state/body)
