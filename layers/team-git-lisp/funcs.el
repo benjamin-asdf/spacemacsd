@@ -60,18 +60,19 @@ If you want to eval multiple forms for side effects. Put some progn that also se
 
 
 
-(defun team/magit-is-ancestor ()
+(defun team/magit-is-ancestor (&optional a b)
   "Use magit to read 2 revs, print message if A is ancestor of B."
-  (interactive)
-  (let ((a (magit-read-branch-or-commit "Ancestor"))
-         (b (magit-read-branch-or-commit "Descendant")))
-    (message
-     "%s is %sancestor of %s"
-     a
-     (if (magit-rev-ancestor-p a b)
-         ""
-       "not ")
-     b)))
+  (interactive
+   (list
+    (magit-read-branch-or-commit "Ancestor")
+    (magit-read-branch-or-commit "Descendant")))
+  (message
+   "%s is %sancestor of %s"
+   a
+   (if (magit-rev-ancestor-p a b)
+       ""
+     "not ")
+   b))
 
 (defun team/magit-common-ancestor ()
   (interactive)
