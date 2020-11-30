@@ -90,4 +90,45 @@ add to the paramer list of the enclosing function."
 
 
 
+(defun team-csharp/turn-conditional-to-log ()
+  "Assume region string in a csharp conditional, copy log string as kill."
+  (interactive)
+  (kill-new
+   (let ((s (region-str)))
+     (with-temp-buffer
+       (insert s)
+       (->gg)
+       (while
+           (re-search-forward
+            (regexp-opt
+             (list
+              "return"
+              ";"))
+            nil
+            t)
+         (replace-match ""))
+       (let ((elms
+              (-map
+               #'s-trim
+               (s-split
+                (regexp-opt
+                 (list
+                  "&&"
+                  "||"))
+                (buffer-string)))))
+         (erase-buffer)
+         (insert
+          "Debug.Log($\"")
+         (--each elms
+           (insert
+            it)
+           (insert " : ")
+           (insert "{")
+           (insert it)
+           (insert "}")
+           (insert ",\\n"))
+         (insert "\");"))
+       (buffer-string)))))
+
+
 (provide 'csharp-transformations)
