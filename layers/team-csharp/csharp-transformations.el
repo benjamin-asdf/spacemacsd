@@ -98,6 +98,9 @@ add to the paramer list of the enclosing function."
      (with-temp-buffer
        (insert s)
        (->gg)
+       (when (re-search-forward
+              "if.+?(\\(.*\\))" nil t)
+         (replace-match "\\1"))
        (while
            (re-search-forward
             (regexp-opt
