@@ -83,12 +83,12 @@
 
         ;; the only reason this exists is because I didnt' check `alert' enough to understand how to make it throw more
         ;; in you face notifications
-        (notifications-notify :body body
-                              ;; :icon slack-alert-icon
-                              :title title
-                              ;; :sound-file (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))
-                              ;; :urgency 'critical
-                              )
+        ;; (notifications-notify :body body
+        ;;                       ;; :icon slack-alert-icon
+        ;;                       :title title
+        ;;                       ;; :sound-file (rand-element (split-string (shell-command-to-string (format "fd -I -e wav . %s" idlegame-project-root))))
+        ;;                       ;; :urgency 'critical
+        ;;                       )
 
         (alert body :icon slack-alert-icon :title title :category 'slack)
         ;; sounds are annoying when I play
@@ -167,4 +167,5 @@
    "benj-slack-notifiy-sound"
    "*slack-notify-sound*"
    "aplay"
-   (rand-element (split-string (shell-command-to-string (format "fd -I -e wav rock %s" idlegame-project-root))))))
+   ;; (rand-element (split-string (shell-command-to-string (format "fd -I -e wav rock %s" idlegame-project-root))))
+   ))
