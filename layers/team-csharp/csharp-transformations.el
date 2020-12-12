@@ -1,4 +1,5 @@
 
+(require 'team-utils)
 
 (defun team/chsarp-params-transform ()
   "Dwim transform buffer contents into chsarp parameter syntax."
@@ -97,10 +98,17 @@ add to the paramer list of the enclosing function."
    (let ((s (region-str)))
      (with-temp-buffer
        (insert s)
+       (while
+           (re-search-forward
+            "\n"
+            nil
+            t)
+         (replace-match ""))
        (->gg)
        (when (re-search-forward
               "if.+?(\\(.*\\))" nil t)
          (replace-match "\\1"))
+       (->gg)
        (while
            (re-search-forward
             (regexp-opt

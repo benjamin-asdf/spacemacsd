@@ -86,4 +86,44 @@
     "reset"
     "--hard")))
 
+
+
+(defun team/cos-try-get-menu-from-arbitrary-string (s)
+  "Try get menu from S, S may contain spaces and snippets of menu names.
+E.g. \"Idle Boss\"  will return \"MenuType.BossTower\"."
+  (--first-result
+   (team/check-file
+    (concat idlegame-project-root "Assets/#/Sources/Menu/MenuEnums.cs")
+    (and
+     (> (length it) 3)
+     (re-search-forward
+      it nil t)
+     (team/re-this-line
+      "\\(\\w+\\) = [[:alnum:]]+"
+      t)
+     (let ((menu
+            (match-string 1)))
+       (re-search-backward
+        "public enum \\(\\w+\\)")
+       (concat  (match-string 1) "." menu))))
+   (s-split-words
+    (-->
+     s
+     (team/re-replace-in-string
+      it
+      "Get Lucky"
+      "Casino")
+     (team/re-replace-in-string
+      it
+      "Auction House"
+      "SkinTrading")
+     (team/re-replace-in-string
+      it
+      "Slot Bingo"
+      "Bingo")
+     (team/re-replace-in-string
+      it
+      "Upgrade"
+      "Fusion")))))
+
 (provide 'idlegame-definitions)

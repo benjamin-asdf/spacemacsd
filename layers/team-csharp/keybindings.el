@@ -1,7 +1,13 @@
 
+(require 'csharp-transformations)
+
 (spacemacs/declare-prefix-for-mode
   'team/chsarp-superior-mode
   "op" "parameters")
+
+(spacemacs/declare-prefix-for-mode
+  'team/chsarp-superior-mode
+  "ox" "text")
 
 (spacemacs/set-leader-keys-for-minor-mode
   'team/chsarp-superior-mode
@@ -17,6 +23,11 @@
   "od" #'ggtags-find-definition
   )
 
+(spacemacs/set-leader-keys-for-minor-mode
+  'team/chsarp-superior-mode
+  "oxi" #'team-csharp/wrap-if
+  "oxl" #'team-csharp/turn-conditional-to-log
+  )
 
 
 
