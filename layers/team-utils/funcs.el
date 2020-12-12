@@ -607,14 +607,6 @@ With TEXT, insert TEXT at the end of the line."
 (defun region-str ()
   (buffer-substring-no-properties (region-beginning) (region-end)))
 
-(defmacro team/--each-file (files &rest body)
-  (declare (debug body))
-  `(--map
-    (team/with-file
-     it
-     ,@body)
-    ,files))
-
 (defmacro team/while-reg (reg &rest body)
   `(while (re-search-forward
            ,reg
@@ -966,8 +958,5 @@ return the result of that evalution and stop."
 
 
 (provide 'team-utils)
-
-
-(provide 'funcs)
 
 ;;; funcs.el ends here
