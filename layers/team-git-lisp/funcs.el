@@ -865,4 +865,14 @@ OTHER-REV defaults to HEAD."
           (kill-buffer it)))))
 
 
+
+(defun benj-git/reset-head-1 ()
+  "Hard reset to HEAD~1."
+  (interactive)
+  (let ((inhibit-magit-refresh t))
+    (magit-run-git-async
+     "reset"
+     "--hard"
+     "HEAD~1")))
+
 (provide 'benj-magit)
