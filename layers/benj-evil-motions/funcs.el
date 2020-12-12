@@ -195,6 +195,9 @@ Got to the start point, execute body with \"end\" bound to a marker of the end o
 (my/define-re-toggle
   "online"
   "offline")
+(my/define-re-toggle
+  "window"
+  "overlay")
 
 (defun my/re-commata-newline ()
   "Replace occurances of , to a new line in region or line."
@@ -263,13 +266,29 @@ with (symbol at point)."
      env))
   (lispyville-backward-function-begin))
 
-
-
-
-
-
-
-
+(defun my/sexp-to-interactive-func ()
+  "Copy the sexp at point, put interactive func snippet below current func."
+  (interactive)
+  (require 'smartparens)
+  (require 'lispyville)
+  (let ((env `((my/interactive-func-content
+                ,(progn
+                   (sp-copy-sexp)
+                   (with-temp-buffer
+                     (yank)
+                     (buffer-string)))
+                ))))
+    (lispyville-end-of-defun)
+    (forward-line 1)
+    (open-line 1)
+    (forward-line 1)
+    (yas-expand-snippet
+     (yas-lookup-snippet
+      "interactive-func"
+      'emacs-lisp-mode)
+     nil
+     nil
+     env)))
 
 
 
@@ -377,6 +396,11 @@ Store a new book mark named \"last-work\"."
 (defvar my/template-string '())
 (defvar my/make-template-finish-function '())
 (defun my/make-template-string-from-region ()
+  "Capture the string on region temporarily.
+Create a temp file with the contents of region, the user has the chance to adapt the strign and finalize by
+calling `my/make-template-string-from-region' again.
+See `my/template-string', which can now be used in lisp.
+Also see `my/insert-template-string'."
   (interactive)
   (when my/make-template-finish-function
     (funcall my/make-template-finish-function))
@@ -397,6 +421,12 @@ Store a new book mark named \"last-work\"."
           (mkstr 'my/template-string)
           (substring-no-properties my/template-string 15))))))
 
+(defun my/insert-template-string (&rest args)
+  "Insert a formatted use `my/template-string' as template.
+Use `my/make-template-string-from-region' to initialize."
+  (team/a-if my/template-string
+      (insert (apply #'format `(,my/template-string ,@args)))
+    (error "No template string at this point.")))
 
 
 
@@ -408,3 +438,23 @@ Store a new book mark named \"last-work\"."
    (save-excursion
      (evil-jump-item)
      (point))))
+
+
+
+(defun my/jump-to-last-symbol-overlay ()
+  "Jump to the last created symbol overlay in buffer.
+Also call `spacemacs/symbol-overlay-transient-state/body'."
+  (interactive)
+  (cl-loop
+   for ov being the overlays of (current-buffer)
+   from (point-min) to (point-max)
+   do (when
+          (member
+           (overlay-get
+            ov
+            'face)
+           symbol-overlay-faces)
+        (goto-char
+         (overlay-start ov))
+        (spacemacs/symbol-overlay-transient-state/body)
+        (return))))

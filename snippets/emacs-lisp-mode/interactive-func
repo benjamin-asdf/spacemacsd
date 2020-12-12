@@ -5,4 +5,4 @@
 # --
 (defun foobam ()
   (interactive)
-  `(my/interactive-func-content)`)
+  `my/interactive-func-content`)

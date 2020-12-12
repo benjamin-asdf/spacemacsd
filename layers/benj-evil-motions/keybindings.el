@@ -24,8 +24,16 @@
   "d" #'my/eval-and-bind-func
   "m" #'my/make-cmd-wrapper
   ;;
-  "o" #'test)
+  "e" #'test
+  "x" #'my/make-template-string-from-region
+  "o" #'my/sexp-to-interactive-func
+  )
 
+(team/spacemacs-declare-keys
+    "os"
+    "search & symbols"
+  "o" #'my/jump-to-last-symbol-overlay
+  )
 
 (team/spacemacs-declare-keys
     "oe"
@@ -47,6 +55,7 @@
   "u" #'my/re-toggle-up-down
   "b" #'my/re-toggle-target-actionButton
   "o" #'my/re-toggle-online-offline
+  "v" #'my/re-toggle-window-overlay
   )
 
 (team/spacemacs-declare-keys
