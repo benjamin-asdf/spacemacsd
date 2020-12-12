@@ -175,7 +175,7 @@ see `benj-roslyn-proj-configs'"
                       (and (not (string-empty-p file)) (list "-f" (file-name-nondirectory file)))))
 
 (defun benj-roslyn-tools/read-analzyer-and-file ()
-  (let ((analyzer (helm :sources helm-benj-roslyn-analzyers-source))
+  (let ((analyzer (benj-roslyn-tools/read-analzyer))
         (file (benj-roslyn-tools/read-file-name)))
     (list analyzer file)))
 
@@ -195,15 +195,15 @@ see `benj-roslyn-proj-configs'"
   "Evaluates to a plist of (SLN TARGET ANALYZER)."
   (let ((sln (completing-read "Sln: " benj-roslyn-tools/default-slns))
         (file (benj-roslyn-tools/read-file-name))
-        (analyzer (helm :sources helm-benj-roslyn-analzyers-source)))
+        (analyzer
+         (benj-roslyn-tools/read-analzyer)))
     (list sln file analyzer)))
+
+(defun benj-roslyn-tools/read-analzyer ()
+  (completing-read "Analzyer: " (benj-roslyn-tools/available-analzyer-names)))
 
 (defun benj-roslyn-tools/read-file-name ()
   (read-file-name "Target file, (C-Ret to not specify target file): " nil (buffer-file-name) nil (buffer-file-name)))
-
-(with-eval-after-load 'helm
-  (defvar helm-benj-roslyn-analzyers-source
-    (helm-build-sync-source "Analzyer" :candidates (benj-roslyn-tools/available-analzyer-names))))
 
 (defun benj-roslyn-tools/run-idlegame-default (&rest args)
   "See `benj-roslyn-tools/run-idlegame'."
@@ -400,7 +400,7 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
 (defun benj-roslyn-tools/get-next-analzyer-id ()
   "Bump current analzyer id and return next id."
   (interactive)
-  (let ((next (number-to-string (+ (string-to-number (car (benj-read-lines benj-roslyn-tools/last-analzyer-id-file))) 1))))
+  (let ((next (number-to-string (+ (string-to-number (car (team/file-lines benj-roslyn-tools/last-analzyer-id-file))) 1))))
     (write-region next nil benj-roslyn-tools/last-analzyer-id-file)
     (kill-new next)))
 
