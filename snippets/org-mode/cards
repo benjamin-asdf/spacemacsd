@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : cards
+#key : cards
+#contributor : benj
+# --
+`(benj-rand-line-from-file "~/.spacemacs.d/snippets/destroy-words")` cards

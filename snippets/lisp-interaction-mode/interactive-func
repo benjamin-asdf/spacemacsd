@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : interactive-func
+#key : interactive-func
+#contributor : benj
+# --
+(defun foobam ()
+  (interactive)
+  `(my/interactive-func-content)`)

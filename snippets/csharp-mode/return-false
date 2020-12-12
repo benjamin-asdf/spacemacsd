@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : return-false
+#key : retf
+#contributor : benj
+# --
+return false;

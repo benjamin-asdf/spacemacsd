@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-try-get-value-or-default-h
+#key : stgvh
+#contributor : benj
+# --
+c.state.GetValueOrDefault<`(team-electric/helm-comp-echo)`, $1>($0)

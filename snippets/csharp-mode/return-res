@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : return-res
+#key : rr
+#contributor : benj
+# --
+return res;

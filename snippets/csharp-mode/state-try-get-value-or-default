@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-try-get-value-or-default
+#key : stgv
+#contributor : benj
+# --
+c.state.GetValueOrDefault<$2, $1>($0)
