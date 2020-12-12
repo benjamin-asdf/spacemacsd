@@ -3,4 +3,4 @@
 #key : tgh
 #contributor : benj
 # --
-TryGet<`(team-electric/helm-comp-echo)`>(out var $0)
+TryGet<`(team-electric/helm-comp-echo)`>(out var $1)
