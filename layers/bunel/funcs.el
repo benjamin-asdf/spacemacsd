@@ -328,6 +328,14 @@ List for menus, overlays, windows to open."
   (bunel-set-globals "disableLore" "0")
   (bunel-set-globals "loreAfterTutorial" "1"))
 
+
+(defun bunel/set-fake-internet ()
+  (interactive)
+  (bunel-set-globals "purchaseWithoutPlaystore" "1")
+  (bunel-set-globals "fakeHaveInternet" "1")
+  (bunel-set-globals "confirmPurchasesWithoutProcessing" "1"))
+
+
 
 ;; generic unity utils
 
