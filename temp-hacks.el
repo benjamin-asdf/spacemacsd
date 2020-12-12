@@ -30,4 +30,16 @@
  #'(lambda ()
      (with-current-buffer (org-capture-get :buffer) (save-buffer))))
 
+
+(defun my/temp-nullify-app-sync ()
+  (interactive)
+  (team/with-file
+   "/home/benj/idlegame/AppSyncUnityProject/Packages/AwsAppSync/Runtime/AppSyncSystems.cs"
+   (while
+       (re-search-forward
+        "Add(new.*System"
+        nil
+        t)
+     (replace-match "//"))))
+
 (provide 'temp-hacks)
