@@ -610,6 +610,9 @@ before packages are loaded."
           "/home/benj/org/jan.org"
           "/home/benj/org/rico.org"))
   (setq-default page-break-lines-max-width 30)
+  (define-key evil-normal-state-map (kbd "M-Y") #'evil-paste-pop-next)
+  (setq dotspacemacs-scratch-buffer-persistent t)
+
   
 
   (global-visual-line-mode 1)
