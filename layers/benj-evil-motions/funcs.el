@@ -275,8 +275,7 @@ with (symbol at point)."
                    (sp-copy-sexp)
                    (with-temp-buffer
                      (yank)
-                     (buffer-string)))
-                ))))
+                     (buffer-string)))))))
     (lispyville-end-of-defun)
     (forward-line 1)
     (open-line 1)
@@ -287,7 +286,8 @@ with (symbol at point)."
       'emacs-lisp-mode)
      nil
      nil
-     env)))
+     env))
+  (my/eval-and-bind-func))
 
 
 
