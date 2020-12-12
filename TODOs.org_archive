@@ -46,3 +46,35 @@ Archived entries from file /home/benj/.spacemacs.d/TODOs.org
 
 (clist "sldfjas" '("fdlsk" "fjasdl"))
 => ("sldfjas" "fdlsk" "fjasdl")
+
+* goto to projectile project, start smart project search
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-12-12 Sat 07:10
+  :ARCHIVE_FILE: ~/.spacemacs.d/TODOs.org
+  :ARCHIVE_CATEGORY: TODOs
+  :END:
+
+* sprite-loaders
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-12-12 Sat 07:10
+  :ARCHIVE_FILE: ~/.spacemacs.d/TODOs.org
+  :ARCHIVE_CATEGORY: TODOs
+  :END:
+** after all is done, delete the loaders that are not used
+
+* juggle registers
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-12-12 Sat 07:10
+  :ARCHIVE_FILE: ~/.spacemacs.d/TODOs.org
+  :ARCHIVE_CATEGORY: TODOs
+  :END:
+** func to move a -> b, b -> c etc
+   - define registers that are already taken and skip them for this thing
+** another version that puts 0 -> a, 1 -> b etc
+
+* make sailor put initial selection in helm-do-ag, instead of running rg
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2020-12-12 Sat 07:12
+  :ARCHIVE_FILE: ~/.spacemacs.d/TODOs.org
+  :ARCHIVE_CATEGORY: TODOs
+  :END:

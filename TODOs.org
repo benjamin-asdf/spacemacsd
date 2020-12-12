@@ -31,48 +31,6 @@
 * Potential TODOS
   - configure a minimalist mode line
   - then it says something like "Launched a rocked."
-* Try fix emacs x11 bug
-  Sep 30 07:15:49 benj-pc emacs[4946]: Warning: due to a long standing Gtk+ bug
-Sep 30 07:15:49 benj-pc emacs[4946]: https://gitlab.gnome.org/GNOME/gtk/issues/221
-Sep 30 07:15:49 benj-pc emacs[4946]: Emacs might crash when run in daemon mode and the X11 connection is unexpectedly lost.
-Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-toolkit=lucid does not have this problem.
-** install emacs with this option, man
-   https://git.savannah.gnu.org/cgit/emacs.git/tree/INSTALL.REPO
-*** build emacs
-    - put the the new build into another dir
-    - test if it works
-    - then delete the old emacs installation and use the new one
-    - cmon man this is easy
-* minder
-  - some minor mode where I can press a button repeatly
-  - automatically push to private repo every 2 hours or something
-  - merge timetrack and minder somehow
-  - have functions that do the repetetive stuff for timetrack
-  - add a user config hook
-** merge minder and time track
-  - these two functions are almost all I need?
-  - well kinda for the beginning that would basically be good enough
-*** func minder good morning
-    - just push a special message with the wake up time so it's at the top of the file
-    - ask "how long did you sleep?"
-    - ask for additional message
-*** func minder good night
-    - would be nice to put the time awake automaticall
-
-** bit bigger mine asteriod funcs
-** add a minder hook for commiting,
-    should be easy
-    hook or this advice-add, whatever that is
-
-** minor mode
-  - minder mode, I could put a special character in front of a block of lines
-  - then show those differently
-** windows
-***  make playing sound files from the command line work
-**** figure out how to chang the target framework in rider
-**** hello world play sound file
-**** have a cmd line program that takes a file location as argument
-**** update minder to work in all environments
 * Need to fix
   - zsh path inside spacemacs is not correct
   - projectile submodules issue
@@ -80,45 +38,13 @@ Sep 30 07:15:49 benj-pc emacs[4946]: Using an Emacs configured with --with-x-too
   - emacs crashes
   - emacs performance
 * conky
-* tmux
-* i3
 * artix
-* make rider work
-** try with docker
-*** milan notes
-   it will look something like this for you
-FROM <someLinuxDistro>  # have a look into dockerhub
-WORKDIR = <someDir>
-COPY = <yourProgram> to WORKDIR
-CMD <execute program>
-(edited)
+* emx
 
-it is just a sketch but you will need to copy your program there and run it if it is executable
-if not you will put installation command there also (edited)
-and one more thing which I haven't done you will
-probably need to enable X if it is graphical app. I haven't done it, but it will be again some config in Dockerfile.
-
-
-
-
-* bossel
-** DONE send current region to bossel
-   CLOSED: [2020-04-05 Sun 06:51]
-** DONE parse syntax tree
-   CLOSED: [2020-04-05 Sun 06:51]
-** send return package from bossel
-** something for brackets
-** compile the solution with bossel..
-
-** getting compilation once is easy.. then
-*** could generate some cache of components
 
 * helm ag fix crlf showing
 * githubbel
 ** achieve automatically getting new omnisharp release
-
-
-* TODO trello package
 
 * If you need to debug code run from jit-lock, see `jit-lock-debug-mode'."
 
@@ -131,58 +57,9 @@ probably need to enable X if it is graphical app. I haven't done it, but it will
 (advice-add 'ggtags-global-build-command :around #'track-ggtags-cmd)
 
 
-* I want to advice omnisharp go to definition + advice evil jump back,
-** to improve the behaviour of C-o with omnisharp
-
-
-* make sailor put initial selection in helm-do-ag, instead of running rg
-
-
-
 * phone funcs could have some love
 ** put a sentinel to the download and push to phone instant
 ** check if I can just push 'sync' up the vid dir
 ** I need to clean up my phone storage
 
-
-* make a backup file of the current visited and put it into backups
-** if buffer is not visiting a file, create file with major mode name
-** file names have timestamps
-
-* move the shits I don't stage into own
-
-
-* find out how to ship packages
 * ship packages to for nikita and anybody willing
-
-
-* get into smartparens
-  https://smartparens.readthedocs.io/en/latest/automatic-escaping.html
-
-
-* juggle registers
-** func to move a -> b, b -> c etc
-   - define registers that are already taken and skip them for this thing
-   -
-** another version that puts 0 -> a, 1 -> b etc
-
-
-* goto to projectile project, start smart project search
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-* sprite-loaders
-** after all is done, delete the loaders that are not used
