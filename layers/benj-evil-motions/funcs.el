@@ -239,7 +239,6 @@ then make cursors"
   "Eval func at point. Set keybinding to `my/temp-devel-kbd'.
 When ARG is non nil prompt the user for the key binding following the <spcot> leader keys,"
   (interactive"P")
-  ;; TODO find a way to check how many bindings we have and do a-z0-9, maybe regexing `describe-bindings' is good enough
   (spacemacs/set-leader-keys
     (if arg (concat "ot" (read-from-minibuffer "Key: ")) my/temp-devel-kbd)
     (eval-defun nil)))
