@@ -534,3 +534,16 @@ Abort current if ARG is non nil"
     "dotnet"
     "RewriterCli.dll"
     file)))
+
+
+
+(defun teamel/find-file-downloads ()
+  (interactive)
+  (let ((default-directory
+          "~/Downloads/"))
+    (call-interactively
+     (lambda (file)
+       (interactive"f")
+       (find-file file))
+     nil)))
+

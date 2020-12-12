@@ -9,6 +9,7 @@
  '("k" . teamel/add-config-here)
  '("r" . teamel/add-config-here)
  '("a" . teamel/do-awk)
+ '("d" . teamel/find-file-downloads)
  )
 
 (team/spacemacs-declare-keys
