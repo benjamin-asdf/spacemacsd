@@ -1,3 +1,14 @@
+;; todo utils
+(defun team/listify-cons (it)
+  "Make a list out of a cons cell."
+  (unless
+      (listp (cdr it))
+    (setf
+     (cdr it)
+     (cons (cdr it) nil)))
+  it)
+
+
 (defun my/c-beginning-of-class ()
   "Move to the beginning of the class around point.
 If unsucessful, move to point min and return nil."
@@ -37,12 +48,12 @@ If unsucessful, move to point min and return nil."
 
 (defun my/csharp-delete-block ()
   (-some-->
-      (my/chsarp-block-bounds)
+      (my/csharp-block-bounds)
     (delete-region
      (car it)
      (cdr it))))
 
-(defun my/chsarp-block-bounds ()
+(defun my/csharp-block-bounds ()
   "Return a cons cell consisting of beginning and end markers of the current cshrap block.
 Return nil, if not inside a block."
   (-some-->
@@ -66,7 +77,7 @@ Return nil, if not inside a block."
 Similar to lisp structural rais sexp."
   (interactive)
   (when-let* ((inner-bounds
-               (my/chsarp-block-bounds))
+               (my/csharp-block-bounds))
               (s
                (progn
                  (print inner-bounds)
@@ -83,5 +94,42 @@ Similar to lisp structural rais sexp."
        p
        (point)))))
 
+
+(defun my/csharp-convert-foreach-to-for ()
+  "Convert foreach syntax on this line to a for loop."
+  (interactive)
+  (when
+      (team/re-this-line
+       "foreach.+?var[[:blank:]]+\\(\\w+\\)[[:blank:]]+in[[:blank:]]+\\(\\w+\\)")
+    (let ((var-name (match-string-no-properties 1))
+          (list-name (match-string-no-properties 2))
+          (bounds
+           (my/csharp-block-bounds)))
+      (goto-char
+       (car bounds))
+      (let ((p (point-marker))
+            (content
+             (buffer-substring
+              (progn
+                (skip-chars-forward "^{")
+                (forward-char 1)
+                (point))
+              (cdr bounds))))
+        (apply
+         #'delete-region
+         (team/listify-cons
+          bounds))
+        (insert (format
+                 "for (var i = 0; i < %s; i++) {"
+                 (concat
+                  list-name
+                  ".Count")))
+        (team/in-new-line
+         (format
+          "var %s = %s[i];"
+          var-name
+          list-name))
+        (insert
+         content)))))
 
 (provide 'c-moves)

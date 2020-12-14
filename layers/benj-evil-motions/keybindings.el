@@ -43,6 +43,11 @@
     )
 
 (team/spacemacs-declare-keys
+    "oy"
+    "copy etc"
+  "w" #'my/copy-symbol-other-window)
+
+(team/spacemacs-declare-keys
     "oes"
     "substitute"
   "l" #'my/re-toggle-left-right

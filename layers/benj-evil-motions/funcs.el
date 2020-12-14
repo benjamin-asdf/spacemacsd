@@ -145,7 +145,6 @@ Got to the start point, execute body with \"end\" bound to a marker of the end o
       (let ((end (my/marker-there (cdr bounds))))
         ,@body))))
 
-
 (defun my/re-replace-dwim (re replace)
   (let (res)
     (my/with-dwim-region
@@ -457,3 +456,15 @@ Also call `spacemacs/symbol-overlay-transient-state/body'."
          (overlay-start ov))
         (spacemacs/symbol-overlay-transient-state/body)
         (return))))
+
+
+
+(defun my/copy-symbol-other-window ()
+  "Insert symobl at other window."
+  (interactive)
+  (require 'ace-window)
+  (forward-char 1)
+  (insert
+   (save-window-excursion
+     (ace-window 0)
+     (mkstr (symbol-at-point)))))
