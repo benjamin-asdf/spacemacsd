@@ -619,14 +619,13 @@ see `omnisharp-unit-test-buffer'."
    (team/file-lines "/tmp/conflicted-prefabs")))
 
 
-
 (defvar cos/prefab-checker-path "/home/benj/repos/csharp/prefab-checker/bin/Debug/netcoreapp3.1/publish/prefab-checker.dll")
 
 (defun cos/prefab-integrity-check (&rest files)
   "Run checker with FILES."
   (interactive)
   (team/with-default-dir
-   cos-dir
+   (file-name-as-directory cos-dir)
    (with-current-buffer
        (get-buffer-create "*prefab-check*")
      (let ((inhibit-read-only t))
