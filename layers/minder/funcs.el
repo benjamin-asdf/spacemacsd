@@ -374,15 +374,42 @@ See `minder-good-night'
   (interactive"sEnter good night message: ")
   (push arg minder-good-night-messages))
 
+
+
+(defun minder/char-to-home-row-key (char)
+  (pcase  (- char 48)
+    (0 ";")
+    (1 "a")
+    (2 "s")
+    (3 "d")
+    (4 "f")
+    (5 "g")
+    (6 "g")
+    (7 "h")
+    (8 "j")
+    (9 "l")))
+
 (defvar minder-last-rocked-string nil)
 
 (defun minder-start-rocket ()
   "Ask the user to type in a string of numbers. And put success or failure messages as minder messages."
   (interactive)
-  (setq minder-last-rocked-string (or minder-last-rocked-string (number-to-string (random (expt 10 3)))))
+  (setq minder-last-rocked-string
+        (or minder-last-rocked-string
+            (with-output-to-string
+              (--map
+               (let ((s it)
+                     (home-key "f")
+                     (home-key (minder/char-to-home-row-key it)))
+                 (--dotimes 3
+                   (if
+                       (= (mod (random) 2) 0)
+                       (princ home-key)
+                     (princ (make-string 1 s)))))
+               (number-to-string (random 10))))))
   (--dotimes 5
     (unless (string-equal minder-last-rocked-string (read-string (format "%s> %s: " (make-string it ?#) minder-last-rocked-string)))
-            (user-error "Try again.")))
+      (user-error "Try again.")))
   (message "rocked started.")
   (minder-play-sound 'minder-intense-sounds)
   (setq minder-last-rocked-string nil))
