@@ -323,7 +323,9 @@ and expand a snippet for a 'With...(this config)' method."
          1)
         (re-search-backward "public static class" nil)
         (->$)
-        (open-line 1))))
+        (open-line 1))
+      (kill-new field-name)
+      (kill-new (concat "With" ,(team/capitalize-first-letter field-name)))))
   (forward-line 1))
 
 (defun teamel/add-used-implicitly ()
