@@ -468,3 +468,7 @@ Also call `spacemacs/symbol-overlay-transient-state/body'."
    (save-window-excursion
      (ace-window 0)
      (mkstr (symbol-at-point)))))
+
+(defun insert-arrow ()
+  (interactive)
+  (insert (make-string 1 8594)))

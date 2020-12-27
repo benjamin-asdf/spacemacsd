@@ -40,6 +40,7 @@
     "transformation, external"
   "r" #'spacemacs/redshiftel-transient-state/body
   "k" #'my/clear-konsoles
+  "l" #'insert-arrow
     )
 
 (team/spacemacs-declare-keys
@@ -83,3 +84,25 @@
   )
 
 (spacemacs/set-leader-keys "cs" #'my/comment-or-uncomment-sexpr)
+
+
+
+(defun my/yank-evil-inner-paren ()
+  (interactive)
+  (team/a-when
+   (evil-inner-paren)
+   (evil-yank (car it) (cadr it))))
+
+(defun my/yank-evil-inner-WORD ()
+  (interactive)
+  (team/a-when
+   (evil-inner-WORD)
+   (evil-yank (car it) (cadr it))))
+
+(team/spacemacs-declare-keys
+    "y"
+    "yank"
+  "o" #'my/yank-evil-inner-paren
+  "w" #'my/yank-evil-inner-WORD)
+
+
