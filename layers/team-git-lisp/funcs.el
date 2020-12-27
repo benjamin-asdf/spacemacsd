@@ -489,7 +489,7 @@ If ARG is nil, prompt the user for available extensions intead."
                        (format
                         ".%s$"
                         (completing-read
-                         "Extension to act with"
+                         "Extension to act with: "
                          (-uniq
                           (-map
                            #'file-name-extension
@@ -850,6 +850,22 @@ OTHER-REV defaults to HEAD."
   (let ((magit-buffer-log-files nil))
     (call-interactively #'magit-show-commit nil nil)))
 
+(defun benj/magit-log-file-no-merges ()
+  (interactive)
+  (let ((magit-buffer-log-args))
+    (magit-log-setup-buffer
+     (list "HEAD")
+     (list "--no-merges")
+     (list (buffer-file-name)))))
+
+(defun benj/magit-log-file-me ()
+  (interactive)
+  (let ((magit-buffer-log-args))
+    (magit-log-setup-buffer
+     (list "HEAD")
+     (list "--no-merges" "--author=Benj")
+     (list (buffer-file-name)))))
+
 
 
 (defun my/git-gutter+-revert-hunks-no-ask ()
@@ -874,5 +890,77 @@ OTHER-REV defaults to HEAD."
      "reset"
      "--hard"
      "HEAD~1")))
+
+
+
+(defun benj/read-recent-commit ()
+  (interactive)
+  (completing-read
+   "Insert recent commit: "
+   (with-temp-buffer
+     (magit-insert-recent-commits)
+     (cdr (s-split "\n" (buffer-string))))))
+
+(defun benj/read-project-dir ()
+  "Use projectile to read a project."
+  (interactive)
+  (list
+   (let ((projects (projectile-relevant-known-projects)))
+     (if projects
+         (completing-read
+          "Project for commit: " projects)
+       (user-error "There are no known projects")))))
+
+(defun benj/format-magit-commit (commit-s)
+  (-some-->
+      commit-s
+    (s-split-up-to " " it 1)
+    (format
+     "`%s` \n> %s\n"
+     (car it)
+     (cadr it))))
+
+(defun benj/insert-recent-commit (&optional dir)
+  "Read a recent commit and insert formatted. DIR should be a directory in a git repo."
+  (interactive
+   (benj/read-project-dir))
+  (insert
+   (benj/format-magit-commit
+    (team/with-default-dir
+     dir
+     (benj/read-recent-commit)))))
+
+(defun benj/copy-recent-commit-in-file (&optional dir)
+  "Kill commit text suitable for team communication. Read from recent commits in visited file.
+DIR should be a directory in a git repo."
+  (interactive
+   (benj/read-project-dir))
+  (kill-new
+   (benj/format-magit-commit
+    (( team/with-default-dir)
+     dir
+     (let
+         ((magit-buffer-log-args
+           (list
+            "--author=Benj"))
+          (file (buffer-file-name)))
+       (completing-read
+        "Copy recent commit: "
+        (with-temp-buffer
+          (magit-insert-log
+           "HEAD"
+           (cons (format "-n%d" 20)
+                 (--remove (string-prefix-p "-n" it)
+                           magit-buffer-log-args))
+           (list file))
+          (cdr (s-split "\n" (buffer-string))))))))))
+
+(defun benj/insert-recent-cos-commit ()
+  (interactive)
+  (benj/insert-recent-commit cos-dir))
+
+(defun benj/copy-recent-cos-commit-in-file ()
+  (interactive)
+  (benj/copy-recent-commit-in-file cos-dir))
 
 (provide 'benj-magit)

@@ -7,17 +7,17 @@
   (magit-stash-save "curr" t t nil t))
 
 (team/spacemacs-declare-keys "og" "git"
- "s" #'vc-revision-other-window
- "n" #'benj-git/goto-next-unmerged-cs-file
- "D" #'benj-git/diff-files-only
- "C" #'benj-quick-commit
- "a" #'team/magit-common-ancestor
- "F" #'benj-git/fetch-and-merge
- "'" #'team/git-update-modules
- "e" #'benj-magit/ediff-resolve
- "o" #'team/magit-fetch-any
- "R" #'team/magit-rebase-onto
- "z" #'team/magit-stash-curr)
+  "s" #'vc-revision-other-window
+  "n" #'benj-git/goto-next-unmerged-cs-file
+  "D" #'benj-git/diff-files-only
+  "C" #'benj-quick-commit
+  "a" #'team/magit-common-ancestor
+  "F" #'benj-git/fetch-and-merge
+  "'" #'team/git-update-modules
+  "e" #'benj-magit/ediff-resolve
+  "o" #'team/magit-fetch-any
+  "R" #'team/magit-rebase-onto
+  "z" #'team/magit-stash-curr)
 
 (team/spacemacs-declare-keys
     "ogf"
@@ -43,7 +43,7 @@
   "r" #'team/magit-log-double-dot
   "R" #'team/magit-log-double-dot-file
   "s" #'benj/magit-show-commit-no-limit-files
-  )
+  "f" #'benj/magit-log-file-no-merges)
 
 (team/spacemacs-declare-keys
     "ogc"
@@ -73,3 +73,9 @@
   "y" #'benj-git/yank-first-unmerged-file
   "x" #'team/checkout-checkout-files-on-region
   )
+
+(team/spacemacs-declare-keys
+    "oe"
+    "transformation, external"
+  "c" #'benj/insert-recent-cos-commit
+  "C" #'benj/copy-recent-cos-commit-in-file)
