@@ -505,7 +505,7 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
        (replace-match ,replace)))))
 
 (defmacro team/with-match-data (nums &rest body)
-  "Bin match-N to each num in NUMS. Then execute BODY."
+  "Bind match-N to each num in NUMS. Then execute BODY."
   (declare (debug body))
   (declare (indent 2))
   (if (null nums)
