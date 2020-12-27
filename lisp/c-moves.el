@@ -31,10 +31,13 @@ If unsucessful, move to point min and return nil."
   "Try to copy the current csharp class name as kill."
   (interactive)
   (save-excursion
-    (my/c-beginning-of-class)
+    (while
+        (and
+         (c-beginning-of-defun)
+         (not (looking-at "^.*\\b\\(?:\\(?:class\\)\\|\\(?:enum\\)\\)\\b.*$"))))
     (if
         (re-search-forward
-         ".*class[[:blank:]]\\(\\w+\\)"
+         ".*\\(?:\\(?:class\\)\\|\\(?:enum\\)\\)[[:blank:]]\\(\\w+\\)"
          (point-at-eol)
          t
          1)
