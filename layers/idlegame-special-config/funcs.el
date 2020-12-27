@@ -1,4 +1,4 @@
-(defconst cos-dir (or (getenv "COSDIR") "~/clashofstreamers"))
+(defconst cos-dir (file-name-as-directory (or (getenv "COSDIR") "~/clashofstreamers")))
 (defconst idlegame-project-root (concat (file-name-as-directory cos-dir) "IdleGame/"))
 (defconst idlegame-assets-dir (concat (file-name-directory idlegame-project-root) "Assets/"))
 (defconst idlegame-sources-dir (concat (file-name-directory idlegame-assets-dir) "#/Sources/"))
