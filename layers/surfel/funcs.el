@@ -1,6 +1,7 @@
 (defconst surfel/best-search-page "https://g4gsearch.com")
-(defconst surfel/default-search-page "https://search.snopyta.org")
-(defconst surfel/default-search-page-input "https://search.snopyta.org/?q=%s")
+(defconst surfel/default-search-page "https://searx.fmac.xyz/")
+(defconst surfel/default-search-page-input "https://searx.fmac.xyz/?q={}")
+
 
 (defvar surfel/process-name "qutebrowser")
 (defconst surfel/moszen-types '("sea" "river" "lake"  "jungle" "forest" "wheather"))
