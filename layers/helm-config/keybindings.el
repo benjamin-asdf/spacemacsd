@@ -41,6 +41,7 @@
  '("m" . benj-helm-ag/comp-matcher)
  '("M" . sailor-find-comp-matched)
  '("p" . benj-helm-ag/do-ag-prefixed)
+ '("P" . benj-helm-ag/do-ag-with-public)
 
  )
 

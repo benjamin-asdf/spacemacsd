@@ -136,27 +136,28 @@ ARGS are additional arguments for the rg search."
 
 
 
-(defun benj-helm-ag/do-ag-prefixed (&optional arg)
-  "Run `helm-do-ag'.
-Prefix arg can be:
-0 - public
-1 - public class {
-2 - public \\\( \\\)
-3 - public static \\\( \\\)
-4 - public class component"
-  (interactive"P")
+(defun benj-helm-ag/do-ag-prefixed (&optional template)
+  "Run `helm-do-ag'. Prompt for a search template first."
+  (interactive
+   (list (completing-read
+     "Search template: "
+     (list
+      "public %s"
+      "public class %s \\{"
+      "public %s \\( \\)"
+      "public static %s \\( \\)"
+      "public class %s component"))))
   (helm-do-ag
    (projectile-project-root)
    nil
    (format
-    (pcase arg
-      (0 "public %s")
-      (1 "public class %s \\{")
-      (2 "public %s \\( \\)")
-      (3 "public static %s \\( \\)")
-      (4 "public class %s component")
-      (_ (user-error "invalid prefix arg %s" arg)))
+    template
     (thing-at-point 'evil-word))))
+
+(defun benj-helm-ag/do-ag-with-public ()
+  (interactive)
+  (benj-helm-ag/do-ag-prefixed
+   "public %s"))
 
 
 
@@ -169,20 +170,20 @@ Prefix arg can be:
 
 (with-eval-after-load
     'rg
-    (rg-define-search sailor-rg-project-multiline
-      "See `sailor-rg-search-in-project' allow multiline matches"
-      :files current
-      :dir project
-      :flags '("--multiline"))
+  (rg-define-search sailor-rg-project-multiline
+    "See `sailor-rg-search-in-project' allow multiline matches"
+    :files current
+    :dir project
+    :flags '("--multiline"))
 
-    (defun sailor-find-comp-matched ()
-      "Search for matcher syntax with things at point."
-      (interactive)
-      (sailor-rg-project-multiline (sailor--matcher-syntax (thing-at-point 'evil-word))))
+  (defun sailor-find-comp-matched ()
+    "Search for matcher syntax with things at point."
+    (interactive)
+    (sailor-rg-project-multiline (sailor--matcher-syntax (thing-at-point 'evil-word))))
 
-    (defun sailor--matcher-syntax (comp)
-      "Get matcher syntax for COMP."
-      (format "Matcher(\n)?(\n\r)?\.(\n)?(\n\r)?.*%s\\b" comp)))
+  (defun sailor--matcher-syntax (comp)
+    "Get matcher syntax for COMP."
+    (format "Matcher(\n)?(\n\r)?\.(\n)?(\n\r)?.*%s\\b" comp)))
 
 
 

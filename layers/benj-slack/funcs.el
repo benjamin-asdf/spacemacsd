@@ -169,3 +169,11 @@
    "aplay"
    ;; (rand-element (split-string (shell-command-to-string (format "fd -I -e wav rock %s" idlegame-project-root))))
    ))
+
+
+
+(defun benj-slack/open-last-downloaded-file ()
+  (interactive)
+  (spacemacs//open-in-external-app
+   (latest-file
+    (expand-file-name slack-file-dir))))
