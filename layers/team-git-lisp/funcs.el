@@ -937,7 +937,7 @@ DIR should be a directory in a git repo."
    (benj/read-project-dir))
   (kill-new
    (benj/format-magit-commit
-    (( team/with-default-dir)
+    (team/with-default-dir
      dir
      (let
          ((magit-buffer-log-args
