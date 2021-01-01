@@ -399,7 +399,6 @@ See `minder-good-night'
             (with-output-to-string
               (--map
                (let ((s it)
-                     (home-key "f")
                      (home-key (minder/char-to-home-row-key it)))
                  (--dotimes 3
                    (if
@@ -407,7 +406,7 @@ See `minder-good-night'
                        (princ home-key)
                      (princ (make-string 1 s)))))
                (number-to-string (random 10))))))
-  (--dotimes 5
+  (--dotimes 2
     (unless (string-equal minder-last-rocked-string (read-string (format "%s> %s: " (make-string it ?#) minder-last-rocked-string)))
       (user-error "Try again.")))
   (message "rocked started.")
