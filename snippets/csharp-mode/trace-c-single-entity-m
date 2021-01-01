@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : trace-c-single-entity-m
+#key : traceCm
+#contributor : benj
+# --
+TraceDebugExt.AddDebugComponentChanged(c.state.GetSingleEntity<`(team-electric/comp-name)`>());

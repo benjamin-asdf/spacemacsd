@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : re-word
+#key : rew
+#contributor : benj
+# --
+\\\\(\\\w+\\\\)

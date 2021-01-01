@@ -1,29 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (defun team-csharp/enum-values ()
   "Catch enum values around point.
 This evaluates to a list of lists. Each element is of the form
@@ -31,7 +5,9 @@ This evaluates to a list of lists. Each element is of the form
   (unless
       (progn
         (goto-char (point-at-bol))
-        (looking-at ".*enum.*{"))
+        (and
+         (looking-at ".*enum")
+         (skip-chars-forward "^{")))
     (error "Not on an enum"))
   (forward-line 1)
   (let ((res '())
