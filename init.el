@@ -620,6 +620,8 @@ before packages are loaded."
   (define-key evil-normal-state-map (kbd "M-Y") #'evil-paste-pop-next)
   (setq dotspacemacs-scratch-buffer-persistent t)
 
+  (setq auto-save-no-message t)
+
   
 
   (global-visual-line-mode 1)
