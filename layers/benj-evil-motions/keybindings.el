@@ -40,8 +40,10 @@
     "transformation, external"
   "r" #'spacemacs/redshiftel-transient-state/body
   "k" #'my/clear-konsoles
-  "l" #'insert-arrow
+  ">" #'insert-arrow
+  "l" #'benj/lispyville-sanitize-region
     )
+
 
 (team/spacemacs-declare-keys
     "oy"

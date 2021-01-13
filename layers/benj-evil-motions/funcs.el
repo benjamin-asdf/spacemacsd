@@ -472,3 +472,20 @@ Also call `spacemacs/symbol-overlay-transient-state/body'."
 (defun insert-arrow ()
   (interactive)
   (insert (make-string 1 8594)))
+
+
+
+
+
+(defun benj/lispyville-sanitize-region (beg end)
+  (require 'lispyville)
+  (interactive
+   `( ,(region-beginning) ,(region-end)))
+  (when
+      (= beg end)
+    (setq beg (point-at-bol))
+    (setq end (point-at-eol)))
+  (let ((safe-string
+         (lispyville--safe-string beg end nil)))
+    (delete-region beg end)
+    (insert safe-string)))
