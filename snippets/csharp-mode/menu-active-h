@@ -3,4 +3,4 @@
 #key : meah
 #contributor : benj
 # --
-c.IsMenuActive(MenuType.`(completing-read "Menu: " (bunel/collect-menu-types))`)
+c.IsMenuActive(MenuType.`(completing-read "Menu: " (bunel-collect-menu-types))`)

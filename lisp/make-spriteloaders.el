@@ -8,19 +8,7 @@
 (require 'team-utils)
 (require 'csharp-transformations)
 
-
 (defconst
-  spriteloaders-skip-files
-  '("#/Sources/Loading/LoadingExt.cs"
-    "#/Sources/Loading/LoadingExt.cs"
-    "#/Sources/Expansion/Shared/PetLoading/PetLoadingExtensions.cs"
-    "#/Sources/ResourceManagement/Monobehaviours/ResolveSprites.cs"
-    "#/Sources/ResourceManagement/ResourceManagementExtentions.cs"
-    "#/Design/RewardItemAnimationsNew/RewardAnimationSetter.cs"
-    "#/Sources/HotStories/Forum/MonoBehaviours/Badges/BadgeGroup.cs"
-    "#/Sources/HotStories/Forum/MonoBehaviours/PolymorphicTapToCycle.cs"
-    "#/Sources/WebVideos/IPopOutButton.cs"))
-(setq
   spriteloaders-skip-files
   '("#/Sources/Loading/LoadingExt.cs"
     "#/Sources/Expansion/Shared/PetLoading/PetLoadingExtensions.cs"

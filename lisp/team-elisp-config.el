@@ -33,7 +33,14 @@
 
 
 (require 'helm-csharp-enums)
-(require 'benj-helm-secretary)
+
+(use-package
+  benj-helm-secretary
+  :init
+  (team/spacemacs-declare-keys
+      "os"
+      "search/secretary"
+    "d" #'secretary-collect))
 
 (cl-pushnew
  (concat team-elisp-dir "snippets/")

@@ -3,4 +3,4 @@
 #key : meh
 #contributor : benj
 # --
-MenuType.`(completing-read "Menu: " (bunel/collect-menu-types))`
+MenuType.`(completing-read "Menu: " (bunel-collect-menu-types))`

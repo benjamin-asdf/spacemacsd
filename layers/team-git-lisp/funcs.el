@@ -963,4 +963,31 @@ DIR should be a directory in a git repo."
   (interactive)
   (benj/copy-recent-commit-in-file cos-dir))
 
+
+
+(defun benj/git-tree-files (dir)
+  (team/with-default-dir
+   dir
+   (--map
+    (cadr
+     (s-split
+      "\t"
+      it))
+    (magit-git-items
+     "ls-tree"
+     "-r"
+     "-z" "HEAD"))))
+
+
+
+(defun benj/magit-status-untracked-files ()
+  "Run magit status and only add the untracked files section."
+  (interactive)
+  (let ((magit-status-sections-hook
+         '(magit-insert-untracked-files)))
+    (magit-status)))
+
+
+
+
 (provide 'benj-magit)

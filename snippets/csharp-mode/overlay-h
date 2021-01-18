@@ -3,4 +3,4 @@
 #key : ovrh
 #contributor : benj
 # --
-OverlayType.`(completing-read "Overlay: " (bunel/collect-overlay-types))`
+OverlayType.`(completing-read "Overlay: " (bunel-collect-overlay-types))`

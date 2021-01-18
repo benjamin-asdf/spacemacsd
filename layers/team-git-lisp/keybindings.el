@@ -7,7 +7,7 @@
   (magit-stash-save "curr" t t nil t))
 
 (team/spacemacs-declare-keys "og" "git"
-  "s" #'vc-revision-other-window
+  "p" #'vc-revision-other-window
   "n" #'benj-git/goto-next-unmerged-cs-file
   "D" #'benj-git/diff-files-only
   "C" #'benj-quick-commit
@@ -18,6 +18,11 @@
   "o" #'team/magit-fetch-any
   "R" #'team/magit-rebase-onto
   "z" #'team/magit-stash-curr)
+
+(team/spacemacs-declare-keys
+    "ogs"
+    "status"
+  "u" #'benj/magit-status-untracked-files)
 
 (team/spacemacs-declare-keys
     "ogf"
