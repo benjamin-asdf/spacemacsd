@@ -589,7 +589,6 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
-
   
   ;;projectile-fd
   (defconst my-fd-command "fd -H -E=.git -tf . -0")
@@ -675,13 +674,16 @@ before packages are loaded."
      magit-insert-rebase-sequence
      magit-insert-am-sequence
      magit-insert-sequencer-sequence
-     magit-insert-untracked-files
+     ;; magit-insert-untracked-files
      magit-insert-unstaged-changes
      magit-insert-staged-changes
      magit-insert-stashes
      magit-insert-unpushed-to-upstream-or-recent
      magit-insert-unpulled-from-upstream))
 
+  (remove-hook
+   'magit-pre-refresh-hook
+   #'spacemacs//git-gutter+-refresh-in-all-buffers)
 
   
 
