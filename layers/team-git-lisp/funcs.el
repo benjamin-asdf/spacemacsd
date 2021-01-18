@@ -1,7 +1,10 @@
 ;; -*- lexical-binding: t; -*-
 ;;(require 'magit)
 
+
 ;;; Code:
+
+(defvar benj-git/author-name "Benj")
 
 (defvar-local benj-git/after-magit-op nil)
 (defun benj-git/after--magit (op &optional run-if-non-active)
@@ -942,7 +945,7 @@ DIR should be a directory in a git repo."
      (let
          ((magit-buffer-log-args
            (list
-            "--author=Benj"))
+            (concat "--author=" benj-git/author-name)))
           (file (buffer-file-name)))
        (completing-read
         "Copy recent commit: "
