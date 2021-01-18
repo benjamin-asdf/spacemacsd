@@ -63,3 +63,25 @@
 ** I need to clean up my phone storage
 
 * ship packages to for nikita and anybody willing
+
+
+* elp
+** mem usage
+
+* dim parens
+
+*    elint
+(use-package elint
+  :commands (elint-initialize elint-current-buffer)
+  :bind ("C-c e E" . my-elint-current-buffer)
+  :preface
+  (defun my-elint-current-buffer ()
+    (interactive)
+    (elint-initialize)
+    (elint-current-buffer))
+  :config
+  (add-to-list 'elint-standard-variables 'current-prefix-arg)
+  (add-to-list 'elint-standard-variables 'command-line-args-left)
+  (add-to-list 'elint-standard-variables 'buffer-file-coding-system)
+  (add-to-list 'elint-standard-variables 'emacs-major-version)
+  (add-to-list 'elint-standard-variables 'window-system))
