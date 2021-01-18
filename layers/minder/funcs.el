@@ -455,3 +455,5 @@ Use this to be able to close the eyes for 20 seconds and take a deep breath."
   "Meant to use as the callback to `minder-take-one-min'"
   (sleep-for 10)
   (funcall #'minder-do-deed))
+
+(provide 'minder)
