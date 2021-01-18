@@ -1,15 +1,12 @@
-(defconst bunel-idlegame-projects '("IdleGame" "IdleGameSymbolicLink" "IdleGameSymbolicLink-Extra")
-  "List of possible projects to create handles for")
+
+(defconst bunel-idlegame-projects
+  '("IdleGame" "IdleGameSymbolicLink" "IdleGameSymbolicLink-Extra")
+  "List of possible projects to create handles for"
+  )
 (defconst bunel-default-unity-project "IdleGame"
   "The default unity project to operate on")
-(defconst bunel-bridge-file "/home/benj/repos/bunel/BenjBridge.cs"
-  "Path of a unity editor script that handles bunel requests")
-(defconst bunel-unity-location "/home/benj/idlegame/IdleGame/Assets/Editor/benj-private/"
-  "Place to put the unity editor script")
 
-(defconst unity-log-file "~/.config/unity3d/Editor.log"
-  "Location of the unity log file")
-(defconst benj-unity/idlegame-tmp-path "/tmp/The Naughty Cult Ltd_/Clash of Streamers/")
+(defconst bunel-idlegame-tmp-path "/tmp/The Naughty Cult Ltd_/Clash of Streamers/")
 
 (defconst bunel-method-names '((bunel-refresh . "refresh")
                                (bunel-open-scene . "open-scene")
@@ -24,20 +21,20 @@
 
 
 
-(defvar bunel/last-cmd '())
-(defvar bunel/last-debug-method-cmd '()
+(defvar bunel-last-cmd '())
+(defvar bunel-last-debug-method-cmd '()
   "Flat list of cmd and args")
 (defun bunel--cmd (cmd proj &rest args)
   "Invoke bunel. PROJ default to `bunel-default-unity-project'.
 CMD should be something."
   (interactive)
-  (setq bunel/last-cmd `(,cmd ,@args))
+  (setq bunel-last-cmd `(,cmd ,@args))
   (when (string-equal "execute-debug-method" cmd)
-    (setq bunel/last-debug-method-cmd bunel/last-cmd))
+    (setq bunel-last-debug-method-cmd bunel-last-cmd))
   (team/start-proc "bunel" "*bunel*" "bunel" (or proj bunel-default-unity-project) cmd args))
 
 
-(defmacro bunel/chain (cmd &rest more)
+(defmacro bunel-chain (cmd &rest more)
   "Create a cmd chain. Forms
 Project will be `bunel-default-unity-project'."
   (if (null cmd)
@@ -48,12 +45,12 @@ Project will be `bunel-default-unity-project'."
         (append
          (list ,cmd nil)
          ,(when (listp (car more)) `,@(pop more))))
-       (bunel/chain ,(car more) ,@(cdr more)))))
+       (bunel-chain ,(car more) ,@(cdr more)))))
 
 
 
 
-(defun bunel/set-default-project ()
+(defun bunel-set-default-project ()
   "Set `bunel-default-unity-project'"
   (interactive)
   (setq bunel-default-unity-project (completing-read "Proj: " bunel-idlegame-projects)))
@@ -74,32 +71,6 @@ If ARG is non-nil, also enter playmode."
   (bunel-create-handle-file bunel-default-unity-project
                             'bunel-refresh arg))
 
-(defun bunel-ensure-bridge-file (&optional force)
-  "Ensure bridge file is in the idlegame project.
-If FORCE is non nil, override any existing file."
-  (interactive)
-  (if (or (not (file-exists-p (concat bunel-unity-location
-                                      (file-name-base bunel-bridge-file))))
-          force)
-      (unless (file-exists-p bunel-unity-location)
-        (mkdir bunel-unity-location)
-        (copy-file bunel-bridge-file bunel-unity-location))))
-
-
-(defun bunel-open-unity-editor-log ()
-  "Open unity log file in tail mode."
-  (interactive)
-  (find-file-literally unity-log-file)
-  (goto-char (point-max))
-  (follow-mode))
-
-
-
-(defvar bunel-menu-lookups '()
-  "This is a list of name and a plist.
-Entries to the plist are
-:file the file name to generate the lookup in,
-:collect a symbol that should be bound to a function that collects the lookup")
 
 (defun bunel-regenerate-open-menu-lookups ()
   "Ensure open menu lookups.
@@ -111,10 +82,7 @@ List for menus, overlays, windows to open."
                 nil
                 bunel-window-name-lookup-file))
 
-
-;; TODO abstract, figure out makros
-
-(defun bunel/collect-menu-types ()
+(defun bunel-collect-menu-types ()
   "Search enum syntax in idlegame and collect overlay types."
   (split-string
    (with-output-to-string
@@ -125,7 +93,7 @@ List for menus, overlays, windows to open."
          (when (re-search-forward " +?\\(\\w+\\) = [0-9]+" (point-at-eol) t 1)
            (princ (concat (match-string 1) "\n"))))))))
 
-(defun bunel/collect-overlay-types ()
+(defun bunel-collect-overlay-types ()
   "Search enum syntax in idlegame and collect overlay types."
   (split-string
    (with-output-to-string
@@ -136,15 +104,13 @@ List for menus, overlays, windows to open."
          (when (re-search-forward " +?\\(\\w+\\) = [0-9]+" (point-at-eol) t 1)
            (princ (concat (match-string 1) "\n"))))))))
 
-;; (with-eval-after-load)
-
 
 (defun bunel-open-overlay ()
   "Open overlay for default idlegame."
   (interactive)
   (shell-command (format "bunel %s open-overlay %s"
                          bunel-default-unity-project
-                         (completing-read "Open overlay: " (bunel/collect-overlay-types)))))
+                         (completing-read "Open overlay: " (bunel-collect-overlay-types)))))
 
 
 (defun bunel-open-menu ()
@@ -152,20 +118,20 @@ List for menus, overlays, windows to open."
   (interactive)
   (shell-command (format "bunel %s open-menu %s"
                          bunel-default-unity-project
-                         (completing-read "Open menu: " (bunel/collect-menu-types)))))
+                         (completing-read "Open menu: " (bunel-collect-menu-types)))))
 
 
 
 
-(defun bunel/rerun-last ()
+(defun bunel-rerun-last ()
   (interactive)
-  (bunel/rerun--last bunel/last-cmd))
+  (bunel-rerun--last bunel-last-cmd))
 
-(defun bunel/rerun-debug-method ()
+(defun bunel-rerun-debug-method ()
   (interactive)
-  (bunel/rerun--last bunel/last-debug-method-cmd))
+  (bunel-rerun--last bunel-last-debug-method-cmd))
 
-(defun bunel/rerun--last (cmd)
+(defun bunel-rerun--last (cmd)
   (team/a-if
    cmd
    (progn (bunel--cmd
@@ -176,7 +142,7 @@ List for menus, overlays, windows to open."
    (user-error "No last unity cmd.")))
 
 
-(defun bunel/refresh-and-play (arg)
+(defun bunel-refresh-and-play (arg)
   "Refresh and play, with prefix ARG do not enter play mode."
   (interactive"P")
   (save-some-buffers)
@@ -185,7 +151,7 @@ List for menus, overlays, windows to open."
    nil
    (unless arg "playmode")))
 
-(defun bunel/loading-scene-and-play ()
+(defun bunel-loading-scene-and-play ()
   (interactive)
   (bunel--cmd
    "refresh-and"
@@ -219,7 +185,7 @@ List for menus, overlays, windows to open."
     prefab
     (completing-read "Prefab: " (bunel--prefabs)))))
 
-(defun bunel/scene-view ()
+(defun bunel-scene-view ()
   (interactive)
   (bunel--cmd
    "scene-view"
@@ -250,11 +216,7 @@ List for menus, overlays, windows to open."
                                   (match-string 1))))))
     res))
 
-
-(defun bunel-get-menu-types ()
-  "Generate a  list of strings with menu types. Search `bunel-menu-enums-file'.")
-
-
+
 
 (defconst debug-method-file (concat idlegame-project-root "Assets/#/Sources/CheatTools/DebugMethods.cs"))
 ;; TODO args, and use global to do the collecting
@@ -279,31 +241,32 @@ List for menus, overlays, windows to open."
   (bunel--cmd "cheat-advance-time" nil (number-to-string days)))
 
 
-(defun bunel-execute-menu-item ()
-  "Search menu item syntax, send command to execute."
-  ;; (process-lines "rg" )
-  ;; collect menu items with rg
-  ;;
-  ;;$ bunel IdleGame execute-menu-item "Tools/Generic/Toggle DebugOverlay &#c"
-  (interactive)
+;;  TODO
+;; (defun bunel-execute-menu-item ()
+;;   "Search menu item syntax, send command to execute."
+;;   ;; (process-lines "rg" )
+;;   ;; collect menu items with rg
+;;   ;;
+;;   ;;$ bunel IdleGame execute-menu-item "Tools/Generic/Toggle DebugOverlay &#c"
+;;   (interactive)
 
-  (let ((default-directory (concat idlegame-project-root "Assets/" "Editor/")))
-    (process-lines "rg" "--color=never" "--no-heading" "-IN" "-o" "-e" "'\[MenuItem\(\"(.*)\"\)\]'" ))
+;;   (let ((default-directory (concat idlegame-project-root "Assets/" "Editor/")))
+;;     (process-lines "rg" "--color=never" "--no-heading" "-IN" "-o" "-e" "'\[MenuItem\(\"(.*)\"\)\]'" ))
 
-  )
+;;   )
 
-(defconst bunel/globals-asset-path "Assets/#/Scripts/Misc/Globals/Globals.asset")
-(defconst bunel/globals-file (concat idlegame-project-root bunel/globals-asset-path))
+(defconst bunel-globals-asset-path "Assets/#/Scripts/Misc/Globals/Globals.asset")
+(defconst bunel-globals-file (concat idlegame-project-root bunel-globals-asset-path))
 (defvar bunel-set-globals-hist '())
 
 (defun bunel-set-globals (item value)
   "Set ITEM in globals to VALUE."
   (interactive
-   (let* ((item (completing-read "Field to set: " (bunel-read-yaml-file-fields bunel/globals-file) nil t nil 'bunel-set-globals-hist))
+   (let* ((item (completing-read "Field to set: " (bunel-read-yaml-file-fields bunel-globals-file) nil t nil 'bunel-set-globals-hist))
           (value (read-from-minibuffer (format "Set %s to: " item))))
      (list item value)))
-  (bunel--set-value-in-yaml bunel/globals-file item value)
-  (bunel--cmd "import-assets" nil bunel/globals-asset-path))
+  (bunel--set-value-in-yaml bunel-globals-file item value)
+  (bunel--cmd "import-assets" nil bunel-globals-asset-path))
 
 (defun bunel--set-value-in-yaml (file item value)
   "Try to set yaml syntax in FILE for ITEM to VALUE in current buffer."
@@ -323,13 +286,13 @@ List for menus, overlays, windows to open."
          (princ (concat (match-string 1) "\n")))))))
 
 
-(defun bunel/set-debug-lore ()
+(defun bunel-set-debug-lore ()
   (interactive)
   (bunel-set-globals "disableLore" "0")
   (bunel-set-globals "loreAfterTutorial" "1"))
 
 
-(defun bunel/set-fake-internet ()
+(defun bunel-set-fake-internet ()
   (interactive)
   (bunel-set-globals "purchaseWithoutPlaystore" "1")
   (bunel-set-globals "fakeHaveInternet" "1")
@@ -436,15 +399,6 @@ List for menus, overlays, windows to open."
 
 
 
-
-;; implement timeout?
-
-;; (let ((temp-sym (gensym)))
-;;   (eval `
-;;    (progn (defvar ,temp-sym "hello")
-;;           (run-at-time 3 nil (// () (message ,temp-sym))))))
-
-
 (defvar team-entr/when-laat-line-timeout 60)
 (defmacro team-entr/when-last-line (file reg &rest body)
   "Use entr to wait until the last line of FILE matches REG.
@@ -476,21 +430,21 @@ Use `team-entr/when-laat-line-timeout' for the timeout, default is 60. Binding `
 
 
 
-(defvar bunel/unity-tests-last '())
+(defvar bunel-unity-tests-last '())
 
-(defun bunel/unity-unit-test-last ()
+(defun bunel-unity-unit-test-last ()
   (interactive)
-  (unless bunel/unity-tests-last
+  (unless bunel-unity-tests-last
     (user-error "no last test methods."))
-  (bunel/unity-unit-test2 bunel/unity-tests-last))
+  (bunel-unity-unit-test2 bunel-unity-tests-last))
 
-(defun bunel/unity-unit-test-buffer ()
+(defun bunel-unity-unit-test-buffer ()
   "Runs all test cases defined in the current buffer.
 see `omnisharp-unit-test-buffer'."
   (interactive)
-  (omnisharp--cs-inspect-buffer #'bunel/unity-unit-test1))
+  (omnisharp--cs-inspect-buffer #'bunel-unity-unit-test1))
 
-(defun bunel/unity-unit-test1 (elements)
+(defun bunel-unity-unit-test1 (elements)
   "Start unit test with some omnisharp csharp data ELEMENTS."
   (let* ((test-methods (omnisharp--cs-filter-resursively
                         'omnisharp--cs-unit-test-method-p
@@ -500,9 +454,9 @@ see `omnisharp-unit-test-buffer'."
                                       (car (omnisharp--cs-unit-test-method-p method)))
                                     test-methods))
          )
-    (bunel/unity-unit-test2 test-method-names)))
+    (bunel-unity-unit-test2 test-method-names)))
 
-(defun bunel/unity-test-at-point ()
+(defun bunel-unity-test-at-point ()
   "Runs test case under point, if any. See `omnisharp-unit-test-at-point'"
   (interactive)
   (omnisharp--cs-element-stack-at-point
@@ -511,50 +465,50 @@ see `omnisharp-unit-test-buffer'."
             (test-method (omnisharp--cs-unit-test-method-p element-on-point))
             (test-method-name (car test-method))
             (test-method-framework (car (cdr test-method))))
-       (bunel/unity-unit-test2 (list test-method-name))))))
+       (bunel-unity-unit-test2 (list test-method-name))))))
 
 
 
-(defconst bunel/test-buff-name "*unity-tests*")
-(defvar-local bunel/test-out-file '())
-(defun bunel/unity-unit-test2 (method-names)
-  (setq bunel/unity-tests-last method-names)
+(defconst bunel-test-buff-name "*unity-tests*")
+(defvar-local bunel-test-out-file '())
+(defun bunel-unity-unit-test2 (method-names)
+  (setq bunel-unity-tests-last method-names)
   (let ((out-file (make-temp-file "unity-test-out")))
     (with-current-buffer
-        (get-buffer-create bunel/test-buff-name)
-      (setq bunel/test-out-file out-file))
+        (get-buffer-create bunel-test-buff-name)
+      (setq bunel-test-out-file out-file))
     (apply #'bunel--cmd
            `("refresh-and"
              nil
              "run-tests"
              "-o" ,out-file
-             ,@bunel/unity-tests-last))
+             ,@bunel-unity-tests-last))
     (message "Running %d unity tests..."
-             (length bunel/unity-tests-last))
+             (length bunel-unity-tests-last))
     (team-entr/file-changed-cb
      out-file
      (lambda ()
        (with-current-buffer
-           bunel/test-buff-name
+           bunel-test-buff-name
            (erase-buffer)
            (insert-file-contents-literally
-            bunel/test-out-file)
+            bunel-test-out-file)
            (team/with-default-dir
-            "/tmp" (delete-file bunel/test-out-file))
+            "/tmp" (delete-file bunel-test-out-file))
            (pop-to-buffer (current-buffer))
-           (bunel/unity-test-mode)
+           (bunel-unity-test-mode)
            (font-lock-fontify-buffer))))))
 
 (define-derived-mode
-  bunel/unity-test-mode
+  bunel-unity-test-mode
   fundamental-mode
   "bunel-unity-test"
   "Mode for team unity test commands"
 
   (font-lock-add-keywords
-   'bunel/unity-test-mode
-   '(("### PASSED" . 'bunel/test-passed-face)
-     ("### ALL TESTS PASSED ###" . 'bunel/test-passed-bottom)
+   'bunel-unity-test-mode
+   '(("### PASSED" . 'bunel-test-passed-face)
+     ("### ALL TESTS PASSED ###" . 'bunel-test-passed-bottom)
      ;; ("\[Test\]" . '(:foreground "Yellow"))
    ))
   (if (fboundp 'font-lock-flush)
@@ -563,12 +517,12 @@ see `omnisharp-unit-test-buffer'."
       (with-no-warnings (font-lock-fontify-buffer)))))
 
 (defface
-  bunel/test-passed-face
+  bunel-test-passed-face
   '((t . (:foreground  "LawnGreen") ))
   "")
 
 (defface
-  bunel/test-passed-bottom
+  bunel-test-passed-bottom
   '((t . (:foreground  "SpringGreen" :underline "white")))
   "")
 
@@ -668,3 +622,15 @@ see `omnisharp-unit-test-buffer'."
   (require 'unity-labels)
   (interactive)
   (command-execute #'cos/add-prefab-label-and-add-for-rewrite nil nil))
+
+
+
+(defconst unity-log-file "~/.config/unity3d/Editor.log"
+  "Location of the unity log file")
+
+(defun bunel-open-unity-editor-log ()
+  "Open unity log file in tail mode."
+  (interactive)
+  (find-file-literally unity-log-file)
+  (goto-char (point-max))
+  (follow-mode))
