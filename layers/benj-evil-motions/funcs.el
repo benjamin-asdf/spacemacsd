@@ -121,10 +121,29 @@ Start either at 0 or prefix ARG, if given."
 
 
 (defadvice evil-force-normal-state (before my/evil-normal-state-maybe-delete-mc-cursors activ)
+  (require 'evil-mc-vars)
   (when (and
          evil-mc-cursor-state
          (eq evil-state 'normal))
     (evil-mc-undo-all-cursors)))
+
+
+;; can be improved
+(defun benj/evil-mc-cursors-on-words (beg end)
+  "Make a cursor on each word in the region."
+  (interactive "r")
+  (goto-char beg)
+  (while
+      (and (not (eobp))
+           (> end (point)))
+    (forward-evil-WORD)
+    (evil-mc-make-cursor-here))
+  (evil-normal-state)
+  (evil-mc-find-and-goto-cursor
+   'evil-mc-find-last-cursor nil)
+  (evil-mc-undo-cursor (-last-item evil-mc-cursor-list))
+  (unless (eobp)
+    (forward-char)))
 
 
 
@@ -489,3 +508,30 @@ Also call `spacemacs/symbol-overlay-transient-state/body'."
          (lispyville--safe-string beg end nil)))
     (delete-region beg end)
     (insert safe-string)))
+
+
+
+
+
+(defun take-every-second (list)
+  (-non-nil
+   (--map-indexed
+    (when
+        (= (% it-index 2) 1)
+      it)
+    list)))
+
+(defun benj/second-words (beg end)
+  (interactive"r")
+  (goto-char beg)
+  (let ((s (buffer-substring beg end)))
+    (delete-region beg end)
+    (insert
+     (mapconcat
+      #'identity
+      (take-every-second
+       (s-split " " s))
+      " "))))
+
+
+

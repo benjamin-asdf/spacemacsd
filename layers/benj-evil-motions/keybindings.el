@@ -67,7 +67,7 @@
   )
 
 (team/spacemacs-declare-keys
-    "oep"
+   "oep"
     "paramaters"
   "e" #'team/csharp-eldoc-to-param
   "y" #'team/insert-yank-as-param
