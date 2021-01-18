@@ -147,7 +147,8 @@ see `benj-roslyn-proj-configs'"
   (interactive)
   (benj-roslyn-runner
    benj-roslyn-tools/playground-sln
-   "-t" "Playground")
+   "-t" "Playground"
+   )
   )
 
 (defun benj-roslyn-tools/run-playground-sync ()
@@ -330,7 +331,9 @@ see `benj-roslyn-proj-configs'"
          (default-directory (file-name-directory sln))
          (proc (benj-start-proccess-flatten-args "run-analyzers"
                                                  benj-roslyn-tools/buff-name "dotnet" benj-roslyn-tools/cli-executable
-                                                 "-s" sln args "-no-stats")))
+                                                 "-s" sln args
+                                                 ;; "-no-stats"
+                                                 )))
     (set-process-filter proc filter)
     (set-process-sentinel proc sentinel))
   (pop-to-buffer benj-roslyn-tools/buff-name)
