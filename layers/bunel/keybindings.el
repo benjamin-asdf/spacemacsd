@@ -3,7 +3,7 @@
 (team/spacemacs-declare-keys
     "ou"
     "unity"
-  "c" #'bunel/refresh-and-play
+  "c" #'bunel-refresh-and-play
   "a" #'bunel-refresh-all
   "L" #'bunel-open-unity-editor-log
   "e" #'bunel-execute-debug-method
@@ -13,8 +13,8 @@
   "u" #'team-unity/rg-guid-search
   "U" #'team-unity/rg-guid-search-at-point
   "f" #'team-unity/rg-guid-search-ask-file
-  "0" #'bunel/set-default-project
-  "L" #'bunel/loading-scene-and-play
+  "0" #'bunel-set-default-project
+  "L" #'bunel-loading-scene-and-play
   "0" #'bunel-open-unity-editor-log
   "O" #'team-unity/open-prefab-at-point
     )
@@ -23,7 +23,7 @@
     "oud"
     "debug"
   "p" #'bunel-open-debug-panel
-  "l" #'bunel/set-debug-lore
+  "l" #'bunel-set-debug-lore
 
   )
 
@@ -31,7 +31,7 @@
   "oup"
   "prefabs"
   "o" #'bunel-open-prefab
-  "s" #'bunel/scene-view
+  "s" #'bunel-scene-view
   "c" #'cos/do-prefab-integrity-check
   "C" #'cos/check-conflicted
   "m" #'cos/prefab-integrity-check
@@ -44,17 +44,15 @@
 (team/spacemacs-declare-keys
   "out"
     "tests"
-  "b" #'bunel/unity-unit-test-buffer
-  "l" #'bunel/unity-unit-test-last
+  "b" #'bunel-unity-unit-test-buffer
+  "l" #'bunel-unity-unit-test-last
   ;; todo at point
-  "t" #'bunel/unity-test-at-point
+  "t" #'bunel-unity-test-at-point
   )
 
 
 (team/spacemacs-declare-keys
     "oul"
     "last"
-  "l" #'bunel/rerun-last
-  "e" #'bunel/rerun-debug-method
-
-    )
+  "l" #'bunel-rerun-last
+  "e" #'bunel-rerun-debug-method)
