@@ -772,6 +772,7 @@ before packages are loaded."
   (with-eval-after-load
       'org-capture (require 'config-org-capture))
 
+  (require 'benj-shell-script)
 
   )
 
