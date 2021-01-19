@@ -85,3 +85,7 @@
   (add-to-list 'elint-standard-variables 'buffer-file-coding-system)
   (add-to-list 'elint-standard-variables 'emacs-major-version)
   (add-to-list 'elint-standard-variables 'window-system))
+
+
+
+* package for text storage

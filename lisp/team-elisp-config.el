@@ -39,9 +39,24 @@
   :init
   (team/spacemacs-declare-keys
       "os"
-      "search/secretary"
+      "search/secretary/strings"
     "d" #'secretary-collect))
 
 (cl-pushnew
  (concat team-elisp-dir "snippets/")
  yas-snippet-dirs)
+
+
+
+(use-package
+  string-edit
+  :defer t
+  :init
+  (team/spacemacs-declare-keys
+      "os"
+      "search/secretary/strings"
+    "e" #'string-edit-at-point
+      )
+
+
+  )
