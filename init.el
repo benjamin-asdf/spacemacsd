@@ -639,7 +639,7 @@ before packages are loaded."
     (spacemacs/declare-prefix-for-mode
       mode
       "ep"
-      "pritty")
+      "pretty")
     (spacemacs/set-leader-keys-for-major-mode
       mode
       "epe" #'pp-eval-last-sexp
