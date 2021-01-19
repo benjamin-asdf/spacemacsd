@@ -1,3 +1,6 @@
 [submodule "redshiftel"]
 	path = layers/redshiftel
 	url = git@github.com:rtnlmeme-DestroyerOfDeath/redshiftel.git
+[submodule "lisp/emacs-hex-to-rgba"]
+	path = lisp/emacs-hex-to-rgba
+	url = git@github.com:syohex/emacs-hex-to-rgba.git
