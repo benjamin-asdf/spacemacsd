@@ -4,6 +4,8 @@
 ;;; Commentary:
 ;;
 
+(require 're-builder)
+
 ;;; Code:
 (defun team-create-temp-file-on-region ()
   "Create a file in temp data folder from active region,
@@ -320,7 +322,6 @@ with it anaphorically bound to a list of ARGS."
   (concat (downcase (subseq s 0 1)) (subseq s 1)))
 
 (defun team/comma-interposed (&rest args)
-  (setq my-args args)
   (apply
    #'concat
    (-interpose
@@ -421,15 +422,16 @@ with it anaphorically bound to a list of ARGS."
 (defun team/copy-file-re-replace (file reg replace)
   "Create a copy of FILE. Regex replace REG with REPLACE in file path,
 return the name of the new file."
-  (let ((new-file
-         (team/re-replace-in-string file reg replace)))
-    (unless (file-exists-p (file-name-directory new-file))
-      (make-directory
-       (file-name-directory new-file) t))
-    (copy-file
-     template-file
-     new-file t)
-    new-file))
+  (when (file-exists-p file)
+    (let ((new-file
+           (team/re-replace-in-string file reg replace)))
+      (unless (file-exists-p (file-name-directory new-file))
+        (make-directory
+         (file-name-directory new-file) t))
+      (copy-file
+       file
+       new-file t)
+      new-file)))
 
 (defun team/find-file (file line &optional coll)
   "Find file and goto LINE. When COLL is non nil, goto coll."
@@ -841,36 +843,6 @@ return the result of that evalution and stop."
 (defmacro team/--expand (form list)
   "Anaphoric form of `team/-expand'."
   `(team/-expand-list ,list (lambda (it) ,form)))
-
-
-
-;; should move stuff that is not really utils
-(defconst team/stack-buff "*team/stack*")
-(defalias 'team/push-to-stack-buff (team/build-append-to-buff team/stack-buff t))
-
-(defun team/push-to-stack-buff ()
-  (interactive)
-  (team/build-append-to-buff team/stack-buff))
-
-(defun team/push-region-to-stack ()
-  (interactive)
-  (team/push-to-stack-buff (region-str)))
-
-(defun team/stack-buff-contents ()
-  (team/buff-content
-   team/stack-buff))
-
-;; (defun benj-slack/msg-stack-buff ()
-;;   (interactive)
-;;   (slack-im-select)
-;;   (slack-message-send-from-buffer)
-;;   (insert team/stack-buff-contents))
-
-(defun team/pop-stack-buff ()
-  (interactive)
-  "Flush the whole contents of `team/stack-buff' into the current buffer."
-  (insert (team/stack-buff-contents))
-  (team/erase-that-buff team/stack-buff))
 
 
 ;; devel
