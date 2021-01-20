@@ -784,6 +784,23 @@ before packages are loaded."
         "misc tools"
       "h" #'hex-to-rgba))
 
+  
+
+  (add-to-load-path "~/.spacemacs.d/lisp/lisp-extra-font-lock/")
+  (use-package
+    lisp-extra-font-lock
+    :defer t
+    :init
+    (lisp-extra-font-lock-global-mode 1))
+
+
+  
+
+  (custom-set-faces
+   '(font-lock-variable-name-face
+     ((t (:inherit font-lock-variable-name-face :weight bold :foreground "Aquamarine")))))
+
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will

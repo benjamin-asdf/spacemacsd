@@ -4,3 +4,6 @@
 [submodule "lisp/emacs-hex-to-rgba"]
 	path = lisp/emacs-hex-to-rgba
 	url = git@github.com:syohex/emacs-hex-to-rgba.git
+[submodule "lisp/lisp-extra-font-lock"]
+	path = lisp/lisp-extra-font-lock
+	url = git@github.com:Lindydancer/lisp-extra-font-lock.git
