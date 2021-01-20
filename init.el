@@ -787,18 +787,14 @@ before packages are loaded."
   
 
   (add-to-load-path "~/.spacemacs.d/lisp/lisp-extra-font-lock/")
-  (use-package
-    lisp-extra-font-lock
-    :defer t
-    :init
-    (lisp-extra-font-lock-global-mode 1))
-
+  (require 'lisp-extra-font-lock)
+  (lisp-extra-font-lock-global-mode 1)
 
   
 
   (custom-set-faces
    '(font-lock-variable-name-face
-     ((t (:inherit font-lock-variable-name-face :weight bold :foreground "Aquamarine")))))
+     ((t (:inherit font-lock-variable-name-face :foreground "LightGreen")))))
 
 
   )
