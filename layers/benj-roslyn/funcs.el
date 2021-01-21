@@ -236,7 +236,7 @@ see `benj-roslyn-proj-configs'"
 
 (defun benj-roslyn-rerun-last ()
   "Rerun `benj-roslyn-runner' with previous args."
-  (interactive)
+  (interactive O)
   (if benj-roslyn-last-args
       (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args))))
 
@@ -313,29 +313,31 @@ see `benj-roslyn-proj-configs'"
                               (code (error "nuke build exited abnormally with code %s" code)))))
     (error "Scheduled rerun after nuke build..."))
 
-  (let* ((file-var (benj-roslyn/diagnostics-file-name sln))
-         (filter
-          (benj-roslyn-tools/handle-proc
-           'p
-           's
-           file-var
-           (lambda (p s file-name)
-             (benj-roslyn-tools/collect-diagnostics p s file-name)
-             (benj-roslyn-tools/default-filter p s))))
-         (sentinel
-          (benj-roslyn-tools/handle-proc
-           'p
-           's
-           file-var
-           #'benj-roslyn-tools/write-diagnostic-out))
+  (let* (
+         ;; (file-var (benj-roslyn/diagnostics-file-name sln))
+         ;; (filter
+         ;;  (benj-roslyn-tools/handle-proc
+         ;;   'p
+         ;;   's
+         ;;   file-var
+         ;;   (lambda (p s file-name)
+         ;;     (benj-roslyn-tools/collect-diagnostics p s file-name)
+         ;;     (benj-roslyn-tools/default-filter p s))))
+         ;; (sentinel
+         ;;  (benj-roslyn-tools/handle-proc
+         ;;   'p
+         ;;   's
+         ;;   file-var
+         ;;   #'benj-roslyn-tools/write-diagnostic-out))
          (default-directory (file-name-directory sln))
          (proc (benj-start-proccess-flatten-args "run-analyzers"
                                                  benj-roslyn-tools/buff-name "dotnet" benj-roslyn-tools/cli-executable
                                                  "-s" sln args
                                                  ;; "-no-stats"
                                                  )))
-    (set-process-filter proc filter)
-    (set-process-sentinel proc sentinel))
+    ;; (set-process-filter proc filter)
+    ;; (set-process-sentinel proc sentinel)
+    )
   (pop-to-buffer benj-roslyn-tools/buff-name)
   ;; (analyzer-log-mode)
   )
