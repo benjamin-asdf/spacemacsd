@@ -236,7 +236,7 @@ see `benj-roslyn-proj-configs'"
 
 (defun benj-roslyn-rerun-last ()
   "Rerun `benj-roslyn-runner' with previous args."
-  (interactive O)
+  (interactive)
   (if benj-roslyn-last-args
       (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args))))
 
