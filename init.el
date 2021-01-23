@@ -262,9 +262,13 @@ It should only modify the values of Spacemacs settings."
    ;; List of items to show in startup buffer or an association list of
    ;; the form `(list-type . list-size)`. If nil then it is disabled.
    ;; Possible values for list-type are:
-   ;; `recents' `bookmarks' `projects' `agenda' `todos'.
+   ;; `recents' `recents-by-project' `bookmarks' `projects' `agenda' `todos'.
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
+   ;; The exceptional case is `recents-by-project', where list-type must be a
+   ;; pair of numbers, e.g. `(recents-by-project . (7 .  5))', where the first
+   ;; number is the project limit and the second the limit on the recent files
+   ;; within a project.
    dotspacemacs-startup-lists '((recents . 5)
                                 (projects . 7))
 
@@ -795,15 +799,17 @@ before packages are loaded."
   (add-to-load-path "~/.spacemacs.d/lisp/lisp-extra-font-lock/")
   (require 'lisp-extra-font-lock)
   (lisp-extra-font-lock-global-mode 1)
+  (add-hook 'lisp-extra-font-lock-mode-hook #'dash-fontify-mode)
 
   
 
-  (custom-set-faces
-   '(font-lock-variable-name-face
-     ((t (:inherit font-lock-variable-name-face :foreground "LightGreen")))))
 
+  (set-face-foreground
+   'font-lock-variable-name-face
+   "LightGreen")
 
   )
+
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
