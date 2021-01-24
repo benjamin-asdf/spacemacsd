@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (defconst benj/omnisharp-repo-root "~/repos/omnisharp-roslyn/")
 (defconst benj/omnisharp-server-executable (concat benj/omnisharp-repo-root "artifacts/scripts/OmniSharp.Stdio"))
 
@@ -277,12 +278,203 @@ Depends on mono and an omnisharp build at `benj/omnisharp-server-executable'."
 (setq omnisharp-host "http://localhost:8083/")
 
 
+
+
+(defun doom-unquote (exp)
+  "Return EXP unquoted."
+  (declare (pure t) (side-effect-free t))
+  (while (memq (car-safe exp) '(quote function))
+    (setq exp (cadr exp)))
+  exp)
+
+(defun doom--resolve-hook-forms (hooks)
+  "Converts a list of modes into a list of hook symbols.
+
+If a mode is quoted, it is left as is. If the entire HOOKS list is quoted, the
+list is returned as-is."
+  (declare (pure t) (side-effect-free t))
+  (let ((hook-list (doom-enlist (doom-unquote hooks))))
+    (if (eq (car-safe hooks) 'quote)
+        hook-list
+      (cl-loop for hook in hook-list
+               if (eq (car-safe hook) 'quote)
+               collect (cadr hook)
+               else collect (intern (format "%s-hook" (symbol-name hook)))))))
+
+(defmacro add-hook! (hooks &rest rest)
+  "A convenience macro for adding N functions to M hooks.
+
+This macro accepts, in order:
+
+  1. The mode(s) or hook(s) to add to. This is either an unquoted mode, an
+     unquoted list of modes, a quoted hook variable or a quoted list of hook
+     variables.
+  2. Optional properties :local and/or :append, which will make the hook
+     buffer-local or append to the list of hooks (respectively),
+  3. The function(s) to be added: this can be one function, a quoted list
+     thereof, a list of `defun's, or body forms (implicitly wrapped in a
+     lambda).
+
+\(fn HOOKS [:append :local] FUNCTIONS)"
+  (declare (indent (lambda (indent-point state)
+                     (goto-char indent-point)
+                     (when (looking-at-p "\\s-*(")
+                       (lisp-indent-defform state indent-point))))
+           (debug t))
+  (let* ((hook-forms (doom--resolve-hook-forms hooks))
+         (func-forms ())
+         (defn-forms ())
+         append-p
+         local-p
+         remove-p
+         forms)
+    (while (keywordp (car rest))
+      (pcase (pop rest)
+        (:append (setq append-p t))
+        (:local  (setq local-p t))
+        (:remove (setq remove-p t))))
+    (let ((first (car-safe (car rest))))
+      (cond ((null first)
+             (setq func-forms rest))
+
+            ((eq first 'defun)
+             (setq func-forms (mapcar #'cadr rest)
+                   defn-forms rest))
+
+            ((memq first '(quote function))
+             (setq func-forms
+                   (if (cdr rest)
+                       (mapcar #'doom-unquote rest)
+                     (doom-enlist (doom-unquote (car rest))))))
+
+            ((setq func-forms (list `(lambda (&rest _) ,@rest)))))
+      (dolist (hook hook-forms)
+        (dolist (func func-forms)
+          (push (if remove-p
+                    `(remove-hook ',hook #',func ,local-p)
+                  `(add-hook ',hook #',func ,append-p ,local-p))
+                forms)))
+      (macroexp-progn
+       (append defn-forms
+               (if append-p
+                   (nreverse forms)
+                 forms))))))
+
+(defmacro after! (package &rest body)
+  "Evaluate BODY after PACKAGE have loaded.
+
+PACKAGE is a symbol or list of them. These are package names, not modes,
+functions or variables. It can be:
+
+- An unquoted package symbol (the name of a package)
+    (after! helm BODY...)
+- An unquoted list of package symbols (i.e. BODY is evaluated once both magit
+  and git-gutter have loaded)
+    (after! (magit git-gutter) BODY...)
+- An unquoted, nested list of compound package lists, using any combination of
+  :or/:any and :and/:all
+    (after! (:or package-a package-b ...)  BODY...)
+    (after! (:and package-a package-b ...) BODY...)
+    (after! (:and package-a (:or package-b package-c) ...) BODY...)
+  Without :or/:any/:and/:all, :and/:all are implied.
+
+This is a wrapper around `eval-after-load' that:
+
+1. Suppresses warnings for disabled packages at compile-time
+2. No-ops for package that are disabled by the user (via `package!')
+3. Supports compound package statements (see below)
+4. Prevents eager expansion pulling in autoloaded macros all at once"
+  (declare (indent defun) (debug t))
+  (if (symbolp package)
+      (unless (memq package (bound-and-true-p doom-disabled-packages))
+        (list (if (or (not (bound-and-true-p byte-compile-current-file))
+                      (require package nil 'noerror))
+                  #'progn
+                #'with-no-warnings)
+              (let ((body (macroexp-progn body)))
+                `(if (featurep ',package)
+                     ,body
+                   ;; We intentionally avoid `with-eval-after-load' to prevent
+                   ;; eager macro expansion from pulling (or failing to pull) in
+                   ;; autoloaded macros/packages.
+                   (eval-after-load ',package ',body)))))
+    (let ((p (car package)))
+      (cond ((not (keywordp p))
+             `(after! (:and ,@package) ,@body))
+            ((memq p '(:or :any))
+             (macroexp-progn
+              (cl-loop for next in (cdr package)
+                       collect `(after! ,next ,@body))))
+            ((memq p '(:and :all))
+             (dolist (next (cdr package))
+               (setq body `((after! ,next ,@body))))
+             (car body))))))
+
+(defun doom-enlist (exp)
+  "Return EXP wrapped in a list, or as-is if already a list."
+  (declare (pure t) (side-effect-free t))
+  (if (listp exp) exp (list exp)))
+
+
+(defvar-local +electric-indent-words '()
+  "The list of electric words. Typing these will trigger reindentation of the
+current line.")
+
+;;
+(after! electric
+        (setq-default electric-indent-chars '(?\n ?\^?))
+
+        (add-hook! 'electric-indent-functions
+                   (defun +electric-indent-char-fn (_c)
+                     (when (and (eolp) +electric-indent-words)
+                       (save-excursion
+                         (backward-word)
+                         (looking-at-p (concat "\\<" (regexp-opt +electric-indent-words))))))))
+
+
+(defun set-electric! (modes &rest plist)
+  "Declare that WORDS (list of strings) or CHARS (lists of chars) should trigger
+electric indentation.
+
+Enables `electric-indent-local-mode' in MODES.
+
+\(fn MODES &key WORDS CHARS)"
+  (declare (indent defun))
+  (dolist (mode (doom-enlist modes))
+    (let ((hook (intern (format "%s-hook" mode)))
+          (fn   (intern (format "+electric--init-%s-h" mode))))
+      (cond ((null (car-safe plist))
+             (remove-hook hook fn)
+             (unintern fn nil))
+            ((fset
+              fn (lambda ()
+                   (when (eq major-mode mode)
+                     (setq-local electric-indent-inhibit nil)
+                     (cl-destructuring-bind (&key chars words) plist
+                       (electric-indent-local-mode +1)
+                       (if chars (setq-local electric-indent-chars chars))
+                       (if words (setq +electric-indent-words words))))))
+             (add-hook hook fn))))))
+
+
+(defun +csharp-sp-point-in-type-p (id action context)
+  "Return t if point is in the right place for C# angle-brackets."
+  (and (sp-in-code-p id action context)
+       (cond ((eq action 'insert)
+              (sp-point-after-word-p id action context))
+             ((eq action 'autoskip)
+              (/= (char-before) 32)))))
+
+(set-electric! 'csharp-mode :chars '(?\n ?\}))
+
+(sp-local-pair 'csharp-mode "<" ">"
+               :when '(+csharp-sp-point-in-type-p)
+               :post-handlers '(("| " "SPC")))
 
 
 
 
-
-
+
 
 
 
