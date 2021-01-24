@@ -747,6 +747,10 @@ before packages are loaded."
   (run-at-time 10 10 #'benj-sys/invoke-watch-vbs)
   (run-at-time 20 20 #'benj-sys/invoke-kill-high-mem)
 
+
+  ;; redefine this shit becuase I always mash `k` anyway
+  (defun persp--kill-buffer-query-function-foreign-check () 'kill)
+
   
   ;; temp hacks
 
