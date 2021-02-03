@@ -333,7 +333,7 @@ see `benj-roslyn-proj-configs'"
          (proc (benj-start-proccess-flatten-args "run-analyzers"
                                                  benj-roslyn-tools/buff-name "dotnet" benj-roslyn-tools/cli-executable
                                                  "-s" sln args
-                                                 ;; "-no-stats"
+                                                 "-no-stats"
                                                  )))
     ;; (set-process-filter proc filter)
     ;; (set-process-sentinel proc sentinel)
