@@ -749,7 +749,7 @@ before packages are loaded."
 
 
   ;; redefine this shit becuase I always mash `k` anyway
-  (defun persp--kill-buffer-query-function-foreign-check () 'kill)
+  (defun persp--kill-buffer-query-function-foreign-check (&rest args) 'kill)
 
   
   ;; temp hacks
