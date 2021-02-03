@@ -981,6 +981,29 @@ DIR should be a directory in a git repo."
      "-r"
      "-z" "HEAD"))))
 
+(defun my/magit-diff-files (rev other-rev &rest patterns)
+  "Return a list of files of git diff between REV and OTHER-REV.
+if OHTER-REV is nil, use HEAD. If any PATTERNS are giving, regex filter by them."
+  (magit-with-toplevel
+    (let ((items
+           (magit-git-items
+            "diff"
+            (concat
+             (or other-rev "HEAD")
+             ".." rev)
+            "--name-only"
+            "-z")))
+      (if
+          patterns
+          (--filter
+           (string-match
+            (regexp-opt
+             patterns)
+            it)
+           items)
+        items))))
+
+
 
 
 (defun benj/magit-status-untracked-files ()
