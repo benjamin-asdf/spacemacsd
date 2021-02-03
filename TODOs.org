@@ -89,3 +89,10 @@
 
 
 * package for text storage
+
+
+* smantic
+https://github.com/syl20bnr/spacemacs/pull/7736#issuecomment-313320906
+
+
+* retire the mouse

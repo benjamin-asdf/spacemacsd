@@ -196,8 +196,9 @@ ARGS are additional arguments for the rg search."
   (defun benj/helm-ag-dwim-kill-selection (arg)
     (interactive "P")
     (benj/helm-make-kill-selection-and-quit
-     (lambda (el) (-last-item
-                     (split-string el ":")))
+     (lambda (el)
+       (-last-item
+        (s-split-up-to ":" el 1)))
      arg)))
 
 (with-eval-after-load
