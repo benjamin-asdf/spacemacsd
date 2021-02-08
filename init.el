@@ -86,7 +86,6 @@ This function should only modify configuration layer settings."
 
      ;; benj
      team-utils
-     idlegame-special-config
      benj-funcs
      benj-themes-config
      benj-tags

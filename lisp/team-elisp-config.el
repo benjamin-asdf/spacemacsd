@@ -46,8 +46,6 @@
  (concat team-elisp-dir "snippets/")
  yas-snippet-dirs)
 
-
-
 (use-package
   string-edit
   :defer t
@@ -55,8 +53,18 @@
   (team/spacemacs-declare-keys
       "os"
       "search/secretary/strings"
-    "e" #'string-edit-at-point
-      )
+    "e" #'string-edit-at-point))
 
+(use-package
+  idlegame-definitions
+  :init
+  (progn
+    (team/spacemacs-declare-keys
+        "oi0"
+        "tools"
+      "f" #'my/cos-jump-asset-file)
 
-  )
+    (team/spacemacs-declare-keys
+        "oig"
+        "cos-git"
+      "O" #'cos/reset-hard)))
