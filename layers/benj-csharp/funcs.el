@@ -476,13 +476,6 @@ Enables `electric-indent-local-mode' in MODES.
 
 
 
-
-
-
-
-
-
-
 
 ;; hack to remove some errors
 ;; but atm the omnisharp get diagnostics is timing out in non-small files, so yea
