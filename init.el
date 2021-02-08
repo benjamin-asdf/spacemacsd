@@ -177,6 +177,7 @@ This function should only modify configuration layer settings."
 This function is called at the very beginning of Spacemacs startup,
 before layer configuration.
 It should only modify the values of Spacemacs settings."
+
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
@@ -425,6 +426,7 @@ It should only modify the values of Spacemacs settings."
    ;; If non-nil show the titles of transient states. (default t)
    dotspacemacs-show-transient-state-title t
 
+
    ;; If non-nil show the color guide hint for transient state keys. (default t)
    dotspacemacs-show-transient-state-color-guide t
 
@@ -550,9 +552,12 @@ configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
+  (let ((default-directory "~/.spacemacs.d/"))
+    (load (expand-file-name "named-macros.el"))
+    (load (expand-file-name "lisp/team-elisp-config.el")))
+
   ;; TODO to not need  to have it?
   (setq package-check-signature nil)
-
 
   (defun team/spacemacs-define-keys (leader-keys prefix-name &rest bindings)
     "Define spacemacs keys."
@@ -560,8 +565,6 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
     (eval
      `(mapc (lambda (x) (spacemacs/set-leader-keys (concat ,leader-keys (car x)) (cdr x)))
             '(,@bindings))))
-
-
 
   (defun team/spacemacs-declare-keys (prefix name &rest bindings)
     "BINDINGS should be single letter strings and function symbol names."
@@ -602,6 +605,7 @@ before packages are loaded."
 
   (setq-default evil-escape-key-sequence "fq")
   (setq-default spacemacs-show-trailing-whitespace nil)
+  (setq-default dotspacemacs-show-trailing-whitespace nil)
   (setq-default avy-timeout-seconds 0.25)
   (setq avy-all-windows t)
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
@@ -716,14 +720,6 @@ before packages are loaded."
     (interactive)
     (when (yes-or-no-p "Kill emacs? ")
       ad-do-it))
-
-
-  
-
-  (let ((default-directory "~/.spacemacs.d/"))
-    (load (expand-file-name "named-macros.el"))
-    (load (expand-file-name "lisp/team-elisp-config.el")))
-
 
   
 
