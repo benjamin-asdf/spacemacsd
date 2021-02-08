@@ -3,4 +3,6 @@
 #key : itrygetm
 #contributor : benj
 # --
-if (!c.state.TryGet<`(team-electric/comp-name)`>(out var $0)) return;
+if (c.state.TryGet<`(team-electric/comp-name)`>(out var m)) {
+    $0
+}

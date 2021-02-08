@@ -1,4 +1,6 @@
 ;; -*- lexical-binding: t; -*-
+
+
 (defconst benj/omnisharp-repo-root "~/repos/omnisharp-roslyn/")
 (defconst benj/omnisharp-server-executable (concat benj/omnisharp-repo-root "artifacts/scripts/OmniSharp.Stdio"))
 
@@ -467,9 +469,10 @@ Enables `electric-indent-local-mode' in MODES.
 
 (set-electric! 'csharp-mode :chars '(?\n ?\}))
 
-(sp-local-pair 'csharp-mode "<" ">"
-               :when '(+csharp-sp-point-in-type-p)
-               :post-handlers '(("| " "SPC")))
+(with-eval-after-load 'smartparens
+  (sp-local-pair 'csharp-mode "<" ">"
+                 :when '(+csharp-sp-point-in-type-p)
+                 :post-handlers '(("| " "SPC"))))
 
 
 

@@ -106,10 +106,18 @@ Use `teamel/next-resharper-warning' now to jump through the warnings." (line-num
   (while (re-search-forward "\\\\" nil t)
     (replace-match "/")))
 
-(defun teamel/last-yank ()
+(defalias 'teamel/last-yank #'my/last-yank)
+(defun my/last-yank ()
   (with-temp-buffer
     (yank)
     (buffer-string)))
+
+(defmacro my/with-yank-buffer (&rest body)
+  `(with-temp-buffer
+     (yank)
+     (->gg)
+     ,@body))
+
 
 (defun teamel/these-resharper-warning-files ()
   (-uniq (-map #'car teamel/these-resharper-warnings)))

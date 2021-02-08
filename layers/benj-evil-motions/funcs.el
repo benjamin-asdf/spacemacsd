@@ -535,3 +535,18 @@ Also call `spacemacs/symbol-overlay-transient-state/body'."
 
 
 
+(defun benj/shed-to-file-name-base ()
+  (interactive)
+  (let* ((bounds
+          (bounds-of-thing-at-point
+           'filename))
+         (s
+          (file-name-base
+           (buffer-substring
+            (car bounds)
+            (cdr bounds)))))
+    (delete-region
+     (car bounds)
+     (cdr bounds))
+    (insert s)
+    (kill-new s)))

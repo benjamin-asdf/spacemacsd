@@ -31,18 +31,6 @@
      (with-current-buffer (org-capture-get :buffer) (save-buffer))))
 
 
-(defun my/temp-nullify-app-sync ()
-  (interactive)
-  (team/with-file
-   "/home/benj/idlegame/AppSyncUnityProject/Packages/AwsAppSync/Runtime/AppSyncSystems.cs"
-   (while
-       (re-search-forward
-        "Add(new.*System"
-        nil
-        t)
-     (replace-match "//"))))
-
-
 (defun my/temp-fix-omnisharp-requires ()
   (--map
    (team/with-file
@@ -83,8 +71,11 @@
     t
     ".elc$")))
 
-
-
+(--map #'byte-compile-file
+        (directory-files
+         "/home/benj/.emacs.d/elpa/28.0/develop/omnisharp-20201220.906/"
+         t
+         ".el$"))
 
 
 

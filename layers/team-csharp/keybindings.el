@@ -1,5 +1,6 @@
 
 (require 'csharp-transformations)
+;; (require 'c-moves)
 
 (spacemacs/declare-prefix-for-mode
   'team/chsarp-superior-mode
@@ -8,6 +9,10 @@
 (spacemacs/declare-prefix-for-mode
   'team/chsarp-superior-mode
   "ox" "text")
+
+(spacemacs/declare-prefix-for-mode
+  'team/chsarp-superior-mode
+  "oc" "classes")
 
 (spacemacs/set-leader-keys-for-minor-mode
   'team/chsarp-superior-mode
@@ -21,6 +26,7 @@
   "ot" #'cos/regenerate-gtags-background
   "opl" #'my-lazy/team/csharp-eldoc-expand-args
   "od" #'ggtags-find-definition
+  "ocr" #'benj/narrow-idlegame-const-buff
   )
 
 (spacemacs/set-leader-keys-for-minor-mode

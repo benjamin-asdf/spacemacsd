@@ -198,7 +198,7 @@ ARGS are additional arguments for the rg search."
     (benj/helm-make-kill-selection-and-quit
      (lambda (el)
        (-last-item
-        (s-split-up-to ":" el 1)))
+        (s-split-up-to ":" el 2)))
      arg)))
 
 (with-eval-after-load
