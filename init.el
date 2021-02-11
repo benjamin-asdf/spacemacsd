@@ -97,7 +97,7 @@ This function should only modify configuration layer settings."
      redshiftel
      ;; sailor
      best-banners
-     bunel
+     ;bunel
      minder
      parens-config
      benj-pomodoro
@@ -552,11 +552,6 @@ configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
-  (let ((default-directory "~/.spacemacs.d/"))
-    (load (expand-file-name "named-macros.el"))
-    (load (expand-file-name "lisp/team-elisp-config.el")))
-
-  ;; TODO to not need  to have it?
   (setq package-check-signature nil)
 
   (defun team/spacemacs-define-keys (leader-keys prefix-name &rest bindings)
@@ -577,6 +572,11 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
           (list (concat prefix it))
         (list it))
       (-flatten bindings))))
+
+  (let ((default-directory "~/.spacemacs.d/"))
+    (load (expand-file-name "named-macros.el"))
+    (load (expand-file-name "lisp/team-elisp-config.el")))
+
 
   )
 
