@@ -242,15 +242,17 @@ List for menus, overlays, windows to open."
   (interactive"nDays to cheat: ")
   (bunel--cmd "cheat-advance-time" nil (number-to-string days)))
 
-(let ((bunel-globals-file (concat idlegame-project-root bunel-globals-asset-path)))
+(let ((bunel-globals-file "Assets/#/Scripts/Misc/Globals/Globals.asset"))
  (defun bunel-set-globals (item value)
     "Set ITEM in globals to VALUE."
     (interactive
-     (let* ((item (completing-read "Field to set: " (bunel-read-yaml-file-fields bunel-globals-file) nil t nil 'bunel-set-globals-hist))
+     (let* ((default-directory idlegame-project-root)
+            (item (completing-read "Field to set: " (bunel-read-yaml-file-fields bunel-globals-file) nil t nil 'bunel-set-globals-hist))
             (value (read-from-minibuffer (format "Set %s to: " item))))
        (list item value)))
-    (bunel--set-value-in-yaml bunel-globals-file item value)
-    (bunel--cmd "import-assets" nil "Assets/#/Scripts/Misc/Globals/Globals.asset")))
+    (team/with-default-dir idlegame-project-root
+                           (bunel--set-value-in-yaml bunel-globals-file item value)
+                           (bunel--cmd "import-assets" nil bunel-globals-file  ))))
 
 (defun bunel--set-value-in-yaml (file item value)
   "Try to set yaml syntax in FILE for ITEM to VALUE in current buffer."
