@@ -24,15 +24,44 @@ SOURCE is a file on the disk, DEST is an absolute on the phone."
   (let ((default-directory "~/Videos"))
     (async-shell-command (format "youtube-dl \"%s\"" (evil-get-register ?\")))))
 
+(defun benj/youtube-dl-download-and-push ()
+  "Download current yank to /tmp/tmp-vids/.
+Afterwards try to push it to the phone with adb"
+  (interactive)
+  (unless
+      (file-exists-p
+       "/tmp/tmp-vids/")
+    (make-directory
+     "/tmp/tmp-vids/"))
+  (let ((default-directory "/tmp/tmp-vids/"))
+    (--each
+        (directory-files-recursively "/tmp/tmp-vids" ".*")
+      (delete-file
+       it))
+    (team/proc-with-cb
+     (start-process
+      "yt-dl"
+      "*yt-dl*"
+      "youtube-dl"
+      (evil-get-register ?\"))
+     (benj-phone-push
+      (directory-files-recursively
+       "/tmp/tmp-vids/"
+       ".*")))))
 
 (defun benj/play-vlc (&optional file)
   "Play a vid with vlc."
   (interactive)
   (start-process "play-vlc" "*play-vlc*" "vlc"
                  (or file (read-file-name "Play vid: " "~/Videos/" nil nil nil
-                                  (lambda (file) (member (file-name-extension file) '("mp4" "mkv" "webm")))))))
+                                          (lambda (file) (member (file-name-extension file) '("mp4" "mkv" "webm")))))))
 
 (defun benj/play-vlc-any (file)
   "See `benj/play-vlc'"
-  (interactive"fPlay vid:")
+  (interactive"fPlay vid: ")
   (benj/play-vlc file))
+
+(defun benj/play-vlc-last ()
+  "See `benj/play-vlc'"
+  (interactive)
+  (benj/play-vlc (latest-file "~/Videos/")))
