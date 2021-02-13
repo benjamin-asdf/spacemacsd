@@ -619,9 +619,9 @@ before packages are loaded."
   (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
   (set-face-foreground 'line-number "slateBlue")
   (setq org-agenda-files
-        '("/home/benj/org/notes.org"
-          "/home/benj/org/jan.org"
-          "/home/benj/org/rico.org"))
+        '("~/org/notes.org"
+          "~/org/jan.org"
+          "~/org/rico.org"))
   (setq-default page-break-lines-max-width 30)
   (define-key evil-normal-state-map (kbd "M-Y") #'evil-paste-pop-next)
   (setq dotspacemacs-scratch-buffer-persistent t)
