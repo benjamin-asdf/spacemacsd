@@ -32,7 +32,7 @@
   )
 
 
-(require 'helm-csharp-enums)
+(use-package helm-csharp-enums)
 
 (use-package
   benj-helm-secretary

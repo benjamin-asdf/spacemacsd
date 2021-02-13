@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (require 'idlegame-definitions)
 
 
@@ -242,6 +243,7 @@ List for menus, overlays, windows to open."
   (interactive"nDays to cheat: ")
   (bunel--cmd "cheat-advance-time" nil (number-to-string days)))
 
+(defvar bunel-set-globals-hist '())
 (let ((bunel-globals-file "Assets/#/Scripts/Misc/Globals/Globals.asset"))
  (defun bunel-set-globals (item value)
     "Set ITEM in globals to VALUE."

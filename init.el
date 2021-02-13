@@ -99,7 +99,7 @@ This function should only modify configuration layer settings."
      redshiftel
      ;; sailor
      best-banners
-     ;bunel
+     bunel
      minder
      parens-config
      benj-pomodoro
@@ -751,7 +751,7 @@ before packages are loaded."
   
   ;; temp hacks
 
-  (require 'temp-hacks "~/.spacemacs.d/temp-hacks.el")
+  (load "~/.spacemacs.d/temp-hacks.el")
 
 
   ;; TEMP

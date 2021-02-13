@@ -651,7 +651,7 @@ With TEXT, insert TEXT at the end of the line."
   (insert string)
   (when (looking-back "\n")
     (forward-line -1))
-  (if indent
+  (when indent
       (indent-line-to indent)
       (indent-according-to-mode)))
 
