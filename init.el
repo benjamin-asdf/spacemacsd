@@ -87,7 +87,6 @@ This function should only modify configuration layer settings."
      ;; github
 
      ;; benj
-     team-utils
      benj-funcs
      benj-themes-config
      benj-tags
@@ -794,6 +793,15 @@ before packages are loaded."
         "oe."
         "misc tools"
       "h" #'hex-to-rgba))
+  
+
+  (use-package string-edit
+    :init
+    (team/spacemacs-declare-keys
+        "oe."
+        "misc tools"
+      "s" #'string-edit-at-point))
+
 
   
 

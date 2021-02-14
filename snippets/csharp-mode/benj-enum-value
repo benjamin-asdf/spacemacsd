@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-#name : benj-enum-value
-#key : eem
-#contributor : benj
-# --
-`(benj/csharp-enum-helm)`

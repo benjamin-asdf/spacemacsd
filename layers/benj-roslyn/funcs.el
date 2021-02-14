@@ -142,14 +142,14 @@ see `benj-roslyn-proj-configs'"
           benj-roslyn-cli-name))
 
 
-(defun benj-roslyn-run-playground ()
+(defun benj-roslyn-run-playground (&rest args)
   "Run release build on playground project."
   (interactive)
-  (benj-roslyn-runner
-   benj-roslyn-tools/playground-sln
-   "-t" "Playground"
-   )
-  )
+  (apply
+   #'benj-roslyn-runner
+   `(benj-roslyn-tools/playground-sln
+     "-t" "Playground"
+     ,@args)))
 
 (defun benj-roslyn-tools/run-playground-sync ()
   "Run playground sync."

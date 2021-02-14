@@ -22,17 +22,9 @@
     #'benj/last-editor-msg))
 
 
-(use-package
-  game-log-tools
-  ;; :init
-  ;; (team/spacemacs-declare-keys
-  ;;     "oe"
-  ;;     )
+(use-package game-log-tools)
 
-  )
-
-
-(use-package helm-csharp-enums)
+(use-package helm-csharp-enums :defer t)
 
 (use-package
   benj-helm-secretary
@@ -42,18 +34,12 @@
       "search/secretary/strings"
     "d" #'secretary-collect))
 
-(cl-pushnew
- (concat team-elisp-dir "snippets/")
- yas-snippet-dirs)
 
-(use-package
-  string-edit
-  :defer t
-  :init
-  (team/spacemacs-declare-keys
-      "os"
-      "search/secretary/strings"
-    "e" #'string-edit-at-point))
+(setq yas-snippet-dirs
+      (append
+       yas-snippet-dirs
+       (list (concat team-elisp-dir "snippets/"))))
+
 
 (use-package
   idlegame-definitions
@@ -68,3 +54,24 @@
         "oig"
         "cos-git"
       "O" #'cos/reset-hard)))
+
+(use-package
+  our-editor-tools
+  :init (progn
+          (team/spacemacs-declare-keys
+              "os"
+              "search/secretary/strings"
+            "e" #'string-edit-at-point)
+          (team/spacemacs-declare-keys
+              "o0"
+              "utils"
+            "r" #'team/regex-builder-with-region
+            "h" #'command-history
+            "m" #'macrostep-expand)
+
+          (team/spacemacs-declare-keys
+              "or"
+              "registers etc"
+            ;; benj-funcs needs to migrate as well
+            "r" #'benj-copy-last-yank-to-register
+            "e" #'team/last-eldoc-csharp-no-type)))
