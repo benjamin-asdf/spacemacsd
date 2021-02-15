@@ -572,14 +572,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
       (if (stringp it)
           (list (concat prefix it))
         (list it))
-      (-flatten bindings))))
-
-  (let ((default-directory "~/.spacemacs.d/"))
-    (load (expand-file-name "named-macros.el"))
-    (load (expand-file-name "lisp/team-elisp-config.el")))
-
-
-  )
+      (-flatten bindings)))))
 
 (defun dotspacemacs/user-load ()
   "Library to load while dumping.
@@ -594,6 +587,11 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+
+  (let ((default-directory "~/.spacemacs.d/"))
+    (load (expand-file-name "named-macros.el"))
+    (load (expand-file-name "lisp/team-elisp-config.el")))
+
   
   ;;projectile-fd
   (defconst my-fd-command "fd -H -E=.git -tf . -0")

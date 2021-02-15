@@ -1,3 +1,4 @@
+(require 'use-package)
 
 (defvar team-elisp-dir "~/repos/lisp/team-elisp/")
 
@@ -28,11 +29,13 @@
 
 (use-package
   benj-helm-secretary
+  :demand
   :init
-  (team/spacemacs-declare-keys
-      "os"
-      "search/secretary/strings"
-    "d" #'secretary-collect))
+  (progn
+    (team/spacemacs-declare-keys
+        "os"
+        "search/secretary/strings"
+      "d" #'secretary-collect)))
 
 
 (setq yas-snippet-dirs
