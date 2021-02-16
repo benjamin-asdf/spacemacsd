@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : unity-set-active-f
+#key : saf
+#contributor : benj
+# --
+.SetActive(false);
