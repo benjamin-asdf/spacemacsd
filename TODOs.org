@@ -94,5 +94,7 @@
 * smantic
 https://github.com/syl20bnr/spacemacs/pull/7736#issuecomment-313320906
 
+* a helm for all hippy expand candidates
+** https://www.emacswiki.org/emacs/HippieExpand some interesting starting point for he
 
 * retire the mouse

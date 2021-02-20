@@ -8,7 +8,7 @@
   "Add FILE's guid to the load groups, or fix existing entry."
   (interactive"f")
   (cos/with-idlegame-proj-root
-   (team/with-file
+   (team/check-file
     team-unity/load-group-file
     (if (re-search-forward (team-unity/true-file-base file) nil t)
         (progn
@@ -28,7 +28,8 @@
     m_TargetAsset: {fileID: 0}
 "
                       (team-unity/file-guid file)
-                      (team-unity/true-file-base file)))))))
+                      (team-unity/true-file-base file))))
+    nil)))
 
 
 (defun team-unity/address-from-guid (guid)

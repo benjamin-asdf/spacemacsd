@@ -33,6 +33,8 @@
   'team/chsarp-superior-mode
   "oxi" #'team-csharp/wrap-if
   "oxl" #'team-csharp/turn-conditional-to-log
+  "oxr" #'my/chsarp-raise-block
+
   )
 
 

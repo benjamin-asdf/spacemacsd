@@ -4,9 +4,7 @@
 
 (use-package helm-csharp-enums :defer t)
 
-(use-package
-  helm-stuff
-  :after 'helm)
+(use-package helm-stuff :demand)
 
 (use-package
   benj-helm-secretary
@@ -59,3 +57,16 @@
             ;; benj-funcs needs to migrate as well
             "r" #'benj-copy-last-yank-to-register
             "e" #'team/last-eldoc-csharp-no-type)))
+
+
+(use-package
+  idlegame-definitions
+  :after '(yasnippet csharp-mode)
+  :config (add-hook
+           'csharp-mode-hook
+           (lambda ()
+             (add-hook
+              'yas-after-exit-snippet-hook
+              #'idlegame-add-sys-yas-hook
+              0
+              t))))

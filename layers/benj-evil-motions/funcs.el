@@ -31,11 +31,26 @@ When ACTION-FORM evals to non nil, bind it to it and execute BODY."
          (setq it ,action-form))))
      ,@body))
 
+(defun benj/kill-word ()
+  (kill-new (buffer-substring (point) (progn (forward-word) (point)))))
+
+(defun benj-avy/goto-word-angle-bracket ()
+  (interactive)
+  (avy-goto-word-1 ?<))
+
+(defun benj-avy/angle-bracket-word ()
+  (interactive)
+  (save-window-excursion
+    (save-excursion
+      (benj-avy/goto-word-angle-bracket)
+      (forward-char 1)
+      (thing-at-point 'word))))
+
 (defun benj-avy/copy-word (&optional arg)
   (interactive"P")
   (benj-avy/yank-excursion
    arg
-   (progn (kill-new (buffer-substring (point) (progn (forward-word) (point)))) t)
+   (progn (benj/kill-word) t)
    (yank)))
 
 (defun benj-avy/take-word (&optional arg)

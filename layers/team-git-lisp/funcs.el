@@ -1014,6 +1014,23 @@ if OHTER-REV is nil, use HEAD. If any PATTERNS are giving, regex filter by them.
     (magit-status)))
 
 
+(defun benj/magit-status-toggle-showing-untracked ()
+  "Toggle adding `magit-insert-untracked-files' to `magit-status-sections-hook'.
+This section is performance heavy but important enough to have a convinient way of showing."
+  (interactive)
+  (apply
+   (let ((fn
+          (if (member
+               'magit-insert-untracked-files
+               magit-status-sections-hook)
+              #'remove-hook
+            #'add-hook)))
+     (message "magit untracked files section: %s" (mkstr fn))
+     fn)
+   '(magit-status-sections-hook
+     magit-insert-untracked-files)))
+
+
 
 
 (provide 'benj-magit)

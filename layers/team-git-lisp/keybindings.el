@@ -17,12 +17,14 @@
   "e" #'benj-magit/ediff-resolve
   "o" #'team/magit-fetch-any
   "R" #'team/magit-rebase-onto
-  "z" #'team/magit-stash-curr)
+  "z" #'team/magit-stash-curr
+  "d" #'magit-diff-dwim
+  )
 
 (team/spacemacs-declare-keys
     "ogs"
     "status"
-  "u" #'benj/magit-status-untracked-files)
+  "u" #'benj/magit-status-toggle-showing-untracked)
 
 (team/spacemacs-declare-keys
     "ogf"

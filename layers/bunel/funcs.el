@@ -171,8 +171,9 @@ List for menus, overlays, windows to open."
 
 (defun team-unity/open-prefab-at-point ()
   (interactive)
-  (team/a-when-reg-this-line
-   "\\(.*\.prefab\\)" 0
+  (team/re-line->
+   "\\(.*\.prefab\\)"
+   0
    (bunel-open-prefab
     (if (string-prefix-p "Assets/" it)
         it

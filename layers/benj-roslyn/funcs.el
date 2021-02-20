@@ -147,7 +147,7 @@ see `benj-roslyn-proj-configs'"
   (interactive)
   (apply
    #'benj-roslyn-runner
-   `(benj-roslyn-tools/playground-sln
+   `(,benj-roslyn-tools/playground-sln
      "-t" "Playground"
      ,@args)))
 

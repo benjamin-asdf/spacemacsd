@@ -44,16 +44,23 @@ add to the paramer list of the enclosing function."
           (or (and (string-empty-p part) part) ", ")
           it))))))
 
+(defmacro team/with-last-eldoc-string-buff (&rest body)
+  `(when team/eldoc-previous-message
+    (with-temp-buffer
+      (insert team/eldoc-previous-message)
+      (->gg)
+      ,@body)))
+
 (defun team/csharp-eldoc-expand-args ()
   "Use `team/eldoc-previous-message' to expand args inside the method call on line."
   (interactive)
   (-some-->
-      team/eldoc-previous-message
-    (with-temp-buffer
-      (insert it)
-      (team/^$-replace ".*\\((.*)\\).*" "\\1")
-      (buffer-string))
+      (team/with-last-eldoc-string-buff
+       (team/^$-replace ".*\\((.*)\\).*" "\\1")
+       (buffer-substring (point-at-bol) (point-at-eol)))
     (team/^$-replace "(.*)" it)))
+
+
 
 (defun csharp-delete-curly-body ()
   (interactive)
