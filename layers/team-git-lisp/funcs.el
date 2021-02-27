@@ -1028,7 +1028,8 @@ This section is performance heavy but important enough to have a convinient way 
      (message "magit untracked files section: %s" (mkstr fn))
      fn)
    '(magit-status-sections-hook
-     magit-insert-untracked-files)))
+     magit-insert-untracked-files))
+  (magit-refresh))
 
 
 

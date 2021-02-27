@@ -1,6 +1,22 @@
 
 (define-error 'enum-parse-failure "Failed parsing enum.")
 
+(defun team-chsarp/expand-syntax (&optional end)
+  ""
+  (unless end
+    (setf end
+          (save-excursion
+            (skip-chars-forward "^}")
+            (point))))
+  (save-excursion
+    (while
+        (re-search-forward
+         (regexp-opt
+          (list "{" "}" ","))
+         end t)
+      (open-line 1))))
+
+
 (defun team-csharp/enum-values ()
   "Catch enum values around point.
 This evaluates to a list of lists. Each element is of the form
@@ -11,7 +27,7 @@ This evaluates to a list of lists. Each element is of the form
         (and
          (looking-at ".*enum")
          (skip-chars-forward "^{")))
-    (signal 'enum-parse-failure "Did not find enum here."))
+    (signal 'enum-parse-failure "No enum here"))
   (forward-line 1)
   (let ((res '())
         (last-elm-pos))
