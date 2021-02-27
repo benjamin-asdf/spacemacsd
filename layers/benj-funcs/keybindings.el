@@ -24,7 +24,6 @@
 (spacemacs/declare-prefix "ox" "text")
 (spacemacs/set-leader-keys "oxw" 'benj-flush-empty-lines)
 (spacemacs/set-leader-keys "oxp" 'benj-delete-some-whitespace)
-(spacemacs/set-leader-keys "oxl" 'benj-delete-til-closing-parem)
 (spacemacs/set-leader-keys "oxe" 'benj-remove-eol-from-file)
 (spacemacs/set-leader-keys "oxE" 'benj-remove-eol)
 

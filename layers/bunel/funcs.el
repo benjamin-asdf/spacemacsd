@@ -306,11 +306,6 @@ List for menus, overlays, windows to open."
         it
       (error (concat "Cannot get meta, file doesn't exist " it)))))
 
-(defun benj-all-guids-at-path (dir)
-  "All unity guids of metas in DIR"
-  (mapcar 'benj-get-guid
-          (benj-directory-files dir ".*meta")))
-
 
 (defun team-unity/file-guid (file)
   "Get guid for FILE. If FILE is not a meta file, try to use the corresponding meta file."

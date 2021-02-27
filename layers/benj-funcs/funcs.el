@@ -1,92 +1,16 @@
 ;; funcs.el starts here;; funcs.el starts here
 ;;; Code:
-(defun mikus-reopen-buffer ()
-  "Kill and open current BUFFER."
-  (interactive)
-  (let ( (buffer (buffer-name))
-         (file (buffer-file-name))
-         (point (point)) )
-    (kill-buffer buffer)
-    (find-file file)
-    (goto-char point)))
 
+(defun benj-best-message ()
+  "A random line chosen from best-message file."
+  (benj-rand-line-from-file best-messages-file))
 
-(defun benj-copy-word-from-above ()
-  "Copy the word or space from next non-empty line above."
-  (interactive)
-  (insert (let ((coll (current-column)))
-            (save-excursion
-              (forward-line -1)
-              (while (and (< 1 (line-number-at-pos)) (looking-at "$"))
-                      (forward-line -1))
-              (goto-char (min (save-excursion (forward-char coll) (point)) (point-at-eol)))
-              (or (and (looking-at-p " ") " ")
-                  (thing-at-point 'evil-word))))))
-
-
-
-(defun team/file-lines (file)
-  "Return a list of lines of FILE."
-  (team/with-file
-   file
-   (split-string (buffer-string) "\n" t)))
-
-(defun benj-flush-empty-lines ()
-  "Delete empty lines on selection."
-  (interactive)
-  (flush-lines "^$" (region-beginning) (region-end)))
-
-(defun benj-insert-other-line ()
-  "Go into insert mode in the line below.
-Use correct indentation. Like 'o' without creating a new line"
-  (interactive)
-  (forward-line)
-  (evil-insert-state)
-  (indent-according-to-mode))
 
 (defun benj-delete-all-files (dir)
   "Delete all files inside DIR."
   (dolist (elem (directory-files dir))
     (unless (member elem '("." ".."))
       (delete-file (concat (file-name-as-directory dir) elem)))))
-
-(defun benj-best-message ()
-  "A random line chosen from best-message file."
-  (benj-rand-line-from-file best-messages-file))
-
-(defun benj-rand-line-from-file (file)
-  "A random line from FILE"
-  (rand-element (team/file-lines file)))
-
-(defun rand-element (list)
-  "Random element from LIST."
-  (nth (random (length list)) list))
-
-(defun benj-new-python-script (file)
-  "Create a new python script shell script with NAME."
-  (interactive "FNew script: ")
-  (benj--new-script-worker file "#!/usr/bin/env python3"))
-
-(defun benj-new-shell-script (file)
-  "Create a new script shell script with NAME."
-  (interactive "FNew script: ")
-  (benj--new-script-worker file "#!/bin/sh\n\n"))
-
-(defun benj--new-script-worker (file shebang)
-  "Insert SHEBANG into FILE and make it executable"
-  (unless (file-exists-p file)
-    (write-region shebang " " file))
-  (set-file-modes file #o777)
-  (find-file file)
-  (goto-char (point-max))
-  (evil-insert-state))
-
-
-(defun benj-process-other-window (process-name buffer-name process-program &rest process-args)
-  "Start process and switch to output buffer in other window."
-  (start-process process-name buffer-name process-program (mapconcat 'identity process-args " "))
-  (unless (string-equal (buffer-name) buffer-name)
-    (switch-to-buffer-other-window buffer-name)))
 
 (defun benj-append-to-file (file content &optional newline)
   "Append a newline with CONTENT to FILE.
@@ -97,6 +21,15 @@ If NEWLINE is non nil, append a newline character."
     (insert-file-contents file)
     (goto-char (point-max))
     (insert (if newline (concat content "\n") content))))
+
+
+(defun benj-process-other-window (process-name buffer-name process-program &rest process-args)
+  "Start process and switch to output buffer in other window."
+  (start-process process-name buffer-name process-program (mapconcat 'identity process-args " "))
+  (unless (string-equal (buffer-name) buffer-name)
+    (switch-to-buffer-other-window buffer-name)))
+
+
 
 (defun benj-copy-last-yank-to-register (&optional reg)
   "Copy the contens of the \" register into REG.
@@ -127,26 +60,6 @@ This is the same as vim `dipO'"
    (format "`%s` line %d"
            (file-name-base (buffer-file-name))
            (line-number-at-pos (point)))))
-
-(defun benj-delete-til-closing-parem ()
-  "Delete the rest until closing parem.
-Basically evil `dt)'"
-  (interactive)
-  (let ((beg (point)))
-    (search-forward ")")
-    (forward-char -1)
-    (delete-region beg (point))))
-
-;; NOTE that this is redundant `directory-files' already provides all the functionality
-(defun benj-directory-files (path &optional pattern)
-  "Get directory files from PATH. Excludes '.' and '..'.
-Match file names for a PATTERN, if non nil."
-  (let ((ret '()))
-    (dolist (file (directory-files path t) ret)
-      (when (and (not (member (file-name-nondirectory file) '("." "..")))
-                 (or (not pattern) (string-match-p pattern (file-name-nondirectory file))))
-        (setq ret (cons file ret))))
-    ret))
 
 
 (defun benj-clear-directory-contents (path)
@@ -201,20 +114,6 @@ There is a scratch file for each day and mode."
 ;;     (funcall mode)))
 
 
-
-(defun benj-next-digit ()
-  "Jump to next digit in buff."
-  (interactive)
-  (re-search-forward "[0-9]+")
-  (forward-char -1))
-
-(defun test-interactive (file-name)
-  (interactive
-   (let*
-       ((default (thing-at-point 'evil-word))
-        (str (read-string (format "New file name (default: %s)" default) nil nil default)))
-     (list str)))
-  (message file-name))
 
 (defun benj-remove-eol (file)
   "Remove crlf from FILE."
@@ -283,28 +182,6 @@ Depends on `default-directory'"
   (string-trim (shell-command-to-string "git rev-parse --show-toplevel")))
 
 
-(defun mikus-clist (new-el &rest args)
-	(let ((res (or (and (listp new-el) new-el) (list new-el))))
-		(mapc (lambda (x)
-            (setq res
-                  (or (and (listp x) (append res x))
-                      (cons x res))))
-          args)
-    res))
-
-
-
-
-
-(defun benj-proc-with-buff (name buffname program &rest args)
-  "See `start-process', also pop to the buffer.
-NAME and BUFFNAME are allowed to be nil."
-  (let ((name (or name "benj-proc"))
-        (buffname (or buffname "*benj-proc*"))
-        )
-    (start-process name buffname program args)
-    (pop-to-buffer buffname)))
-
 
 (defun benj/find-worktree-file-for-buff ()
   ;;   "This is because magit creates temp buffers when opening file history.
@@ -321,29 +198,6 @@ NAME and BUFFNAME are allowed to be nil."
   "Use `last-command' to bring up help of the last thing that happened."
   (interactive)
   (describe-function last-command))
-
-
-(defun benj/read-file (file)
-  "Read all contents of FILE."
-  (with-temp-file file
-    (insert-file-contents-literally file)
-    (princ (buffer-substring-no-properties (point-min) (point-max)))))
-
-(defun benj-text/add-crlf (&optional file)
-  "Add crlf to FILE."
-  (interactive"fFile to add crlf")
-  (with-temp-file
-      file
-    (insert-file-contents-literally file)
-    (while (re-search-forward "\n" nil t)
-      (replace-match "\r\n"))))
-
-(defun benj-text/add-crlf-this-file ()
-  "Add crlf to current file"
-  (interactive)
-  (if (buffer-file-name)
-      (benj-text/add-crlf (buffer-file-name))
-    (user-error "Buffer is not visiting a file.")))
 
 
 

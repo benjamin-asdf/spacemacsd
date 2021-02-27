@@ -12,6 +12,13 @@
 :sess-dir dir"
   '())
 
+
+(defun benj/read-file (file)
+  "Read all contents of FILE."
+  (with-temp-file file
+    (insert-file-contents-literally file)
+    (princ (buffer-substring-no-properties (point-min) (point-max)))))
+
 (defun benj-ediff//put-current-sesson (prop val)
   "Put VAL in PROP for `benj-ediff/current-session'"
   (setq benj-ediff/current-session
