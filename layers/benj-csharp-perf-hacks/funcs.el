@@ -17,3 +17,17 @@ Every x time, actually call the func.")
 (advice-add 'c-after-change :around #'benj-csharp/c-after-change-adv)
 
 (spacemacs/set-leader-keys "ofl" 'font-lock-fontify-buffer)
+
+
+
+(with-eval-after-load
+    'csharp-mode
+  (add-hook
+    'chsarp-mode-hook
+   (lambda ()
+     (when
+         (>
+          90000000
+          (point-max))
+       (eldoc-mode -1)))
+   50))

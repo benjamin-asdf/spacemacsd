@@ -89,10 +89,13 @@
   (interactive) ;; interactive list form
   (sharpel--send-file-name-command buffer-file-name))
 
-(defun sharpel-rewrite-file (file-name)
+(defun sharpel-rewrite-file (&optional file-name)
   "Run sharpel with rewrite reqeust and FILE-NAME"
-  (interactive "fFile for const rewrite: ")
-  (sharpel-run-cmd :rewrite-file file-name)
+  (interactive)
+  (sharpel-run-cmd :rewrite-file
+                   (or file-name
+                       (buffer-file-name)
+                       (user-error "Buffer is not visiting a file.")))
   (csharp-mode))
 
 (defun sharpel--send-file-name-command (file-name)

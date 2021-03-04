@@ -98,3 +98,6 @@ https://github.com/syl20bnr/spacemacs/pull/7736#issuecomment-313320906
 ** https://www.emacswiki.org/emacs/HippieExpand some interesting starting point for he
 
 * retire the mouse
+
+
+* use this on the fly yasnippet thing
