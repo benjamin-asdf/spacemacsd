@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(require 'team-utils)
+
 (defvar benj-git/author-name "Benj")
 
 (defvar-local benj-git/after-magit-op nil)

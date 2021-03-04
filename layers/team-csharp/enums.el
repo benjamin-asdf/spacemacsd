@@ -17,6 +17,26 @@
       (open-line 1))))
 
 
+(defmacro team-csharp/with-sanitized-region (start end &rest body)
+  "Put the buffer substring between START and END into a temp buffer, call `team-csharp/exand-syntax', remove chsarp comment syntax, then eval BODY."
+  (declare (debug body))
+  `(let ((s
+         (buffer-substring
+          ,start
+          ,end)))
+    (with-temp-buffer
+      (insert s)
+      (->gg)
+      (while
+          (re-search-forward
+           "//"
+           nil t)
+        (delete-region
+         (- (point) 2)
+         (point-at-eol)))
+      (->gg)
+      ,@body)))
+
 (defun team-csharp/enum-values ()
   "Catch enum values around point.
 This evaluates to a list of lists. Each element is of the form
@@ -29,23 +49,54 @@ This evaluates to a list of lists. Each element is of the form
          (skip-chars-forward "^{")))
     (signal 'enum-parse-failure "No enum here"))
   (forward-line 1)
-  (let ((res '())
-        (last-elm-pos))
-    (while
-        (re-search-forward
-         "\\(?:^.*//.*$\\)\\|\\([[:blank:]]\\(\\w+\\)\\(?: = \\([[:digit:]]+\\)\\)?\\)"
-         (save-excursion
-           (skip-chars-forward
-            "^}")
-           (point))
-         t)
-      (when (match-string-no-properties 2)
-        (setq last-elm-pos (point))
-        (push (list (match-string-no-properties 2)
-                    (match-string-no-properties 3))
-              res)))
-    (goto-char last-elm-pos)
-    (nreverse res)))
+  (team-csharp/with-sanitized-region
+   (point)
+   (save-excursion
+     (skip-chars-forward
+      "^}")
+     (point))
+   (let ((res '())
+         (last-elm-pos))
+     (while
+         (re-search-forward
+          "\\([[:blank:]]\\(\\w+\\)\\(?: = \\([[:digit:]]+\\)\\)?\\)"
+          (save-excursion
+            (skip-chars-forward
+             "^}")
+            (point))
+          t)
+       (when (match-string-no-properties 2)
+         (setq last-elm-pos (point))
+         (push (list (match-string-no-properties 2)
+                     (match-string-no-properties 3))
+               res)))
+     (goto-char last-elm-pos)
+     (nreverse res))))
+
+
+(defun team-csharp/count-enum-value ()
+  "Read from the enum values on point.
+Say enum value number."
+  (interactive)
+  (when
+      (re-search-backward "\\benum\\b")
+    (let* ((vals (team-csharp/enum-values))
+           (choice
+            (completing-read "value for num: "
+                             (al-keys vals))))
+      (message
+       "%s is number %d in this enum."
+       choice
+       (cl-loop
+        for it in vals
+        with it-index = -1
+        do (incf it-index)
+        when (and
+              (string-equal
+               choice
+               (car it))
+              it)
+        do (return (or (cadr it) it-index)))))))
 
 
 
