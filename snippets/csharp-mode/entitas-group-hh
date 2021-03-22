@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-group-hh
+#key : grphh
+#contributor : benj
+# --
+c.state.GetGroup(Matcher.AllOf<`(benj-avy/angle-bracket-word)`>())

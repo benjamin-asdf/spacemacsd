@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-try-get-short-hh
+#key : tghh
+#contributor : benj
+# --
+TryGet<`(benj-avy/angle-bracket-word)`>(out var $1)

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : entitas-if-try-get-hh
+#key : itrygethh
+#contributor : benj
+# --
+if (c.state.TryGet<`(benj-avy/angle-bracket-word)`>(out var m)) {
+    $0
+}

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-entity-with-var-hh
+#key : egewhh
+#contributor : benj
+# --
+var $1 = c.state.GetEntityWith<`(benj-avy/angle-bracket-word)`>($0);

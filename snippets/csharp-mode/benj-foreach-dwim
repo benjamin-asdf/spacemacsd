@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : benj-foreach-dwim
+#key : each
+#contributor : benj
+# --
+foreach (var item in `(benj/chsarp-foreach-dwim-items-name)`) {
+    $0
+}

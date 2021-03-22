@@ -98,7 +98,6 @@ This function should only modify configuration layer settings."
      redshiftel
      ;; sailor
      best-banners
-     bunel
      minder
      parens-config
      benj-pomodoro
@@ -358,7 +357,7 @@ It should only modify the values of Spacemacs settings."
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
-   dotspacemacs-large-file-size 1
+   dotspacemacs-large-file-size 0.9
 
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
@@ -552,6 +551,8 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
+
+  (setq package-native-compile t)
 
   (setq package-check-signature nil)
 
@@ -780,6 +781,8 @@ before packages are loaded."
 
   (require 'benj-shell-script)
 
+  (require 'init-slime)
+
 
   (add-to-load-path "~/.spacemacs.d/lisp/emacs-hex-to-rgba/")
 
@@ -807,6 +810,14 @@ before packages are loaded."
   (require 'lisp-extra-font-lock)
   (lisp-extra-font-lock-global-mode 1)
   (add-hook 'lisp-extra-font-lock-mode-hook #'dash-fontify-mode)
+
+  
+
+  (add-hook 'markdown-mode-hook 'evil-normalize-keymaps)
+  (evil-define-key '(normal motion) markdown-mode-map
+    (concat (kbd ",") (kbd ",")) 'with-editor-finish)
+
+
 
   
 

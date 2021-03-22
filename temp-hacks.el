@@ -2,18 +2,18 @@
 
 ;; patch up some malformed minor mode
 
-(setq
- minor-mode-map-alist
- (--filter
-  (let ((pass nil))
-    (with-demoted-errors
-        (unwind-protect
-            (progn
-              (setq pass nil)
-              (symbol-value (car it))
-              (setq pass t))
-          pass)))
-  minor-mode-map-alist))
+;; (setq
+;;  minor-mode-map-alist
+;;  (--filter
+;;   (let ((pass nil))
+;;     (with-demoted-errors
+;;         (unwind-protect
+;;             (progn
+;;               (setq pass nil)
+;;               (symbol-value (car it))
+;;               (setq pass t))
+;;           pass)))
+;;   minor-mode-map-alist))
 
 
 ;;  org capture is trying to save a buffer not ass. with a file and not handled specially
@@ -206,5 +206,70 @@ denotes the original magit key for this command.")
       (dolist (state (nth 0 binding))
         (evil-collection-define-key
           state (nth 1 binding) (nth 2 binding) (nth 3 binding))))))
+
+
+
+
+(defun help--binding-locus (key position)
+  "Describe in which keymap KEY is defined.
+Return a symbol pointing to that keymap if one exists ; otherwise
+return nil.  The argument POSITION is as documented in the
+function `key-binding'."
+  (let ((map (help--key-binding-keymap key t nil position)))
+    (when map
+      (catch 'found
+        (let ((advertised-syms (nconc
+                                (list 'overriding-terminal-local-map
+                                      'overriding-local-map)
+                                (delq nil
+                                      (mapcar
+                                       (lambda (mode-and-map)
+                                         (let ((mode (car mode-and-map)))
+                                           (when (and
+                                                  ;;  fucked
+                                                  (bound-and-true-p
+                                                   mode)
+                                                  (symbol-value mode))
+                                             (intern-soft
+                                              (format "%s-map" mode)))))
+                                       minor-mode-map-alist))
+                                (list 'global-map
+                                      (intern-soft (format "%s-map" major-mode))))))
+          ;; Look into these advertised symbols first.
+          (dolist (sym advertised-syms)
+            (when (and
+                   (boundp sym)
+                   (eq map (symbol-value sym)))
+              (throw 'found sym)))
+          ;; Only look in other symbols otherwise.
+          (mapatoms
+           (lambda (x)
+             (when (and (boundp x)
+                        ;; Avoid let-bound symbols.
+                        (special-variable-p x)
+                        (eq (symbol-value x) map))
+               (throw 'found x))))
+          nil)))))
+
+
+
+
+;; scale is t during (spaceline-ml-main)
+(defun image--default-smoothing (image)
+  "Say whether IMAGE should be smoothed when transformed."
+  (let* ((props (nthcdr 5 image))
+         (scaling (plist-get props :scale))
+         (rotation (plist-get props :rotation)))
+    (cond
+     ((not (number-or-marker-p scaling)) nil)
+     ;; We always smooth when scaling down and small upwards scaling.
+     ((and scaling (< scaling 2))
+      t)
+     ;; Smooth when doing non-90-degree rotation
+     ((and rotation
+           (or (not (zerop (mod rotation 1)))
+               (not (zerop (% (truncate rotation) 90)))))
+      t)
+     (t nil))))
 
 (provide 'temp-hacks)

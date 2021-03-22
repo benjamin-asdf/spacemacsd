@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-hh
+#key : ghh
+#contributor : benj
+# --
+Get<`(benj-avy/angle-bracket-word)`>().value

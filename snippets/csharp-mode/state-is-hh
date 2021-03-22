@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-is-hh
+#key : csihh
+#contributor : benj
+# --
+c.state.Is<`(benj-avy/angle-bracket-word)`>()

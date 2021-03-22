@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-destroy-entities-hh
+#key : destrhh
+#contributor : benj
+# --
+c.state.DestroyEntities<`(benj-avy/angle-bracket-word)`>();

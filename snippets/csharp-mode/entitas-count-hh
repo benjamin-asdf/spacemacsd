@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-count-hh
+#key : cnthh
+#contributor : benj
+# --
+c.state.Count<`(benj-avy/angle-bracket-word)`>()

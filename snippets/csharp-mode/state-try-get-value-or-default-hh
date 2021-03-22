@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-try-get-value-or-default-hh
+#key : stgvhh
+#contributor : benj
+# --
+c.state.GetValueOrDefault<`(benj-avy/angle-bracket-word)`, $1>($0)

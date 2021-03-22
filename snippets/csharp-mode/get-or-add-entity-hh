@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : get-or-add-entity-hh
+#key : gowhh
+#contributor : benj
+# --
+c.state.GetOrAddEntityWith<`(benj-avy/angle-bracket-word)`>($0);

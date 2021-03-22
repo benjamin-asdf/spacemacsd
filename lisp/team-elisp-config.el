@@ -20,7 +20,7 @@
 (setq yas-snippet-dirs
       (append
        yas-snippet-dirs
-       (list (concat team-elisp-dir "snippets/"))))
+       (list (expand-file-name (concat team-elisp-dir "snippets/")))))
 
 
 (use-package
@@ -64,6 +64,7 @@
 (use-package
   idlegame-definitions
   :after '(yasnippet csharp-mode)
+  :demand
   :config (idlegame-add-charp-yas-hook))
 
 (use-package
@@ -73,6 +74,11 @@
       "oe"
       "external"
     "o" #'rider-open-file-at-point))
+
+(use-package
+  bunel
+  :config
+  (load "~/.spacemacs.d/lisp/init-bunel.el"))
 
 
 (use-package cl-editor-tools)

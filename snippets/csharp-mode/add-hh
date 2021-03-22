@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : add-hh
+#key : Ahh
+#contributor : benj
+# --
+Add<`(benj-avy/angle-bracket-word)`>($0);

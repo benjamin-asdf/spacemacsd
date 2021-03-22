@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : has-entity-with-hh
+#key : hywhh
+#contributor : benj
+# --
+c.state.HasEntityWith<`(benj-avy/angle-bracket-word)`>($0)

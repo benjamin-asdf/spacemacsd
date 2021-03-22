@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-has-hh
+#key : hhh
+#contributor : benj
+# --
+Has<`(benj-avy/angle-bracket-word)`>()

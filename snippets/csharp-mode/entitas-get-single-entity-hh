@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-get-single-entity-hh
+#key : gsehh
+#contributor : benj
+# --
+c.state.GetSingleEntity<`(benj-avy/angle-bracket-word)`>()

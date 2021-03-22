@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-hhatcher-all-of-hh
+#key : malhh
+#contributor : benj
+# --
+Matcher.AllOf<`(benj-avy/angle-bracket-word)`>()$0

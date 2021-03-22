@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: entitas-is-hh
+# key: ihh
+# --
+Is<`(benj-avy/angle-bracket-word)`>()$0

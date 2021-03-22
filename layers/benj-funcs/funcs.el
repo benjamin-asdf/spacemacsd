@@ -69,50 +69,15 @@ This is the same as vim `dipO'"
 
 
 
-
-
-;; TODO add here and extension
-(defconst benj-scratches/buffer-kinds
-  '((:csharp . csharp-mode)
-    (:fundamental . fundamental-mode)
-    (:lisp-interaction . lisp-interaction-mode)
-    (:markdown . markdown-mode)
-    (:org . org-mode))
-  "Map scratch buffer kind names with respective mode.
-Form '(:key . MODE-FUNC)")
-
-(defconst benj-scratches/scratches-dir "~/.local/scratches/")
-
-(defun benj-scratches/file-name (mode)
-  "Get file name for todays scratch for MODE."
-  (format "%s%s%s" benj-scratches/scratches-dir (format-time-string "%Y-%m-%d/") mode))
-
-;; TODO functionality to open a second scratch for the day
-(defun benj--switch-to-scratch-buffer (arg)
-  "Switch to one of the `'*scratch<name>*' buffers.
-ARG should be one of `benj-scratches/buffer-kinds'.
-There is a scratch file for each day and mode."
-  (let* ((buff-name (format "*scratch%s*" arg))
-         (exists (get-buffer buff-name))
-         (mode (cdr (assoc arg benj-scratches/buffer-kinds))))
+(defun benj--switch-to-scratch-buffer (mode)
+  "Switch to one of the `'*scratch<name>*' buffers. MODE should be the name of a mode function."
+  (let* ((buff-name (format "*scratch%s*" (mkstr mode)))
+         (exists (get-buffer buff-name)))
     (switch-to-buffer (get-buffer-create buff-name))
     (when (and (not exists)
                (not (eq major-mode mode))
                (fboundp mode))
       (funcall mode))))
-
-
-;; create dir
-
-;; (defun benj--switch-to-scratch-buffer (arg)
-;;   "Switch to one of the `'*scratch<name>*' buffers.
-;; ARG should be one of `benj-scratches/buffer-kinds'.
-;; There is a scratch file for each day and mode."
-;;   (find-file (benj-scratches/file-name (assoc-default arg benj-scratches/buffer-kinds)))
-;;   (when (and (not (eq major-mode mode))
-;;              (fboundp mode))
-;;     (funcall mode)))
-
 
 
 (defun benj-remove-eol (file)

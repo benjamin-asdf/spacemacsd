@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+#name: entitas-replace-hh
+#key: Rhh
+# --
+Replace<`(benj-avy/angle-bracket-word)`>($0)

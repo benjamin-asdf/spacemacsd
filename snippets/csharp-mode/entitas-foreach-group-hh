@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : entitas-foreach-group-hh
+#key : foregrhh
+#contributor : benj
+# --
+foreach (var ${1:e} in c.state.GetGroup(Matcher.AllOf<`(benj-avy/angle-bracket-word)`>())) {
+    $0
+}

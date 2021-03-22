@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-get-hh
+#key : csghh
+#contributor : benj
+# --
+c.state.Get<`(benj-avy/angle-bracket-word)`>().value

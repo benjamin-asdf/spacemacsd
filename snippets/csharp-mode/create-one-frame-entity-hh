@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : create-one-frame-entity-hh
+#key : creaofhh
+#contributor : benj
+# --
+c.state.CreateOneFrameEntity().`(team-electric/resolve-cached-comp-set-part)`;

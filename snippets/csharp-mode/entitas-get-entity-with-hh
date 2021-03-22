@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: entitas-get-entity-with-hh
+# key: gewhh
+# --
+c.state.GetEntityWith<`(benj-avy/angle-bracket-word)`>($0)

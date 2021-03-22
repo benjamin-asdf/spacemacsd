@@ -86,10 +86,10 @@
 
 (progn
   (mapc (lambda (x) (spacemacs/set-leader-keys (concat benj-scratch-buffer-leader-keys (car x)) (cdr x)))
-        '(("c" . (lambda () (interactive) (benj--switch-to-scratch-buffer :csharp)))
-          ("f" . (lambda () (interactive) (benj--switch-to-scratch-buffer :fundamental)))
-          ("l" . (lambda () (interactive) (benj--switch-to-scratch-buffer :lisp-interaction)))
-          ("o" . (lambda () (interactive) (benj--switch-to-scratch-buffer :org)))
-          ("m" . (lambda () (interactive) (benj--switch-to-scratch-buffer :markdown))))))
-
-
+        '(("s" . (lambda () (interactive) (benj--switch-to-scratch-buffer #'csharp-mode)))
+          ;; ("f" . (lambda () (interactive) (benj--switch-to-scratch-buffer :fundamental)))
+          ("f" . (lambda () (interactive) (benj--switch-to-scratch-buffer #'text-mode)))
+          ("l" . (lambda () (interactive) (benj--switch-to-scratch-buffer #'emacs-lisp-mode)))
+          ("o" . (lambda () (interactive) (benj--switch-to-scratch-buffer #'org-mode)))
+          ("c" . (lambda () (interactive) (benj--switch-to-scratch-buffer #'common-lisp-mode)))
+          ("m" . (lambda () (interactive) (benj--switch-to-scratch-buffer #'markdown))))))

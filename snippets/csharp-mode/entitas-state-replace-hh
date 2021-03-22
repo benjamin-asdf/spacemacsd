@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : state-replace-hh
+#key : csrhh
+#contributor : benj
+# --
+c.state.Replace<`(benj-avy/angle-bracket-word)`>($0)

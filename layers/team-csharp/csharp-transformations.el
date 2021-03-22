@@ -105,12 +105,7 @@ add to the paramer list of the enclosing function."
    (let ((s (region-str)))
      (with-temp-buffer
        (insert s)
-       (while
-           (re-search-forward
-            "\n"
-            nil
-            t)
-         (replace-match ""))
+       (join-line nil (point-min) (point-max))
        (->gg)
        (when (re-search-forward
               "if.+?(\\(.*\\))" nil t)
@@ -136,16 +131,12 @@ add to the paramer list of the enclosing function."
                 (buffer-string)))))
          (erase-buffer)
          (insert
-          "Debug.Log($\"")
-         (--each elms
-           (insert
-            it)
-           (insert " : ")
-           (insert "{")
-           (insert it)
-           (insert "}")
-           (insert ",\\n"))
-         (insert "\");"))
+          (format "Debug.Log($\"%s\");"
+                  (s-join
+                   ",\\n"
+                   (--map
+                    (format "%s : {%s}" it it)
+                    elms)))))
        (buffer-string)))))
 
 

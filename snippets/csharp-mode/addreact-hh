@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+#name : addreact-hh
+#key : arecthh
+#contributor : benj
+# --
+AddReact(
+    Matcher.AllOf<`(benj-avy/angle-bracket-word)`>(),
+    entities => {
+         $0
+});

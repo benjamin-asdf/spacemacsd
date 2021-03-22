@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : trace-c-single-entity-hh
+#key : traceChh
+#contributor : benj
+# --
+TraceDebugExt.AddDebugComponentChanged(c.state.GetSingleEntity<`(benj-avy/angle-bracket-word)`>());

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-remove-all-entities-hh
+#key : csrahh
+#contributor : benj
+# --
+c.state.RemoveFromAllEntities<`(benj-avy/angle-bracket-word)`>();
