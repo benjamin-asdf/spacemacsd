@@ -90,13 +90,13 @@ Say enum value number."
        (cl-loop
         for it in vals
         with it-index = -1
-        do (incf it-index)
+        do (cl-incf it-index)
         when (and
               (string-equal
                choice
                (car it))
               it)
-        do (return (or (cadr it) it-index)))))))
+        do (cl-return (or (cadr it) it-index)))))))
 
 
 
