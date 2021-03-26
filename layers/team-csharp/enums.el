@@ -59,7 +59,7 @@ This evaluates to a list of lists. Each element is of the form
          (last-elm-pos))
      (while
          (re-search-forward
-          "\\([[:blank:]]\\(\\w+\\)\\(?: = \\([[:digit:]]+\\)\\)?\\)"
+          "\\([[:blank:]]\\([a-zA-Z0-9_]+\\)\\(?: = \\([[:digit:]]+\\)\\)?\\)"
           (save-excursion
             (skip-chars-forward
              "^}")
