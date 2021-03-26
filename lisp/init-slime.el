@@ -1,12 +1,13 @@
 (with-eval-after-load 'slime
   ;; makes it better together with cepl
   (setq slime-inhibit-pipelining nil)
+)
 
+(with-eval-after-load 'sime-repl-mode
   (spacemacs/declare-prefix-for-mode
     'slime-repl-mode
     "l"
     "repl funcs")
-
 
   (spacemacs/set-leader-keys-for-major-mode
     'slime-repl-mode
@@ -17,6 +18,5 @@
       "ol"
       "lisp, other"
     "o" #'counsel-slime-repl-history))
-
 
 (provide 'init-slime)

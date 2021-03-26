@@ -57,8 +57,11 @@
             ;; benj-funcs needs to migrate as well
             "r" #'benj-copy-last-yank-to-register
             "e" #'team/kill-last-eldoc
-            "c" #'team/last-eldoc-csharp-no-type)))
-
+            "c" #'team/last-eldoc-csharp-no-type)
+          (team/spacemacs-declare-keys
+              "oj"
+              "jump"
+            "d" #'benj-find-file-and-line-at-point)))
 
 
 (use-package
@@ -79,6 +82,16 @@
   bunel
   :config
   (load "~/.spacemacs.d/lisp/init-bunel.el"))
+
+
+(use-package
+  log-digest
+  :defer t
+  :config
+  (team/spacemacs-declare-keys
+      "oi1"
+      "log stuff"
+    "l" #'benj-transform-resharper-output))
 
 
 (use-package cl-editor-tools)

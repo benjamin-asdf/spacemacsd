@@ -211,10 +211,10 @@ see `benj-roslyn-proj-configs'"
   (interactive)
   (benj-roslyn-tools/run-idlegame args "--no-git"))
 
-(defun benj-roslyn-tools/run-idlegame-sync ()
+(defun benj-roslyn-tools/run-idlegame-sync (&rest args)
   "Run idlegame synced analzyers."
   (interactive)
-  (benj-roslyn-tools/run-idlegame "-sync"))
+  (benj-roslyn-tools/run-idlegame "-sync" args))
 
 (defun benj-roslyn-tools/run-idlegame (&rest args)
   "Run release build on playground project. ARGS can be additional args."
