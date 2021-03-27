@@ -225,13 +225,11 @@ function `key-binding'."
                                       (mapcar
                                        (lambda (mode-and-map)
                                          (let ((mode (car mode-and-map)))
-                                           (when (and
-                                                  ;;  fucked
-                                                  (bound-and-true-p
-                                                   mode)
-                                                  (symbol-value mode))
-                                             (intern-soft
-                                              (format "%s-map" mode)))))
+                                           ;;  err symbol value
+                                           (ignore-errors
+                                               (when (symbol-value mode)
+                                                 (intern-soft
+                                                  (format "%s-map" mode))))))
                                        minor-mode-map-alist))
                                 (list 'global-map
                                       (intern-soft (format "%s-map" major-mode))))))
@@ -271,5 +269,36 @@ function `key-binding'."
                (not (zerop (% (truncate rotation) 90)))))
       t)
      (t nil))))
+
+
+
+
+;; do not call split string with nil
+(defvar my-ggtags-completion-table
+  (completion-table-dynamic
+   (lambda (prefix)
+     (let ((cache-key (concat prefix "$" ggtags-completion-flag)))
+       (unless (equal cache-key (car ggtags-completion-cache))
+         (setq ggtags-completion-cache
+               (cons cache-key
+                     (ggtags-with-current-project
+                       (-some-->
+                           (apply #'ggtags-process-string
+                                  "global"
+                                  (append (and completion-ignore-case '("--ignore-case"))
+                                          ;; Note -c alone returns only definitions
+                                          (list (concat "-c" ggtags-completion-flag) prefix)))
+                         (split-string it "\n" t)))))))
+     (cdr ggtags-completion-cache))))
+
+
+(defadvice ggtags-highlight-tag-at-point
+    (around my-ggtags-highlight-tag-at-point-adv activa)
+  (let ((ggtags-completion-table my-ggtags-completion-table))
+    ad-do-it))
+
+
+
+
 
 (provide 'temp-hacks)

@@ -55,7 +55,7 @@
               "or"
               "registers etc"
             ;; benj-funcs needs to migrate as well
-            "r" #'benj-copy-last-yank-to-register
+            ;; "r" #'benj-copy-last-yank-to-register
             "e" #'team/kill-last-eldoc
             "c" #'team/last-eldoc-csharp-no-type)
           (team/spacemacs-declare-keys
@@ -93,5 +93,18 @@
       "log stuff"
     "l" #'benj-transform-resharper-output))
 
+
+
+(use-package
+  benj-file-syncer
+  :after 'csharp-mode
+  :config
+  (progn
+    (benj-file-sync-setup)
+    (team/spacemacs-declare-keys
+        "or"
+        "remote"
+      "r" #'benj-file-syncer-refresh-everything
+      "f" #'create-sync-file-req)))
 
 (use-package cl-editor-tools)

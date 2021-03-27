@@ -3,7 +3,7 @@
   (setq slime-inhibit-pipelining nil)
 )
 
-(with-eval-after-load 'sime-repl-mode
+(with-eval-after-load 'slime-repl
   (spacemacs/declare-prefix-for-mode
     'slime-repl-mode
     "l"
