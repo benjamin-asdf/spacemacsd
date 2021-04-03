@@ -265,9 +265,7 @@ see `benj-roslyn-proj-configs'"
 (add-to-list 'auto-mode-alist `(,(format "\\%s$" benj-roslyn-tools/analzyer-log-file-ext) . analyzer-log-mode))
 
 
-;; TODO in order to get the buffer in the lambda
-;; I have to use make symbol
-
+;; first real attempts at elisp before I knew about lexical binding :d
 
 (defun benj-roslyn-tools/collect-diagnostics (proc string file-name)
   (when (string-match-p (format "\\(Starting Analyzer CLI with arguments:\\)\\|\\(%s\\)"
