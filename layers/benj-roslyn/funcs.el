@@ -225,11 +225,16 @@ see `benj-roslyn-proj-configs'"
    ;; "-v"
    args))
 
+(defun benj-roslyn-idlegame-sync-sym (&rest syms)
+  "Invoke analyzers to search SYMS occurrances"
+  (benj-roslyn-tools/run-idlegame
+   "-sync"
+   (concat
+    "-sym="
+    (s-join "," syms))
+   "-dont-analyze"
+   "-no-stats"))
 
-
-;; "-a" "StartupMethodAnalyzer" "-startup"
-;; "-e" "UNITY_EDITOR"
-;; "-p" "UNITY_IOS"
 
 (defvar benj-roslyn-last-args '()
   "list of sln and args of last roslyn run.")
@@ -245,16 +250,7 @@ see `benj-roslyn-proj-configs'"
   analyzer-log-mode compilation-mode
   "analyzer-log"
   "Mode for benj roslyn tools analyzer logs."
-  ;; (read-only-mode -1)
-
-  ;; (font-lock-add-keywords)
-  (setq buffer-read-only nil)
-
-  ;; (evil-set-initial-state 'normal)
-
-  )
-
-;;(evil-set-initial-state 'analyzer-log-mode 'normal)
+  (setq buffer-read-only nil))
 
 (spacemacs|define-jump-handlers analyzer-log-mode)
 

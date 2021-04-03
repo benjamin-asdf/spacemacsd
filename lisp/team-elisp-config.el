@@ -1,9 +1,7 @@
 (require 'use-package)
 
 (use-package game-log-tools)
-
 (use-package helm-csharp-enums :defer t)
-
 (use-package helm-stuff :demand)
 
 (use-package
@@ -44,11 +42,15 @@
               "os"
               "search/secretary/strings"
             "e" #'string-edit-at-point)
+
           (team/spacemacs-declare-keys
               "o0"
               "utils"
             "r" #'team/regex-builder-with-region
-            "h" #'command-history
+            "h" #'command-history)
+
+          (team/spacemacs-declare-keys "k"
+              "lisp"
             "m" #'macrostep-expand)
 
           (team/spacemacs-declare-keys
@@ -95,16 +97,18 @@
 
 
 
-(use-package
-  benj-file-syncer
-  :after 'csharp-mode
+(use-package benj-file-syncer
+  :after csharp-mode
+  :demand t
   :config
   (progn
-    (benj-file-sync-setup)
     (team/spacemacs-declare-keys
         "or"
         "remote"
       "r" #'benj-file-syncer-refresh-everything
-      "f" #'create-sync-file-req)))
+      "f" #'create-sync-file-req)
+    (global-benj-code-patch-client-mode)))
+
+(require 'csharp-config)
 
 (use-package cl-editor-tools)
