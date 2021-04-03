@@ -77,7 +77,7 @@ This function should only modify configuration layer settings."
      vimscript
      go
      perl5
-     ;; clojure
+     (clojure :variables clojure-enable-linters '(clj-kondo joker))
      ;; lua
 
      ;; features
@@ -117,7 +117,6 @@ This function should only modify configuration layer settings."
      benj-ediff
      benj-evil-motions
 
-     team-csharp
      team-snippets
      sxhkd-mode
      my-structural-csharp
@@ -358,7 +357,7 @@ It should only modify the values of Spacemacs settings."
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
-   dotspacemacs-large-file-size 0.9
+   dotspacemacs-large-file-size 1
 
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
@@ -747,6 +746,10 @@ before packages are loaded."
   ;; redefine this shit becuase I always mash `k` anyway
   (defun persp--kill-buffer-query-function-foreign-check (&rest args) 'kill)
 
+  ;; run at startup and then at desire with ,ot
+  ;; don't run as timer because gtags are corrupted sometimes
+  (cos/regenerate-gtags-background)
+
   
   ;; temp hacks
 
@@ -860,7 +863,7 @@ This function is called at the very end of Spacemacs initialization."
      ("XXX+" . "#dc752f")
      ("\\?\\?\\?+" . "#dc752f")))
  '(package-selected-packages
-   '(elint string-edit prescient visual-fill-column vterm treemacs slime shx org-rich-yank org-cliplink magit-section kotlin-mode js2-mode markdown-mode ghub flycheck-kotlin flycheck magit git-commit emojify ht dired-quick-sort csharp-mode company-quickhelp company-emoji company packed auto-complete helm request projectile anzu smartparens lispy iedit transient helm-core with-editor dash-functional dash multiple-cursors circe websocket powerline org-plus-contrib evil goto-chg hydra persistent-scratch pdf-tools tablist company-lua lua-mode tern realgud test-simple loc-changes load-relative company-plsense gitlab quelpa csv-mode godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc flycheck-golangci-lint counsel swiper ivy company-go go-mode helm-rtags google-c-style flycheck-rtags disaster cpp-auto-include company-rtags rtags company-c-headers clang-format nim-mode flycheck-nimsuggest commenter flycheck-nim tide typescript-mode grizzl insert-shebang flycheck-bashate fish-mode company-shell yaml-mode yapfify pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope xcscope cython-mode counsel-gtags company-anaconda anaconda-mode pythonic web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data add-node-modules-path yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rg restart-emacs rbenv rake rainbow-delimiters prettier-js powershell popwin persp-mode password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp nameless mwim multi-term move-text mmm-mode minitest markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum livid-mode link-hint json-navigator json-mode js2-refactor js-doc indent-guide import-js hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flyspell-correct-helm flycheck-pos-tip flycheck-package flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-tern company-statistics column-enforce-mode clean-aindent-mode chruby centered-cursor-mode bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-link ace-jump-helm-line ac-ispell))
+   '(benj-file-syncer elint string-edit prescient visual-fill-column vterm treemacs slime shx org-rich-yank org-cliplink magit-section kotlin-mode js2-mode markdown-mode ghub flycheck-kotlin flycheck magit git-commit emojify ht dired-quick-sort csharp-mode company-quickhelp company-emoji company packed auto-complete helm request projectile anzu smartparens lispy iedit transient helm-core with-editor dash-functional dash multiple-cursors circe websocket powerline org-plus-contrib evil goto-chg hydra persistent-scratch pdf-tools tablist company-lua lua-mode tern realgud test-simple loc-changes load-relative company-plsense gitlab quelpa csv-mode godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc flycheck-golangci-lint counsel swiper ivy company-go go-mode helm-rtags google-c-style flycheck-rtags disaster cpp-auto-include company-rtags rtags company-c-headers clang-format nim-mode flycheck-nimsuggest commenter flycheck-nim tide typescript-mode grizzl insert-shebang flycheck-bashate fish-mode company-shell yaml-mode yapfify pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope xcscope cython-mode counsel-gtags company-anaconda anaconda-mode pythonic web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data add-node-modules-path yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rg restart-emacs rbenv rake rainbow-delimiters prettier-js powershell popwin persp-mode password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp nameless mwim multi-term move-text mmm-mode minitest markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum livid-mode link-hint json-navigator json-mode js2-refactor js-doc indent-guide import-js hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flyspell-correct-helm flycheck-pos-tip flycheck-package flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-tern company-statistics column-enforce-mode clean-aindent-mode chruby centered-cursor-mode bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-link ace-jump-helm-line ac-ispell))
  '(paradox-github-token t)
  '(safe-local-variable-values
    '((ambrevar/prettify-inhibit-p)
