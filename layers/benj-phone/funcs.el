@@ -12,10 +12,15 @@ SOURCE is a file on the disk, DEST is an absolute on the phone."
   "Run adb with ARGS and pop to puffer."
   (pop-to-buffer (process-buffer (benj-start-proccess-flatten-args "abd" "*abd*" "adb" "-d" args))))
 
-(defun benj-phone-push-to-misc-dir (file)
+(defun benj-phone-push-to-misc-dir (&optional file)
   "Push FILE to `benj-phone-misc-dir'"
-  (interactive "fFile to push: ")
-  (benj-phone-push file benj-phone-misc-dir))
+  (interactive)
+  (team/with-default-dir
+   "~/Videos/"
+   (call-interactively
+    (lambda (f)
+      (interactive "fFile to push: ")
+      (benj-phone-push f benj-phone-misc-dir)) file)))
 
 
 (defun benj/youtube-dl-download-yank ()

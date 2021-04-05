@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
+(require 'evil-mc-vars)
+
 (defun benj-avy/jump (arg action &optional beg end)
   (setq avy-all-windows t)
   (avy-with avy-goto-word-0
@@ -136,7 +138,6 @@ Start either at 0 or prefix ARG, if given."
 
 
 (defadvice evil-force-normal-state (before my/evil-normal-state-maybe-delete-mc-cursors activ)
-  (require 'evil-mc-vars)
   (when (and
          evil-mc-cursor-state
          (eq evil-state 'normal))

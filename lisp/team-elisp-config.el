@@ -106,9 +106,10 @@
         "or"
         "remote"
       "r" #'benj-file-syncer-refresh-everything
-      "f" #'create-sync-file-req)
+      "f" #'create-sync-file-req
+      "j" #'benj-cos-trace-method)
     (global-benj-code-patch-client-mode)))
 
-(require 'csharp-config)
+(require 'csharp-config "/home/benj/.spacemacs.d/lisp/csharp-config.el")
 
 (use-package cl-editor-tools)
