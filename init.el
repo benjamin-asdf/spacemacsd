@@ -127,7 +127,6 @@ This function should only modify configuration layer settings."
 
      lispyville-csharp
      benj-helpful
-     benj-discover
 
      pdf
 
@@ -663,6 +662,7 @@ before packages are loaded."
 
   ;; `evil-goggles'
   (evil-goggles-mode)
+  (set-face-background 'evil-goggles-default-face "DarkOliveGreen")
 
   ;; (global-undo-tree-mode)
   ;; (evil-set-undo-system 'undo-tree)
@@ -720,6 +720,14 @@ before packages are loaded."
     (interactive)
     (when (yes-or-no-p "Kill emacs? ")
       ad-do-it))
+
+  (defadvice evil-force-normal-state (before my/evil-normal-state-maybe-delete-mc-cursors activ)
+    (require 'evil-mc-vars)
+    (when (and
+           evil-mc-cursor-state
+           (eq evil-state 'normal))
+      (evil-mc-undo-all-cursors)))
+
 
   
 
@@ -821,7 +829,16 @@ before packages are loaded."
   (evil-define-key '(normal motion) markdown-mode-map
     (concat (kbd ",") (kbd ",")) 'with-editor-finish)
 
-
+  (team/spacemacs-declare-keys
+      ","
+      "emacs dev etc"
+    "t" #'trace-function
+    "T" #'untrace-function
+    "x" #'untrace-all
+    "d" #'debug-on-entry
+    "D" #'cancel-debug-on-entry
+    "e" #'edebug-on-entry
+    "E" #'cancel-edebug-on-entry)
 
   
 
