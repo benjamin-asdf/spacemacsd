@@ -20,6 +20,13 @@
        yas-snippet-dirs
        (list (expand-file-name (concat team-elisp-dir "snippets/")))))
 
+;; TODO generate auto laods
+(use-package
+  benj-home-row-state
+  ;;  and defer
+  ;; :defer t
+  :demand t
+  :init (define-key evil-normal-state-map (kbd ", ;") 'benj-toggle-home-row-numbers-state))
 
 (use-package
   idlegame-definitions
