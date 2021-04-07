@@ -26,6 +26,12 @@
  #'(lambda ()
      (flyspell-mode -1)))
 
+
+(spacemacs/set-leader-keys-for-major-mode
+  'slack-message-compose-buffer-mode
+  ","
+  #'slack-message-send-from-buffer)
+
 
 
 (slack-start)
