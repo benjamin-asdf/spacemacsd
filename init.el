@@ -109,7 +109,6 @@ This function should only modify configuration layer settings."
      benj-trello
      helm-config
      sharpel
-                                        ;benj-slack
      benj-backups
      benj-phone
      benj-term
@@ -770,17 +769,7 @@ before packages are loaded."
       (after benj-eyebrowse/create-config-adv last activate)
     (--dotimes 2 (funcall #'winner-undo)))
 
-  ;; better way..?
-  (add-hook
-   'spacemacs-post-user-config-hook
-   #'(lambda ()
-       (load "/home/benj/.spacemacs.d/layers/benj-slack/funcs.el")
-       (load "/home/benj/.spacemacs.d/layers/benj-slack/keybindings.el")))
-
-
   
-
-  ;; no ggtags in shell mode atm
 
   (add-hook 'shell-mode-hook #'(lambda () (ggtags-mode -1)))
 
@@ -792,9 +781,11 @@ before packages are loaded."
       'org-capture (require 'config-org-capture))
 
   (require 'benj-shell-script)
-
   (require 'init-slime)
 
+  (use-package
+    init-slack
+    :defer 100)
 
   (add-to-load-path "~/.spacemacs.d/lisp/emacs-hex-to-rgba/")
 
