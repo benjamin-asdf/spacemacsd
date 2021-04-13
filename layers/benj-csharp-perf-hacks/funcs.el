@@ -27,9 +27,9 @@ Every x time, actually call the func.")
   (unless
       (or
        (eq major-mode 'magit-process-mode)
-       (and (eq major-mode 'chsarp-mode)
-            ;; (not benj-imenu-manual)
-            ))
+       (eq major-mode 'chsarp-mode)
+       ;; (not benj-imenu-manual)
+       )
     ad-do-it))
 
 

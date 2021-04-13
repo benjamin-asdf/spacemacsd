@@ -1,3 +1,5 @@
+(require 'team-yas-snippets)
+
 (defconst teamel-debug-buttons-file (concat idlegame-project-root "Assets/Editor/BestGlobals/DebugButtons.cs"))
 
 (defun teamel/curl-yank ()

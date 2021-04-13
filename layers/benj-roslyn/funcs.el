@@ -201,7 +201,9 @@ see `benj-roslyn-proj-configs'"
     (list sln file analyzer)))
 
 (defun benj-roslyn-tools/read-analzyer ()
+  (interactive)
   (completing-read "Analzyer: " (benj-roslyn-tools/available-analzyer-names)))
+
 
 (defun benj-roslyn-tools/read-file-name ()
   (read-file-name "Target file, (C-Ret to not specify target file): " nil (buffer-file-name) nil (buffer-file-name)))
@@ -598,34 +600,6 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
           "common-types-merge-template"
           "compilation = l.compilation,"
           snippet-env))))
-
-(defun team/csharp-snippet-insert (snippet-name line-regex snippet-env &optional place)
-  (benj-yasnippet/insert-snippet-at-place
-   (yas-lookup-snippet
-    snippet-name
-    'csharp-mode)
-   line-regex
-   snippet-env
-   place))
-
-(defun benj-yasnippet/insert-snippet-at-place (snippet line-regex snippet-env &optional place)
-  "Search forward for LINE-REGEX. Insert SNIPPET. SNIPPET-ENV expects a let style list. See `yas-insert-snippet'."
-  (re-search-forward line-regex nil t)
-  (forward-line (or place -1))
-  (yas-expand-snippet
-   snippet
-   nil
-   nil
-   snippet-env))
-
-(defun team-yas/expand-csharp-snippet (name expand-env)
-  (yas-expand-snippet
-   (yas-lookup-snippet
-    name
-    'csharp-mode)
-   nil
-   nil
-   expand-env))
 
 
 

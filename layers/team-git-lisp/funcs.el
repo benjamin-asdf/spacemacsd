@@ -414,6 +414,15 @@ With ARG only check cs files."
   (benj-git/after-magit-success
    (magit-run-git-async "submodule" "foreach" "git" "clean" "-fd")))
 
+(defun benj-git/merge-sample-dir ()
+  "Return the current merge sample dir, if there is one, nil otherwise."
+  (-some-->
+      (directory-directories
+       "/tmp/"
+       t
+       "merge-sample")
+    (car it)))
+
 (defun benj-git/fire-up-merge-sample (arg)
   "Create an empty git repo, \"git merge topic\"
 will create a conflict in a file.
@@ -421,30 +430,24 @@ If ARG is nil, try to open an existing merge sample repo, else always create a f
   (interactive"P")
   (team/with-default-dir
    (or (and (not arg)
-            (car
-             (process-lines
-              "fd"
-              "-td"
-              "-a"
-              "merge-sample"
-              "/tmp/")))
+            (benj-git/merge-sample-dir))
        (let ((default-directory
                (concat
                 (temporary-file-directory)
                 (make-temp-name "merge-sample"))))
-      (mkdir default-directory)
-      (write-region "" nil "file")
-      (shell-command "git init")
-      (benj-git//commit-with-msg "Initial commit")
-      (shell-command "git checkout -b topic")
-      (write-region "best line\n" nil "file")
-      (write-region "unrelated file\n" nil "unrelated-file")
-      (benj-git//commit-with-msg "Making a change on topic")
-      (shell-command "git checkout master")
-      (write-region "another line\n" nil "file")
-      (benj-git//commit-with-msg "Making a change on master")
-      (find-file-other-window "file")
-      default-directory))
+         (mkdir default-directory)
+         (write-region "" nil "file")
+         (shell-command "git init")
+         (benj-git//commit-with-msg "Initial commit")
+         (shell-command "git checkout -b topic")
+         (write-region "best line\n" nil "file")
+         (write-region "unrelated file\n" nil "unrelated-file")
+         (benj-git//commit-with-msg "Making a change on topic")
+         (shell-command "git checkout master")
+         (write-region "another line\n" nil "file")
+         (benj-git//commit-with-msg "Making a change on master")
+         (find-file-other-window "file")
+         default-directory))
    (magit-status)))
 
 

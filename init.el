@@ -829,7 +829,12 @@ before packages are loaded."
     "d" #'debug-on-entry
     "D" #'cancel-debug-on-entry
     "e" #'edebug-on-entry
-    "E" #'cancel-edebug-on-entry)
+    "E" #'cancel-edebug-on-entry
+    "m" #'macrostep-expand)
+
+  (team/spacemacs-declare-keys "k"
+      "lisp"
+    "m" #'macrostep-expand)
 
   
 
@@ -837,6 +842,14 @@ before packages are loaded."
   (set-face-foreground
    'font-lock-variable-name-face
    "LightGreen")
+
+  
+
+  (with-eval-after-load
+      'csharp-mode
+      (idlegame-add-csharp-yas-hook))
+
+
 
   )
 

@@ -56,9 +56,6 @@
             "r" #'team/regex-builder-with-region
             "h" #'command-history)
 
-          (team/spacemacs-declare-keys "k"
-              "lisp"
-            "m" #'macrostep-expand)
 
           (team/spacemacs-declare-keys
               "or"
@@ -114,7 +111,8 @@
         "remote"
       "r" #'benj-file-syncer-refresh-everything
       "f" #'create-sync-file-req
-      "j" #'benj-cos-trace-method)
+      "j" #'benj-cos-trace-method
+      "d" #'benj-code-patch-dispatch)
     (global-benj-code-patch-client-mode)))
 
 (require 'csharp-config "/home/benj/.spacemacs.d/lisp/csharp-config.el")
