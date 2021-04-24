@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-remove-m
+#key : rmm
+#contributor : benj
+# --
+Remove<`(team-electric/comp-name)`>();

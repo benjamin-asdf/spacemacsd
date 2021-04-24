@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-c-state-set-m
+#key : cssm
+#contributor : benj
+# --
+c.state.Set<`(team-electric/comp-name)`>(true);

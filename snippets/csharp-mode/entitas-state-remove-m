@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-state-remove-m
+#key : csrmm
+#contributor : benj
+# --
+c.state.Remove<`(team-electric/comp-name)`>();

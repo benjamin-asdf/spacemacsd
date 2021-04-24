@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-remove-hh
+#key : rmhh
+#contributor : benj
+# --
+Remove<`(benj-avy/angle-bracket-word)`>();

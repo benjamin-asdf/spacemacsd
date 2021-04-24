@@ -853,8 +853,6 @@ before packages are loaded."
       (idlegame-add-csharp-yas-hook))
 
 
-  (use-package geiser-chicken
-    :defer t)
 
   (remove-hook
    'outline-mode-hook

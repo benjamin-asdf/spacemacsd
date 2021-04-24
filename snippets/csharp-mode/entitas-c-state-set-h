@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-c-state-set-h
+#key : cssh
+#contributor : benj
+# --
+c.state.Set<`(team-electric/helm-comp-echo)`>(true);

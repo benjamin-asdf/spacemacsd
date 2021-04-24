@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : genp
+#key : genp
+#contributor : benj
+# --
+c.PlayPopupSound();

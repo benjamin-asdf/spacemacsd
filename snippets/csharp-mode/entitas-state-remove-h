@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-state-remove-h
+#key : csrmh
+#contributor : benj
+# --
+c.state.Remove<`(team-electric/helm-comp-echo)`>();

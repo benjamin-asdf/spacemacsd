@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : cos-enter-menu
+#key : cos-enter-menu
+#contributor : benj
+# --
+AddOnEnterMenu(`enter-menu-menu`, () => {
+    `benj-code-patch-snip-body`
+});

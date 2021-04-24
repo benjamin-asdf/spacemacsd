@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-#name : state-set-h
-#key : cssh
-#contributor : benj
-# --
-c.state.`(team-electric/resolve-cached-comp-set-part)`

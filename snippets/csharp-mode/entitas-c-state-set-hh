@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-c-state-set-hh
+#key : csshh
+#contributor : benj
+# --
+c.state.Set<`(benj-avy/angle-bracket-word)`>(true);

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : patcher-add-init
+#key : patcher-add-init
+#contributor : benj
+# --
+        AddInitialize(() => {
+            `benj-code-patch-snip-body`
+        });

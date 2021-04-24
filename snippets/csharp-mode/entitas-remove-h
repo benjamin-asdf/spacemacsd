@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-remove-h
+#key : rmh
+#contributor : benj
+# --
+Remove<`(team-electric/helm-comp-echo)`>();

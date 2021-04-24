@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : patcher-timed-ex
+#key : patcher-timed-ex
+#contributor : benj
+# --
+        AddTimedExecute(TimeSpan.FromMilliseconds(200), () => {
+            `benj-code-patch-snip-body`
+        });

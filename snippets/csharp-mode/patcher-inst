@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : patcher-inst
+#key : patcher-inst
+#contributor : benj
+# --
+      `benj-code-patch-snip-method`(`benj-code-patch-snip-matcher`, ent => {
+          `benj-code-patch-snip-body`
+      });

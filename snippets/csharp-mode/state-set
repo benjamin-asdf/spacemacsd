@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-#name : state-set
-#key : css
-#contributor : benj
-# --
-c.state.Set<$0>(true)

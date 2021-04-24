@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : genss
+#key : genss
+#contributor : benj
+# --
+c.PlayGeneralSoundOnce(SoundName.$0);
