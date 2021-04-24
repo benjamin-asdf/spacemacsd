@@ -113,6 +113,7 @@
       "f" #'create-sync-file-req
       "j" #'benj-cos-trace-method
       "k" #'benj-add-to-trace-log
+      "K" #'benj-add-contexts-name-log
       "d" #'benj-code-patch-dispatch)))
 
 (use-package benj-file-patch-additionals
