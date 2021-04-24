@@ -79,6 +79,7 @@ This function should only modify configuration layer settings."
      perl5
      (clojure :variables clojure-enable-linters '(clj-kondo joker))
      ;; lua
+     scheme
 
      ;; features
      slack
@@ -128,6 +129,7 @@ This function should only modify configuration layer settings."
      benj-helpful
 
      pdf
+
 
 
      )
@@ -789,6 +791,7 @@ before packages are loaded."
 
   (add-to-load-path "~/.spacemacs.d/lisp/emacs-hex-to-rgba/")
 
+  (require 'rgba-loadefs)
   (use-package
     hex-to-rgba
     :defer t
@@ -850,6 +853,13 @@ before packages are loaded."
       (idlegame-add-csharp-yas-hook))
 
 
+  (use-package geiser-chicken
+    :defer t)
+
+  (remove-hook
+   'outline-mode-hook
+   #'windows-scripts/bat-outline-setup)
+
 
   )
 
@@ -866,6 +876,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(helm-completion-style ’(flex))
  '(evil-want-Y-yank-to-eol nil)
  '(hl-todo-keyword-faces
    '(("TODO" . "#dc752f")

@@ -19,7 +19,9 @@
 
 
 (setq omnisharp-auto-complete-want-documentation nil)
-(setq omnisharp-imenu-support t)
+
+;; too slow in big files.
+;; (setq omnisharp-imenu-support t)
 
 (defgroup ggtags nil
 	"Options for ggtags"

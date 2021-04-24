@@ -190,23 +190,6 @@ Depends on `default-directory'"
 
 
 
-
-(defun benj/transmute-region (beg end op)
-  (let ((s (buffer-substring beg end)))
-    (delete-region beg end)
-    (insert (funcall op s))))
-
-(defun benj/dashed-words ()
-  (interactive)
-  (evil-backward-word-begin 1)
-  (let ((w (thing-at-point 'evil-word)))
-    (kill-word 1)
-    (insert (s-dashed-words w))))
-
-
-
-
-
 
 
 

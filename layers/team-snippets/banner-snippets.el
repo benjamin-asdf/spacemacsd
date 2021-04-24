@@ -11,9 +11,9 @@
             (name-downcase ,name-downcase))))
     (team-yassnippets/add-snippet-at-place
      "/home/benj/idlegame/IdleGame/Assets/#/Sources/CongratsScreen/MonoBehaviours/CongratulationsScreen.cs"
-    "congrats-cb-dict"
-    "CongratsSource.FirstPurchase, m => new FirstPurchaseCongratsCallbacks"
-    expand-env)
+     "congrats-cb-dict"
+     "CongratsSource.FirstPurchase, m => new FirstPurchaseCongratsCallbacks"
+     expand-env)
     (team-yassnippets/add-snippet-at-place
      "/home/benj/idlegame/IdleGame/Assets/#/Sources/CongratsScreen/CongratsCallbacks.cs"
      "congrats-cb-class"
@@ -39,11 +39,12 @@
      "congrats-system"
      "public static class CongratsBannersExt {"
      expand-env)
-    (team-yassnippets/add-snippet-at-place
-     "/home/benj/idlegame/IdleGame/Assets/#/Sources/CongratsScreen/MoreBanners.cs"
-     "feature-sys-congrats"
-     "Add(new SalePointCongratsSystem(c));"
-     expand-env)
+    (;; team-yassnippets/add-snippet-at-place
+     ;; "/home/benj/idlegame/IdleGame/Assets/#/Sources/CongratsScreen/MoreBanners.cs"
+     ;; "feature-sys-congrats"
+     ;; "Add(new SalePointCongratsSystem(c));"
+     ;; expand-env
+     )
     (team/with-file
      "/home/benj/idlegame/IdleGame/Assets/#/Sources/CongratsScreen/MonoBehaviours/CongratulationsScreen.cs"
      (when (re-search-forward "Banners, set by code" nil t)
@@ -61,6 +62,10 @@
            nil
            t)
       (skip-chars-forward "^{")
+basicPetShowAll.SetActive(false);
+
+basicPetBannerShowAll.SetActive(false);
+
       (team/in-new-line
        (format "%s.SetActive(false);\n" name-downcase)))
     (team-yassnippets/add-snippet-at-place
@@ -79,37 +84,35 @@
      "public void MilestoneCongrats() {"
      expand-env)
     (eval `(let ,expand-env
-       (let ((file-name (concat "/home/benj/idlegame/IdleGame/Assets/#/Sources/CongratsScreen/MonoBehaviours/"
-                                (format "%sCongratsView.cs" name))))
-         (unless (file-exists-p file-name)
-           (write-region
-
-            (with-temp-buffer
-              (csharp-mode)
-              (team/csharp-snippet-insert
-               "congrats-viewmanager"
-               ".*"
-               expand-env)
-              (buffer-string))
-            nil
-            file-name)))))
-    (with-current-buffer
-        "*scratch:org*"
-      (insert "* Add references for %s" name)
-      (org-mode)
-      (pop-to-buffer (current-buffer))))
-  (team/with-idlegame-git-toplevel
-   (team/
+             (let ((file-name (concat "/home/benj/idlegame/IdleGame/Assets/#/Sources/CongratsScreen/MonoBehaviours/"
+                                      (format "%sCongratsView.cs" name))))
+               (unless (file-exists-p file-name)
+                 (team/with-file
+                  file-name
+                  (csharp-mode)
+                  (team/csharp-snippet-insert
+                   "congrats-viewmanager"
+                   ".*"
+                   expand-env))))))
+    ;; (with-current-buffer
+    ;;     "*scratch:org*"
+    ;;   (insert "* Add references for %s" name)
+    ;;   (org-mode)
+    ;;   (pop-to-buffer (current-buffer)))
     )
-   (magit-run-git-async
-    "add"
-    "--"
-    (list
-     "IdleGame/Assets/#/Sources/CongratsScreen/MonoBehaviours/CongratulationsScreen.cs"
-     "IdleGame/Assets/#/Sources/CongratsScreen/CongratsCallbacks.cs"
-     "IdleGame/Assets/#/Sources/CongratsScreen/CongratsComponents.cs"
-     "IdleGame/Assets/#/Sources/CongratsScreen/MoreBanners.cs"
-     "IdleGame/Assets/#/Sources/CheatTools/DebugMethods.cs"))))
+  ;; (team/with-idlegame-git-toplevel
+  ;;  (team/
+  ;;   )
+  ;;  (magit-run-git-async
+  ;;   "add"
+  ;;   "--"
+  ;;   (list
+  ;;    "IdleGame/Assets/#/Sources/CongratsScreen/MonoBehaviours/CongratulationsScreen.cs"
+  ;;    "IdleGame/Assets/#/Sources/CongratsScreen/CongratsCallbacks.cs"
+  ;;    "IdleGame/Assets/#/Sources/CongratsScreen/CongratsComponents.cs"
+  ;;    "IdleGame/Assets/#/Sources/CongratsScreen/MoreBanners.cs"
+  ;;    "IdleGame/Assets/#/Sources/CheatTools/DebugMethods.cs")))
+  )
 
 
 (defmacro team/with-idlegame-proj (&rest body)

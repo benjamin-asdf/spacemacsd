@@ -965,7 +965,20 @@ DIR should be a directory in a git repo."
 
 (defun benj/insert-recent-cos-commit ()
   (interactive)
-  (benj/insert-recent-commit cos-dir))
+  (benj/insert-recent-commit cos-dir)
+  (team/in-new-line
+   (rand-element
+    '("Let's go for it."
+     "Rekt."
+     "Success."
+     "Fixed real gud."
+     ;; "Let's solve poverty."
+     "Best game."
+     "Love and happiness."
+     "Get hyped."
+     "Hype."))))
+
+
 
 (defun benj/copy-recent-cos-commit-in-file ()
   (interactive)

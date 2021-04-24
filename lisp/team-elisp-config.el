@@ -112,9 +112,17 @@
       "r" #'benj-file-syncer-refresh-everything
       "f" #'create-sync-file-req
       "j" #'benj-cos-trace-method
-      "d" #'benj-code-patch-dispatch)
+      "k" #'benj-add-to-trace-log
+      "d" #'benj-code-patch-dispatch)))
+
+(use-package benj-file-patch-additionals
+  :after benj-file-syncer
+  :demand t
+  :config
+  (progn
+    (benj-code-patcher-spinner-setup)
     (global-benj-code-patch-client-mode)))
 
-(require 'csharp-config "/home/benj/.spacemacs.d/lisp/csharp-config.el")
+(require 'csharp-config "~/.spacemacs.d/lisp/csharp-config.el")
 
 (use-package cl-editor-tools)
