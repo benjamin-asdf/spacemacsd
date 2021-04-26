@@ -92,7 +92,9 @@
 
 (use-package
   log-digest
-  :defer t
+  ;; TODO autoloads
+  ;; :defer t
+  :demand
   :config
   (team/spacemacs-declare-keys
       "oi1"
