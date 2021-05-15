@@ -485,6 +485,22 @@ Also call `spacemacs/symbol-overlay-transient-state/body'."
         (spacemacs/symbol-overlay-transient-state/body)
         (return))))
 
+(defun my/kill-currenty-symbol-overlay-symbols ()
+  (interactive)
+  (cl-loop
+   for ov being the overlays of (current-buffer)
+   from (point-min) to (point-max)
+   do (when
+          (member
+           (overlay-get
+            ov
+            'face)
+           symbol-overlay-faces)
+        (kill-new
+         (buffer-substring
+          (overlay-start ov)
+          (overlay-end ov))))))
+
 
 
 (defun my/copy-symbol-other-window ()

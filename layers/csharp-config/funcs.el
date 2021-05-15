@@ -65,11 +65,3 @@
 (advice-add 'omnisharp-unit-test-buffer :before #'benj-omnisharp/unit-test-advice)
 (advice-add 'omnisharp-unit-test-last :before #'benj-omnisharp/unit-test-advice)
 
-
-
-
-
-;; building my own now
-;; use `benj/omnisharp-start-near-proj'
-;; (setq omnisharp-expected-server-version "1.35.2")
-

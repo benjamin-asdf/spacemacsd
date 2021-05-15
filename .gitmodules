@@ -7,3 +7,6 @@
 [submodule "lisp/lisp-extra-font-lock"]
 	path = lisp/lisp-extra-font-lock
 	url = git@github.com:Lindydancer/lisp-extra-font-lock.git
+[submodule "lisp/lisp-extra-font-lock"]
+	path = layers/redshank/local/redshank/
+	url = git@github.com:rtnlmeme-DestroyerOfDeath/redshank.git

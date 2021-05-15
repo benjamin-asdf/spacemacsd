@@ -65,6 +65,3 @@ Purpose is to not load all the stuff always."
 
 
 
-(add-to-load-path-if-exists
- "~/.spacemacs.d/layers/team-snippets/"
- )

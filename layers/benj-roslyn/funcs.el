@@ -70,11 +70,6 @@
   (interactive)
   (unless (file-exists-p benj-roslyn-tools/analzyer-log-file)
     (write-region "" nil benj-roslyn-tools/analzyer-log-file))
-  ;; (when-let ((buff (get-buffer (file-name-nondirectory benj-roslyn-tools/analzyer-log-file))))
-  ;;   (switch-to-buffer-other-frame buff)
-  ;;   (erase-buffer)
-  ;;   (save-buffer))
-  ;; (find-file-other-window benj-roslyn-tools/analzyer-log-file)
   (benj-roslyn-tools/run-nuke-target "Publish"))
 
 
@@ -301,42 +296,25 @@ see `benj-roslyn-proj-configs'"
   (benj-roslyn-tools/erase-analyzer-log-buff-if-exists)
   (setq benj-roslyn-last-args (list sln args))
 
-  (when (process-live-p benj-roslyn-tools/nuke-build-proc)
-    (set-process-sentinel benj-roslyn-tools/nuke-build-proc
-                          #'(lambda (proc code)
-                            (pcase code
-                              ("finished\n" (benj-roslyn-rerun-last))
-                              (code (error "nuke build exited abnormally with code %s" code)))))
-    (error "Scheduled rerun after nuke build..."))
-
-  (let* (
-         ;; (file-var (benj-roslyn/diagnostics-file-name sln))
-         ;; (filter
-         ;;  (benj-roslyn-tools/handle-proc
-         ;;   'p
-         ;;   's
-         ;;   file-var
-         ;;   (lambda (p s file-name)
-         ;;     (benj-roslyn-tools/collect-diagnostics p s file-name)
-         ;;     (benj-roslyn-tools/default-filter p s))))
-         ;; (sentinel
-         ;;  (benj-roslyn-tools/handle-proc
-         ;;   'p
-         ;;   's
-         ;;   file-var
-         ;;   #'benj-roslyn-tools/write-diagnostic-out))
-         (default-directory (file-name-directory sln))
-         (proc (benj-start-proccess-flatten-args "run-analyzers"
-                                                 benj-roslyn-tools/buff-name "dotnet" benj-roslyn-tools/cli-executable
-                                                 "-s" sln args
-                                                 "-no-stats"
-                                                 )))
-    ;; (set-process-filter proc filter)
-    ;; (set-process-sentinel proc sentinel)
-    )
-  (pop-to-buffer benj-roslyn-tools/buff-name)
-  ;; (analyzer-log-mode)
-  )
+  (if (process-live-p benj-roslyn-tools/nuke-build-proc)
+      (progn (set-process-sentinel
+              benj-roslyn-tools/nuke-build-proc
+              #'(lambda (proc code)
+                  (pcase code
+                    ("finished\n" (benj-roslyn-rerun-last))
+                    (code (error "nuke build exited abnormally with code %s" code)))))
+             (message "Scheduled rerun after nuke build..."))
+    (team/with-default-dir
+     (file-name-directory sln)
+     (apply
+      #'start-process
+      (append
+       (list "run-analyzers"
+             benj-roslyn-tools/buff-name "dotnet" benj-roslyn-tools/cli-executable
+             "-s" sln)
+       args
+       (list "-no-stats")))
+     (pop-to-buffer benj-roslyn-tools/buff-name))))
 
 (defun benj-roslyn-tools/handle-proc (p s file-name op)
   "Eval OP with current handle buff."

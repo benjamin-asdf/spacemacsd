@@ -33,6 +33,7 @@
     "os"
     "search & symbols"
   "o" #'my/jump-to-last-symbol-overlay
+  "y" #'my/kill-currenty-symbol-overlay-symbols
   )
 
 (team/spacemacs-declare-keys

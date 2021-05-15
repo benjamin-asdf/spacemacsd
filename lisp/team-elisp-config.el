@@ -1,5 +1,12 @@
 (require 'use-package)
 
+
+(use-package team-autoloads
+  :demand t
+  :config
+  (load-file team-elisp-auto-load-file))
+
+
 (use-package game-log-tools)
 (use-package helm-csharp-enums :defer t)
 (use-package helm-stuff :demand)
@@ -20,12 +27,9 @@
        yas-snippet-dirs
        (list (expand-file-name (concat team-elisp-dir "snippets/")))))
 
-;; TODO generate auto laods
 (use-package
   benj-home-row-state
-  ;;  and defer
-  ;; :defer t
-  :demand t
+  :defer t
   :init (define-key evil-normal-state-map (kbd ", ;") 'benj-toggle-home-row-numbers-state))
 
 (use-package
@@ -114,9 +118,11 @@
       "r" #'benj-file-syncer-refresh-everything
       "f" #'create-sync-file-req
       "j" #'benj-cos-trace-method
+      "." #'benj-send-bunel-cmd-to-hallway
       "k" #'benj-add-to-trace-log
       "K" #'benj-add-contexts-name-log
-      "d" #'benj-code-patch-dispatch)))
+      "d" #'benj-code-patch-dispatch
+      "{" #'benj-csharp-add-curly-brackets)))
 
 (use-package benj-file-patch-additionals
   :after benj-file-syncer
@@ -127,5 +133,10 @@
     (global-benj-code-patch-client-mode)))
 
 (require 'csharp-config "~/.spacemacs.d/lisp/csharp-config.el")
+
+
+
+
+
 
 (use-package cl-editor-tools)

@@ -1,12 +1,6 @@
 ;; -*- lexical-binding: t; -*-
 
 
-(add-to-load-path-if-exists
- "~/.spacemacs.d/layers/system-utils/funcs.el"
- )
-
-
-
 
 ;; (defun my/lazy-update-rider ()
 ;;   "Search in ~/Downloads for a rider tar, extract to /opt/rider, make symlink."

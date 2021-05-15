@@ -78,3 +78,12 @@ Archived entries from file /home/benj/.spacemacs.d/TODOs.org
   :ARCHIVE_FILE: ~/.spacemacs.d/TODOs.org
   :ARCHIVE_CATEGORY: TODOs
   :END:
+
+* DONE retire the mouse
+  CLOSED: [2021-05-05 Wed 12:54]
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2021-05-05 Wed 12:54
+  :ARCHIVE_FILE: ~/.spacemacs.d/TODOs.org
+  :ARCHIVE_CATEGORY: TODOs
+  :ARCHIVE_TODO: DONE
+  :END:

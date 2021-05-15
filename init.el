@@ -33,7 +33,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(csv
+   '(
      version-control
      gtags
      (auto-completion  :variables
@@ -49,7 +49,7 @@ This function should only modify configuration layer settings."
      syntax-checking
      (org :variables
           ;; org-enable-trello-support t
-          org-enable-roam-support t
+          ;; org-enable-roam-support t
 
           )
      (helm :variables
@@ -61,6 +61,7 @@ This function should only modify configuration layer settings."
      common-lisp
      ;; semantic
      csharp
+     ;; (csharp :variables csharp-backend 'lsp)
      (python :variables python-backend 'anaconda)
      windows-scripts
      javascript
@@ -80,13 +81,22 @@ This function should only modify configuration layer settings."
      perl5
      (clojure :variables clojure-enable-linters '(clj-kondo joker))
      ;; lua
-     scheme
+     (scheme :variables
+             scheme-implementations
+             '(guile racket chicken))
+     csv
+
+     (haskell :variables haskell-completion-backend 'dante)
+
 
      ;; features
      slack
      pass
      ;; media
      ;; github
+     (rcirc :variables rcirc-enable-authinfo-support t
+            ;; rcirc-enable-znc-support t
+            )
 
      ;; benj
      benj-funcs
@@ -156,8 +166,9 @@ This function should only modify configuration layer settings."
                                       shx
                                       string-edit
                                       geiser-chicken
-                                      geiser-guile
                                       macrostep-geiser
+                                      palimpsest
+                                      ;; structural-haskell-mode
                                       )
 
 
@@ -165,7 +176,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(org-superstar)
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -595,7 +606,6 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
   (let ((default-directory "~/.spacemacs.d/"))
-    (load (expand-file-name "named-macros.el"))
     (load (expand-file-name "lisp/team-elisp-config.el")))
 
   
@@ -629,13 +639,16 @@ before packages are loaded."
   (define-key evil-normal-state-map (kbd "M-Y") #'evil-paste-pop-next)
   (setq dotspacemacs-scratch-buffer-persistent t)
 
+  (setq auto-save-no-message t)
+  ;; (setf completion-styles '(flex))
+  (setf company-format-margin-function  nil)
+
   ;; scrolling
 
   (setq jit-lock-defer-time 0)
   (setq redisplay-skip-fontification-on-input t)
   (setq fast-but-imprecise-scrolling t)
 
-  (setq auto-save-no-message t)
 
   
 
@@ -739,7 +752,9 @@ before packages are loaded."
 
   (defun benj-sys/invoke-watch-vbs ()
     "Invoke python script that kills vbs compiler processes."
-    (start-process-shell-command "watch-vbs" "*watch-vbs*" "watch_vbs.py"))
+    (team/with-default-dir
+     "~/"
+     (start-process-shell-command "watch-vbs" "*watch-vbs*" "watch_vbs.py")))
 
   (defvar benj-sys/inhibit-kill-high-mem nil)
   (defun benj-sys/invoke-kill-high-mem ()
@@ -782,7 +797,7 @@ before packages are loaded."
 
   
 
-  (add-to-load-path "~/.spacemacs.d/lisp/")
+  (add-to-list 'load-path "~/.spacemacs.d/lisp/")
 
   (with-eval-after-load
       'org-capture (require 'config-org-capture))
@@ -794,7 +809,8 @@ before packages are loaded."
     init-slack
     :defer 100)
 
-  (add-to-load-path "~/.spacemacs.d/lisp/emacs-hex-to-rgba/")
+
+  (add-to-list 'load-path "~/.spacemacs.d/lisp/emacs-hex-to-rgba/")
 
   (require 'rgba-loadefs)
   (use-package
@@ -817,7 +833,7 @@ before packages are loaded."
 
   
 
-  (add-to-load-path "~/.spacemacs.d/lisp/lisp-extra-font-lock/")
+  (add-to-list 'load-path "~/.spacemacs.d/lisp/lisp-extra-font-lock/")
   (require 'lisp-extra-font-lock)
   (lisp-extra-font-lock-global-mode 1)
   (add-hook 'lisp-extra-font-lock-mode-hook #'dash-fontify-mode)
@@ -848,7 +864,6 @@ before packages are loaded."
 
   
 
-
   (set-face-foreground
    'font-lock-variable-name-face
    "LightGreen")
@@ -857,9 +872,7 @@ before packages are loaded."
 
   (with-eval-after-load
       'csharp-mode
-      (idlegame-add-csharp-yas-hook))
-
-
+    (idlegame-add-csharp-yas-hook))
 
   (remove-hook
    'outline-mode-hook
@@ -872,8 +885,63 @@ before packages are loaded."
        (:underline "white")
        (:background "grey50")))))
 
+  ;; shut up lsp
   (setf shell-scripts-backend nil)
 
+  (setf auto-revert-verbose nil)
+
+  
+
+  ;; (setq auth-sources '(password-store))
+
+  (setq rcirc-server-alist
+        '(("irc.freenode.net"
+           :user-name "benj"
+           :port "1337"
+           :auth "benj"
+           :channels ("#emacs" "#guile"))))
+
+
+  (require 'init-geiser)
+
+  (cl-pushnew "~/.guix-profile/share/info" Info-additional-directory-list :test #'equal)
+
+
+
+  
+
+  (setf json-backend nil)
+
+
+  ;; kill eval output
+  (let ((kill (lambda (val)
+                (prog1 val (kill-new (mkstr val))))))
+    (advice-add 'eval-last-sexp :filter-return kill)
+    (advice-add 'eval-defun     :filter-return kill))
+
+
+
+  ;; (use-package
+  ;;   palimpsest
+  ;;   :load "/home/benj/repos/lisp/Palimpsest/palimpsest.el"
+  ;;   ;; :pin "https://github.com/rtnlmeme-DestroyerOfDeath/Palimpsest"
+  ;;   :ensure t
+  ;;   ;; :config (team/spacemacs-declare-keys
+  ;;   ;;             "xp"
+  ;;   ;;             "palimpsest"
+  ;;   ;;             )
+  ;;   )
+
+
+  ;; (load "~/.spacemacs.d/hacks2.el")
+
+  (when (file-exists-p "~/.guix-profile/share/emacs/site-lisp/")
+    (let ((default-directory "~/.guix-profile/share/emacs/site-lisp/"))
+      (load "subdirs.el")))
+
+  (use-package guix
+    :load guix-autoloads
+    :demand t)
 
   )
 
@@ -891,7 +959,6 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(evil-want-Y-yank-to-eol nil)
- '(helm-completion-style ’)
  '(hl-todo-keyword-faces
    '(("TODO" . "#dc752f")
      ("NEXT" . "#dc752f")
@@ -912,7 +979,9 @@ This function is called at the very end of Spacemacs initialization."
    '(macrostep-geiser geiser-guile geiser-chicken benj-file-syncer elint string-edit prescient visual-fill-column vterm treemacs slime shx org-rich-yank org-cliplink magit-section kotlin-mode js2-mode markdown-mode ghub flycheck-kotlin flycheck magit git-commit emojify ht dired-quick-sort csharp-mode company-quickhelp company-emoji company packed auto-complete helm request projectile anzu smartparens lispy iedit transient helm-core with-editor dash-functional dash multiple-cursors circe websocket powerline org-plus-contrib evil goto-chg hydra persistent-scratch pdf-tools tablist company-lua lua-mode tern realgud test-simple loc-changes load-relative company-plsense gitlab quelpa csv-mode godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc flycheck-golangci-lint counsel swiper ivy company-go go-mode helm-rtags google-c-style flycheck-rtags disaster cpp-auto-include company-rtags rtags company-c-headers clang-format nim-mode flycheck-nimsuggest commenter flycheck-nim tide typescript-mode grizzl insert-shebang flycheck-bashate fish-mode company-shell yaml-mode yapfify pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope xcscope cython-mode counsel-gtags company-anaconda anaconda-mode pythonic web-mode tagedit slim-mode scss-mode sass-mode pug-mode impatient-mode helm-css-scss haml-mode emmet-mode counsel-css company-web web-completion-data add-node-modules-path yasnippet-snippets xterm-color ws-butler writeroom-mode winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons smeargle shell-pop seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rg restart-emacs rbenv rake rainbow-delimiters prettier-js powershell popwin persp-mode password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file omnisharp nameless mwim multi-term move-text mmm-mode minitest markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum livid-mode link-hint json-navigator json-mode js2-refactor js-doc indent-guide import-js hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy font-lock+ flyspell-correct-helm flycheck-pos-tip flycheck-package flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish diff-hl define-word counsel-projectile company-tern company-statistics column-enforce-mode clean-aindent-mode chruby centered-cursor-mode bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-link ace-jump-helm-line ac-ispell))
  '(paradox-github-token t)
  '(safe-local-variable-values
-   '((ambrevar/prettify-inhibit-p)
+   '((eval add-hook 'before-save-hook 'time-stamp)
+     (geiser-guile-load-path "~/.guix-profile/share/guile/site/3.0")
+     (ambrevar/prettify-inhibit-p)
      (whitespace-style quote
                        (face trailing empty tabs))
      (whitespace-action)
@@ -934,5 +1003,6 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
+ '(lsp-face-highlight-textual ((t (:inherit show-paren-match) (:underline "white") (:background "grey50"))))
  '(sp-show-pair-match-face ((t (:inherit sp-show-pair-match-face :underline t :foreground "#16f7dd")))))
 )

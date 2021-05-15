@@ -913,20 +913,16 @@ OTHER-REV defaults to HEAD."
   "Use projectile to read a project."
   (interactive)
   (list
-   (let ((projects (projectile-relevant-known-projects)))
-     (if projects
-         (completing-read
-          "Project for commit: " projects)
-       (user-error "There are no known projects")))))
+   (completing-read
+    "Project for commit: " (or
+                            (projectile-relevant-known-projects)
+                            (user-error "There are no known projects")))))
 
 (defun benj/format-magit-commit (commit-s)
-  (-some-->
-      commit-s
-    (s-split-up-to " " it 1)
-    (format
-     "`%s` \n> %s\n"
-     (car it)
-     (cadr it))))
+  (apply
+   'format
+   "`%s` \n> %s\n"
+   (s-split-up-to " " commit-s 1)))
 
 (defun benj/insert-recent-commit (&optional dir)
   "Read a recent commit and insert formatted. DIR should be a directory in a git repo."
@@ -971,7 +967,6 @@ DIR should be a directory in a git repo."
     '("Let's go for it."
      "Rekt."
      "Success."
-     "Fixed real gud."
      ;; "Let's solve poverty."
      "Best game."
      "Love and happiness."

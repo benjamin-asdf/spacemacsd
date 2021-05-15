@@ -6,9 +6,11 @@
   "a" #'bunel-refresh-all
   "L" #'bunel-open-unity-editor-log
   "e" #'bunel-execute-debug-method
+  "E" #'bunel-hallway-execute-debug-method
   "o" #'bunel-open-overlay
   "m" #'bunel-open-menu
   "g" #'bunel-set-globals
+  "G" #'bunel-hallway-set-globals
   "u" #'team-unity/rg-guid-search
   "U" #'team-unity/rg-guid-search-at-point
   "f" #'team-unity/rg-guid-search-ask-file

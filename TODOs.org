@@ -97,8 +97,11 @@ https://github.com/syl20bnr/spacemacs/pull/7736#issuecomment-313320906
 * a helm for all hippy expand candidates
 ** https://www.emacswiki.org/emacs/HippieExpand some interesting starting point for he
 
-* retire the mouse
-
 * use this on the fly yasnippet thing
 * use this rotate text package
 * csharp after yas snippet hook to add ;'s
+* fix my yas hook getting removed or something
+
+* pastebin emacs package
+
+* it would be cool to have pcase like pattern matching for strings

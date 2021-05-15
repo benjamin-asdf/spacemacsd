@@ -209,7 +209,7 @@ and expand a snippet for a 'With...(this config)' method."
           (interface-name)
           (type))
       (save-excursion
-        (line->0)
+        (beginning-of-line)
         (re-search-forward
          "public \\([^ ]+\\) \\(\\w+\\)"
          (line-end-position))
