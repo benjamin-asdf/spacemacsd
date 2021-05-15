@@ -11,7 +11,7 @@
                                       :host "slack.com"
                                       :user "benjamin.schwerdtner@gamil.com")
                       :token (auth-source-pick-first-password :host "singularity-group-slack"
-                                                              :user "benjamin.schwerdtner@gamil.com")
+                                                              :user "benjamin.schwerdtner@gmail.com")
                       :subscribed-channels '(general slackbot new-to-cos))
 
 

@@ -777,7 +777,7 @@ before packages are loaded."
 
   ;; run at startup and then at desire with ,ot
   ;; don't run as timer because gtags are corrupted sometimes
-  (cos/regenerate-gtags-background)
+  (when team-enable-gtags (cos/regenerate-gtags-background))
 
   
   ;; temp hacks
@@ -805,9 +805,10 @@ before packages are loaded."
   (require 'benj-shell-script)
   (require 'init-slime)
 
-  (use-package
-    init-slack
-    :defer 100)
+  (when team-enable-slack
+      (use-package
+        init-slack
+        :defer 100))
 
 
   (add-to-list 'load-path "~/.spacemacs.d/lisp/emacs-hex-to-rgba/")
