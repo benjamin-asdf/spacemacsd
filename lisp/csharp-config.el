@@ -1,6 +1,6 @@
 
 (use-package
-  csharp-electric
+    csharp-electric
   :demand t
   :config
   (progn
@@ -11,6 +11,10 @@
     (spacemacs/declare-prefix-for-mode
       'team/chsarp-superior-mode
       "ox" "text")
+
+    (spacemacs/declare-prefix-for-mode
+      'team/chsarp-superior-mode
+      "on" "new")
 
     (spacemacs/declare-prefix-for-mode
       'team/chsarp-superior-mode
@@ -34,8 +38,19 @@
       'team/chsarp-superior-mode
       "oxi" #'team-csharp/wrap-if
       "oxl" #'team-csharp/turn-conditional-to-log
-      "oxr" #'my/chsarp-raise-block)))
+      "oxr" #'my/chsarp-raise-block
+      "onc" #'benj-create-new-csharp-scratch
+      "onC" #'benj-csharp-scratches-create-on-region
+      "oU" benj-csharp/replace-wl-with-debug
+      "ou" benj-csharp/replace-wl-with-debug
+
+      ))
+
+  )
 
 
 
 (provide 'csharp-config)
+
+
+

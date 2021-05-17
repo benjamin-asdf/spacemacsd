@@ -104,8 +104,6 @@ This function should only modify configuration layer settings."
      benj-tags
      substitute-utils
      csharp-config
-     benj-csharp
-     csharp-scratches
      my-config-spellcheck
      redshiftel
      ;; sailor
