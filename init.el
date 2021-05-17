@@ -133,6 +133,7 @@ This function should only modify configuration layer settings."
      system-utils
 
      lispy
+     evil-better-jumper
 
      lispyville-csharp
      benj-helpful
@@ -627,7 +628,7 @@ before packages are loaded."
   (setq-default split-hight-threshold 500)
   (show-smartparens-global-mode -1)
   (setq history-delete-duplicates t)
-  (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
+  ;; (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
   (set-face-foreground 'line-number "slateBlue")
   (setq org-agenda-files
         '("~/org/notes.org"
@@ -646,6 +647,7 @@ before packages are loaded."
   (setq jit-lock-defer-time 0)
   (setq redisplay-skip-fontification-on-input t)
   (setq fast-but-imprecise-scrolling t)
+  (setf scroll-conservatively 0)
 
 
   
