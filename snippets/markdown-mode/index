@@ -1,0 +1,27 @@
+# -*- mode: snippet -*-
+#name : index
+#key : index
+#contributor : benj
+# --
+---
+title: `(file-name-base (directory-file-name (file-name-directory (buffer-file-name))))`
+date: `(format-time-string "%F")`
+draft: false
+author: Ben
+tags:
+---
+
+`(s-join
+"\n"
+(--map-indexed
+(format "%d. [%s](%s)"
+(+ it-index 1)
+(file-name-base it)
+(file-name-base it))
+(--remove
+(string-match-p "index" it)
+(progn (save-some-buffers)
+(directory-files
+default-directory
+nil
+"\\w+")))))`
