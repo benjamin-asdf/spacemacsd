@@ -41,8 +41,8 @@
       "oxr" #'my/chsarp-raise-block
       "onc" #'benj-create-new-csharp-scratch
       "onC" #'benj-csharp-scratches-create-on-region
-      "oU" benj-csharp/replace-wl-with-debug
-      "ou" benj-csharp/replace-wl-with-debug
+      ;; "oU" benj-csharp/replace-wl-with-debug
+      ;; "ou" benj-csharp/replace-wl-with-debug
 
       ))
 

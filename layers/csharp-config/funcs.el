@@ -12,10 +12,10 @@
 
   (setq-local flycheck-check-syntax-automatically '(save mode-enabled))
   (define-key evil-normal-state-map "gh" 'omnisharp-current-type-information)
-
-(((flycheck-cancel-error-display-error-at-point-timer)
-                                           (flycheck-display-error-at-point)))
+  (flycheck-cancel-error-display-error-at-point-timer)
   (smartparens-strict-mode -1)
+
+
 
   (setq-local helm-swoop-speed-or-color (< (line-beginning-position (point-max)) 800))
 

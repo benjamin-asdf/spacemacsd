@@ -132,10 +132,16 @@
     (benj-code-patcher-spinner-setup)
     (global-benj-code-patch-client-mode)))
 
+
+
+
 (require 'csharp-config "~/.spacemacs.d/lisp/csharp-config.el")
 
 
 
+(use-package
+    benj-more-motions
+  :bind ("<space> o m n" . benj/insert-evil-mc-nums-simple))
 
 
 

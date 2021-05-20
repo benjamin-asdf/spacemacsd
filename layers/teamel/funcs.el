@@ -226,7 +226,7 @@ and expand a snippet for a 'With...(this config)' method."
                         (format "%s %s {get;set;}" type field-name))))
         (setq class-name (match-string-no-properties 1))
         (unless (re-search-forward "public static class" nil t)
-          (->G)
+          (->gm)
           (team/->new-line)
           (team-yas/expand-csharp-snippet
            "conf-ext-class-template"

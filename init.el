@@ -863,16 +863,14 @@ before packages are loaded."
   (require 'init-slime)
 
   (when team-enable-slack
-      (use-package
+    (use-package
         init-slack
-        :defer 100))
+      :defer 100))
 
 
   (add-to-list 'load-path "~/.spacemacs.d/lisp/emacs-hex-to-rgba/")
-
-  (require 'rgba-loadefs)
   (use-package
-    hex-to-rgba
+      hex-to-rgba
     :defer t
     :init
     (team/spacemacs-declare-keys
@@ -1000,6 +998,19 @@ before packages are loaded."
   (use-package guix
     :load guix-autoloads
     :demand t)
+
+  (with-eval-after-load 'company
+    (define-key company-active-map (kbd "C-/") 'helm-company))
+
+
+
+  (straight-use-package
+   'metronome
+   ;; :bind '("<spc>omm" . (metronome))
+   :config
+   (progn
+     (setf metronome-click "/home/benj/game-assets/sci-fi-sounds/Audio/impactMetal_000.wav"
+           metronome-accent "/home/benj/game-assets/sci-fi-sounds/Audio/laserSmall_004.wav")))
 
   )
 

@@ -1,21 +1,30 @@
 
 (defun benj/enable-lispyville-chsarp ()
-  (setq lispy-outline
-        "^\\\\*+")
+  (setq-local lispy-outline "^\\\\*+")
   (lispyville-mode)
 
   (define-key
     evil-normal-state-map
     (kbd "{")
-    #'evil-backward-paragraph
-    )
+    #'evil-backward-paragraph)
+  (define-key
+    evil-normal-state-map
+    (kbd "}")
+    #'evil-forward-paragraph)
 
   (define-key
     evil-normal-state-map
     (kbd "}")
     #'evil-forward-paragraph)
 
-  )
+  (define-key
+    evil-normal-state-map
+    (kbd "L")
+    #'evil-window-bottom)
+  (define-key
+    evil-normal-state-map
+    (kbd "H")
+    #'evil-window-top))
 
 
 
@@ -42,12 +51,6 @@
         (forward-char -1)
         (insert " ")))))
 
-(defadvice lispyville-forward-sexp
-    (around my/lispyville-forward-sexp-adv last (&optional count) acti)
-  (if
-      (eq major-mode 'csharp-mode)
-      (evil-window-bottom)
-    ad-do-it count))
 
 
 

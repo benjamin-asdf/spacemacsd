@@ -105,3 +105,8 @@ https://github.com/syl20bnr/spacemacs/pull/7736#issuecomment-313320906
 * pastebin emacs package
 
 * it would be cool to have pcase like pattern matching for strings
+
+* use straight
+* have a good way to get some spacemacs config
+* guix system
+* exwm
