@@ -840,14 +840,6 @@ before packages are loaded."
   ;; temp hacks
 
   (load "~/.spacemacs.d/temp-hacks.el")
-
-
-  ;; TEMP
-  ;; until they make the clone workspace nice again
-  ;; (defadvice eyebrowse-create-window-config
-  ;;     (after benj-eyebrowse/create-config-adv last activate)
-  ;;   (--dotimes 2 (funcall #'winner-undo)))
-
   
 
   (add-hook 'shell-mode-hook #'(lambda () (ggtags-mode -1)))

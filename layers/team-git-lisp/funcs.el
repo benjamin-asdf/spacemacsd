@@ -8,6 +8,7 @@
 
 (defvar benj-git/author-name "Benj")
 
+;; shit code because I did not know about lexical binding
 (defvar-local benj-git/after-magit-op nil)
 (defun benj-git/after--magit (op &optional run-if-non-active)
   "Call OP after magit process finished with a single arg, the exit status.
@@ -43,8 +44,7 @@ arg 222."
 (defmacro team/magit-pipe (&optional form &rest forms)
   "Assume each form starts a new magit process.
 Run FORM, then each of FORMS after the previous git process exited with status 0.
-When there is no magit process or it returns non 0, stop.
-If you want to eval multiple forms for side effects. Put some progn that also sets the next git proccess."
+When there is no magit process or the process returns non-zero exit code, stop."
   (if (null form)
       nil
     `(progn ,form
@@ -317,7 +317,7 @@ Attempt to do the right thing for checking out the unmerged file."
 
 (defun benj-git/unmerged-status (&optional exclusion-regex)
   "Get unmerged files in the format defined by `benj-git/git-status-files'.
-Ignore file matching EXLUSION-REGEX, it non-nil."
+Ignore files matching EXLUSION-REGEX, it non-nil."
   (let ((unmerged (magit-unmerged-files)))
     (--filter (and  (member (car it) unmerged)
                     (or (null exclusion-regex)
@@ -424,8 +424,7 @@ With ARG only check cs files."
     (car it)))
 
 (defun benj-git/fire-up-merge-sample (arg)
-  "Create an empty git repo, \"git merge topic\"
-will create a conflict in a file.
+  "Create an empty git repo, merging a branch called topic will create a conflict in a file.
 If ARG is nil, try to open an existing merge sample repo, else always create a fresh one."
   (interactive"P")
   (team/with-default-dir
@@ -455,24 +454,6 @@ If ARG is nil, try to open an existing merge sample repo, else always create a f
   "Add everything and commit with MSG."
   (shell-command "git add .")
   (shell-command (format "git commit -m \"%s\"" msg)))
-
-
-;; TODO
-(defun benj-git/open-diff-buff-logs-and-todos ()
-  "Open buffer for diffs with dev that contain logs or todos."
-  (interactive)
-
-  )
-
-(defun benj-git/skip-worktree-file (file)
-  "Run git skip worktree with this file."
-  (interactive"fFile to skip worktree: ")
-  (magit-run-git-async "update-index" "--skip-worktree" "--" file))
-
-(defun benj-git/no-skip-worktree-file (file)
-  ""
-  (interactive"fFile to no-skip-worktree: ")
-  (magit-run-git-async "update-index" "--no-skip-worktree" "--" file))
 
 
 
@@ -996,7 +977,7 @@ DIR should be a directory in a git repo."
 
 (defun my/magit-diff-files (rev other-rev &rest patterns)
   "Return a list of files of git diff between REV and OTHER-REV.
-if OHTER-REV is nil, use HEAD. If any PATTERNS are giving, regex filter by them."
+if OHTER-REV is nil, use HEAD. If any PATTERNS are given, regex filter by them."
   (magit-with-toplevel
     (let ((items
            (magit-git-items
@@ -1018,14 +999,6 @@ if OHTER-REV is nil, use HEAD. If any PATTERNS are giving, regex filter by them.
 
 
 
-
-(defun benj/magit-status-untracked-files ()
-  "Run magit status and only add the untracked files section."
-  (interactive)
-  (let ((magit-status-sections-hook
-         '(magit-insert-untracked-files)))
-    (magit-status)))
-
 
 (defun benj/magit-status-toggle-showing-untracked ()
   "Toggle adding `magit-insert-untracked-files' to `magit-status-sections-hook'.
