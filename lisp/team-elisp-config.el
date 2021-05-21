@@ -143,6 +143,9 @@
     benj-more-motions
   :bind ("<space> o m n" . benj/insert-evil-mc-nums-simple))
 
+(use-package team-git
+  :demand t
+  :config (load "init-team-git.el"))
 
 
 (use-package cl-editor-tools)

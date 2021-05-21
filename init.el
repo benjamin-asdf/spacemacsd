@@ -112,7 +112,6 @@ This function should only modify configuration layer settings."
      benj-pomodoro
      benj-roslyn
      team-projectile
-     team-git-lisp
      teamel
      surfel
      benj-trello
