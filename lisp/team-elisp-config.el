@@ -145,7 +145,7 @@
 
 (use-package team-git
   :demand t
-  :config (load "init-team-git.el"))
+  :config (load "~/.spacemacs.d/lisp/init-team-git.el"))
 
 
 (use-package cl-editor-tools)

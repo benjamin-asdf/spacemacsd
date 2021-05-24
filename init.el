@@ -32,7 +32,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(sql
      version-control
      gtags
      (auto-completion  :variables
@@ -855,13 +855,13 @@ before packages are loaded."
 
   (when team-enable-slack
     (use-package
-        init-slack
+      init-slack
       :defer 100))
 
 
   (add-to-list 'load-path "~/.spacemacs.d/lisp/emacs-hex-to-rgba/")
   (use-package
-      hex-to-rgba
+    hex-to-rgba
     :defer t
     :init
     (team/spacemacs-declare-keys
@@ -942,10 +942,10 @@ before packages are loaded."
   ;; (setq auth-sources '(password-store))
 
   (setq rcirc-server-alist
-        '(("irc.freenode.net"
-           :user-name "benj"
-           :port "1337"
-           :auth "benj"
+        '(("irc.libera.chat"
+           :nick "benj234"
+           :user-name "benj234"
+           ;; :auth "benj"
            :channels ("#emacs" "#guile"))))
 
 
@@ -1003,6 +1003,22 @@ before packages are loaded."
      (setf metronome-click "/home/benj/game-assets/sci-fi-sounds/Audio/impactMetal_000.wav"
            metronome-accent "/home/benj/game-assets/sci-fi-sounds/Audio/laserSmall_004.wav")))
 
+
+
+  
+
+  (use-package axe
+    :straight
+    '(axe
+      :type git
+      :host github
+      :repo "cniles/axe"))
+
+
+  (define-key spacemacs-default-map "ojh" (lambda () (interactive) (dired-jump nil (expand-file-name "~/.profile"))))
+
+
+
   )
 
 
@@ -1055,7 +1071,8 @@ This function is called at the very end of Spacemacs initialization."
      (typescript-backend . tide)
      (javascript-backend . tide)
      (javascript-backend . tern)
-     (go-backend . go-mode))))
+     (go-backend . go-mode)))
+ '(send-mail-function 'mailclient-send-it))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
