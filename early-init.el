@@ -1,7 +1,7 @@
 (defvar team-elisp-dir "~/repos/lisp/team-elisp/")
 
-(defvar team-enable-slack t)
-(defvar team-enable-gtags t)
+(defvar team-enable-slack nil)
+(defvar team-enable-gtags nil)
 
 (dolist
     (file
