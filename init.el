@@ -693,6 +693,7 @@ before packages are loaded."
   (setq-default page-break-lines-max-width 30)
   (define-key evil-normal-state-map (kbd "M-Y") #'evil-paste-pop-next)
   (setq dotspacemacs-scratch-buffer-persistent t)
+  (setf gtags-enable-by-default nil)
 
   (setq auto-save-no-message t)
   ;; (setf completion-styles '(flex))
@@ -949,7 +950,9 @@ before packages are loaded."
            :channels ("#emacs" "#guile"))))
 
 
-  (require 'init-geiser)
+  (with-eval-after-load
+      'geiser
+    (require 'init-geiser))
 
   (cl-pushnew "~/.guix-profile/share/info" Info-additional-directory-list :test #'equal)
 
@@ -1016,6 +1019,25 @@ before packages are loaded."
 
 
   (define-key spacemacs-default-map "ojh" (lambda () (interactive) (dired-jump nil (expand-file-name "~/.profile"))))
+
+
+
+  (use-package flycheck-guile
+    :demand t
+    :config
+    (add-hook
+     'geiser-mode-hook
+     (lambda ()
+       (when (eq geiser-impl--implementation 'guile)
+         (flycheck-mode 1)))))
+
+  (use-package dired-dragon
+    :straight (:host github
+                     :repo "jeetelongname/dired-dragon")
+    :bind (:map dired-mode-map
+                ("C-d d" . dired-dragon)
+                ("C-d s" . dired-dragon-stay)
+                ("C-d i" . dired-dragon-individual)))
 
 
 

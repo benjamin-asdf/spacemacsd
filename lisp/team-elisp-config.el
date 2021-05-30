@@ -116,7 +116,7 @@
         "or"
         "remote"
       "r" #'benj-file-syncer-refresh-everything
-      "f" #'create-sync-file-req
+      "f" #'benj-syncer-create-file-req 
       "j" #'benj-cos-trace-method
       "." #'benj-send-bunel-cmd-to-hallway
       "k" #'benj-add-to-trace-log

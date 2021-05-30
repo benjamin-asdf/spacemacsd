@@ -19,6 +19,19 @@
    'geiser-mode-hook
    #'macrostep-geiser-setup))
 
+;; redefine so we just collect the completions once
+
+(defun geiser-completion--read-symbol (prompt &optional default history)
+  (let ((minibuffer-local-completion-map geiser-completion--minibuffer-map))
+    (make-symbol (completing-read prompt
+                                  (geiser-eval--send/result '(:eval (:ge completions "")))
+                                  nil nil nil
+                                  (or history
+                                      geiser-completion--symbol-history)
+                                  (or default (geiser--symbol-at-point))))))
+
+
+
 
 (provide 'init-geiser)
 

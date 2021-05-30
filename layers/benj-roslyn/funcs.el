@@ -112,7 +112,8 @@
     (benj-roslyn-tools/nuke-proc-buff)
     "nuke"
     args)
-   (benj-roslyn-tools/pop-to-nuke-buff)))
+   ;; (benj-roslyn-tools/pop-to-nuke-buff)
+    ))
 
 
 (defun benj-roslyn-tools/pop-to-analyzer-log ()
