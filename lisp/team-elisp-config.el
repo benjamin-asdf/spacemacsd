@@ -148,4 +148,19 @@
   :config (load "~/.spacemacs.d/lisp/init-team-git.el"))
 
 
+
+(use-package
+  team-trello
+  :demand t
+
+  :config (team/spacemacs-declare-keys
+              "o1"
+              "trello"
+            ">" #'team-trello-move-card
+
+
+           )
+
+  )
+
 (use-package cl-editor-tools)

@@ -75,7 +75,9 @@ This function should only modify configuration layer settings."
      kotlin
      c-c++
      vimscript
-     lsp
+     (lsp :variables
+          lsp-headerline-breadcrumb-enable nil
+          lsp-headerline-breadcrumb-segments '(symbol))
      (go :variables godoc-at-point-function 'godoc-gogetdoc go-backend 'lsp)
      perl5
      (clojure :variables clojure-enable-linters '(clj-kondo joker))
@@ -325,7 +327,7 @@ It should only modify the values of Spacemacs settings."
    ;; refer to the DOCUMENTATION.org for more info on how to create your own
    ;; spaceline theme. Value can be a symbol or list with additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
-   dotspacemacs-mode-line-theme '(spacemacs :separator nil :separator-scale 1.5)
+   dotspacemacs-mode-line-theme '(custom :separator nil :separator-scale 1.5)
 
    ;; If non-nil the cursor color matches the state color in GUI Emacs.
    ;; (default t)
@@ -644,7 +646,50 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
       (if (stringp it)
           (list (concat prefix it))
         (list it))
-      (-flatten bindings)))))
+      (-flatten bindings))))
+
+  (defun spaceline-custom-theme (&rest additional-segments)
+    "Sapce line with less stuff"
+    (spaceline-compile
+      `(
+        '((persp-name
+           workspace-number
+           window-number)
+          :fallback evil-state
+          :face highlight-face
+          :priority 100)
+        auto-compile
+        '((buffer-modified buffer-size buffer-id remote-host)
+          :priority 98)
+        (major-mode :priority 79)
+        (process :when active)
+        ((flycheck-error flycheck-warning flycheck-info)
+         :when active
+         :priority 89)
+        (minor-modes :when active
+                     :priority 9)
+        (org-pomodoro :when active)
+        (org-clock :when active)
+        nyan-cat)
+      `(which-function
+        (python-pyvenv :fallback python-pyenv)
+        (purpose :priority 94)
+        ;; (battery :when active)
+        ;; (selection-info :priority 95)
+        input-method
+        ((buffer-encoding-abbrev
+          point-position
+          line-column)
+         :separator " | "
+         :priority 96)
+        ;; (global :when active)
+        (buffer-position :priority 99)
+        (hud :priority 99)
+        ,@additional-segments))
+
+    (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main)))))
+
+  )
 
 (defun dotspacemacs/user-load ()
   "Library to load while dumping.
@@ -947,7 +992,12 @@ before packages are loaded."
            :nick "benj234"
            :user-name "benj234"
            ;; :auth "benj"
-           :channels ("#emacs" "#guile"))))
+           :channels ("#emacs" "#guile"))
+          ("irc.gimp.org"
+           :nick "benj234"
+           :user-name "benj234"
+           ;; :auth "benj"
+           :channels ("#gimp-users"))))
 
 
   (with-eval-after-load
@@ -970,17 +1020,10 @@ before packages are loaded."
     (advice-add 'eval-defun     :filter-return kill))
 
 
-
-  ;; (use-package
-  ;;   palimpsest
-  ;;   :load "/home/benj/repos/lisp/Palimpsest/palimpsest.el"
-  ;;   ;; :pin "https://github.com/rtnlmeme-DestroyerOfDeath/Palimpsest"
-  ;;   :ensure t
-  ;;   ;; :config (team/spacemacs-declare-keys
-  ;;   ;;             "xp"
-  ;;   ;;             "palimpsest"
-  ;;   ;;             )
-  ;;   )
+  (use-package palimpsest
+    :config (progn
+              (add-hook 'prog-mode-hook 'palimpsest-mode)
+              (spacemacs|diminish palimpsest-mode)))
 
 
   ;; (load "~/.spacemacs.d/hacks2.el")
@@ -1038,6 +1081,34 @@ before packages are loaded."
                 ("C-d d" . dired-dragon)
                 ("C-d s" . dired-dragon-stay)
                 ("C-d i" . dired-dragon-individual)))
+
+
+  (with-eval-after-load 'go-mode
+    (add-hook 'go-mode-hook (lambda () (when (featurep 'lispyville) (lispyville-mode 1)))))
+
+
+  
+
+  (defun say-many-fluid (kg)
+    (let* ((ml (ounce-to-ml
+                (/ (kg-to-lbs kg) 40)))
+           (sips (/ ml (float 15))))
+      (message "You need to drink around %s ml water every 15 minutes. This is around %s sips" ml sips)))
+
+  (defun kg-to-lbs (kg)
+    (/ kg 0.45359237))
+  (defun ounce-to-ml (ounce)
+    (* ounce 28.35))
+
+  (run-at-time
+   (* 15 60)
+   (* 15 60)
+   (apply-partially 'say-many-fluid 77))
+
+  
+
+
+
 
 
 
