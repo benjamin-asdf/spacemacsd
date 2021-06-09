@@ -399,7 +399,7 @@ See `minder-good-night'
    (sleep-for 0.25)))
 
 (defun minder-start-rocket-1 ()
-  "Ask the user to type in a string of numbers. And put success or failure messages as minder messages."
+  "Start neuroscientificly engineered number keyboard training. The user is asked to type a mix between home row and number keys."
   (interactive)
   (setq minder-last-rocked-string
         (or minder-last-rocked-string
@@ -414,8 +414,23 @@ See `minder-good-night'
                      (princ (make-string 1 s)))))
                (number-to-string (random 10))))))
   (--dotimes 2
-    (unless (string-equal minder-last-rocked-string (read-string (format "%s> %s " (make-string it ?#) minder-last-rocked-string)))
-      (user-error "Try again.")))
+    (let ((input))
+      (till
+       (string-equal input  minder-last-rocked-string)
+       (setf input
+             (--> (s-concat input
+                          (make-string
+                           1
+                           (read-char
+                            (format "%s> %s %s"
+                                    (make-string it ?#)
+                                    minder-last-rocked-string
+                                    (or input "")))))
+               (if (s-prefix-p it minder-last-rocked-string)
+                   it
+                 (message "mistake %s" it)
+                 (sit-for 0.3)
+                 ""))))))
   (minder-play-sound 'minder-intense-sounds)
   (setq minder-last-rocked-string nil)
   t)
