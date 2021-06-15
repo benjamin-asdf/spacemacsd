@@ -302,7 +302,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil, *scratch* buffer will be persistent. Things you write down in
    ;; *scratch* buffer will be saved and restored automatically.
-   dotspacemacs-scratch-buffer-persistent nil
+   dotspacemacs-scratch-buffer-persistent t
 
    ;; If non-nil, `kill-buffer' on *scratch* buffer
    ;; will bury it instead of killing.
@@ -737,7 +737,6 @@ before packages are loaded."
           "~/org/rico.org"))
   (setq-default page-break-lines-max-width 30)
   (define-key evil-normal-state-map (kbd "M-Y") #'evil-paste-pop-next)
-  (setq dotspacemacs-scratch-buffer-persistent t)
   (setf gtags-enable-by-default nil)
 
   (setq auto-save-no-message t)
