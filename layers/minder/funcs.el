@@ -394,9 +394,7 @@ See `minder-good-night'
 (defun minder-start-rocket ()
   "Do `minder-start-rocket-1' until the user quits."
   (interactive)
-  (while (minder-start-rocket-1)
-   (message "rocked started. Use c-g to exit")
-   (sleep-for 0.25)))
+  (while (minder-start-rocket-1)))
 
 (defun minder-start-rocket-1 ()
   "Start neuroscientificly engineered number keyboard training. The user is asked to type a mix between home row and number keys."
@@ -428,6 +426,8 @@ See `minder-good-night'
                                     (or input "")))))
                (if (s-prefix-p it minder-last-rocked-string)
                    it
+                 (when (string-equal " " it)
+                   (user-error "ended by spc"))
                  (message "mistake %s" it)
                  (sit-for 0.3)
                  ""))))))

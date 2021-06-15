@@ -763,6 +763,10 @@ before packages are loaded."
   (add-hook 'git-commit-mode-hook
             #'(lambda () (visual-line-mode -1)))
 
+
+
+  (setf persp-auto-save-opt 0)
+
   
 
   (spacemacs/set-leader-keys "km" #'spacemacs/macrostep-transient-state/body)
@@ -1082,9 +1086,11 @@ before packages are loaded."
                 ("C-d i" . dired-dragon-individual)))
 
 
-  (with-eval-after-load 'go-mode
-    (add-hook 'go-mode-hook (lambda () (when (featurep 'lispyville) (lispyville-mode 1)))))
+  (add-hook 'prog-mode-hook #'lispyville-mode)
 
+  (use-package memoize
+    :straight  (:host github
+                      :repo "skeeto/emacs-memoize"))
 
   
 
@@ -1106,7 +1112,10 @@ before packages are loaded."
 
   
 
-
+  (with-eval-after-load 'python
+    (advice-add 'python-shell-completion-native-setup
+                :filter-return
+                (lambda (&rest _) t)))
 
 
 

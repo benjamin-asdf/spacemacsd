@@ -71,7 +71,7 @@
 
 (spacemacs/set-leader-keys "oef" #'with-editor-finish)
 
-
+(spacemacs/set-leader-keys "obh" (lambda () (interactive) (dired "~/")))
 
 ;; maybe something
 ;; (defvar benj-keybindings-prefixes '()

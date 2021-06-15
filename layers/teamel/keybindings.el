@@ -10,6 +10,7 @@
  '("r" . teamel/add-config-here)
  '("a" . teamel/do-awk)
  '("d" . teamel/find-file-downloads)
+ '("v" . cos-find-view)
  )
 
 (team/spacemacs-declare-keys
