@@ -718,7 +718,10 @@ before packages are loaded."
 
   
 
-  (setq-default evil-escape-key-sequence "fq")
+  (setq-default evil-escape-key-sequence nil)
+  (global-set-key (kbd "C-<escape>") 'evil-escape)
+
+
   (setq-default spacemacs-show-trailing-whitespace nil)
   (setq-default dotspacemacs-show-trailing-whitespace nil)
   (setq-default avy-timeout-seconds 0.25)
