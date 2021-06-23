@@ -999,11 +999,12 @@ before packages are loaded."
            :user-name "benj234"
            ;; :auth "benj"
            :channels ("#emacs" "#guile"))
-          ("irc.gimp.org"
-           :nick "benj234"
-           :user-name "benj234"
-           ;; :auth "benj"
-           :channels ("#gimp-users"))))
+          ;; ("irc.gimp.org"
+          ;;  :nick "benj234"
+          ;;  :user-name "benj234"
+          ;;  ;; :auth "benj"
+          ;;  :channels ("#gimp-users"))
+          ))
 
 
   (with-eval-after-load
@@ -1046,14 +1047,12 @@ before packages are loaded."
     (define-key company-active-map (kbd "C-/") 'helm-company))
 
 
-
-  (straight-use-package
-   'metronome
-   ;; :bind '("<spc>omm" . (metronome))
-   :config
-   (progn
-     (setf metronome-click "/home/benj/game-assets/sci-fi-sounds/Audio/impactMetal_000.wav"
-           metronome-accent "/home/benj/game-assets/sci-fi-sounds/Audio/laserSmall_004.wav")))
+  (use-package metronome
+    :straight t
+    :demand t
+    :config 
+    (setf metronome-click "/home/benj/game-assets/sci-fi-sounds/Audio/impactMetal_000.wav"
+          metronome-accent "/home/benj/game-assets/sci-fi-sounds/Audio/laserSmall_004.wav"))
 
 
 
@@ -1111,14 +1110,17 @@ before packages are loaded."
   (run-at-time
    (* 15 60)
    (* 15 60)
-   (apply-partially 'say-many-fluid 77))
+   (apply-partially 'say-many-fluid 76))
+
+
+  (with-eval-after-load 'python (require 'python-config))
 
   
 
-  (with-eval-after-load 'python
-    (advice-add 'python-shell-completion-native-setup
-                :filter-return
-                (lambda (&rest _) t)))
+  ;; (with-eval-after-load 'python
+  ;;   (advice-add 'python-shell-completion-native-setup
+  ;;               :filter-return
+  ;;               (lambda (&rest _) t)))
 
 
 

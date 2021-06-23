@@ -108,7 +108,6 @@
 
 
 (use-package benj-file-syncer
-  :after csharp-mode
   :demand t
   :config
   (progn
@@ -117,12 +116,14 @@
         "remote"
       "r" #'benj-file-syncer-refresh-everything
       "f" #'benj-syncer-create-file-req 
+      "F" #'bunel-sync-and-run-airtest
       "j" #'benj-cos-trace-method
       "." #'benj-send-bunel-cmd-to-hallway
       "k" #'benj-add-to-trace-log
       "K" #'benj-add-contexts-name-log
       "d" #'benj-code-patch-dispatch
-      "{" #'benj-csharp-add-curly-brackets)))
+      "{" #'benj-csharp-add-curly-brackets
+      "a" #'airtest-run-dwm)))
 
 (use-package benj-file-patch-additionals
   :after benj-file-syncer
@@ -162,5 +163,16 @@
            )
 
   )
+
+
+(use-package listful
+  :after csharp-mode
+  :demand t
+  :config
+  (team/spacemacs-declare-keys
+      "ol" "listful"
+    "s" #'listful-start
+    "f" #'listful-finish
+    "u" #'listful-update))
 
 (use-package cl-editor-tools)

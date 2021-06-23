@@ -1,9 +1,5 @@
 
 
-
-
-
-
 (defmacro incfmod (sym step)
   "Increment SYM value, if STEP amount of times reached, return non nil,
 nil otherwise"

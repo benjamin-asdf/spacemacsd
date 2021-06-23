@@ -12,7 +12,8 @@
    ;; geiser-guile-debug-show-bt-p t
    ;; geiser-guile-jump-on-debug-p t
    ;; geiser-guile-warning-level 'high
-   geiser-default-implementation 'guile))
+   geiser-default-implementation 'guile)
+  (add-to-list 'geiser-guile-load-path "~/.guix-profile/share/guile/site/3.0"))
 
 (with-eval-after-load 'macrostep-geiser
   (add-hook

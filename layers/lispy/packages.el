@@ -46,9 +46,13 @@
                 (require 'cider)
                 ;; show eval results in a cider overlay, next to point
                 (add-to-list 'lispy-compat 'cider)
-                (setq lispy-eval-display-style 'overlay)))))
+                (setq lispy-eval-display-style 'overlay))
 
-;; todo yanking marked stuff is broken
+              (with-eval-after-load
+                  'python-mode
+                  (add-hook
+                   'python-mode-hook
+                   (lambda () (require 'le-python)))))))
 
 (defun evil-lispy-layer-configure-colorization ()
   ;; this will be displayed in the modeline
@@ -88,16 +92,20 @@
             additional-insert
             ;; arrows
             escape
-            ;; mark
+            mark
             slurp/barf-lispy))
     :config
     (progn
 
+      (setq lispyville-motions-put-into-special t)
+      (setq lispyville-commands-put-into-special t)
+      (lispyville-enter-visual-when-marking)
+
       (spacemacs/set-leader-keys
         "C-l"
         #'evil-visual-line)
-
       (lispyville-set-key-theme)
+
       (require 'targets)
       (setq targets-text-objects nil)
       (targets-setup)
