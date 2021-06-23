@@ -102,7 +102,6 @@ This function should only modify configuration layer settings."
      ;; benj
      benj-funcs
      benj-themes-config
-     benj-tags
      substitute-utils
      csharp-config
      my-config-spellcheck
