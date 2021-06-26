@@ -36,6 +36,7 @@
  "search"
  '("c" . benj-helm-ag/comp-value-set)
  '("v" . benj-helm-ag/comp-value)
+ '("g" . benj-helm-ag/comp-ent-with)
  '("f" . benj-helm-ag/flag-set)
  '("i" . benj-helm-ag/implementations)
  '("m" . benj-helm-ag/comp-matcher)

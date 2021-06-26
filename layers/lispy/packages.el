@@ -92,14 +92,14 @@
             additional-insert
             ;; arrows
             escape
-            mark
+            ;; mark
             slurp/barf-lispy))
     :config
     (progn
 
       (setq lispyville-motions-put-into-special t)
       (setq lispyville-commands-put-into-special t)
-      (lispyville-enter-visual-when-marking)
+      ;; (lispyville-enter-visual-when-marking)
 
       (spacemacs/set-leader-keys
         "C-l"

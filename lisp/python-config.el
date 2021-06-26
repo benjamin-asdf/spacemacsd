@@ -10,8 +10,8 @@
      'post-self-insert-hook #'benj-python-electric-bools-post-self-insert-fn t)))
 
 
-(let ((t-re (regexp-opt (list "true" "t " "ture")))
-      (f-re (regexp-opt (list "false" "f " "fasle")))
+(let ((t-re (regexp-opt (list "true" " t " "ture")))
+      (f-re (regexp-opt (list "false" " f " "fasle")))
       (n-re (regexp-opt (list "nil" "non " "none"))))
   (defun benj-python-electric-bools-post-self-insert-fn ()
     "Function to run in `post-self-insert-hook' in python mode to fix some bools."
@@ -25,4 +25,15 @@
  'python-mode-hook
  #'benj-python-electric-bools-mode)
 
+(put 'python-pylint (flycheck--checker-property-name 'error-filter) #'benj-pylint-checker-filter)
+
+(defun benj-pylint-checker-filter (errors)
+  (flycheck-sanitize-errors
+  (--remove
+    (string-match-p
+     "Instance of.+?has no.+?member; maybe '_"
+     (flycheck-error-message it))
+    errors)))
+
 (provide 'python-config)
+

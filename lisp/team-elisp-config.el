@@ -116,7 +116,6 @@
         "remote"
       "r" #'benj-file-syncer-refresh-everything
       "f" #'benj-syncer-create-file-req 
-      "F" #'bunel-sync-and-run-airtest
       "j" #'benj-cos-trace-method
       "." #'benj-send-bunel-cmd-to-hallway
       "k" #'benj-add-to-trace-log
@@ -148,21 +147,9 @@
   :demand t
   :config (load "~/.spacemacs.d/lisp/init-team-git.el"))
 
-
-
 (use-package
   team-trello
-  :demand t
-
-  :config (team/spacemacs-declare-keys
-              "o1"
-              "trello"
-            ">" #'team-trello-move-card
-
-
-           )
-
-  )
+  :demand t)
 
 
 (use-package listful

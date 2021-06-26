@@ -293,8 +293,7 @@ Also call `spacemacs/symbol-overlay-transient-state/body'."
 
 (defun benj/lispyville-sanitize-region (beg end)
   (require 'lispyville)
-  (interactive
-   `( ,(region-beginning) ,(region-end)))
+  (interactive"r")
   (when
       (= beg end)
     (setq beg (point-at-bol))
