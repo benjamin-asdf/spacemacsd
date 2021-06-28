@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : entitas-contexts-name
+#key : cname
+#contributor : benj
+# --
+c.GetContextsName()

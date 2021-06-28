@@ -6,7 +6,7 @@
 public class `name`CongratsCallbacks : CongratsCallbacksBase {
     public `name`CongratsCallbacks(CongratulationsScreen m) : base(m) { }
 
-    public override void OnOkButtonClick() => c.CleanupCongratsScreenAndAnim();
+    protected override void OnOkButtonClick() => c.CleanupCongratsScreenAndAnim();
     public override void OnNextButtonClick() { }
     public override void OnShareButtonClick() { }
     public override void OnPostButtonClick() { }

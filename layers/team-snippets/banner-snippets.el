@@ -1,9 +1,9 @@
-(defun team-congrats/add-banner ()
+(defun team-congrats/add-banner (name)
   "Add snippets for a new banner."
-  (interactive)
+  (interactive "sName: ")
   (save-some-buffers)
   (let* ((name (team/capitalize-first-letter
-                (read-string "Congrats banner name: ")))
+                name))
          (name-downcase (team/un-capitalize name))
          (expand-env
           `((name ,name)
@@ -81,7 +81,7 @@ basicPetBannerShowAll.SetActive(false);
     (team-yassnippets/add-snippet-at-place
      "/home/benj/idlegame/IdleGame/Assets/#/Sources/CheatTools/DebugMethods.cs"
      "congrats-debug-method"
-     "public void MilestoneCongrats() {"
+     "void ReferralReachedCongrats"
      expand-env)
     (eval `(let ,expand-env
              (let ((file-name (concat "/home/benj/idlegame/IdleGame/Assets/#/Sources/CongratsScreen/MonoBehaviours/"

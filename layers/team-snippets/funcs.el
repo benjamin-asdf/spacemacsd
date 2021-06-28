@@ -4,10 +4,11 @@
   (team/with-file
    file
    (csharp-mode)
-   (team/csharp-snippet-insert
-    snippet-name
-    line-regex
-    expand-env)))
+   (let ((c-before-change nil))
+     (team/csharp-snippet-insert
+      snippet-name
+      line-regex
+      expand-env))))
 
 
 

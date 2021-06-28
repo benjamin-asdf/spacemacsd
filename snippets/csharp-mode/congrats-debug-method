@@ -4,5 +4,6 @@
 #contributor : benj
 # --
     public void `name`Congrats() {
+        Globals.I.blockRandomAnims = false;
         c.`name`Congrats();
     }
