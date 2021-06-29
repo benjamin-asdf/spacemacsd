@@ -10,7 +10,7 @@
                       :client-secret (auth-source-pick-first-password
                                       :host "slack.com"
                                       :user "benjamin.schwerdtner@gamil.com")
-                      :token (auth-source-pick-first-password :host "singularity-group-slack"
+                      :token (auth-source-pick-first-password :host "slack-token"
                                                               :user "benjamin.schwerdtner@gmail.com")
                       :subscribed-channels '(general slackbot new-to-cos))
 

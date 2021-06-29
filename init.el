@@ -42,7 +42,8 @@ This function should only modify configuration layer settings."
      multiple-cursors
      (shell :variables
             shell-default-height 30
-            shell-default-position 'bottom)
+            shell-default-position 'bottom
+            shell-scripts-backend nil)
      (spell-checking :variables spell-checking-enable-by-default nil)
      syntax-checking
      (org :variables
@@ -51,8 +52,7 @@ This function should only modify configuration layer settings."
 
           )
      (helm :variables
-           spacemacs-helm-rg-max-column-number 1024
-           )
+           spacemacs-helm-rg-max-column-number 1024)
 
      ;; Langs
      emacs-lisp
