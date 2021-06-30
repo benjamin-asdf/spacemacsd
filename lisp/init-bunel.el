@@ -18,7 +18,8 @@
   "L" #'bunel-loading-scene-and-play
   "0" #'bunel-open-unity-editor-log
   "O" #'team-unity/open-prefab-at-point
-    )
+  "." #'bunel-make-cmd-ask)
+
 
 (team/spacemacs-declare-keys
     "oud"

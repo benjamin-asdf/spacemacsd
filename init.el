@@ -69,7 +69,7 @@ This function should only modify configuration layer settings."
      ;; typescript
      ;; nim
      ;; kotlin
-     c-c++
+     (c-c++ :variable c-c++-backend nil)
      vimscript
      (lsp :variables
           lsp-headerline-breadcrumb-enable nil
@@ -154,12 +154,10 @@ This function should only modify configuration layer settings."
                                       doom-themes
                                       emr
                                       auth-source-pass
-                                      ;; gitlab
                                       dired-x
                                       nav-flash
                                       minsk-theme
                                       minimap
-                                      ;; evil-quick-diff
                                       shx
                                       string-edit
                                       geiser-chicken
@@ -167,7 +165,6 @@ This function should only modify configuration layer settings."
                                       palimpsest
                                       ;; structural-haskell-mode
 
-                                      smartparens
                                       )
 
 
@@ -181,6 +178,7 @@ This function should only modify configuration layer settings."
                                     vterm
                                     ghub
                                     packed
+                                    auto-highlight-symbol
                                     )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -1043,7 +1041,7 @@ before packages are loaded."
       'geiser
     (require 'init-geiser))
 
-  (cl-pushnew "~/.guix-profile/share/info" Info-additional-directory-list :test #'equal)
+  ;; (cl-pushnew "~/.guix-profile/share/info" Info-additional-directory-list :test #'equal)
 
 
 
@@ -1071,9 +1069,9 @@ before packages are loaded."
     (let ((default-directory "~/.guix-profile/share/emacs/site-lisp/"))
       (load "subdirs.el")))
 
-  (use-package guix
-    :load guix-autoloads
-    :demand t)
+  ;; (use-package guix
+  ;;   :load guix-autoloads
+  ;;   :demand t)
 
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "C-/") 'helm-company))
@@ -1102,14 +1100,14 @@ before packages are loaded."
 
 
 
-  (use-package flycheck-guile
-    :demand t
-    :config
-    (add-hook
-     'geiser-mode-hook
-     (lambda ()
-       (when (eq geiser-impl--implementation 'guile)
-         (flycheck-mode 1)))))
+  ;; (use-package flycheck-guile
+  ;;   :demand t
+  ;;   :config
+  ;;   (add-hook
+  ;;    'geiser-mode-hook
+  ;;    (lambda ()
+  ;;      (when (eq geiser-impl--implementation 'guile)
+  ;;        (flycheck-mode 1)))))
 
   (use-package dired-dragon
     :straight (:host github
