@@ -736,7 +736,6 @@ before packages are loaded."
   (setq-default spacemacs-show-trailing-whitespace nil)
   (setq-default dotspacemacs-show-trailing-whitespace nil)
   (setq-default avy-timeout-seconds 0.25)
-  (setq avy-all-windows t)
   (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line))
   (set-face-foreground 'spaceline-python-venv "SeaGreen")
   (setq-default split-width-threshold 80)
@@ -781,6 +780,7 @@ before packages are loaded."
 
 
   (setf persp-auto-save-opt 0)
+  (setf ahs-idle-interval 3)
 
   
 
