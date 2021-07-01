@@ -1,28 +1,40 @@
+(require 'deferred)
+
 (defconst sharpel-repo-root "/home/benj/idlegame/RoslynTools/AdjConstRewriter/")
 (defconst sharpel-proj-dir (concat sharpel-repo-root "RewriterCli/"))
 (defconst sharpel-sln-path (concat sharpel-repo-root "AdjConstRewriter.sln"))
 (defconst sharpel-release-exe-dir (concat sharpel-proj-dir "bin/Release/netcoreapp3.1/"))
 (defconst sharpel-debug-exe-dir (concat sharpel-proj-dir "bin/Debug/netcoreapp3.1/"))
 (defconst sharpel-release-exe-path (concat sharpel-release-exe-dir "RewriterCli.dll"))
-(defconst sharpel-debug-exe-path (concat sharpel-debug-exe-dir "RewriterCli.dll"))
+(defconst sharpel-debug-exe-path (concat sharpel-debug-exe-dir "RewriterCli.dll" ))
 (defconst sharpel-buff-name "*team-sharper*")
 
 (defvar sharpel-process nil)
 
+
 (defun sharpel-start-proc ()
   "Start roslyn proc and switch to output buffer"
   (let ((default-directory sharpel-proj-dir))
+    (when (file-exists-p "../../global.json")
+      (rename-file "../../global.json" "../../hurr-globals"))
     (with-current-buffer-window
         sharpel-buff-name
         nil
         nil
-        (setq sharpel-process
-              (start-process
-               "team-sharper"
-               (current-buffer)
-               "dotnet"
-               "run"
-               "--stdio")))))
+      (setq sharpel-process
+            (start-process
+             "team-sharper"
+             (current-buffer)
+             "dotnet"
+             "run"
+             "--stdio")))
+    (deferred:$
+      (deferred:wait (* 1000 5))
+      (deferred:nextc
+        it
+        (lambda ()
+          (when (file-exists-p "../../hurr-globals.json")
+            (rename-file "../../hurr-globals" "../../global.json")))))))
 
 (defun sharpel--start (&rest args)
   "Start sharpel with ARGS"
