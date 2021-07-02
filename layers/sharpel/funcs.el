@@ -1,4 +1,4 @@
-(require 'deferred)
+;(require 'deferred)
 
 (defconst sharpel-repo-root "/home/benj/idlegame/RoslynTools/AdjConstRewriter/")
 (defconst sharpel-proj-dir (concat sharpel-repo-root "RewriterCli/"))
@@ -28,13 +28,14 @@
              "dotnet"
              "run"
              "--stdio")))
-    (deferred:$
-      (deferred:wait (* 1000 5))
-      (deferred:nextc
-        it
-        (lambda ()
-          (when (file-exists-p "../../hurr-globals.json")
-            (rename-file "../../hurr-globals" "../../global.json")))))))
+    ;; (deferred:$
+    ;;   (deferred:wait (* 1000 5))
+    ;;   (deferred:nextc
+    ;;     it
+    ;;     (lambda ()
+    ;;       (when (file-exists-p "../../hurr-globals.json")
+    ;;         (rename-file "../../hurr-globals" "../../global.json")))))
+    ))
 
 (defun sharpel--start (&rest args)
   "Start sharpel with ARGS"
