@@ -698,6 +698,12 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
     (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main)))))
 
+
+  (use-package keychain-environment
+    :straight  (:host github
+                      :repo "tarsius/keychain-environment")
+    :demand t
+    :init (keychain-refresh-environment))
   )
 
 (defun dotspacemacs/user-load ()
