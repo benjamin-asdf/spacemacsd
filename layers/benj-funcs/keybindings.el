@@ -11,7 +11,14 @@
   "J" #'evil-avy-goto-word-1-below
   "W" #'evil-avy-goto-char-2
   "g" #'spacemacs/jump-to-definition
+  "e" #'eshell
 )
+
+(team/spacemacs-declare-keys
+  "j"
+  "jump"
+  "e" #'eshell)
+
 
 (spacemacs/declare-prefix "oc" "copy")
 (spacemacs/set-leader-keys "ocl" 'avy-copy-line)

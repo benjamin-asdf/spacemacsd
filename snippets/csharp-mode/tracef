@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : tracef
+#key : tracef
+#contributor : Benjamin Schwerdtner
+# --
+TraceDebugExt.AddDebugComponentChanged(${1:e}, comp => !(comp is CountdownEndDate));

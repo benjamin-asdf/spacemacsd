@@ -32,7 +32,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(sql
+   '(javascript
+     sql
      version-control
      gtags
      (auto-completion  :variables
@@ -136,6 +137,7 @@ This function should only modify configuration layer settings."
      pdf
      dap
 
+     ;; mu4e
 
      ;exwm
 
@@ -1171,11 +1173,7 @@ before packages are loaded."
 
 
 
-
-
-
-
-
+  
 
   )
 
