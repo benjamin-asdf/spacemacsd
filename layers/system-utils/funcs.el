@@ -12,7 +12,7 @@
 (defun my/amixer-change-volume (perc up)
   "PERC is a number to change volume,
 IF UP is non nil go up, else go down."
-  (shell-command (format "amixer -D pulse sset Master %d%%%s"
+  (shell-command (format "amixer -q sset Master %d%%%s"
                          perc
                          (if up "+" "-"))))
 
