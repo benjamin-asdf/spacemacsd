@@ -14,11 +14,13 @@
   (use-package lispy
     :defer t
     ;; :init (setq lispy-key-theme nil)
-    :config (progn
-              (pushnew
-               'lispy-mode
-               evil-mc-incompatible-minor-modes)
-              (spacemacs|diminish lispy-mode "" ""))))
+    :config (with-eval-after-load
+                'evil-mc
+                (progn
+                  (pushnew
+                   'lispy-mode
+                   evil-mc-incompatible-minor-modes)
+                  (spacemacs|diminish lispy-mode "" "")))))
 
 (defun lispy/init-evil-lispy ()
   (use-package evil-lispy

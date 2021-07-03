@@ -699,11 +699,6 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
     (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main)))))
 
 
-  (use-package keychain-environment
-    :straight  (:host github
-                      :repo "tarsius/keychain-environment")
-    :demand t
-    :init (keychain-refresh-environment))
   )
 
 (defun dotspacemacs/user-load ()
@@ -719,6 +714,12 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+
+  (use-package keychain-environment
+    :straight  (:host github
+                      :repo "tarsius/keychain-environment")
+    :demand t
+    :init (keychain-refresh-environment))
 
   (let ((default-directory "~/.spacemacs.d/"))
     (load (expand-file-name "lisp/team-elisp-config.el")))
@@ -1164,10 +1165,6 @@ before packages are loaded."
              (add-to-list 'company-backends 'company-restclient)
              (company-mode-on))))
 
-
-
-
-  
 
   )
 

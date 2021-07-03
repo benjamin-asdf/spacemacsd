@@ -107,13 +107,13 @@
 
 
 (defun nuke/runner-core (&rest args)
-  (prog1 (team/start-proc
-    "roslyn-tools-nuke"
-    (benj-roslyn-tools/nuke-proc-buff)
-    "nuke"
-    args)
-   ;; (benj-roslyn-tools/pop-to-nuke-buff)
-    ))
+  (prog1
+      (team/start-proc
+       "roslyn-tools-nuke"
+       (benj-roslyn-tools/nuke-proc-buff)
+       "sh"
+       "./build.sh"
+       args)))
 
 
 (defun benj-roslyn-tools/pop-to-analyzer-log ()
