@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 
 (add-hook 'csharp-mode-hook 'benj-csharp-hook)
 
@@ -45,6 +46,11 @@
     (apply original-func args)))
 
 (advice-add 'ggtags-eldoc-function :around #'benj/ggtags-eldoc-advice)
+
+
+;; (when (file-exists-p "/lib/mono/4.5")
+;;   (defadvice omnisharp--start-omnisharp-server (before my/omnisharp-start-server-adv () activate)
+;;     (setenv "FrameworkPathOverride" "/lib/mono/4.5")))
 
 
 (add-to-list 'auto-mode-alist '("\\.ruleset\\'" . xml-mode))

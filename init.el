@@ -112,11 +112,9 @@ This function should only modify configuration layer settings."
      benj-roslyn
      team-projectile
      teamel
-     surfel
      benj-trello
      helm-config
      sharpel
-     benj-backups
      benj-phone
      benj-term
      benj-csharp-perf-hacks
@@ -1096,15 +1094,11 @@ before packages are loaded."
 
   
 
-  (use-package axe
-    :straight
-    '(axe
-      :type git
-      :host github
-      :repo "cniles/axe"))
-
-
-  (define-key spacemacs-default-map "ojh" (lambda () (interactive) (dired-jump nil (expand-file-name "~/.profile"))))
+  (define-key spacemacs-default-map "ojh"
+    (lambda (&optional arg) (interactive "P")
+      (dired-jump nil (expand-file-name
+                       (if arg "~/repos/"
+                         "~/.profile")))))
 
 
 

@@ -19,6 +19,7 @@
   "R" #'team/magit-rebase-onto
   "z" #'team/magit-stash-curr
   "d" #'magit-diff-dwim
+
   )
 
 (team/spacemacs-declare-keys
@@ -41,6 +42,7 @@
     "og0"
     "dev-utils"
   "m" #'benj-git/fire-up-merge-sample
+  "z" #'magit-section-show-level-1-all
   )
 
 (team/spacemacs-declare-keys
