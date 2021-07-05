@@ -281,14 +281,14 @@ function `key-binding'."
 
     )
    (directory-files
-    "/home/benj/.emacs.d/elpa/28.0/develop/omnisharp-20201220.906/"
+    "/home/benj/.emacs-spacemacs.d/elpa/28.0/develop/omnisharp-20201220.906/"
     t
     ".el$"))
 
   (-map
    #'delete-file
    (directory-files
-    "/home/benj/.emacs.d/elpa/28.0/develop/omnisharp-20201220.906/"
+    "/home/benj/.emacs-spacemacs.d/elpa/28.0/develop/omnisharp-20201220.906/"
     t
     ".elc$"))
   (--map
@@ -297,7 +297,7 @@ function `key-binding'."
      (unless (s-ends-with? "pkg.el" it)
        (load-file it)))
    (directory-files
-    "/home/benj/.emacs.d/elpa/28.0/develop/omnisharp-20201220.906/"
+    "/home/benj/.emacs-spacemacs.d/elpa/28.0/develop/omnisharp-20201220.906/"
     t
     ".el$")))
 

@@ -103,17 +103,18 @@
   "Run nuke in `benj-roslyn-tools/proj-path'."
   (save-some-buffers)
   (let ((default-directory benj-roslyn-tools/proj-path))
-    (setq benj-roslyn-tools/nuke-build-proc (nuke/runner-core args))))
+    (setq benj-roslyn-tools/nuke-build-proc
+          (apply #'nuke/runner-core args))))
 
 
 (defun nuke/runner-core (&rest args)
-  (prog1
-      (team/start-proc
-       "roslyn-tools-nuke"
-       (benj-roslyn-tools/nuke-proc-buff)
-       "sh"
-       "./build.sh"
-       args)))
+  (require 'deferred)
+  (deferred:$ 
+    (apply
+     #'deferred:process
+     (append '("sh" "./build.sh") args))
+    (deferred:nextc it
+      (lambda (x) (message "roslyn build success.")))))
 
 
 (defun benj-roslyn-tools/pop-to-analyzer-log ()
