@@ -2,7 +2,6 @@
 
 (load "~/.spacemacs.d/lisp/slack-config.el" )
 
-(auth-source-pass-enable)
 
 (slack-register-team  :name "singularity-group"
                       :default t

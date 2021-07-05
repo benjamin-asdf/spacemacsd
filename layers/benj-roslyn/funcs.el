@@ -237,9 +237,11 @@ see `benj-roslyn-proj-configs'"
 (defvar benj-roslyn-last-args '()
   "list of sln and args of last roslyn run.")
 
-(defun benj-roslyn-rerun-last ()
+(defun benj-roslyn-rerun-last (&optional arg)
   "Rerun `benj-roslyn-runner' with previous args."
-  (interactive)
+  (interactive "P")
+  (when arg
+    (benj-roslyn-tools/nuke-build))
   (if benj-roslyn-last-args
       (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args))))
 

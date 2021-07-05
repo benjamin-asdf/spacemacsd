@@ -719,7 +719,10 @@ before packages are loaded."
     :straight  (:host github
                       :repo "tarsius/keychain-environment")
     :demand t
-    :init (keychain-refresh-environment))
+    :init
+    (progn
+      (keychain-refresh-environment)
+      (auth-source-pass-enable)))
 
   (let ((default-directory "~/.spacemacs.d/"))
     (load (expand-file-name "lisp/team-elisp-config.el")))

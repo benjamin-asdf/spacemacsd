@@ -168,9 +168,9 @@ Depends on `default-directory'"
 
 
 
-(defun my/clear-konsoles ()
+(defun my/kill-unity ()
   (interactive)
-  (async-shell-command "killall konsole"))
+  (async-shell-command "killall unity-editor"))
 
 
 

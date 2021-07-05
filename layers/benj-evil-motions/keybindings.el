@@ -40,7 +40,7 @@
     "oe"
     "transformation, external"
   "r" #'spacemacs/redshiftel-transient-state/body
-  "k" #'my/clear-konsoles
+  "k" #'my/kill-unity
   ">" #'insert-arrow
   "l" #'benj/lispyville-sanitize-region
     )
