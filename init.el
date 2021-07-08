@@ -179,6 +179,9 @@ This function should only modify configuration layer settings."
                                     ghub
                                     packed
                                     auto-highlight-symbol
+                                    org-brain
+                                    lsp-treemacs
+                                    treemacs
                                     )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
