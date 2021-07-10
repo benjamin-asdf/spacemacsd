@@ -119,6 +119,9 @@
                          :bind t :keys "m")
       (targets-define-to lispyville-list 'lispyville-list nil object
                          :last-key nil
+                         :bind t :keys "k")
+      (targets-define-to lispyville-list 'lispyville-comment nil object
+                         :last-key nil
                          :bind t :keys "c")
       (targets-define-to lispyville-sexp 'lispyville-sexp nil object
                          :last-key nil
