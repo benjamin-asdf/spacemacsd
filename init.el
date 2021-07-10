@@ -163,6 +163,7 @@ This function should only modify configuration layer settings."
                                       geiser-chicken
                                       macrostep-geiser
                                       palimpsest
+                                      backup-each-save
                                       ;; structural-haskell-mode
 
                                       )
@@ -182,6 +183,7 @@ This function should only modify configuration layer settings."
                                     org-brain
                                     lsp-treemacs
                                     treemacs
+                                    windows-scripts
                                     )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -1171,6 +1173,39 @@ before packages are loaded."
              (add-to-list 'company-backends 'company-restclient)
              (company-mode-on))))
 
+
+  (with-eval-after-load
+      'lsp-mode
+    (setf
+     lsp-unzip-script
+     "bash -c '7z x %1$s -o%2$s/'"))
+
+
+  (use-package backup-each-save
+    :commands backup-each-save
+    :preface
+    (defun my-make-backup-file-name (file)
+      (make-backup-file-name-1 (expand-file-name (file-truename file))))
+
+    (defun backup-each-save-filter (filename)
+      (not (string-match
+            (concat "\\(^/tmp\\|\\.emacs\\.d/data\\(-alt\\)?/"
+                    "\\|\\.newsrc\\(\\.eld\\)?\\|"
+                    "\\(archive/sent/\\|recentf\\`\\)\\)")
+            filename)))
+
+    (defun my-dont-backup-files-p (filename)
+      (unless (string-match filename "\\(archive/sent/\\|recentf\\`\\)")
+        (normal-backup-enable-predicate filename)))
+
+    :hook after-save
+    :config
+    (setq backup-each-save-filter-function 'backup-each-save-filter
+          backup-enable-predicate 'my-dont-backup-files-p))
+
+
+
+  ;; (advice-add 'spacemacs/avy-goto-url :after #'browse-url-at-point)
 
   )
 
