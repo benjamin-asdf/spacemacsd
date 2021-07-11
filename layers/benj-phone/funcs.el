@@ -22,38 +22,6 @@ SOURCE is a file on the disk, DEST is an absolute on the phone."
       (interactive "fFile to push: ")
       (benj-phone-push f benj-phone-misc-dir)) file)))
 
-
-(defun benj/youtube-dl-download-yank ()
-  "Download current yank into ~/Vidoes."
-  (interactive)
-  (let ((default-directory "~/Videos"))
-    (async-shell-command (format "youtube-dl --no-playlist \"%s\"" (evil-get-register ?\")))))
-
-(defun benj/youtube-dl-download-and-push ()
-  "Download current yank to /tmp/tmp-vids/.
-Afterwards try to push it to the phone with adb"
-  (interactive)
-  (unless
-      (file-exists-p
-       "/tmp/tmp-vids/")
-    (make-directory
-     "/tmp/tmp-vids/"))
-  (let ((default-directory "/tmp/tmp-vids/"))
-    (--each
-        (directory-files-recursively "/tmp/tmp-vids" ".*")
-      (delete-file
-       it))
-    (team/proc-with-cb
-     (start-process
-      "yt-dl"
-      "*yt-dl*"
-      "youtube-dl"
-      (evil-get-register ?\"))
-     (benj-phone-push
-      (directory-files-recursively
-       "/tmp/tmp-vids/"
-       ".*")))))
-
 (defun benj/play-vlc (&optional file)
   "Play a vid with vlc."
   (interactive)
