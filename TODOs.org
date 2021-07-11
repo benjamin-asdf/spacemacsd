@@ -88,20 +88,15 @@
 
 
 
-* package for text storage
-
-
 * smantic
 https://github.com/syl20bnr/spacemacs/pull/7736#issuecomment-313320906
+
 
 * a helm for all hippy expand candidates
 ** https://www.emacswiki.org/emacs/HippieExpand some interesting starting point for he
 
-* use this on the fly yasnippet thing
-* use this rotate text package
+   
 * csharp after yas snippet hook to add ;'s
-* fix my yas hook getting removed or something
-
 * pastebin emacs package
 
 * it would be cool to have pcase like pattern matching for strings
@@ -110,3 +105,12 @@ https://github.com/syl20bnr/spacemacs/pull/7736#issuecomment-313320906
 * have a good way to get some spacemacs config
 * guix system
 * exwm
+  
+
+  
+[[file:../org-roam/20210708094042-use_this_on_the_fly_yasnippet_thing_use_this_rotate_text_package_add_to_smartparens_when_needed.org][* use this on the fly yasnippet thing
+* use this rotate text package
+* add < to smartparens when needed]]
+* get into org roam  
+  
+* figure out xdotool to "hover"

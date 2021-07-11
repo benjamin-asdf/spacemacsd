@@ -87,3 +87,11 @@ Archived entries from file /home/benj/.spacemacs.d/TODOs.org
   :ARCHIVE_CATEGORY: TODOs
   :ARCHIVE_TODO: DONE
   :END:
+
+* fix my yas hook getting removed or something                      :ARCHIVE:
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2021-07-08 Do 09:40
+  :ARCHIVE_FILE: ~/.spacemacs.d/TODOs.org
+  :ARCHIVE_CATEGORY: TODOs
+  :END:
+

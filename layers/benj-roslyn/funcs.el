@@ -68,9 +68,43 @@
 (defun benj-roslyn-tools/nuke-build ()
   "Build RoslynTools with nuke."
   (interactive)
-  (unless (file-exists-p benj-roslyn-tools/analzyer-log-file)
-    (write-region "" nil benj-roslyn-tools/analzyer-log-file))
+  (benj-roslyn-prepare-build)
   (benj-roslyn-tools/run-nuke-target "Publish"))
+
+(defun benj-roslyn-prepare-build ()
+  (if
+      (file-exists-p benj-roslyn-tools/analzyer-log-file)
+      (team/with-file
+          benj-roslyn-tools/analzyer-log-file
+        (let ((inhibit-read-only t))
+          (erase-buffer)))
+    (write-region "" nil benj-roslyn-tools/analzyer-log-file)))
+
+(defun benj-roslyn-build-analyzers ()
+  "Only build analyzer project and put dll to output."
+  (interactive)
+  (require 'deferred)
+  (benj-roslyn-prepare-build)
+  (with-dir
+   benj-roslyn-tools/proj-path
+   (shell-command "rm -r -f output"))
+  (deferred:$
+    (with-dir
+     benj-roslyn-tools/analyzers-proj-path
+     (deferred:process
+       "dotnet" "build" "--configuration=Release"))
+    (deferred:nextc it
+      (lambda (x)
+        (team/with-file benj-roslyn-tools/analzyer-log-file
+          (erase-buffer)
+          (->gg)
+          (team/in-new-line "==================== ready ==============="))
+        (with-dir
+         benj-roslyn-tools/proj-path
+         (copy-directory
+          "source/Analyzers/bin/Release/netcoreapp3.1/"
+          "output" t t t))
+        (message "roslyn build success.")))))
 
 
 (defun benj-roslyn-tools/nuke-clean ()
@@ -114,7 +148,15 @@
      #'deferred:process
      (append '("sh" "./build.sh") args))
     (deferred:nextc it
-      (lambda (x) (message "roslyn build success.")))))
+      (lambda (x)
+        (team/with-file benj-roslyn-tools/analzyer-log-file
+          (->gg)
+          (team/in-new-line "==================== ready ==============="))
+
+(
+         )
+
+        (message "roslyn build success.")))))
 
 
 (defun benj-roslyn-tools/pop-to-analyzer-log ()
