@@ -722,6 +722,9 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  ;; TODO base init config for all chemacs profiles
+  (setenv "XAUTHORITY" (expand-file-name "~/.Xauthority"))
+
   (use-package keychain-environment
     :straight  (:host github
                       :repo "tarsius/keychain-environment")
