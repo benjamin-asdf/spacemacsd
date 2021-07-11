@@ -722,9 +722,6 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
-  ;; TODO base init config for all chemacs profiles
-  (setenv "XAUTHORITY" (expand-file-name "~/.Xauthority"))
-
   (use-package keychain-environment
     :straight  (:host github
                       :repo "tarsius/keychain-environment")
@@ -1209,8 +1206,15 @@ before packages are loaded."
           backup-enable-predicate 'my-dont-backup-files-p))
 
 
-
-  ;; (advice-add 'spacemacs/avy-goto-url :after #'browse-url-at-point)
+  (use-package youtube-dl-emacs
+    :straight (:host github :repo "skeeto/youtube-dl-emacs")
+    :config (progn
+              (setf youtube-dl-directory "~/tmp/vids/")
+              (team/spacemacs-define-keys
+               "oe"
+               "external"
+               "y" #'youtube-dl
+               "V" #'youtube-dl-list)))
 
   )
 
