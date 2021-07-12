@@ -79,7 +79,9 @@ This function should only modify configuration layer settings."
      (go :variables godoc-at-point-function 'godoc-gogetdoc go-backend 'lsp)
      (perl5 :variables perl5-backend nil)
      (clojure :variables clojure-enable-linters '(clj-kondo joker)
-              clojure-enable-fancify-symbols t)
+              clojure-enable-fancify-symbols t
+              clojure-enable-sayid t
+              clojure-enable-clj-refactor t)
      ;; lua
      (scheme :variables
              scheme-implementations
@@ -730,6 +732,7 @@ before packages are loaded."
       (keychain-refresh-environment)
       (auth-source-pass-enable)))
 
+
   (let ((default-directory "~/.spacemacs.d/"))
     (load (expand-file-name "lisp/team-elisp-config.el")))
 
@@ -758,10 +761,6 @@ before packages are loaded."
   (setq history-delete-duplicates t)
   ;; (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
   (set-face-foreground 'line-number "slateBlue")
-  (setq org-agenda-files
-        '("~/org/notes.org"
-          "~/org/jan.org"
-          "~/org/rico.org"))
   (setq-default page-break-lines-max-width 30)
   (define-key evil-normal-state-map (kbd "M-Y") #'evil-paste-pop-next)
   (setf gtags-enable-by-default nil)
@@ -777,24 +776,31 @@ before packages are loaded."
   (setq fast-but-imprecise-scrolling t)
   (setf scroll-conservatively 0)
 
+  (setf json-backend nil)
   
 
-  (global-visual-line-mode 1)
   (global-so-long-mode 1)
 
-  ;; (shx-global-mode 1)
   (global-evil-mc-mode 1)
+  (defun disable-evil-mc-mode ()
+    (evil-mc-mode -1))
+  (add-hook 'dired-mode-hook #'disable-evil-mc-mode)
 
-  (add-hook 'dired-mode-hook
-            #'(lambda () (evil-mc-mode -1)))
+  ;; visual line mode
+  (global-visual-line-mode 1)
+  (defun disable-visual-line-mode ()
+    (visual-line-mode -1))
 
-  (add-hook 'git-commit-mode-hook
-            #'(lambda () (visual-line-mode -1)))
-
-
+  (add-hook 'git-commit-mode-hook #'disable-visual-line-mode)
 
   (setf persp-auto-save-opt 0)
-  (setf ahs-idle-interval 3)
+
+  
+
+  (setq org-agenda-files
+        '("~/org/notes.org"
+          "~/org/jan.org"
+          "~/org/rico.org"))
 
   
 
@@ -817,13 +823,11 @@ before packages are loaded."
   (evil-goggles-mode)
   (set-face-background 'evil-goggles-default-face "DarkOliveGreen")
 
-  ;; (global-undo-tree-mode)
-  ;; (evil-set-undo-system 'undo-tree)
+  
 
   (defun my/update-spacemacs ()
     (let ((default-directory "~/.emacs.d"))
       (magit-pull "spacemacs_public" "refs/heads/develop")))
-
 
   
 
@@ -849,16 +853,17 @@ before packages are loaded."
    'magit-pre-refresh-hook
    #'spacemacs//git-gutter+-refresh-in-all-buffers)
 
-  (advice-add 'magit-log-setup-buffer
-              :filter-args
-              (lambda (args)
-                (destructuring-bind
-                    (revs log-args files &optional locked focus) args
-                  (list revs
-                        (cons
-                         "--no-merges"
-                         log-args)
-                        files locked focus))))
+  (defun benj-add-no-merges-to-magit-log-buffer (args)
+    "Add --no-merges arg to magit log buffers."
+    (destructuring-bind
+        (revs log-args files &optional locked focus) args
+      (list revs
+            (cons
+             "--no-merges"
+             log-args)
+            files locked focus)))
+
+  (advice-add 'magit-log-setup-buffer :filter-args #'benj-add-no-merges-to-magit-log-buffer)
 
   
 
@@ -869,8 +874,7 @@ before packages are loaded."
                     (smartparens-strict-mode)))))
 
   (dolist (elm '(wdired-mode-hook))
-    (add-hook elm
-              #'(lambda () (evil-mc-mode))))
+    (add-hook elm #'evil-mc-mode))
 
   
 
@@ -916,15 +920,12 @@ before packages are loaded."
     (unless benj-sys/inhibit-kill-high-mem
       (start-process-shell-command "kill-high-mem" "*kill-high-mem*" "kill-high-mem-procs")))
 
-  (defun benj-sys/toggle-inhibit-kill-high-mem ()
-    (interactive)
-    (message "Set inhibit kill high mem to %s" (setq benj-sys/inhibit-kill-high-mem (not benj-sys/inhibit-kill-high-mem))))
 
-  (spacemacs/set-leader-keys "oeak" 'benj-sys/toggle-inhibit-kill-high-mem)
 
   (run-at-time 10 10 #'benj-sys/invoke-watch-vbs)
   (run-at-time 20 20 #'benj-sys/invoke-kill-high-mem)
 
+  
 
   ;; redefine this shit becuase I always mash `k` anyway
   (defun persp--kill-buffer-query-function-foreign-check (&rest args) 'kill)
@@ -939,7 +940,7 @@ before packages are loaded."
   (load "~/.spacemacs.d/temp-hacks.el")
   
 
-  (add-hook 'shell-mode-hook #'(lambda () (ggtags-mode -1)))
+  (add-hook 'shell-mode-hook #'ggtags-mode)
 
   
 
@@ -951,11 +952,11 @@ before packages are loaded."
   (require 'benj-shell-script)
   (require 'init-slime)
 
+  (setf team-enable-slack nil)
   (when team-enable-slack
     (use-package
       init-slack
       :defer 100))
-
 
   (add-to-list 'load-path "~/.spacemacs.d/lisp/emacs-hex-to-rgba/")
   (use-package
@@ -1059,11 +1060,7 @@ before packages are loaded."
 
   ;; (cl-pushnew "~/.guix-profile/share/info" Info-additional-directory-list :test #'equal)
 
-
-
   
-
-  (setf json-backend nil)
 
 
   ;; kill eval output
@@ -1134,8 +1131,7 @@ before packages are loaded."
   (add-hook 'prog-mode-hook #'lispyville-mode)
 
   (use-package memoize
-    :straight  (:host github
-                      :repo "skeeto/emacs-memoize"))
+    :straight  (:host github :repo "skeeto/emacs-memoize"))
 
   
 
@@ -1145,15 +1141,15 @@ before packages are loaded."
            (sips (/ ml (float 15))))
       (message "You need to drink around %s ml water every 15 minutes. This is around %s sips" ml sips)))
 
-  (defun kg-to-lbs (kg)
-    (/ kg 0.45359237))
+  s (defun kg-to-lbs (kg)
+      (/ kg 0.45359237))
   (defun ounce-to-ml (ounce)
     (* ounce 28.35))
 
   (run-at-time
    (* 15 60)
    (* 15 60)
-   (apply-partially 'say-many-fluid 76))
+   (apply-partially #'say-many-fluid 75))
 
 
   (with-eval-after-load 'python (require 'python-config))
@@ -1205,15 +1201,25 @@ before packages are loaded."
           backup-enable-predicate 'my-dont-backup-files-p))
 
 
-  (use-package youtube-dl-emacs
+  (use-package youtube-dl
     :straight (:host github :repo "skeeto/youtube-dl-emacs")
     :config (progn
               (setf youtube-dl-directory "~/tmp/vids/")
-              (team/spacemacs-define-keys
-               "oe"
-               "external"
-               "y" #'youtube-dl
-               "V" #'youtube-dl-list)))
+              (team/spacemacs-declare-keys
+                  "oe"
+                  "external"
+                "y" #'youtube-dl
+                "V" #'youtube-dl-list)))
+
+  (use-package team-trello
+    :commands #'team-trello-card-dispatch
+    :config
+    (progn
+      (setf team-trello-token
+            (auth-source-pick-first-password :host "trello-token")
+            team-trello-key
+            (auth-source-pick-first-password :host "trello-key"))))
+
 
   )
 

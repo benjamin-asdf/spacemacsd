@@ -147,11 +147,6 @@
   :demand t
   :config (load "~/.spacemacs.d/lisp/init-team-git.el"))
 
-(use-package
-  team-trello
-  :demand t)
-
-
 (use-package listful
   :after csharp-mode
   :demand t

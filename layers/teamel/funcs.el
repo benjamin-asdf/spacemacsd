@@ -319,35 +319,12 @@ If REACH is a negative number, search backward first, else search forward first.
      (point))
    t 1))
 
-(add-hook
- 'flycheck-mode-hook
- #'(lambda ()
-     (setq flycheck-display-errors-function
-           #'teamel/flycheck-momentary-string-display-function)))
+(defun team/setup-flycheck-display-function ()
+  (setq flycheck-display-errors-function
+        #'teamel/flycheck-momentary-string-display-function))
 
 
-
-(defun teamel/wrap-in-this ()
-  "Wrap the region into what ever bracket structure is in register a"
-  (interactive)
-  (kill-region (region-beginning) (region-end))
-  (set-mark (point))
-  (let ((indent (current-indentation)))
-    (insert
-     (with-temp-buffer
-       (insert (get-register ?a))
-       (csharp-mode)
-       (->gg)
-       (unless (re-search-forward "{" nil t)
-         (user-error "%s\n was probably not some csharp block"
-                     (buffer-string)))
-       (helm-aif (team-helm/hs-block)
-           (delete-region (point) (mark)))
-       (insert "\n")
-       (yank)
-       (indent-region (point-min) (point-max))
-       (buffer-string))))
-  (indent-region (mark) (point)))
+;; (add-hook 'flycheck-mode-hook #'team/setup-flycheck-display-function)
 
 
 
