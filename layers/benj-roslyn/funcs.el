@@ -107,11 +107,6 @@
         (message "roslyn build success.")))))
 
 
-(defun benj-roslyn-tools/nuke-clean ()
-  "Run clean target roslyn tools."
-  (interactive)
-  (benj-roslyn-tools/run-nuke-target "Clean"))
-
 (defun benj-roslyn-tools/nuke-proc-buff ()
   "Buffer for roslyn tools nuke proc."
   (get-buffer-create "*nuke-roslyn-tools*"))
@@ -141,8 +136,12 @@
           (apply #'nuke/runner-core args))))
 
 
+(defvar benj-roslyn-run-requested ())
+(defvar benj-roslyn-build-running ())
+
 (defun nuke/runner-core (&rest args)
   (require 'deferred)
+  (setf benj-roslyn-build-running t)
   (deferred:$ 
     (apply
      #'deferred:process
@@ -152,11 +151,11 @@
         (team/with-file benj-roslyn-tools/analzyer-log-file
           (->gg)
           (team/in-new-line "==================== ready ==============="))
-
-(
-         )
-
-        (message "roslyn build success.")))))
+        (message "roslyn build success.")
+        (setf benj-roslyn-build-running nil)
+        (and benj-roslyn-run-requested
+             benj-roslyn-last-args
+             (benj-roslyn-rerun-last t))))))
 
 
 (defun benj-roslyn-tools/pop-to-analyzer-log ()
@@ -283,10 +282,9 @@ see `benj-roslyn-proj-configs'"
 (defun benj-roslyn-rerun-last (&optional arg)
   "Rerun `benj-roslyn-runner' with previous args."
   (interactive "P")
-  (when arg
+  (unless arg
     (benj-roslyn-tools/nuke-build))
-  (if benj-roslyn-last-args
-      (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args))))
+  (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args)))
 
 
 (define-derived-mode
@@ -341,26 +339,20 @@ see `benj-roslyn-proj-configs'"
   (pushnew "-all-diagnostics" args :test 'string-equal)
   (benj-roslyn-tools/erase-analyzer-log-buff-if-exists)
   (setq benj-roslyn-last-args (list sln args))
-
-  (if (process-live-p benj-roslyn-tools/nuke-build-proc)
-      (progn (set-process-sentinel
-              benj-roslyn-tools/nuke-build-proc
-              #'(lambda (proc code)
-                  (pcase code
-                    ("finished\n" (benj-roslyn-rerun-last))
-                    (code (error "nuke build exited abnormally with code %s" code)))))
-             (message "Scheduled rerun after nuke build..."))
-    (team/with-default-dir
-     (file-name-directory sln)
-     (apply
-      #'start-process
-      (append
-       (list "run-analyzers"
-             benj-roslyn-tools/buff-name "dotnet" benj-roslyn-tools/cli-executable
-             "-s" sln)
-       args
-       (list "-no-stats")))
-     (pop-to-buffer benj-roslyn-tools/buff-name))))
+  (when benj-roslyn-build-running
+    (setf benj-roslyn-run-requested t)
+    (user-error "Scheduled run after bulid"))
+  (team/with-default-dir
+   (file-name-directory sln)
+   (apply
+    #'start-process
+    (append
+     (list "run-analyzers"
+           benj-roslyn-tools/buff-name "dotnet" benj-roslyn-tools/cli-executable
+           "-s" sln)
+     args
+     (list "-no-stats")))
+   (pop-to-buffer benj-roslyn-tools/buff-name)))
 
 (defun benj-roslyn-tools/handle-proc (p s file-name op)
   "Eval OP with current handle buff."
