@@ -114,7 +114,6 @@ This function should only modify configuration layer settings."
      benj-roslyn
      team-projectile
      teamel
-     benj-trello
      helm-config
      sharpel
      benj-phone
