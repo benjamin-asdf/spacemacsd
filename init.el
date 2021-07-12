@@ -89,14 +89,14 @@ This function should only modify configuration layer settings."
      csv
 
      (haskell :variables haskell-completion-backend 'dante)
-     (julia :variables julia-backend 'lsp)
+     ;; (julia :variables julia-backend 'lsp)
 
 
      ;; features
-     slack
+     ;; slack
+
      pass
      ;; media
-     ;; github
      (rcirc :variables rcirc-enable-authinfo-support t
             ;; rcirc-enable-znc-support t
             )
@@ -106,7 +106,6 @@ This function should only modify configuration layer settings."
      benj-themes-config
      substitute-utils
      csharp-config
-     my-config-spellcheck
      redshiftel
 
      best-banners
@@ -119,7 +118,6 @@ This function should only modify configuration layer settings."
      helm-config
      sharpel
      benj-phone
-     benj-term
      benj-csharp-perf-hacks
      benj-evil-motions
 
@@ -1221,7 +1219,9 @@ before packages are loaded."
             (auth-source-pick-first-password :host "trello-key"))))
 
 
-  )
+  (with-eval-after-load 'flyspell
+    (dolist (hook '(text-mode-hook org-mode-hook))
+      (add-hook hook #'flyspell-mode-on))))
 
 
 ;; Do not write anything past this comment. This is where Emacs will

@@ -3,7 +3,7 @@
 (defmacro incfmod (sym step)
   "Increment SYM value, if STEP amount of times reached, return non nil,
 nil otherwise"
-  `(= (% (setf ,sym (1+ ,sym)) ,step) 0))
+  `(= (% (cl-incf ,sym) ,step) 0))
 
 (defvar benj-chsarp/c-after-change-counter 0
   "Increment everytime `c-after-change' would have been called but was blocked.
