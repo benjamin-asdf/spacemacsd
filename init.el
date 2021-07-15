@@ -1139,7 +1139,7 @@ before packages are loaded."
            (sips (/ ml (float 15))))
       (message "You need to drink around %s ml water every 15 minutes. This is around %s sips" ml sips)))
 
-  s (defun kg-to-lbs (kg)
+  (defun kg-to-lbs (kg)
       (/ kg 0.45359237))
   (defun ounce-to-ml (ounce)
     (* ounce 28.35))
@@ -1203,11 +1203,21 @@ before packages are loaded."
     :straight (:host github :repo "skeeto/youtube-dl-emacs")
     :config (progn
               (setf youtube-dl-directory "~/tmp/vids/")
+
+              (defun benj-push-all-vids-to-phone-and-delete ()
+                "Push all vids in `youtube-dl-directory' wiht adb and delete them"
+                (interactive)
+                (with-dir
+                 youtube-dl-directory
+                 "fd -tf . -e mkv -e mp4 -X sh -c \"adb -d push {} /storage/self/primary/misc-downloads && rm -f {}\""))
+
               (team/spacemacs-declare-keys
                   "oe"
                   "external"
                 "y" #'youtube-dl
-                "V" #'youtube-dl-list)))
+                "V" #'youtube-dl-list)
+              )
+    )
 
   (use-package team-trello
     :commands #'team-trello-card-dispatch

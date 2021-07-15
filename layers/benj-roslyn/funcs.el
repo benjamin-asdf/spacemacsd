@@ -111,18 +111,6 @@
   "Buffer for roslyn tools nuke proc."
   (get-buffer-create "*nuke-roslyn-tools*"))
 
-(defun benj-roslyn-tools/pop-to-nuke-buff ()
-  "Pop to buff other frame returned by `benj-roslyn-tools/nuke-proc-buff'."
-  (interactive)
-  (let ((buff (benj-roslyn-tools/nuke-proc-buff)))
-    (unless (equal buff (current-buffer))
-      (switch-to-buffer-other-frame buff)
-      (compilation-mode)
-      (goto-char (point-max))))
-
-  ;; (pop-to-buffer (benj-roslyn-tools/nuke-proc-buff))
-  )
-
 (defun benj-roslyn-tools/run-nuke-target (target)
   "Run nuke with TARGET in `benj-roslyn-tools/proj-path'."
   (benj-roslyn-tools/run-nuke "--target" target))
@@ -674,6 +662,46 @@ LINES is a list of numbers."
      (if (re-search-forward "\r\n" nil t 1)
          t
        nil))))
+
+
+
+(defun benj-csharp-get-diagnostic-args ()
+  "Get roslyn diagnostic args from last unit test run.
+Put into temp buffer window."
+  (interactive)
+  (with-current-buffer-window
+      "diagnostics-unit-tests"
+      nil
+      nil
+    (insert
+     (with-output-to-string
+       (with-current-buffer
+           "* Omnisharp : Unit Test Results *"
+         (->gg)
+         (while
+             (re-search-forward
+              "\\[FAILED\\] \\(.*\\)" nil t)
+           (princ (match-string 0))
+           (save-excursion
+             (re-search-forward "Actual diagnostic:")
+             (princ
+              (buffer-substring
+               (point)
+               (progn (forward-line 3) (point)))))))))
+    (->gg)
+    (while (re-search-forward
+            "\\.WithSpan" nil t)
+      (save-excursion
+        (goto-char (match-beginning 0))
+        (open-line 1)
+        (re-search-forward "\\.WithArguments")
+        (goto-char (match-beginning 0))
+        (open-line 1)
+        (forward-line 1)
+        (goto-char (line-end-position))
+        (delete-region
+         (1- (point))
+         (point))))))
 
 
 
