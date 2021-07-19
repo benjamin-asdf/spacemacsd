@@ -78,9 +78,11 @@ This function should only modify configuration layer settings."
           lsp-headerline-breadcrumb-segments '(symbol))
      (go :variables godoc-at-point-function 'godoc-gogetdoc go-backend 'lsp)
      (perl5 :variables perl5-backend nil)
-     (clojure :variables clojure-enable-linters '(clj-kondo joker)
+     (clojure :variables
+              clojure-backend 'cider
+              clojure-enable-linters '(clj-kondo joker)
               clojure-enable-fancify-symbols t
-              clojure-enable-sayid t
+              clojure-enable-sayid nil
               clojure-enable-clj-refactor t)
      ;; lua
      (scheme :variables
@@ -778,6 +780,7 @@ before packages are loaded."
   (setf scroll-conservatively 0)
 
   (setf json-backend nil)
+  (setf next-error-verbose nil)
   
 
   (global-so-long-mode 1)
@@ -1194,6 +1197,12 @@ before packages are loaded."
     (setq backup-each-save-filter-function 'backup-each-save-filter
           backup-enable-predicate 'my-dont-backup-files-p))
 
+  (setf
+   backup-directory-alist
+   '((".*" . "~/.cache/emacs/backups"))
+   undo-tree-history-directory-alist
+   '((".*" . "~/.cache/emacs/backups")))
+
 
   (use-package youtube-dl
     :straight (:host github :repo "skeeto/youtube-dl-emacs")
@@ -1229,35 +1238,73 @@ before packages are loaded."
     (dolist (hook '(text-mode-hook org-mode-hook))
       (add-hook hook #'flyspell-mode-on)))
 
-  (with-eval-after-load 'flycheck
-    (defadvice
-        spacemacs/next-error
-        (around my/spacemacs-next-err-advice (&optional n reset)
-                activate)
-      (let ((p (point)))
-        ad-do-it
-        (when (eq p (point))
-          (message "")
-          (flycheck-next-error)))))
+
+  ;; `spacemacs/next-error' does not make sense and can mess stuff up
+  ;; flycheck already does sets `next-error-function'
+  (defalias 'spacemacs/next-error #'next-error)
 
 
   (use-package quick-peek
     :straight (:host github :repo "cpitclaudel/quick-peek")
     :commands quick-peek-overlay-ensure-at
+    :demand t
     :after flycheck)
 
   (use-package flycheck-inline
     :straight (:host github :repo "flycheck/flycheck-inline")
-    :after quick-peek 
-    :preface (defun my-quick-peek-flycheck-inline-fn (msg pos err)
-               (let* ((ov (quick-peek-overlay-ensure-at pos))
-                      (contents (quick-peek-overlay-contents ov)))
-                 (setf (quick-peek-overlay-contents ov)
-                       (concat contents (when contents "\n") msg))
-                 (quick-peek-update ov)))
-    :init (add-hook 'flycheck-mode-hook #'flycheck-inline-mode)
-    :config (setq flycheck-inline-display-function #'my-quick-peek-flycheck-inline-fn
-                  flycheck-inline-clear-function #'quick-peek-hide)))
+    :after quick-peek
+    :preface
+
+    (defun my-quick-peek-flycheck-inline-fn (msg pos err)
+      (let* ((ov (quick-peek-overlay-ensure-at pos))
+             (contents (quick-peek-overlay-contents ov)))
+        (overlay-put
+         ov
+         'quick-peek--contents
+         (concat contents (when contents "\n") msg))
+        (quick-peek-update ov)))
+
+
+    (defun my-flycheck-inline-setup ()
+      (remove-hook 'next-error-hook #'flycheck-display-error-at-point 'local)
+      (flycheck-inline-mode t))
+
+    ;; flycheck-inline ads calls clear function to post command hook
+    ;; this is cool but not after `flycheck-next-error'
+    (defvar my-flycheck-inlide-hide-errs-tanks-one nil)
+    (defvar my-flycheck-inlide-hide-errs-tanks-after-next nil)
+
+    (defadvice flycheck-next-error
+        (before
+         my-flycheck-inlide-hack-flycheck-next-err-adv
+         activate)
+      (setf my-flycheck-inlide-hide-errs-tanks-after-next t))
+
+    (defadvice flycheck-inline-hide-errors
+        (around
+         my-flycheck-inlide-hide-errs-hack-adv
+         activate)
+      (print (list "adv.. taking" my-flycheck-inlide-hide-errs-tanks-one))
+      (if my-flycheck-inlide-hide-errs-tanks-one
+          (setf my-flycheck-inlide-hide-errs-tanks-one nil)
+        ad-do-it)
+      (setf my-flycheck-inlide-hide-errs-tanks-one
+            my-flycheck-inlide-hide-errs-tanks-after-next
+            my-flycheck-inlide-hide-errs-tanks-after-next
+            nil))
+
+    :init (add-hook 'flycheck-mode-hook #'my-flycheck-inline-setup)
+    :config
+    (setq flycheck-inline-display-function
+          #'my-quick-peek-flycheck-inline-fn
+          flycheck-inline-clear-function
+          #'quick-peek-hide))
+
+
+  (with-eval-after-load 'cider
+    (require 'init-cider))
+
+  )
 
 
 ;; Do not write anything past this comment. This is where Emacs will

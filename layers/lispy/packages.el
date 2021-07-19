@@ -82,13 +82,14 @@
     :hook (lispy-mode . lispyville-mode)
     :init
     (setq lispyville-key-theme
-          '((operators normal)
+          '(operators
             c-w
-            (prettify insert)
-            (atom-movement t)
+            c-u
+            prettify
             slurp/barf-lispy
             additional
             additional-motions
+            atom-movement
             commentary
             additional-wrap
             additional-insert
@@ -113,16 +114,13 @@
       (targets-setup)
       (targets-define-to lispyville-comment 'lispyville-comment nil object
                          :last-key nil
-                         :bind t :keys ";")
+                         :bind t :keys "c")
       (targets-define-to lispyville-atom 'lispyville-atom nil object
                          :last-key nil
                          :bind t :keys "m")
       (targets-define-to lispyville-list 'lispyville-list nil object
                          :last-key nil
                          :bind t :keys "k")
-      (targets-define-to lispyville-list 'lispyville-comment nil object
-                         :last-key nil
-                         :bind t :keys "c")
       (targets-define-to lispyville-sexp 'lispyville-sexp nil object
                          :last-key nil
                          :bind t :keys "x")

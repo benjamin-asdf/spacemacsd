@@ -84,6 +84,7 @@
   "Only build analyzer project and put dll to output."
   (interactive)
   (require 'deferred)
+  (save-some-buffers)
   (benj-roslyn-prepare-build)
   (with-dir
    benj-roslyn-tools/proj-path
