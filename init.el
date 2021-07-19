@@ -1284,7 +1284,7 @@ before packages are loaded."
         (around
          my-flycheck-inlide-hide-errs-hack-adv
          activate)
-      (print (list "adv.. taking" my-flycheck-inlide-hide-errs-tanks-one))
+      (list "adv.. taking" my-flycheck-inlide-hide-errs-tanks-one)
       (if my-flycheck-inlide-hide-errs-tanks-one
           (setf my-flycheck-inlide-hide-errs-tanks-one nil)
         ad-do-it)
