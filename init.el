@@ -47,7 +47,7 @@ This function should only modify configuration layer settings."
             shell-default-position 'bottom
             shell-scripts-backend nil)
      (spell-checking :variables spell-checking-enable-by-default nil)
-     syntax-checking
+     (syntax-checking :variables syntax-checking-enable-tooltips nil)
      (org :variables
           ;; org-enable-trello-support t
           org-enable-roam-support t
@@ -185,6 +185,7 @@ This function should only modify configuration layer settings."
                                     lsp-treemacs
                                     treemacs
                                     windows-scripts
+                                    lsp-ui
                                     )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -643,6 +644,8 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (setq package-native-compile t)
 
   (setq package-check-signature nil)
+
+  (setq org-roam-v2-ack t)
 
   (defun team/spacemacs-define-keys (leader-keys prefix-name &rest bindings)
     "Define spacemacs keys."
@@ -1140,7 +1143,7 @@ before packages are loaded."
       (message "You need to drink around %s ml water every 15 minutes. This is around %s sips" ml sips)))
 
   (defun kg-to-lbs (kg)
-      (/ kg 0.45359237))
+    (/ kg 0.45359237))
   (defun ounce-to-ml (ounce)
     (* ounce 28.35))
 
@@ -1167,13 +1170,6 @@ before packages are loaded."
            (lambda ()
              (add-to-list 'company-backends 'company-restclient)
              (company-mode-on))))
-
-
-  (with-eval-after-load
-      'lsp-mode
-    (setf
-     lsp-unzip-script
-     "bash -c '7z x %1$s -o%2$s/'"))
 
 
   (use-package backup-each-save
@@ -1231,7 +1227,37 @@ before packages are loaded."
 
   (with-eval-after-load 'flyspell
     (dolist (hook '(text-mode-hook org-mode-hook))
-      (add-hook hook #'flyspell-mode-on))))
+      (add-hook hook #'flyspell-mode-on)))
+
+  (with-eval-after-load 'flycheck
+    (defadvice
+        spacemacs/next-error
+        (around my/spacemacs-next-err-advice (&optional n reset)
+                activate)
+      (let ((p (point)))
+        ad-do-it
+        (when (eq p (point))
+          (message "")
+          (flycheck-next-error)))))
+
+
+  (use-package quick-peek
+    :straight (:host github :repo "cpitclaudel/quick-peek")
+    :commands quick-peek-overlay-ensure-at
+    :after flycheck)
+
+  (use-package flycheck-inline
+    :straight (:host github :repo "flycheck/flycheck-inline")
+    :after quick-peek 
+    :preface (defun my-quick-peek-flycheck-inline-fn (msg pos err)
+               (let* ((ov (quick-peek-overlay-ensure-at pos))
+                      (contents (quick-peek-overlay-contents ov)))
+                 (setf (quick-peek-overlay-contents ov)
+                       (concat contents (when contents "\n") msg))
+                 (quick-peek-update ov)))
+    :init (add-hook 'flycheck-mode-hook #'flycheck-inline-mode)
+    :config (setq flycheck-inline-display-function #'my-quick-peek-flycheck-inline-fn
+                  flycheck-inline-clear-function #'quick-peek-hide)))
 
 
 ;; Do not write anything past this comment. This is where Emacs will

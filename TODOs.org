@@ -114,3 +114,10 @@ https://github.com/syl20bnr/spacemacs/pull/7736#issuecomment-313320906
 * get into org roam  
   
 * figure out xdotool to "hover"
+
+* cron for updatedb  
+* also cron for watch vbs  
+
+
+* fix keys and basic setup  
+* basic mememacs with leader keys  
