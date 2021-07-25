@@ -69,6 +69,7 @@
 (defun benj-roslyn-tools/nuke-build ()
   "Build RoslynTools with nuke."
   (interactive)
+  (message "buildin roslyn analyzers...")
   (benj-roslyn-prepare-build)
   (benj-roslyn-tools/run-nuke-target "Publish"))
 
@@ -250,11 +251,27 @@ see `benj-roslyn-proj-configs'"
 (defun benj-roslyn-tools/run-idlegame (&rest args)
   "Run release build on playground project. ARGS can be additional args."
   (interactive)
+  (benj-roslyn/hack-idlegame-proj-files)
   (benj-roslyn-runner
    idlegame-sln-path
    benj-roslyn-tools/idlegame-args
    ;; "-v"
    args))
+
+(defun benj-roslyn/hack-idlegame-proj-files ()
+  "Add some mono path csproj  syntax to all project files in idlegame"
+  (--each
+      (directory-files idlegame-dir t "\.csproj$")
+    (team/check-file
+      it
+      (when
+          (not (re-search-forward "BaseFrameworkPathOverrideForMono" nil t))
+        (->gg)
+        (re-search-forward "/PropertyGroup>")
+        (forward-line 1)
+        (insert
+         "  <PropertyGroup Condition=\"'$(OS)' == 'Unix'\">\r\n    <BaseFrameworkPathOverrideForMono Condition=\"'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')\">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</BaseFrameworkPathOverrideForMono>\r\n    <BaseFrameworkPathOverrideForMono Condition=\"'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/lib/mono')\">/usr/lib/mono</BaseFrameworkPathOverrideForMono>\r\n    <BaseFrameworkPathOverrideForMono Condition=\"'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/local/lib/mono')\">/usr/local/lib/mono</BaseFrameworkPathOverrideForMono>\r\n    <FrameworkPathOverride Condition=\"'$(BaseFrameworkPathOverrideForMono)' != ''\">$(BaseFrameworkPathOverrideForMono)/4.7.1-api</FrameworkPathOverride>\r\n    <EnableFrameworkPathOverride Condition=\"'$(BaseFrameworkPathOverrideForMono)' != ''\">true</EnableFrameworkPathOverride>\r\n    <!-- <AssemblySearchPaths Condition=\"'$(BaseFrameworkPathOverrideForMono)' != ''\">$(AssemblySearchPaths);$(FrameworkPathOverride);$(FrameworkPathOverride)/Facades</AssemblySearchPaths> -->\r\n  </PropertyGroup>\r\n")
+        t))))
 
 (defun benj-roslyn-idlegame-sync-sym (&rest syms)
   "Invoke analyzers to search SYMS occurrances"
@@ -409,12 +426,20 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
 (defconst benj-roslyn-tools/last-analzyer-id-file (concat (file-name-as-directory benj-roslyn-tools/proj-path) "last-analzyer-id"))
 
 (defun benj-roslyn-tools/get-next-analzyer-id ()
-  "Bump current analzyer id and return next id."
+  "Bump and return analzyer id."
   (interactive)
-  (let ((next (number-to-string (+ (string-to-number (car (team/file-lines benj-roslyn-tools/last-analzyer-id-file))) 1))))
-    (write-region next nil benj-roslyn-tools/last-analzyer-id-file)
-    (kill-new next)))
+  (format
+   "BEST%03d"
+   (team/with-file
+     benj-roslyn-tools/last-analzyer-id-file
+     (-->
+      (1+ (car (read-from-string (buffer-string))))
+      (progn
+        (erase-buffer)
+        (insert (mkstr it))
+        it)))))
 
+(benj-roslyn-tools/get-next-analzyer-id)
 
 (defun benj-roslyn-tools/build-banned-analzyer ()
   ""
@@ -708,6 +733,98 @@ Put into temp buffer window."
         (delete-region
          (1- (point))
          (point))))))
+
+
+
+(defun benj-roslyn-errs (&optional re)
+  (with-current-buffer
+      benj-roslyn-tools/buff-name
+    (->gg)
+    (let ((res))
+      (while (re-search-forward (concat "\\(^.+?\\)(\\([[:alnum:]]+\\),\\([[:alnum:]]+\\)):.+?" (or re "")) nil t)
+        (cl-pushnew (list (match-string 1) (match-string 2) (match-string 3)) res :test #'equal))
+      (nreverse res))))
+
+
+;; (let ((re (regexp-opt '("BEST" "CS"))))
+;;   (defun benj-roslyn-filter-best-warns (errors)
+;;     (--filter (string-match-p re (flycheck-error-id it)) errors)))
+
+;; (defun benj-roslyn-omnisharp-setup-only-best-errs ()
+;;   (setq-local
+;;    omnisharp-flycheck-error-filter-function
+;;    #'benj-roslyn-filter-best-warns))
+
+
+;; (let ((omnisharp-analzyer-copies "/tmp/CodeAnalysis/AnalyzerShadowCopies/"))
+;;   (when (file-exists-p omnisharp-analzyer-copies)
+
+;;     (delete-directory "/tmp/CodeAnalysis/AnalyzerShadowCopies/" t)))
+
+
+
+
+;; (flycheck-define-generic-checker 'benj-roslyn-best-checker
+;;   :start #'benj-roslyn-flycheck-start
+;;   :modes '(csharp-mode)
+;;   :error-filter #'omnisharp--flycheck-filter
+;;   :predicate (lambda ()
+;;                (s-ends-with-p "RoslynPlayground/"
+;;                               (projectile-project-root))))
+
+
+;; ;; TODO add something to find the solution in the working dir
+;; (flycheck-define-checker
+;;     benj-roslyn-best-checker
+;;   "A csharp checker that only shows BEST warnings."
+;;   :command
+;;   ("echo"
+;;    ;; "dotnet"
+;;    ;; (eval benj-roslyn-tools/cli-executable)
+;;    ;; "--no-git"
+;;    ;; "-s"
+;;    ;; (eval (benj-find-dominant-file "\.sln$"))
+;;    ;; "-g"
+;;    ;; (eval (benj-roslyn-tools/read-analzyer))
+;;    ;; "-f"
+;;    ;; (eval (file-name-nondirectory (buffer-file-name)))
+;;    ;; (eval benj-roslyn-tools/playground-sln)
+;;    )
+
+;;   :working-directory  (lambda (_) (print benj-roslyn-tools/playground-proj))
+;;   ;; :error-patterns (lambda)
+;;   :error-parser (lambda (res)
+;;                   (print "parse:" res))
+;;   :modes csharp-mode
+;;   :predicate (lambda () t)
+
+;;   )
+
+;; (--each
+;;     (benj-roslyn-errs "BEST60")
+;;   (team/with-file
+;;       (first it)
+;;     (let ((line (string-to-number (second it))))
+;;       (->gg)
+;;       (forward-line (- line 1))
+;;       (re-search-forward "while")
+;;       (forward-line -1)
+;;       (goto-char (point-at-eol))
+;;       (open-line 1)
+;;       (forward-line 1)
+;;       (insert
+;;        "#pragma warning disable BEST60")
+;;       (forward-line 2)
+;;       (open-line 1)
+;;       (insert
+;;        "#pragma warning restore BEST60")
+;;       )))
+
+
+
+;; (add-to-list 'flycheck-checkers 'benj-roslyn-best-checker)
+
+
 
 
 

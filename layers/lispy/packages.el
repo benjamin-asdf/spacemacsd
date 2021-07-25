@@ -114,17 +114,22 @@
 
       (with-eval-after-load
           'cider
-          (setf cider-jack-in-dependencies
-                (delete-dups
-                 (append
-                  cider-jack-in-dependencies
-                  lispy-cider-jack-in-dependencies))))
+        (setf cider-jack-in-dependencies
+              (delete-dups
+               (append
+                cider-jack-in-dependencies
+                lispy-cider-jack-in-dependencies))))
 
 
       (defalias 'evil-lisp-state-evil-visual-char
         (lispyville-wrap-command lispy-mark-symbol special))
       (defalias 'evil-lisp-state-evil-visual-line
         (lispyville-wrap-command lispy-mark special))
+
+
+      (lispyville--define-key
+          '(normal)
+        (kbd "SPC k j") (lispyville-wrap-command lispyville-forward-list-end special))
 
 
       (require 'targets)

@@ -3,17 +3,20 @@
 #key : anal
 #contributor : benj
 # --
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Immutable;
+using System.Collections.Generic;
+using System;
+using System.Linq;
+
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class $1Analzyer : GlobalAnalyzerBase {
-    protected override int id { get; } = `(benj-roslyn-tools/get-next-analzyer-id)`;
-    protected override string title { get; } = $2;
-    protected override string description { get; } = $3;
-    protected override DiagnosticSeverity severity => DiagnosticSeverity.Error;
+public class `(file-name-base (buffer-file-name))` : GlobalAnalyzerBase {
+public const string ruleId = "`(benj-roslyn-tools/get-next-analzyer-id)`";
 
     protected override bool logVerbose => true;
 
-    public override void Setup() {
-        $0
-    }
+public static DiagnosticDescriptor rule = new DiagnosticDescriptor(ruleId,AnalyzerCategories.SingularityGroupCategory,DiagnosticSeverity.Error,true);
 
 }

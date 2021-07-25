@@ -792,6 +792,15 @@ before packages are loaded."
 
   ;;; Disable prompt (but leave warning) on git symlink.
   (setq vc-follow-symlinks t)
+
+  ;;; Clipboard and primary selection.
+  ;; (setq select-enable-clipboard t)
+
+  ;; this hogs when I put a big buff in the selection
+  ;; (setq select-enable-primary t
+  ;;       save-interprogram-paste-before-kill t)
+  ;; (setq select-enable-primary t)
+
   (setf json-backend nil)
 
   (setf persistent-scratch-what-to-save '(major-mode))
