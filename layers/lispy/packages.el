@@ -94,9 +94,11 @@
             additional-wrap
             additional-insert
             ;; arrows
-            escape
-            ;; mark
-            slurp/barf-lispy))
+            ;; escape
+            mark-toggle
+            slurp/barf-lispy
+            ;; mark-special
+            ))
     :config
     (progn
 
@@ -108,6 +110,22 @@
         "C-l"
         #'evil-visual-line)
       (lispyville-set-key-theme)
+
+
+      (with-eval-after-load
+          'cider
+          (setf cider-jack-in-dependencies
+                (delete-dups
+                 (append
+                  cider-jack-in-dependencies
+                  lispy-cider-jack-in-dependencies))))
+
+
+      (defalias 'evil-lisp-state-evil-visual-char
+        (lispyville-wrap-command lispy-mark-symbol special))
+      (defalias 'evil-lisp-state-evil-visual-line
+        (lispyville-wrap-command lispy-mark special))
+
 
       (require 'targets)
       (setq targets-text-objects nil)
@@ -130,6 +148,8 @@
       (targets-define-to lispyville-string 'lispyville-string nil object
                          :last-key nil
                          :bind t :keys "S")
+
+      ;; (diminish 'lispyville-mode (lispyville-mode-line-string " 🍰" " 🍰"))
       (spacemacs|diminish lispyville-mode " Ⓥ" " V")
 
       (with-eval-after-load
