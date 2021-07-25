@@ -757,9 +757,10 @@ before packages are loaded."
 
   
 
+  (setq uniquify-buffer-name-style 'forward)
+
   (setq-default evil-escape-key-sequence nil)
   (global-set-key (kbd "C-<escape>") 'evil-escape)
-
 
   (setq-default spacemacs-show-trailing-whitespace nil)
   (setq-default dotspacemacs-show-trailing-whitespace nil)
@@ -778,7 +779,7 @@ before packages are loaded."
 
   (setq auto-save-no-message t)
   ;; (setf completion-styles '(flex))
-  (setf company-format-margin-function  nil)
+  (setf company-format-margin-function nil)
 
   ;; scrolling
 
@@ -786,9 +787,16 @@ before packages are loaded."
   (setq redisplay-skip-fontification-on-input t)
   (setq fast-but-imprecise-scrolling t)
   (setf scroll-conservatively 0)
-
-  (setf json-backend nil)
   (setf next-error-verbose nil)
+
+
+  ;;; Disable prompt (but leave warning) on git symlink.
+  (setq vc-follow-symlinks t)
+  (setf json-backend nil)
+
+  (setf persistent-scratch-what-to-save '(major-mode))
+
+
   
 
   (global-so-long-mode 1)
@@ -867,7 +875,7 @@ before packages are loaded."
 
   (defun benj-add-no-merges-to-magit-log-buffer (args)
     "Add --no-merges arg to magit log buffers."
-    (destructuring-bind
+    (cl-destructuring-bind
         (revs log-args files &optional locked focus) args
       (list revs
             (cons
@@ -889,6 +897,37 @@ before packages are loaded."
     (add-hook elm #'evil-mc-mode))
 
   
+
+  ;; helm
+
+  (setq
+   helm-follow-mode-persistent t
+   helm-reuse-last-window-split-state t
+   helm-display-header-line nil
+   helm-findutils-search-full-path t
+   helm-show-completion-display-function nil
+   helm-completion-mode-string ""
+   helm-dwim-target 'completion
+   helm-echo-input-in-header-line t
+   helm-use-frame-when-more-than-two-windows nil
+
+   helm-apropos-fuzzy-match t
+   helm-buffers-fuzzy-matching t
+   helm-eshell-fuzzy-match t
+   helm-imenu-fuzzy-match t
+   helm-M-x-fuzzy-match t
+   helm-recentf-fuzzy-match t
+
+   ;; Use woman instead of man.
+   helm-man-or-woman-function nil
+
+   ;; https://github.com/emacs-helm/helm/issues/1910
+   helm-buffers-end-truncated-string "…"
+   helm-buffer-max-length 22
+
+   helm-window-show-buffers-function 'helm-window-mosaic-fn
+   helm-window-prefer-horizontal-split t)
+
 
   (with-eval-after-load 'avy
     (setf avy-all-windows nil)
@@ -993,6 +1032,14 @@ before packages are loaded."
 
   (add-to-list 'load-path "~/.spacemacs.d/lisp/lisp-extra-font-lock/")
   (require 'lisp-extra-font-lock)
+  ;; REVIEW not sure if so useful for clojure and scheme because of lisp-1
+  (setf
+   lisp-extra-font-lock-modes
+   (delete-dups
+    (append
+     lisp-extra-font-lock-modes
+     '(clojure-mode common-lisp-mode scheme-mode))))
+
   (lisp-extra-font-lock-global-mode 1)
   (add-hook 'lisp-extra-font-lock-mode-hook #'dash-fontify-mode)
 
@@ -1014,11 +1061,20 @@ before packages are loaded."
     "E" #'cancel-edebug-on-entry
     "v" #'debug-on-variable-change
     "V" #'cancel-debug-on-variable-change
-    "m" #'macrostep-expand)
+    "m" #'my-macro-expand)
+
+  (defun my-macro-expand ()
+    (interactive)
+    (funcall
+     (pcase major-mode
+       ('clojure-mode #'cider-macroexpand-1-inplace)
+       ('common-lisp-mode #'slime-macroexpand-1-inplace)
+       (_ #'macrostep-expand))))
+
 
   (team/spacemacs-declare-keys "k"
       "lisp"
-    "m" #'macrostep-expand)
+    "m" #'my-macro-expand)
 
   
 
@@ -1057,7 +1113,7 @@ before packages are loaded."
            :nick "benj234"
            :user-name "benj234"
            ;; :auth "benj"
-           :channels ("#emacs" "#guile" "#mnt-reform"))
+           :channels ("#emacs" "#guile" "#nyxt"))
           ;; ("irc.gimp.org"
           ;;  :nick "benj234"
           ;;  :user-name "benj234"
@@ -1247,9 +1303,9 @@ before packages are loaded."
       (add-hook hook #'flyspell-mode-on)))
 
 
-  ;; `spacemacs/next-error' does not make sense and can mess stuff up
-  ;; flycheck already does sets `next-error-function'
-  (defalias 'spacemacs/next-error #'next-error)
+  ;; `spacemacs/next-error' should not exist
+  ;; (setf flycheck-standard-error-navigation t)
+  ;; (defalias 'spacemacs/next-error #'next-error)
 
 
   (use-package quick-peek
@@ -1292,7 +1348,6 @@ before packages are loaded."
         (around
          my-flycheck-inlide-hide-errs-hack-adv
          activate)
-      (list "adv.. taking" my-flycheck-inlide-hide-errs-tanks-one)
       (if my-flycheck-inlide-hide-errs-tanks-one
           (setf my-flycheck-inlide-hide-errs-tanks-one nil)
         ad-do-it)
@@ -1311,6 +1366,19 @@ before packages are loaded."
 
   (with-eval-after-load 'cider
     (require 'init-cider))
+
+  (use-package omnisharp
+    :straight  (:host github :repo "rtnlmeme-DestroyerOfDeath/omnisharp-emacs")
+    :defer t
+    :init
+    (add-hook 'csharp-mode-hook 'omnisharp-mode)
+
+    (add-to-list 'spacemacs-jump-handlers-csharp-mode
+                 '(omnisharp-go-to-definition :async t))
+
+    :config
+    (spacemacs//csharp-configure))
+
 
   )
 
