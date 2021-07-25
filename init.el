@@ -60,7 +60,7 @@ This function should only modify configuration layer settings."
      emacs-lisp
      common-lisp
      ;; semantic
-     csharp
+     ;; csharp
      ;; (csharp :variables csharp-backend 'lsp)
      (python :variables python-backend 'anaconda)
 
@@ -103,6 +103,8 @@ This function should only modify configuration layer settings."
             ;; rcirc-enable-znc-support t
             )
 
+     benj-csharp
+
      ;; benj
      benj-funcs
      benj-themes-config
@@ -140,7 +142,7 @@ This function should only modify configuration layer settings."
 
      ;; mu4e
 
-     ;exwm
+                                        ;exwm
 
 
      )
@@ -168,6 +170,7 @@ This function should only modify configuration layer settings."
                                       palimpsest
                                       backup-each-save
                                       ;; structural-haskell-mode
+                                      ;; adoc-mode
 
                                       )
 
@@ -188,6 +191,7 @@ This function should only modify configuration layer settings."
                                     treemacs
                                     windows-scripts
                                     lsp-ui
+                                    omnisharp
                                     )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
@@ -672,6 +676,10 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
     "Sapce line with less stuff"
     (spaceline-compile
       `(
+        ;; '((:eval
+        ;;    (when
+        ;;        (featurep 'lispyville)
+        ;;      (lispyville-mode-line-string))))
         '((persp-name
            workspace-number
            window-number)
