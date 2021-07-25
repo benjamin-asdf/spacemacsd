@@ -34,8 +34,18 @@
 (spacemacs/set-leader-keys "oxe" 'benj-remove-eol-from-file)
 (spacemacs/set-leader-keys "oxE" 'benj-remove-eol)
 
-(define-key evil-insert-state-map (kbd "C-j") 'company-manual-begin)
 (define-key evil-insert-state-map (kbd "C-y") 'benj-copy-word-from-above)
+
+(defun my-company-manual-begin ()
+  (interactive)
+  (if (company-tooltip-visible-p)
+      (company-select-next)
+    (company-manual-begin)))
+(define-key evil-insert-state-map (kbd "C-j") #'my-company-manual-begin)
+
+(evil-define-key 'insert cider-repl-mode-map
+  (kbd "C-j") 'spacemacs//clj-repl-wrap-c-j
+  (kbd "C-k") 'spacemacs//clj-repl-wrap-c-k)
 
 
 (spacemacs/declare-prefix "on" "new")

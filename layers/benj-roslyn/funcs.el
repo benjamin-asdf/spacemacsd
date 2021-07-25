@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (require 'idlegame-definitions)
 (require 'team-utils)
 
@@ -88,7 +89,7 @@
   (benj-roslyn-prepare-build)
   (with-dir
    benj-roslyn-tools/proj-path
-   (shell-command "rm -r -f output"))
+   (shell-command "rm  -f output/Analyzers.dll"))
   (deferred:$
     (with-dir
      benj-roslyn-tools/analyzers-proj-path
@@ -102,9 +103,10 @@
           (team/in-new-line "==================== ready ==============="))
         (with-dir
          benj-roslyn-tools/proj-path
-         (copy-directory
-          "source/Analyzers/bin/Release/netcoreapp3.1/"
-          "output" t t t))
+         (copy-file
+          "source/Analyzers/bin/Release/netcoreapp3.1/Analyzers.dll"
+          "output/"
+          'override))
         (message "roslyn build success.")))))
 
 
@@ -337,7 +339,10 @@ see `benj-roslyn-proj-configs'"
     #'start-process
     (append
      (list "run-analyzers"
-           benj-roslyn-tools/buff-name "dotnet" benj-roslyn-tools/cli-executable
+           benj-roslyn-tools/buff-name
+           "dotnet"
+           ;; "mono"
+           benj-roslyn-tools/cli-executable
            "-s" sln)
      args
      (list "-no-stats")))
