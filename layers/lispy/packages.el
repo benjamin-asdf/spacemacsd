@@ -130,6 +130,11 @@
       (lispyville--define-key
           '(normal)
         (kbd "SPC k j") (lispyville-wrap-command lispyville-forward-list-end special))
+      (lispyville--define-key
+          '(insert)
+        (kbd "C-h") #'lispy-delete-backward)
+
+
 
 
       (require 'targets)

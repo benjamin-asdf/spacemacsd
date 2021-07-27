@@ -270,7 +270,7 @@ see `benj-roslyn-proj-configs'"
         (re-search-forward "/PropertyGroup>")
         (forward-line 1)
         (insert
-         "  <PropertyGroup Condition=\"'$(OS)' == 'Unix'\">\r\n    <BaseFrameworkPathOverrideForMono Condition=\"'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')\">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</BaseFrameworkPathOverrideForMono>\r\n    <BaseFrameworkPathOverrideForMono Condition=\"'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/lib/mono')\">/usr/lib/mono</BaseFrameworkPathOverrideForMono>\r\n    <BaseFrameworkPathOverrideForMono Condition=\"'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/local/lib/mono')\">/usr/local/lib/mono</BaseFrameworkPathOverrideForMono>\r\n    <FrameworkPathOverride Condition=\"'$(BaseFrameworkPathOverrideForMono)' != ''\">$(BaseFrameworkPathOverrideForMono)/4.7.1-api</FrameworkPathOverride>\r\n    <EnableFrameworkPathOverride Condition=\"'$(BaseFrameworkPathOverrideForMono)' != ''\">true</EnableFrameworkPathOverride>\r\n    <!-- <AssemblySearchPaths Condition=\"'$(BaseFrameworkPathOverrideForMono)' != ''\">$(AssemblySearchPaths);$(FrameworkPathOverride);$(FrameworkPathOverride)/Facades</AssemblySearchPaths> -->\r\n  </PropertyGroup>\r\n")
+         "  <PropertyGroup Condition=\"'$(OS)' == 'Unix'\">\r\n    <BaseFrameworkPathOverrideForMono Condition=\"'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')\">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</BaseFrameworkPathOverrideForMono>\r\n    <BaseFrameworkPathOverrideForMono Condition=\"'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/lib/mono')\">/usr/lib/mono</BaseFrameworkPathOverrideForMono>\r\n    <BaseFrameworkPathOverrideForMono Condition=\"'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/local/lib/mono')\">/usr/local/lib/mono</BaseFrameworkPathOverrideForMono>\r\n    <FrameworkPathOverride Condition=\"'$(BaseFrameworkPathOverrideForMono)' != ''\">$(BaseFrameworkPathOverrideForMono)/4.7.1-api</FrameworkPathOverride>\r\n    <EnableFrameworkPathOverride Condition=\"'$(BaseFrameworkPathOverrideForMono)' != ''\">true</EnableFrameworkPathOverride>\r\n    <!-- <AssemblySearchPaths Condition=\"'$(BaseFrameworkPathOverrideForMono)' != ''\">$(AsusemblySearchPaths);$(FrameworkPathOverride);$(FrameworkPathOverride)/Facades</AssemblySearchPaths> -->\r\n  </PropertyGroup>\r\n")
         t))))
 
 (defun benj-roslyn-idlegame-sync-sym (&rest syms)
@@ -291,7 +291,7 @@ see `benj-roslyn-proj-configs'"
   "Rerun `benj-roslyn-runner' with previous args."
   (interactive "P")
   (unless arg
-    (benj-roslyn-tools/nuke-build))
+    (benj-roslyn-build-analyzers))
   (benj-roslyn-runner (car benj-roslyn-last-args) (cdr benj-roslyn-last-args)))
 
 
@@ -439,7 +439,6 @@ Instead of consing PROGRAM and PROGRAM-ARGS, also flatten the list, see `-flatte
         (insert (mkstr it))
         it)))))
 
-(benj-roslyn-tools/get-next-analzyer-id)
 
 (defun benj-roslyn-tools/build-banned-analzyer ()
   ""

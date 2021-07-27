@@ -1,12 +1,4 @@
 (require 'use-package)
-
-
-(use-package team-autoloads
-  :demand t
-  :config
-  (load-file team-elisp-auto-load-file))
-
-
 (use-package game-log-tools)
 (use-package helm-csharp-enums :defer t)
 (use-package helm-stuff :demand)

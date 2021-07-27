@@ -19,4 +19,25 @@ public const string ruleId = "`(benj-roslyn-tools/get-next-analzyer-id)`";
 
 public static DiagnosticDescriptor rule = new DiagnosticDescriptor(ruleId,AnalyzerCategories.SingularityGroupCategory,DiagnosticSeverity.Error,true);
 
+    public const string replaceNotAllowedId = "BEST070";
+    // public const string compReadOnly = "BEST070";
+    // public const string keyRuleId = "BEST064";
+
+    protected override bool logVerbose => true;
+
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+        replaceNotAllowedRule
+        // msgPackKeyMissingRule
+        );
+
+    public static DiagnosticDescriptor replaceNotAllowedRule = new DiagnosticDescriptor(replaceNotAllowedId,"Do not replace read-only components","{0} is read-only. Do not use Replace.",AnalyzerCategories.SingularityGroupCategory,DiagnosticSeverity.Error,true);
+
+    // public static DiagnosticDescriptor msgPackKeyMissingRule = new DiagnosticDescriptor(keyRuleId,"Message pack key attribute missing","{0} is a MessagePackObject and {1} is missing [Key] Attribute",AnalyzerCategories.SingularityGroupCategory,DiagnosticSeverity.Error,true);
+
+
+    protected override void OnInitialize(AnalysisContext context) {
+        context.RegisterCompilationStartAction(compStartCtx => {
+        });
+    }
 }
+
