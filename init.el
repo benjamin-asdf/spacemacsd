@@ -70,7 +70,10 @@ This function should only modify configuration layer settings."
      yaml
      ;; typescript
      ;; nim
-     ;; kotlin
+     (kotlin :variables
+             kotlin-backend 'lsp
+             kotlin-lsp-jar-path "/home/benj/repos/kotlin/kotlin-language-server/server/build/install/server/bin/kotlin-language-server")
+
      (c-c++ :variable c-c++-backend nil)
      vimscript
      (lsp :variables
@@ -1123,7 +1126,7 @@ before packages are loaded."
            :nick "benj234"
            :user-name "benj234"
            ;; :auth "benj"
-           :channels ("#emacs" "#guile" "#nyxt"))
+           :channels ("#emacs" "#guile" "#nyxt" "#guix"))
           ;; ("irc.gimp.org"
           ;;  :nick "benj234"
           ;;  :user-name "benj234"
@@ -1307,6 +1310,10 @@ before packages are loaded."
             team-trello-key
             (auth-source-pick-first-password :host "trello-key"))))
 
+  (defun benj-clear-kill-ring-and-gc ()
+    (interactive)
+    (progn (setf kill-ring nil) (garbage-collect)))
+
 
   (with-eval-after-load 'flyspell
     (dolist (hook '(text-mode-hook org-mode-hook))
@@ -1378,7 +1385,7 @@ before packages are loaded."
     (require 'init-cider))
 
   (use-package omnisharp
-    :straight  (:host github :repo "rtnlmeme-DestroyerOfDeath/omnisharp-emacs")
+    :straight  (:host github :repo "benjamin-asdf/omnisharp-emacs")
     :defer t
     :init
     (add-hook 'csharp-mode-hook 'omnisharp-mode)

@@ -34,34 +34,34 @@
 ;;         "dx" 'sayid-reset-workspace))
 
 
-    (evilified-state-evilify sayid-mode sayid-mode-map
-      (kbd "H") 'sayid-buf-show-help
-      (kbd "n") 'sayid-buffer-nav-to-next
-      (kbd "N") 'sayid-buffer-nav-to-prev
-      (kbd "C-s v") 'sayid-toggle-view
-      (kbd "C-s V") 'sayid-set-view
-      (kbd "L") 'sayid-buf-back
-      (kbd "e") 'sayid-gen-instance-expr) ;Originally this was bound to 'g', but I feel this is still mnemonic and doesn't overlap with evil
+;;     (evilified-state-evilify sayid-mode sayid-mode-map
+;;       (kbd "H") 'sayid-buf-show-help
+;;       (kbd "n") 'sayid-buffer-nav-to-next
+;;       (kbd "N") 'sayid-buffer-nav-to-prev
+;;       (kbd "C-s v") 'sayid-toggle-view
+;;       (kbd "C-s V") 'sayid-set-view
+;;       (kbd "L") 'sayid-buf-back
+;;       (kbd "e") 'sayid-gen-instance-expr) ;Originally this was bound to 'g', but I feel this is still mnemonic and doesn't overlap with evil
 
-    (evilified-state-evilify sayid-pprint-mode sayid-pprint-mode-map
-      (kbd "h") 'sayid-pprint-buf-show-help
-      (kbd "n") 'sayid-pprint-buf-next
-      (kbd "N") 'sayid-pprint-buf-prev
-      (kbd "l") 'sayid-pprint-buf-exit)
+;;     (evilified-state-evilify sayid-pprint-mode sayid-pprint-mode-map
+;;       (kbd "h") 'sayid-pprint-buf-show-help
+;;       (kbd "n") 'sayid-pprint-buf-next
+;;       (kbd "N") 'sayid-pprint-buf-prev
+;;       (kbd "l") 'sayid-pprint-buf-exit)
 
-    (evilified-state-evilify sayid-traced-mode sayid-traced-mode-map
-      (kbd "l") 'sayid-show-traced
-      (kbd "h") 'sayid-traced-buf-show-help))
-  :config
-  (progn
-    ;; If sayid-version is null the .elc file
-    ;; is corrupted. Then force a reinstall and
-    ;; reload the feature.
-    (when (null sayid-version)
-      (package-reinstall 'sayid)
-      (unload-feature 'sayid)
-      (require 'sayid)
-      (setq cider-jack-in-lein-plugins (delete `("com.billpiel/sayid" nil) cider-jack-in-lein-plugins)))))
+;;     (evilified-state-evilify sayid-traced-mode sayid-traced-mode-map
+;;       (kbd "l") 'sayid-show-traced
+;;       (kbd "h") 'sayid-traced-buf-show-help))
+;;   :config
+;;   (progn
+;;     ;; If sayid-version is null the .elc file
+;;     ;; is corrupted. Then force a reinstall and
+;;     ;; reload the feature.
+;;     (when (null sayid-version)
+;;       (package-reinstall 'sayid)
+;;       (unload-feature 'sayid)
+;;       (require 'sayid)
+;;       (setq cider-jack-in-lein-plugins (delete `("com.billpiel/sayid" nil) cider-jack-in-lein-plugins)))))
 
 
 
