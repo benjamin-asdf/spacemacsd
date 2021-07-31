@@ -1,9 +1,6 @@
 
 (defconst lispy-packages
   '(lispy
-    (evil-lispy :location (recipe :fetcher github
-                                  :repo "sp3ctum/evil-lispy"
-                                  :branch "master"))
     (targets
      :location (recipe
                 :fetcher github
@@ -14,47 +11,22 @@
   (use-package lispy
     :defer t
     ;; :init (setq lispy-key-theme nil)
-    :config (with-eval-after-load
-                'evil-mc
-                (progn
-                  (pushnew
-                   'lispy-mode
-                   evil-mc-incompatible-minor-modes)
-                  (spacemacs|diminish lispy-mode "" "")))))
-
-(defun lispy/init-evil-lispy ()
-  (use-package evil-lispy
     :hook ((lisp-mode . lispy-mode)
-          (emacs-lisp-mode . lispy-mode)
-          (scheme-mode . lispy-mode)
-          (racket-mode . lispy-mode)
-          (hy-mode . lispy-mode)
-          (lfe-mode . lispy-mode)
-          (dune-mode . lispy-mode)
-          (clojure-mode . lispy-mode))
-    :commands (evil-lispy-mode)
-    :config (progn
-              (spacemacs|diminish evil-lispy-mode " Ⓛ" " L")
-              (setq lispy-close-quotes-at-end-p t)
-              (add-hook 'lispy-mode-hook #'turn-off-smartparens-mode)
-
-              (defadvice lispy-backtick (after my/lispy-lispy-backtick-advice activate)
-                (interactive)
-                (run-hooks 'post-self-insert-hook))
-
-              (when (configuration-layer/package-usedp 'cider)
-
-                ;; todo better mechanism of loading cider
-                (require 'cider)
-                ;; show eval results in a cider overlay, next to point
-                (add-to-list 'lispy-compat 'cider)
-                (setq lispy-eval-display-style 'overlay))
-
-              (with-eval-after-load
-                  'python-mode
-                  (add-hook
-                   'python-mode-hook
-                   (lambda () (require 'le-python)))))))
+           (emacs-lisp-mode . lispy-mode)
+           (scheme-mode . lispy-mode)
+           (racket-mode . lispy-mode)
+           (hy-mode . lispy-mode)
+           (lfe-mode . lispy-mode)
+           (dune-mode . lispy-mode)
+           (clojure-mode . lispy-mode))
+    :config
+    (with-eval-after-load
+        'evil-mc
+      (progn
+        (pushnew
+         'lispy-mode
+         evil-mc-incompatible-minor-modes)
+        (spacemacs|diminish lispy-mode "" "")))))
 
 (defun evil-lispy-layer-configure-colorization ()
   ;; this will be displayed in the modeline
@@ -133,6 +105,15 @@
       (lispyville--define-key
           '(insert)
         (kbd "C-h") #'lispy-delete-backward)
+
+      (lispyville--define-key '(motion normal)
+        "q" 'lispy-ace-paren
+        ;; "Q" 'lispy-ace-symbol
+        ;; "t" 'lispy-ace-char
+        "Y" 'lispy-new-copy
+        "p" 'lispy-paste
+        )
+
 
 
 
