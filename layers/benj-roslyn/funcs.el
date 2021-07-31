@@ -91,6 +91,7 @@
   (with-dir
    benj-roslyn-tools/proj-path
    (shell-command "rm  -f output/Analyzers.dll"))
+  (setf benj-roslyn-build-running t)
   (deferred:$
     (with-dir
      benj-roslyn-tools/analyzers-proj-path
@@ -108,6 +109,7 @@
           "source/Analyzers/bin/Release/netcoreapp3.1/Analyzers.dll"
           "output/"
           'override))
+        (setf benj-roslyn-build-running nil)
         (message "roslyn build success.")))))
 
 
@@ -178,7 +180,7 @@ see `benj-roslyn-proj-configs'"
   (apply
    #'benj-roslyn-runner
    `(,benj-roslyn-tools/playground-sln
-     "-t" "Playground"
+     ;; "-t" "Playground"
      ,@args)))
 
 (defun benj-roslyn-tools/run-playground-sync ()
@@ -186,7 +188,7 @@ see `benj-roslyn-proj-configs'"
   (interactive)
   (benj-roslyn-runner
    benj-roslyn-tools/playground-sln
-   "-t" "Playground"
+   ;; "-t" "Playground"
    "-sync"))
 
 (defun benj-roslyn-tools/do-run-analyzers (sln target analyzer)
@@ -201,7 +203,7 @@ see `benj-roslyn-proj-configs'"
   (interactive
    (benj-roslyn-tools/read-analzyer-and-file))
   (benj-roslyn-runner benj-roslyn-tools/playground-sln
-                      "-t" "Playground"
+                      ;; "-t" "Playground"
                       "-g" analyzer
                       (and (not (string-empty-p file)) (list "-f" (file-name-nondirectory file)))))
 
