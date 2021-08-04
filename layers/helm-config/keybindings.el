@@ -24,12 +24,6 @@
   (interactive)
   (team/a-when (buffer-file-name) (helm-do-ag default-directory (list it))))
 
-(spacemacs/declare-prefix "ohs" "swoop")
-(spacemacs/set-leader-keys
-  "ohsb" 'team-helm/swoop-block-swoop
-  "ohsF" 'team-helm/swoop-narrow-fun
-  "ohsf"  'my/helm-rg-this-file)
-
 
 (team/spacemacs-define-keys
  "os"

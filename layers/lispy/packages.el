@@ -65,12 +65,8 @@
             commentary
             additional-wrap
             additional-insert
-            ;; arrows
-            ;; escape
-            mark-toggle
             slurp/barf-lispy
-            ;; mark-special
-            ))
+            mark-toggle))
     :config
     (progn
 
@@ -101,7 +97,9 @@
 
       (lispyville--define-key
           '(normal)
-        (kbd "SPC k j") (lispyville-wrap-command lispyville-forward-list-end special))
+        (kbd "SPC k j")
+        (lispyville-wrap-command lispyville-forward-list-end special))
+
       (lispyville--define-key
           '(insert)
         (kbd "C-h") #'lispy-delete-backward)

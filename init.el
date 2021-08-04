@@ -776,7 +776,12 @@ before packages are loaded."
   (setq history-delete-duplicates t)
   ;; (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-common-lisp-mode)
   (set-face-foreground 'line-number "slateBlue")
+
+
+  (setq-default page-break-lines-char ?-)
   (setq-default page-break-lines-max-width 30)
+  (add-to-list 'page-break-lines-modes 'clojure-mode)
+
   (define-key evil-normal-state-map (kbd "M-Y") #'evil-paste-pop-next)
   (setf gtags-enable-by-default nil)
 
@@ -793,10 +798,10 @@ before packages are loaded."
   (setf next-error-verbose nil)
 
 
-  ;;; Disable prompt (but leave warning) on git symlink.
+;;; Disable prompt (but leave warning) on git symlink.
   (setq vc-follow-symlinks t)
 
-  ;;; Clipboard and primary selection.
+;;; Clipboard and primary selection.
   ;; (setq select-enable-clipboard t)
 
   ;; this hogs when I put a big buff in the selection
@@ -1396,6 +1401,13 @@ before packages are loaded."
     :config
     (spacemacs//csharp-configure))
 
+  (define-key evil-normal-state-map (kbd ",a") #'org-roam-node-find)
+  (spacemacs/set-leader-keys
+    "aorr" #'org-roam-node-find)
+
+  (use-package gradle-mode :ensure t)
+
+  
 
   )
 
